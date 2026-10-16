@@ -8,12 +8,303 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "composite_close_fore_paw_front_three_quarter_vs_clay.png",
+      "hash": "e5c3d0c7b8ee46ee3b49f7511138d7c824a646d69df68fb9ffe3a116a8075768"
+    },
+    {
+      "name": "composite_close_fore_paw_side_vs_clay.png",
+      "hash": "024a9712fe0ad38c6315cb34f043e8e19690903b1319a56685ba8084b72f56e7"
+    },
+    {
+      "name": "composite_close_hind_paw_front_three_quarter_vs_clay.png",
+      "hash": "91cdebf4809c894b8ae7104e78fe82fc0e3d8698e42bd1ff52d6624918f4dab3"
+    },
+    {
+      "name": "composite_close_hind_paw_side_vs_clay.png",
+      "hash": "779bfc1013aae7e04852adb9f4f730abe569bb91ac80019d89a9ff5b1a947918"
+    },
+    {
+      "name": "composite_fore_paws_front_vs_clay.png",
+      "hash": "3e5a3a756068e46528a19c119665c3a4ab3934b5af42d23694f702cbfdf31f35"
+    },
+    {
+      "name": "composite_fore_paw_side_vs_clay.png",
+      "hash": "d5ff29337c1970dca1f1c7224467af3362bac855996b1259325fdc9a0c2a7c07"
+    },
+    {
+      "name": "composite_full_front_vs_clay.png",
+      "hash": "a70dc48c18561af7f734e2556b0d344279e6c2171200f72776f30b495d8dd530"
+    },
+    {
+      "name": "composite_full_side_vs_clay.png",
+      "hash": "422852ae06c90b61e6c9ce45c353d86afd22b2fef16238d55007ccbcbef14c72"
+    },
+    {
+      "name": "composite_full_side_vs_furred.png",
+      "hash": "fe3fa2f4db13b45078783bdc705a125ee7d6e82e80df6d2934509d6fc37b0fb0"
+    },
+    {
+      "name": "composite_full_three_quarter_vs_clay.png",
+      "hash": "816d4d5720dd11a72ebcc683a29108a5bdde5cffd354c99b65afe0276b7a32ca"
+    },
+    {
+      "name": "composite_hind_paw_side_vs_clay.png",
+      "hash": "af5bbd99f9571471c04c10c2c18f81dab970dba69771703e7cd61f76c78f2716"
+    },
+    {
+      "name": "composite_hind_paw_three_quarter_vs_clay.png",
+      "hash": "a54790b0c25cb19321073b7d7c17698709c0b7ff762c1bc3b8193f5d686f4a51"
+    },
+    {
+      "name": "iter_notes.json",
+      "hash": "765dba6d4f4d8ce45c55a6f4fbbec2fc32b1f7d19e539249bca3fbfb92ced217"
+    },
+    {
+      "name": "outline_fore_-1_front.png",
+      "hash": "cc3cc988551634121f0c9930dcfb19b8dd918019041e3c58fea8a27411fd3e79"
+    },
+    {
+      "name": "outline_fore_-1_side.png",
+      "hash": "75bbb6fc0d7b2ec1ccbd17362ab532fcead9076ac7ff23cb6d7c997e34033e9d"
+    },
+    {
+      "name": "outline_fore_-1_top.png",
+      "hash": "affde265845be5a0a85898c89588ae05c08d733a0f6463c133eae46ef21d2335"
+    },
+    {
+      "name": "outline_fore_1_front.png",
+      "hash": "6605c71fe5fdd194a7411bfc5ebb7f4d917b7dc541422ad670ada5dc3c97d7f4"
+    },
+    {
+      "name": "outline_fore_1_side.png",
+      "hash": "a61fd8d30ea409571d280257ec65cdf9c6dc3a3a947fcbf5b1a7312ca94ba1ec"
+    },
+    {
+      "name": "outline_fore_1_top.png",
+      "hash": "c2b0e6390e712cb7c19e71fa9864d67201b0e32b9defead14fcae003b29295cb"
+    },
+    {
+      "name": "outline_hind_-1_front.png",
+      "hash": "7b3febbf3193fb7cef19bf03a46a5c671a94aa6fbc2a1127a722864ca0db8314"
+    },
+    {
+      "name": "outline_hind_-1_side.png",
+      "hash": "a028aaccdfd915477b309058bf1f359078cbe08902855e09d817e2cc5ccf18cd"
+    },
+    {
+      "name": "outline_hind_-1_top.png",
+      "hash": "11e43f791f0f5415a1481be1981638ff786de4d65f03ae0959d7c5a9961da351"
+    },
+    {
+      "name": "outline_hind_1_front.png",
+      "hash": "d4a317a5bca3cf566eeb711e1e35fefc3dad240bbd1c36bba03de7074fbd4f37"
+    },
+    {
+      "name": "outline_hind_1_side.png",
+      "hash": "0f4db0e5786760bb30ec41559d351218c03ccccaa2ce0aa3e33113e6d8776769"
+    },
+    {
+      "name": "outline_hind_1_top.png",
+      "hash": "03e64bb6ffde4dec71b419180f32fdc63a5ae80e84c4d81b51989dadcac66fe6"
+    },
+    {
+      "name": "paws.blend",
+      "hash": "f09ce1aa0158fd12e7f42a17a02953b502d61f34c03b0c30cb343ae85e8346f3"
+    },
+    {
+      "name": "progress.png",
+      "hash": "0e1b51d5aae70d71dedd06cde1658b8b225139b717ff1e86768d31d25bfbe9b7"
+    },
+    {
+      "name": "report.json",
+      "hash": "dfae05879ed10734b58dfe0329cb47e368c5b34d23e8564d7628589cc181ad35"
+    },
+    {
+      "name": "triple_pass10_fore_paws_front.png",
+      "hash": "dea1af7a9ad04a9bcd84fd9cf3c62cea08e98a71019f81faec3b6b420a0c2d51"
+    },
+    {
+      "name": "triple_pass10_fore_paw_side.png",
+      "hash": "9de7934336c042daec50a07e098c8b293a6d16d3c61c05f033fb39d958752c83"
+    },
+    {
+      "name": "triple_pass10_full_front.png",
+      "hash": "109fdce750ca0fd12155f837535e8040a4d48ad76e85e41c646eaef40684802a"
+    },
+    {
+      "name": "triple_pass10_full_side.png",
+      "hash": "d67f067b304f080fdd4bdea9f90c9eceaceddd707e7cc4dc07707ca28bd2f8ec"
+    },
+    {
+      "name": "triple_pass10_full_three_quarter.png",
+      "hash": "aa0a32300cb271a739ca1a963343fca835c3bfcb67f9655c9e0fe5dd9b745dbc"
+    },
+    {
+      "name": "triple_pass10_hind_paw_side.png",
+      "hash": "300fc6879d4d7b41b91bb9b4fa4f9a831e3c567187e2e19104bb778dc803e434"
+    },
+    {
+      "name": "triple_pass10_hind_paw_three_quarter.png",
+      "hash": "60c123a931467146451e70fccd89e6b3c5b281c58fe73a8f10099e4f7342ecf5"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "composite_close_fore_paw_front_three_quarter_vs_clay.png",
+        "hash": "e5c3d0c7b8ee46ee3b49f7511138d7c824a646d69df68fb9ffe3a116a8075768"
+      },
+      {
+        "name": "composite_close_fore_paw_side_vs_clay.png",
+        "hash": "024a9712fe0ad38c6315cb34f043e8e19690903b1319a56685ba8084b72f56e7"
+      },
+      {
+        "name": "composite_close_hind_paw_front_three_quarter_vs_clay.png",
+        "hash": "91cdebf4809c894b8ae7104e78fe82fc0e3d8698e42bd1ff52d6624918f4dab3"
+      },
+      {
+        "name": "composite_close_hind_paw_side_vs_clay.png",
+        "hash": "779bfc1013aae7e04852adb9f4f730abe569bb91ac80019d89a9ff5b1a947918"
+      },
+      {
+        "name": "composite_fore_paws_front_vs_clay.png",
+        "hash": "3e5a3a756068e46528a19c119665c3a4ab3934b5af42d23694f702cbfdf31f35"
+      },
+      {
+        "name": "composite_fore_paw_side_vs_clay.png",
+        "hash": "d5ff29337c1970dca1f1c7224467af3362bac855996b1259325fdc9a0c2a7c07"
+      },
+      {
+        "name": "composite_full_front_vs_clay.png",
+        "hash": "a70dc48c18561af7f734e2556b0d344279e6c2171200f72776f30b495d8dd530"
+      },
+      {
+        "name": "composite_full_side_vs_clay.png",
+        "hash": "422852ae06c90b61e6c9ce45c353d86afd22b2fef16238d55007ccbcbef14c72"
+      },
+      {
+        "name": "composite_full_side_vs_furred.png",
+        "hash": "fe3fa2f4db13b45078783bdc705a125ee7d6e82e80df6d2934509d6fc37b0fb0"
+      },
+      {
+        "name": "composite_full_three_quarter_vs_clay.png",
+        "hash": "816d4d5720dd11a72ebcc683a29108a5bdde5cffd354c99b65afe0276b7a32ca"
+      },
+      {
+        "name": "composite_hind_paw_side_vs_clay.png",
+        "hash": "af5bbd99f9571471c04c10c2c18f81dab970dba69771703e7cd61f76c78f2716"
+      },
+      {
+        "name": "composite_hind_paw_three_quarter_vs_clay.png",
+        "hash": "a54790b0c25cb19321073b7d7c17698709c0b7ff762c1bc3b8193f5d686f4a51"
+      },
+      {
+        "name": "iter_notes.json",
+        "hash": "765dba6d4f4d8ce45c55a6f4fbbec2fc32b1f7d19e539249bca3fbfb92ced217"
+      },
+      {
+        "name": "outline_fore_-1_front.png",
+        "hash": "cc3cc988551634121f0c9930dcfb19b8dd918019041e3c58fea8a27411fd3e79"
+      },
+      {
+        "name": "outline_fore_-1_side.png",
+        "hash": "75bbb6fc0d7b2ec1ccbd17362ab532fcead9076ac7ff23cb6d7c997e34033e9d"
+      },
+      {
+        "name": "outline_fore_-1_top.png",
+        "hash": "affde265845be5a0a85898c89588ae05c08d733a0f6463c133eae46ef21d2335"
+      },
+      {
+        "name": "outline_fore_1_front.png",
+        "hash": "6605c71fe5fdd194a7411bfc5ebb7f4d917b7dc541422ad670ada5dc3c97d7f4"
+      },
+      {
+        "name": "outline_fore_1_side.png",
+        "hash": "a61fd8d30ea409571d280257ec65cdf9c6dc3a3a947fcbf5b1a7312ca94ba1ec"
+      },
+      {
+        "name": "outline_fore_1_top.png",
+        "hash": "c2b0e6390e712cb7c19e71fa9864d67201b0e32b9defead14fcae003b29295cb"
+      },
+      {
+        "name": "outline_hind_-1_front.png",
+        "hash": "7b3febbf3193fb7cef19bf03a46a5c671a94aa6fbc2a1127a722864ca0db8314"
+      },
+      {
+        "name": "outline_hind_-1_side.png",
+        "hash": "a028aaccdfd915477b309058bf1f359078cbe08902855e09d817e2cc5ccf18cd"
+      },
+      {
+        "name": "outline_hind_-1_top.png",
+        "hash": "11e43f791f0f5415a1481be1981638ff786de4d65f03ae0959d7c5a9961da351"
+      },
+      {
+        "name": "outline_hind_1_front.png",
+        "hash": "d4a317a5bca3cf566eeb711e1e35fefc3dad240bbd1c36bba03de7074fbd4f37"
+      },
+      {
+        "name": "outline_hind_1_side.png",
+        "hash": "0f4db0e5786760bb30ec41559d351218c03ccccaa2ce0aa3e33113e6d8776769"
+      },
+      {
+        "name": "outline_hind_1_top.png",
+        "hash": "03e64bb6ffde4dec71b419180f32fdc63a5ae80e84c4d81b51989dadcac66fe6"
+      },
+      {
+        "name": "paws.blend",
+        "hash": "f09ce1aa0158fd12e7f42a17a02953b502d61f34c03b0c30cb343ae85e8346f3"
+      },
+      {
+        "name": "progress.png",
+        "hash": "0e1b51d5aae70d71dedd06cde1658b8b225139b717ff1e86768d31d25bfbe9b7"
+      },
+      {
+        "name": "report.json",
+        "hash": "dfae05879ed10734b58dfe0329cb47e368c5b34d23e8564d7628589cc181ad35"
+      },
+      {
+        "name": "triple_pass10_fore_paws_front.png",
+        "hash": "dea1af7a9ad04a9bcd84fd9cf3c62cea08e98a71019f81faec3b6b420a0c2d51"
+      },
+      {
+        "name": "triple_pass10_fore_paw_side.png",
+        "hash": "9de7934336c042daec50a07e098c8b293a6d16d3c61c05f033fb39d958752c83"
+      },
+      {
+        "name": "triple_pass10_full_front.png",
+        "hash": "109fdce750ca0fd12155f837535e8040a4d48ad76e85e41c646eaef40684802a"
+      },
+      {
+        "name": "triple_pass10_full_side.png",
+        "hash": "d67f067b304f080fdd4bdea9f90c9eceaceddd707e7cc4dc07707ca28bd2f8ec"
+      },
+      {
+        "name": "triple_pass10_full_three_quarter.png",
+        "hash": "aa0a32300cb271a739ca1a963343fca835c3bfcb67f9655c9e0fe5dd9b745dbc"
+      },
+      {
+        "name": "triple_pass10_hind_paw_side.png",
+        "hash": "300fc6879d4d7b41b91bb9b4fa4f9a831e3c567187e2e19104bb778dc803e434"
+      },
+      {
+        "name": "triple_pass10_hind_paw_three_quarter.png",
+        "hash": "60c123a931467146451e70fccd89e6b3c5b281c58fe73a8f10099e4f7342ecf5"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 19.7,
+    "defectResult": "D-e6zx: fore pits filled, fifth lumps blended, four claws per paw. Left: small jagged nubs and angular dents at the hind toe ends and cleft edges, a flattened hind flank where a side lump was removed (width -7.5 mm), right outer hind claw nearly flush.",
+    "note": "Critic checklist: counts four toes and four claws per paw in the triples; no holes visible; jagged nubs at the hind toe ends visible at the close three-quarter camera. One cleanup pass before Nick."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-16T00:00:07Z",
-  "briefSha256": "3a5edaec2a6621527b0c695e01e823eaf17f6c4a9b6de61d278c18f959999610"
+  "briefSha256": "3a5edaec2a6621527b0c695e01e823eaf17f6c4a9b6de61d278c18f959999610",
+  "checks": [],
+  "reportedAt": "2026-10-16T00:20:33Z"
 }

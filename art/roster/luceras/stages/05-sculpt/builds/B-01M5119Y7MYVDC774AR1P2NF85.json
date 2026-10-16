@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5119Y7MYVDC774AR1P2NF85",
+  "alias": "q7ax",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: cleanup of B-7txf (jagged toe ends, dents, flattened hind flank, flush claw); Codex",
+  "scope": "all four paws",
+  "defect": "D-01M5104H1KFBBMHWJPXF56QBSG",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T00:20:33Z",
+  "briefSha256": "f20be71c792caf70e803c1d8f434fdb511a79eb1890e4a90642c7a5c5b2f981e"
+}

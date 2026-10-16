@@ -29,42 +29,52 @@
     "mustHave[5]"
    ],
    "recommend": null,
-   "note": "Known: the toe grooves are subtle at full-body size; the claws are smooth where the clay's have ridges (surface stage); muscle relief is softer than the clay everywhere, as on the torso you approved.",
+   "note": "Checked on every paw: four toes, four claws, no holes. The two holes and the fifth toe lump you found on the right front paw came from the generated paw and are fixed. Known and small: slight lips of skin under the outer hind claws at the close three-quarter view; toe grooves subtle at full-body size; muscle relief softer than the clay, as on the approved torso.",
    "views": [
     {
+     "label": "Fore paws, front",
+     "blob": "bc21ba4178d296c43bb8b478a2987205cc3635dce2a57273e2b0f0ca34deb304",
+     "caption": "Fore paws, front: 1 generated, 2 current, 3 clay"
+    },
+    {
      "label": "Hind paw, side",
-     "blob": "19d6367ffd32a9cf117c3df836d0c17537c0386493cb6348c892eec46936b440",
+     "blob": "863e3b0c1fbdf709c37a6bf6361b1855778f0ff6a30f3fac5940f9898c27cfa3",
      "caption": "Hind paw, side: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Hind paw, three-quarter",
-     "blob": "fdd8ef44ddccf244db7f16ae6bc53b8f18574c32ddedeadb2ea70a652f952c85",
+     "blob": "19cdd254d76a7da65d99553a8db4e1c8dc6fb82c84b371c6bb250fa975de838a",
      "caption": "Hind paw, three-quarter: 1 generated, 2 current, 3 clay"
     },
     {
-     "label": "Fore paws, front",
-     "blob": "7215ac234489fdde58a01764a6448442ce017bca8d1853604812b64d3b26c70c",
-     "caption": "Fore paws, front: 1 generated, 2 current, 3 clay"
-    },
-    {
      "label": "Fore paw, side",
-     "blob": "8a25bc3d6868eacaee5f1eedfe92df66ca35eeabd17629849fba6843e8033397",
+     "blob": "c549a886f84ff7a1a8094cdc47bb489b067c5ad78ac8ce63d44a12061022bd96",
      "caption": "Fore paw, side: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Full body, side",
-     "blob": "6ba5be38466a446f6629651dbdbe042b6f1a0600507f2a6d659be6ccf4ecb795",
+     "blob": "9669e7e676f2b2b37dc78b508f1c6e5fe0baf19de0a358bc802379142e472697",
      "caption": "Full body, side: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Full body, three-quarter",
-     "blob": "4d1c0f5bd4d1b6195d5a0f136af446ec7d34f41061a38ac9361f1ee6b876e02b",
+     "blob": "5d54a81de6fba52e8680aaf89d99c3051383cc3806eb4e08e2ca665e68f71017",
      "caption": "Full body, three-quarter: 1 generated, 2 current, 3 clay"
     },
     {
      "label": "Full body, front",
-     "blob": "10663996a90bd931a91b512b8e2b42b0ede9ac595b72431b3c2375ac6a33b94d",
+     "blob": "5f054d271b901533bf3101f4cae06349ee31b6ad3ea29c006b159b8eb15476bd",
      "caption": "Full body, front: 1 generated, 2 current, 3 clay"
+    },
+    {
+     "label": "Hind paw close",
+     "blob": "f6fc2fc2e417ad8b8d66106916f7c4531c9598d6718e6e3796bb35f3f2d0ade2",
+     "caption": "Hind paw close, three-quarter: build left, clay right"
+    },
+    {
+     "label": "Fore paw close",
+     "blob": "ac078781fbd8c6a969775c1274b465a6e37ee7afb71a93123db5418087731fce",
+     "caption": "Fore paw close, side: build left, clay right"
     },
     {
      "label": "Tail",

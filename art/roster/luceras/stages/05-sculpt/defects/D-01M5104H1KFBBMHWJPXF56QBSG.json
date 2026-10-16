@@ -6,7 +6,10 @@
   "camera": "fore_paws_front",
   "region": "right fore paw (and audit all four)",
   "origin": "B-ss73",
-  "attempts": [],
+  "attempts": [
+    "B-01M5119Y7MYVDC774AR1P2NF85",
+    "B-01M5125VCDH14MJ8XA0KK1JE5C"
+  ],
   "status": "open",
   "createdAt": "2026-10-16T00:00:07Z"
 }

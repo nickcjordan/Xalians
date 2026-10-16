@@ -1,0 +1,134 @@
+{
+  "id": "B-01M5125VCDH14MJ8XA0KK1JE5C",
+  "alias": "mm9r",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: finish B-q7ax (save iteration 5, shelves under the outer hind claws, lower cleft corners, the small fore side dents) with one consistent set of renders; Codex",
+  "scope": "all four paws",
+  "defect": "D-01M5104H1KFBBMHWJPXF56QBSG",
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "composite_close_fore_paw_front_three_quarter_vs_clay.png",
+      "hash": "c8264625fa3bcdedfbf1e145236872984d4ddd125b366390ce4e587253a6af20"
+    },
+    {
+      "name": "composite_close_fore_paw_side_vs_clay.png",
+      "hash": "ac078781fbd8c6a969775c1274b465a6e37ee7afb71a93123db5418087731fce"
+    },
+    {
+      "name": "composite_close_hind_paw_front_three_quarter_vs_clay.png",
+      "hash": "f6fc2fc2e417ad8b8d66106916f7c4531c9598d6718e6e3796bb35f3f2d0ade2"
+    },
+    {
+      "name": "composite_close_hind_paw_side_vs_clay.png",
+      "hash": "2af68f49d7396ddbf3dc48ce35cf5ee93917efd33f3670ba6cc4ccbee5c571a9"
+    },
+    {
+      "name": "paws.blend",
+      "hash": "0e59a189d9aa3cb34910f852f6315eca2d7fc1c0cde3b0259406f771c4e61360"
+    },
+    {
+      "name": "report.json",
+      "hash": "40d6acc58a8d801e7e75b895293288fa8a90f2044d7066f459dcc63c2cc7e251"
+    },
+    {
+      "name": "triple_pass12_fore_paws_front.png",
+      "hash": "bc21ba4178d296c43bb8b478a2987205cc3635dce2a57273e2b0f0ca34deb304"
+    },
+    {
+      "name": "triple_pass12_fore_paw_side.png",
+      "hash": "c549a886f84ff7a1a8094cdc47bb489b067c5ad78ac8ce63d44a12061022bd96"
+    },
+    {
+      "name": "triple_pass12_full_front.png",
+      "hash": "5f054d271b901533bf3101f4cae06349ee31b6ad3ea29c006b159b8eb15476bd"
+    },
+    {
+      "name": "triple_pass12_full_side.png",
+      "hash": "9669e7e676f2b2b37dc78b508f1c6e5fe0baf19de0a358bc802379142e472697"
+    },
+    {
+      "name": "triple_pass12_full_three_quarter.png",
+      "hash": "5d54a81de6fba52e8680aaf89d99c3051383cc3806eb4e08e2ca665e68f71017"
+    },
+    {
+      "name": "triple_pass12_hind_paw_side.png",
+      "hash": "863e3b0c1fbdf709c37a6bf6361b1855778f0ff6a30f3fac5940f9898c27cfa3"
+    },
+    {
+      "name": "triple_pass12_hind_paw_three_quarter.png",
+      "hash": "19cdd254d76a7da65d99553a8db4e1c8dc6fb82c84b371c6bb250fa975de838a"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "composite_close_fore_paw_front_three_quarter_vs_clay.png",
+        "hash": "c8264625fa3bcdedfbf1e145236872984d4ddd125b366390ce4e587253a6af20"
+      },
+      {
+        "name": "composite_close_fore_paw_side_vs_clay.png",
+        "hash": "ac078781fbd8c6a969775c1274b465a6e37ee7afb71a93123db5418087731fce"
+      },
+      {
+        "name": "composite_close_hind_paw_front_three_quarter_vs_clay.png",
+        "hash": "f6fc2fc2e417ad8b8d66106916f7c4531c9598d6718e6e3796bb35f3f2d0ade2"
+      },
+      {
+        "name": "composite_close_hind_paw_side_vs_clay.png",
+        "hash": "2af68f49d7396ddbf3dc48ce35cf5ee93917efd33f3670ba6cc4ccbee5c571a9"
+      },
+      {
+        "name": "paws.blend",
+        "hash": "0e59a189d9aa3cb34910f852f6315eca2d7fc1c0cde3b0259406f771c4e61360"
+      },
+      {
+        "name": "report.json",
+        "hash": "40d6acc58a8d801e7e75b895293288fa8a90f2044d7066f459dcc63c2cc7e251"
+      },
+      {
+        "name": "triple_pass12_fore_paws_front.png",
+        "hash": "bc21ba4178d296c43bb8b478a2987205cc3635dce2a57273e2b0f0ca34deb304"
+      },
+      {
+        "name": "triple_pass12_fore_paw_side.png",
+        "hash": "c549a886f84ff7a1a8094cdc47bb489b067c5ad78ac8ce63d44a12061022bd96"
+      },
+      {
+        "name": "triple_pass12_full_front.png",
+        "hash": "5f054d271b901533bf3101f4cae06349ee31b6ad3ea29c006b159b8eb15476bd"
+      },
+      {
+        "name": "triple_pass12_full_side.png",
+        "hash": "9669e7e676f2b2b37dc78b508f1c6e5fe0baf19de0a358bc802379142e472697"
+      },
+      {
+        "name": "triple_pass12_full_three_quarter.png",
+        "hash": "5d54a81de6fba52e8680aaf89d99c3051383cc3806eb4e08e2ca665e68f71017"
+      },
+      {
+        "name": "triple_pass12_hind_paw_side.png",
+        "hash": "863e3b0c1fbdf709c37a6bf6361b1855778f0ff6a30f3fac5940f9898c27cfa3"
+      },
+      {
+        "name": "triple_pass12_hind_paw_three_quarter.png",
+        "hash": "19cdd254d76a7da65d99553a8db4e1c8dc6fb82c84b371c6bb250fa975de838a"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 22.2,
+    "defectResult": "D-e6zx: four toes, four claws, no holes on every paw; fore side dents filled; hind toe-end lips and lower-cleft pinches softened, small residual named.",
+    "note": "Consistent delivery from one saved file (sha256 0e59a189...). Critic checklist on the final renders: fore paws 4 toes 4 claws, no holes or pits; hind paws 4 toes 4 claws, small lips under the outer claws at the close three-quarter camera. Presented to Nick with the residual named."
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-16T00:35:47Z",
+  "briefSha256": "491c4eb873c2e3629db83281a8f68abd2d84183512a88d9b729aa1943221392d",
+  "checks": [],
+  "reportedAt": "2026-10-16T00:58:46Z"
+}
