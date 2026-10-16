@@ -1,0 +1,101 @@
+{
+  "id": "B-01M513KBK8VYR4513CE0A87SCQ",
+  "alias": "ycqv",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: remove the outer side chunk of each fore paw (Nick's circle), nothing else; Codex",
+  "scope": "fore paws",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "paws.blend",
+      "hash": "65e0f689a43666b2dc0f7530d162401f6fe368ae9899de410de6210806ee4911"
+    },
+    {
+      "name": "report.json",
+      "hash": "10a353258f1aedcd91ef3d0c7f6fe65cf3b6c6a70246060e2ec1a9bbbd46bce3"
+    },
+    {
+      "name": "triple_pass13_fore_paws_front.png",
+      "hash": "5f4ba94f7accce97618f139e3a1fb0c586d16992f95dd945f8d94ed496ff2d48"
+    },
+    {
+      "name": "triple_pass13_fore_paw_side.png",
+      "hash": "b009403e88272aedd35fa6ea9d7e7079ee4078447a49cb03e3817c8a917c67c2"
+    },
+    {
+      "name": "triple_pass13_full_front.png",
+      "hash": "a29ebd10446829bd2772c4596f84ae5bdcad84d4e6711c2ff7491fb23d19f47e"
+    },
+    {
+      "name": "triple_pass13_full_side.png",
+      "hash": "a199d94da3978c6af5e088e08b74ba467b8e4867a30c348f3f8a792de87bd0fd"
+    },
+    {
+      "name": "triple_pass13_full_three_quarter.png",
+      "hash": "c9d13a5e40cdd40e039803dc878b33d8572faa66f81276eba8772d65f9fbb23d"
+    },
+    {
+      "name": "triple_pass13_hind_paw_side.png",
+      "hash": "cf2c18f222d6b0eb5c5333135ab7279e4da385014f73c9f040b292160de5af60"
+    },
+    {
+      "name": "triple_pass13_hind_paw_three_quarter.png",
+      "hash": "6214b7a650c4d63aa6ac7d8e423683a15bf125e5795597efa842389ad9df4623"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "paws.blend",
+        "hash": "65e0f689a43666b2dc0f7530d162401f6fe368ae9899de410de6210806ee4911"
+      },
+      {
+        "name": "report.json",
+        "hash": "10a353258f1aedcd91ef3d0c7f6fe65cf3b6c6a70246060e2ec1a9bbbd46bce3"
+      },
+      {
+        "name": "triple_pass13_fore_paws_front.png",
+        "hash": "5f4ba94f7accce97618f139e3a1fb0c586d16992f95dd945f8d94ed496ff2d48"
+      },
+      {
+        "name": "triple_pass13_fore_paw_side.png",
+        "hash": "b009403e88272aedd35fa6ea9d7e7079ee4078447a49cb03e3817c8a917c67c2"
+      },
+      {
+        "name": "triple_pass13_full_front.png",
+        "hash": "a29ebd10446829bd2772c4596f84ae5bdcad84d4e6711c2ff7491fb23d19f47e"
+      },
+      {
+        "name": "triple_pass13_full_side.png",
+        "hash": "a199d94da3978c6af5e088e08b74ba467b8e4867a30c348f3f8a792de87bd0fd"
+      },
+      {
+        "name": "triple_pass13_full_three_quarter.png",
+        "hash": "c9d13a5e40cdd40e039803dc878b33d8572faa66f81276eba8772d65f9fbb23d"
+      },
+      {
+        "name": "triple_pass13_hind_paw_side.png",
+        "hash": "cf2c18f222d6b0eb5c5333135ab7279e4da385014f73c9f040b292160de5af60"
+      },
+      {
+        "name": "triple_pass13_hind_paw_three_quarter.png",
+        "hash": "6214b7a650c4d63aa6ac7d8e423683a15bf125e5795597efa842389ad9df4623"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 6.7,
+    "note": "Outer chunk removed on both fore paws per Nick's circle; nothing else moved (Codex report: completed, nothing remaining)."
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-16T01:00:38Z",
+  "briefSha256": "27984ab26d6e8fa53a287d9a11af483a4af364e1645aff7f357a826d7846137a",
+  "checks": [],
+  "reportedAt": "2026-10-16T01:08:51Z"
+}

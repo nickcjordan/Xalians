@@ -1,0 +1,155 @@
+{
+  "id": "B-01M5142CAPSHRW8YMNG8YY5WSC",
+  "alias": "mwsc",
+  "stage": "05-sculpt",
+  "kind": "run",
+  "goal": "Stage 5: revert the forelegs build B-t5qe by its inverse region delta (Nick: shoulder-to-arm mass lost), applied on B-ycqv; orchestrator, mechanical",
+  "scope": "forelegs",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "cmp_fore_paws_front.png",
+      "hash": "4097740124d4367289f0451a34dcdae85c5eb64cd39ed450813959751460421c"
+    },
+    {
+      "name": "cmp_fore_paw_side.png",
+      "hash": "ef74de9ce449348d8e67543faa8270014921484e88403508994eb1659056dfba"
+    },
+    {
+      "name": "cmp_full_front.png",
+      "hash": "1cbdf486ce154f3271ef5b2d339a4e1f19e9c81d6946a3afd4d8a98931d8db43"
+    },
+    {
+      "name": "cmp_full_side.png",
+      "hash": "9961e83fc4ad45a7ee273f7f4744753b64818c217a167f74dd4e071a6863436e"
+    },
+    {
+      "name": "cmp_full_three_quarter.png",
+      "hash": "5dd3f2c9412c321d0ec6387cadc559ce708959da0b4885423898eed6cf511a7e"
+    },
+    {
+      "name": "luceras_sculpt.blend",
+      "hash": "d1203576f1f786fb8ae68097dde1e9fe344db0c6108b5077c0f9524d58a35754"
+    },
+    {
+      "name": "meta.json",
+      "hash": "137cb0cef39372c74b51fe3432d5e2dee039620fed12ac52b7dec2895fa91dbb"
+    },
+    {
+      "name": "reverted_fore_paws_front.png",
+      "hash": "b2c46f46da1a28ba0bf691ae3f451ac52dd4748ccc7e6ee60170ffaddad34fb4"
+    },
+    {
+      "name": "reverted_fore_paw_side.png",
+      "hash": "98fac4145ce5426d251ab31cc2020a7684844576a87f98a645388eaeb4a89453"
+    },
+    {
+      "name": "reverted_full_front.png",
+      "hash": "344e1bdc7d1d0d3a36c855de30aa98f584dabd61ba27eead0a6dbac8d45a3cd3"
+    },
+    {
+      "name": "reverted_full_side.png",
+      "hash": "e7705453638ffff77816b526fe2cd4c74d3cb0823e7d09dc9be0061acc93de3c"
+    },
+    {
+      "name": "reverted_full_three_quarter.png",
+      "hash": "706e5be0aa1c28104fd11da93cf5ad737083677e84203ba4d84d6b5780910be4"
+    },
+    {
+      "name": "reverted_hind_paw_side.png",
+      "hash": "3204a9aacf4e3c25fe3f75b9b62f57977036372dab011e23cd8ea96a550e7caf"
+    },
+    {
+      "name": "reverted_hind_paw_three_quarter.png",
+      "hash": "e44ef7221fa39272246103ab45449f8e14e32dbd15d4bcb44c28fd58fb632752"
+    },
+    {
+      "name": "revert_forelegs_delta.npz",
+      "hash": "b377a3fd626456ac0b0692addb1b75f2968fe81360d9097e2ca226b902ba9f3e"
+    },
+    {
+      "name": "run.sh",
+      "hash": "1c7f1f7a7f68d99009a6c2939be0d41f2ac273bf315610d31726fa312202da34"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "cmp_fore_paws_front.png",
+        "hash": "4097740124d4367289f0451a34dcdae85c5eb64cd39ed450813959751460421c"
+      },
+      {
+        "name": "cmp_fore_paw_side.png",
+        "hash": "ef74de9ce449348d8e67543faa8270014921484e88403508994eb1659056dfba"
+      },
+      {
+        "name": "cmp_full_front.png",
+        "hash": "1cbdf486ce154f3271ef5b2d339a4e1f19e9c81d6946a3afd4d8a98931d8db43"
+      },
+      {
+        "name": "cmp_full_side.png",
+        "hash": "9961e83fc4ad45a7ee273f7f4744753b64818c217a167f74dd4e071a6863436e"
+      },
+      {
+        "name": "cmp_full_three_quarter.png",
+        "hash": "5dd3f2c9412c321d0ec6387cadc559ce708959da0b4885423898eed6cf511a7e"
+      },
+      {
+        "name": "luceras_sculpt.blend",
+        "hash": "d1203576f1f786fb8ae68097dde1e9fe344db0c6108b5077c0f9524d58a35754"
+      },
+      {
+        "name": "meta.json",
+        "hash": "137cb0cef39372c74b51fe3432d5e2dee039620fed12ac52b7dec2895fa91dbb"
+      },
+      {
+        "name": "reverted_fore_paws_front.png",
+        "hash": "b2c46f46da1a28ba0bf691ae3f451ac52dd4748ccc7e6ee60170ffaddad34fb4"
+      },
+      {
+        "name": "reverted_fore_paw_side.png",
+        "hash": "98fac4145ce5426d251ab31cc2020a7684844576a87f98a645388eaeb4a89453"
+      },
+      {
+        "name": "reverted_full_front.png",
+        "hash": "344e1bdc7d1d0d3a36c855de30aa98f584dabd61ba27eead0a6dbac8d45a3cd3"
+      },
+      {
+        "name": "reverted_full_side.png",
+        "hash": "e7705453638ffff77816b526fe2cd4c74d3cb0823e7d09dc9be0061acc93de3c"
+      },
+      {
+        "name": "reverted_full_three_quarter.png",
+        "hash": "706e5be0aa1c28104fd11da93cf5ad737083677e84203ba4d84d6b5780910be4"
+      },
+      {
+        "name": "reverted_hind_paw_side.png",
+        "hash": "3204a9aacf4e3c25fe3f75b9b62f57977036372dab011e23cd8ea96a550e7caf"
+      },
+      {
+        "name": "reverted_hind_paw_three_quarter.png",
+        "hash": "e44ef7221fa39272246103ab45449f8e14e32dbd15d4bcb44c28fd58fb632752"
+      },
+      {
+        "name": "revert_forelegs_delta.npz",
+        "hash": "b377a3fd626456ac0b0692addb1b75f2968fe81360d9097e2ca226b902ba9f3e"
+      },
+      {
+        "name": "run.sh",
+        "hash": "1c7f1f7a7f68d99009a6c2939be0d41f2ac273bf315610d31726fa312202da34"
+      }
+    ],
+    "blockedBy": "nothing",
+    "note": "Inverse of the forelegs delta applied with apply_region_delta.py (12,761 points, no refusals); forelegs back to the generated surface; renders through compare_render.py. This file is the stage 5 sculpt candidate: luceras_sculpt.blend."
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-16T01:08:51Z",
+  "briefSha256": "2de0ac4a08675d9d9f081cddd1c1fee8ab41c1970a7acbe0c5b813c57bf0c70b",
+  "checks": [],
+  "reportedAt": "2026-10-16T01:08:52Z"
+}

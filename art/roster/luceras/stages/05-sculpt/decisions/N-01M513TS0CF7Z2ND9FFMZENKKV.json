@@ -1,0 +1,14 @@
+{
+  "id": "N-01M513TS0CF7Z2ND9FFMZENKKV",
+  "alias": "t7b2",
+  "stage": "05-sculpt",
+  "who": "nick",
+  "words": "Nick 2026-10-15 (image of generated vs current, side): 'The front arms look like they lost some mass around where the shoulder connects to the arm. That needs to be fixed. The original generation is much closer with all that area.' Outcome: revert the forelegs build B-t5qe exactly by applying the inverse of its region delta (12,761 points, up to 21 mm), restoring the generated upper arm and shoulder join.",
+  "date": "2026-10-16",
+  "kind": "request",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-16T01:04:42Z"
+}

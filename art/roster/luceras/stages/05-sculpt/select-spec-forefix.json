@@ -1,0 +1,56 @@
+{
+ "title": "Luceras Forelegs Fix",
+ "heading": "Luceras: forelegs and front paws fixed",
+ "lede": "Your two notes, applied. The chunk you circled on the outer side of each front paw is removed. The forelegs are put back exactly to the generated version (every point of the forelegs pass undone), so the shoulder-to-arm mass is back. Each picture: 1 generated, 2 what you saw before, 3 now. Approve below if this is right; it closes the legs, paws and tail.",
+ "fallback": "Approvals cannot be saved from this view; reply in chat.",
+ "compositeEmpty": "Confirm closes the legs, paws and tail; the whole-body check comes next.",
+ "confirmed": "Confirmed; the orchestrator files it and runs the whole-body check.",
+ "fold": {
+  "title": "How",
+  "text": "The forelegs pass was recorded as a list of the 12,761 points it moved (up to 21 mm). Applying that list in reverse puts every point back to the generated position; nothing else in the model moved. The paw trim was a separate Codex pass that changed only the outer side of each front paw."
+ },
+ "order": [
+  "fix"
+ ],
+ "elements": {
+  "fix": {
+   "name": "Forelegs and front paws",
+   "mode": "gallery",
+   "question": "Is the shoulder mass back and the paw chunk gone?",
+   "judge": [
+    "Side and three-quarter: upper arm and shoulder as full as the generated version?",
+    "Front paws: outer side follows the outer toe, no chunk?"
+   ],
+   "reading": [],
+   "recommend": null,
+   "note": "Checked: four toes and four claws per paw, no holes.",
+   "views": [
+    {
+     "label": "Fore paws, front",
+     "blob": "4097740124d4367289f0451a34dcdae85c5eb64cd39ed450813959751460421c",
+     "caption": "Fore paws, front: 1 generated, 2 before, 3 now"
+    },
+    {
+     "label": "Full body, side",
+     "blob": "9961e83fc4ad45a7ee273f7f4744753b64818c217a167f74dd4e071a6863436e",
+     "caption": "Full body, side: 1 generated, 2 before, 3 now"
+    },
+    {
+     "label": "Full body, three-quarter",
+     "blob": "5dd3f2c9412c321d0ec6387cadc559ce708959da0b4885423898eed6cf511a7e",
+     "caption": "Full body, three-quarter: 1 generated, 2 before, 3 now"
+    },
+    {
+     "label": "Full body, front",
+     "blob": "1cbdf486ce154f3271ef5b2d339a4e1f19e9c81d6946a3afd4d8a98931d8db43",
+     "caption": "Full body, front: 1 generated, 2 before, 3 now"
+    },
+    {
+     "label": "Fore paw, side",
+     "blob": "ef74de9ce449348d8e67543faa8270014921484e88403508994eb1659056dfba",
+     "caption": "Fore paw, side: 1 generated, 2 before, 3 now"
+    }
+   ]
+  }
+ }
+}
