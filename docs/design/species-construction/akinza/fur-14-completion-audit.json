@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-step14",
+  "outcome": "Step 14 visible small ear openings, white airy furnishings from each cup and localized blue velvet, with all other regions and approved eyeliner held.",
+  "authorizedScope": "Brief 14, at most four total builds, two separate commits, no push.",
+  "workRecord": "docs/design/species-construction/akinza/fur-14-active-work.md",
+  "evidence": {},
+  "criteria": [
+    {
+      "id": "anatomy",
+      "expectation": "Small mirrored ear-base cups with zero outside-region displacement and a visible soft ridge in shaved clay",
+      "status": "pending",
+      "assessment": "Verification in progress",
+      "evidence": []
+    },
+    {
+      "id": "coat",
+      "expectation": "Bright fine wispy white hairs rooted in the cups over localized deeper short blue velvet",
+      "status": "pending",
+      "assessment": "Verification in progress",
+      "evidence": []
+    },
+    {
+      "id": "regression",
+      "expectation": "Held geometry and eyeliner/unrelated fur exact; full saved body sweep has no new flag or regional rise",
+      "status": "pending",
+      "assessment": "Verification in progress",
+      "evidence": []
+    },
+    {
+      "id": "delivery",
+      "expectation": "All three native before-left pairs and six current images inspected, independent review, separate commits, no push and scoped archive",
+      "status": "pending",
+      "assessment": "Verification in progress",
+      "evidence": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "coat",
+      "status": "open",
+      "observation": "Coat native renders and full saved verification pending.",
+      "nextAction": "Inspect renders and gates; use the final permitted build for concrete repairs if needed."
+    }
+  ],
+  "audit": {
+    "reviewer": "Codex with independent step14 reviewer",
+    "comparison": "Part A direct native clay and independent compact-support review; coat pending",
+    "regressions": "Part A no external displacement; coat pending",
+    "scopeCheck": "Only brief 14; no scope reduction",
+    "sessionId": "akinza-fur-14",
+    "requestId": "c9f40ae1-23a1-4165-9903-645d09cd48dd",
+    "performedAt": "Actual fresh audit time"
+  },
+  "stop": {
+    "kind": "continue"
+  }
+}

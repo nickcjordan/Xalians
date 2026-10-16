@@ -1,0 +1,33 @@
+{
+  "vertices": 621482,
+  "supportVertices": 702,
+  "movedVertices": 702,
+  "outsideFalloffMax": 0.0,
+  "maxMove": 0.007966043427586555,
+  "leftMoved": 351,
+  "rightMoved": 351,
+  "skinAfter": {
+    "components": 1,
+    "nonManifoldEdges": 0,
+    "vertices": 621482
+  },
+  "topologyUnchanged": true,
+  "spec": {
+    "centerUV": [
+      0.057,
+      0.019
+    ],
+    "radiusUV": [
+      0.026,
+      0.021
+    ],
+    "depth": 0.008,
+    "ridge": 0.0025,
+    "frontTolerance": 0.003,
+    "note": "Step 14 approved small mirrored ear-base cups. Compact support; front surface only; unchanged topology and every position outside the ellipse. Shaved anatomy only."
+  },
+  "inputSha256": "1ddd2f35a3ce5cdc3fe95dca281ecbd99312c55b5bc0371a8fb4fe63d1269dfe",
+  "scriptSha256": "3c9aa028911364d2c01d7c1f69cb36acf65fe22fb17cf94b312f7958a5838dd1",
+  "specSha256": "d0338203c6e95cd47534150c2c88be3169d834c6f4ad1d808709cb132c82a9cf",
+  "approval": null
+}
