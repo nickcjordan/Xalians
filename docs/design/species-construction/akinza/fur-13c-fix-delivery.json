@@ -1,0 +1,367 @@
+{
+  "part": "13c-fix",
+  "status": "partial; tuft shape/brightness and upper-rim step unmet",
+  "attempts": 4,
+  "successfulSaves": 2,
+  "deliveredAttempt": 3,
+  "surface": {
+    "path": "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\surface.blend",
+    "sha256": "70f0f23ee1cc271a833ee816faf2c21738bb5e402a261d635b7b662c9e63ed0f"
+  },
+  "beforeSha256": "ef867f9db57d27812b5b7d4fc73da02e630207963584b8eb7b076f4722007e79",
+  "changes": {
+    "arcCurves": 1372,
+    "furnishingCurves": 3163,
+    "rimTrimmed": 2290,
+    "requestedRim": 2278,
+    "requestedRetained": 2278,
+    "medianRimOverhang": 0.01535872418211423,
+    "boundaryRepairs": 6,
+    "method": "short opening arc, upward convergent surface-lifted white fan; projected tip-envelope trim"
+  },
+  "heldDataEqual": true,
+  "artifactGate": {
+    "collision": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 0,
+          "after": 0
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "neighborLength": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 9,
+          "after": 9
+        },
+        "ears": {
+          "before": 33,
+          "after": 27
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "regionalLength": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1965,
+          "after": 1959
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "partTransfer": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1598,
+          "after": 1590
+        },
+        "ears": {
+          "before": 20,
+          "after": 20
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "lift": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 5,
+          "after": 5
+        },
+        "ears": {
+          "before": 68,
+          "after": 38
+        },
+        "arms": {
+          "before": 1,
+          "after": 1
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "rogue": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 0,
+          "after": 0
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    }
+  },
+  "pixels": {
+    "current-ears-front": true,
+    "current-head-side": true,
+    "current-head-backq": true,
+    "current-body-backq": true,
+    "current-body-front": true,
+    "current-tails-side": true,
+    "pair-ears-front": true,
+    "pair-ear-root-close": true,
+    "pair-ear-tip-close": true
+  },
+  "tipEnvelope": {
+    "selected": 2278,
+    "median": 0.01535872418211423,
+    "remainingAboveTargetPlus1mm": 0,
+    "maximumAfter": 0.015051392600280308,
+    "maximumBefore": 0.10491513856146185
+  },
+  "noPush": true,
+  "attemptsSummary": [
+    "1: numerical guard cycle, no save",
+    "2: saved; tuft still square",
+    "3: saved; better flow, selected partial fallback",
+    "4: fixed failing geometry with24 rogue flags, terminated without save"
+  ],
+  "files": {
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\surface.blend": "70f0f23ee1cc271a833ee816faf2c21738bb5e402a261d635b7b662c9e63ed0f",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\patch-evidence.npz": "da63ff557a59e903b0e9ee06800964eae6dc72300c2ea5b16f04ecf63dd751b9",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\saved-protection-check.json": "12953c9d89feb13728722812ac24bcd44bb544bd3c4901b8388deb1a16ebc4ed",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\r\\ears-front.png": "5cc2f5c894653d4d66e5a954e6cd941c13ca2c7a2e713b070d9e9bef091554c8",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\r\\head-side.png": "bad68a3e43e7b0e76ca43955c4ce6ff9456d9c29144a92803a2e3281c279bdfb",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\r\\head-backq.png": "34f49612dc3c77efc9b69a73e5576d0d9a0cf0668f5dcccbd274ad6ff1be9eb6",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\r\\body-backq.png": "fbcaca371417cd62742e21b4cefd8f98a15463d1d183f1a127600c617263ebba",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\r\\body-front.png": "e86067366bd59306b1f95c737bdfe1df0f6a3e519655e0dabc58418ddeb3aac8",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\r\\tails-side.png": "944001bfc630aac14c3a5e4a0ea1bf51d23f466c958344cbd6a4cdb4dbc8f6e1",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\r\\ear-root-close.png": "bcf541de70c1e332b385524a29b04d102ba623eb7bb3c7868a3059afb95facf0",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix3\\r\\ear-tip-close.png": "e4fac1f2029f9317a2013128a6255aceb201d45569dd43cf81cee037e810ce3a",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\13c-fix-ears-front.png": "d31c8fd8f3fe3206bbf9e73b40d6508bb05ce3152f0a80d8ef7cece17b6efc05",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\13c-fix-ear-root-close.png": "3079157fd96685f722245730d02e4c0c3b56a5994a4b0e5bccdb6e613b8ff4d0",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\13c-fix-ear-tip-close.png": "5d3491512a4bd79ffe8c7a6b5418089d48f298438a0a8f32f831956d78f2f19c",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\current-ears-front.png": "abc79e340d9becec1c59db4337a416a2dabf0e7b3a7f2007a32e400f8afb8b1b",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\current-head-side.png": "990deef638f62a553b664c9e9f3e1580b22d49c20e774260acb914ce93a02af4",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\current-head-backq.png": "01f71dda347725b31c123faae72ba62b5aca25cc4c87ba6644efa9d1fbae1a4e",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\current-body-backq.png": "050bf230059f87a6950db290c747d37a4baec67eef5198871d870a5c616cc4e5",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\current-body-front.png": "e9a0ee9d9c69932af52dc0a19be4c10457d8e78ac3589e1c351e59e09a7b625b",
+    "untracked\\species-construction\\akinza\\surface\\fur-steps\\current-tails-side.png": "ef96f18a75f689c46e3ad135c34b87f68833b6ef0722365eea5669f24417f58c"
+  },
+  "archives": [
+    {
+      "source": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c",
+      "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13c-superseded-13c-fix",
+      "modelSha256": "ef867f9db57d27812b5b7d4fc73da02e630207963584b8eb7b076f4722007e79"
+    },
+    {
+      "source": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix1",
+      "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13c-fix-rejected1",
+      "modelSha256": null
+    },
+    {
+      "source": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix2",
+      "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13c-fix-rejected2",
+      "modelSha256": "f925721b06cafa4e92e80a2ab495e4da709553778736770b2d2b2e9929967d6a"
+    },
+    {
+      "source": "C:\\dev\\src\\xalians-akinza-loop\\untracked\\species-construction\\akinza\\surface\\fur-steps\\s12-13c-fix4",
+      "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13c-fix-rejected4",
+      "modelSha256": null
+    }
+  ],
+  "independentReview": "review_13c_full inspected all six final native views against13c plus root/tip and final three labeled pairs. Correct labels/framing/scale, no new held-region or delivery defect. Tuft and upper-rim-step failures remain. No art approval.",
+  "reproducibilityLimitation": "Final builder source describes rejected attempt4; delivered attempt3 is preserved in the blend, patch evidence and raw hashes.",
+  "elapsed": "About2h40m including shared-slot waits"
+}

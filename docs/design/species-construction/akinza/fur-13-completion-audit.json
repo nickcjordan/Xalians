@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "akinza-fur-13",
   "outcome": "Complete the earlier13a/13b delivery and13c under briefs/13c-full.md plus13c-addendum.md: obvious opaque white triangular canal tufts, shortened coherent ear-tip fringe, comparisons and six refreshed views, separate commits, no push.",
-  "authorizedScope": "Material-only eyeliner mockups with default current; sparse rogue repairs; prominent ear furnishings; at most four tries per part; serial WSL Blender; three commits and no push. User steering October16 explicitly applies13c-addendum.md, superseding airy blue-separated root target with opaque triangular canal coverage and adding coherent apex shortening.",
+  "authorizedScope": "Material-only eyeliner mockups with default current; sparse rogue repairs; prominent ear furnishings; at most four tries per part; serial WSL Blender; three commits and no push. User steering October16 explicitly applies13c-addendum.md, superseding airy blue-separated root target with opaque triangular canal coverage and adding coherent apex shortening. Current fix brief explicitly authorizes four additional builds for the same two unresolved visual outcomes.",
   "workRecord": "docs/design/species-construction/akinza/fur-13-active-work.md",
   "evidence": {
     "A-eye-close": {
@@ -319,6 +319,96 @@
       "path": ".codex/audit-state/fur-13-evidence/cWork.md",
       "sha256": "2bb9b7129c7abd42d275f0dc885bf195f17b15ec272c926066adbf30a5313ac5",
       "sourcePath": "docs/design/species-construction/akinza/fur-13-active-work.md"
+    },
+    "fix2Guard": {
+      "path": ".codex/audit-state/fur-13-evidence/fix2Guard.json",
+      "sha256": "0605f2600db141672607edbe466da8e0bb504de88c318d35a5ac01826a61cd75",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix2/guard-history.json"
+    },
+    "fix3FrontFailure": {
+      "path": ".codex/audit-state/fur-13-evidence/fix3FrontFailure.png",
+      "sha256": "65c0bcb28c00517133a6563be20acf7200bb852e29aec17c78b3207f7f8dd66a",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/r/ears-front.png"
+    },
+    "fix3Provenance": {
+      "path": ".codex/audit-state/fur-13-evidence/fix3Provenance.png",
+      "sha256": "3d66cce454f42861eb179f79a543b08b607a91b49b4161bf7ff89289ad267eaf",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13c-fix3-fan-provenance.png"
+    },
+    "fixBrief": {
+      "path": ".codex/audit-state/fur-13-evidence/fixBrief.md",
+      "sha256": "83fdeb57e80b008e8d8a28c1596b37ee2e2b3d7489d3f89066cf8c4039f58d5c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/13c-fix.md"
+    },
+    "fix4Failure": {
+      "path": ".codex/audit-state/fur-13-evidence/fix4Failure.log",
+      "sha256": "6ae5aa10c56872a85b969677bd34f7743ae31fe8f938509d2c0b7717cfe1ec7c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13c-fix-build4.log"
+    },
+    "fix3TipVerified": {
+      "path": ".codex/audit-state/fur-13-evidence/fix3TipVerified.json",
+      "sha256": "b2aa217ed2e921661d3594f68675730269984b1567d72d1f0db94b21600e773b",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/tip-envelope-check.json"
+    },
+    "fix3TipNow": {
+      "path": ".codex/audit-state/fur-13-evidence/fix3TipNow.png",
+      "sha256": "e4fac1f2029f9317a2013128a6255aceb201d45569dd43cf81cee037e810ce3a",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/r/ear-tip-close.png"
+    },
+    "fixFinalModel": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalModel.blend",
+      "sha256": "70f0f23ee1cc271a833ee816faf2c21738bb5e402a261d635b7b662c9e63ed0f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/surface.blend"
+    },
+    "fixFinalMetrics": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalMetrics.json",
+      "sha256": "a5a04600df753b80ad08db697ec2955ca3611f803cf51e331d4d0fc24aefc04e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/metrics.json"
+    },
+    "fixFinalProtection": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalProtection.json",
+      "sha256": "12953c9d89feb13728722812ac24bcd44bb544bd3c4901b8388deb1a16ebc4ed",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/saved-protection-check.json"
+    },
+    "fixFinalPixels": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalPixels.json",
+      "sha256": "68a77972b7927c2b562db1b13278cb86db7db6266064316c480bbf491dde5b6f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/pixel-checks.json"
+    },
+    "fixFinalDelivery": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalDelivery.json",
+      "sha256": "301cf38c9dacd95a303fd04a1fb8d572efd58d1bea84ff99ee72961c22ca60ee",
+      "sourcePath": "docs/design/species-construction/akinza/fur-13c-fix-delivery.json"
+    },
+    "fixFinalFront": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalFront.png",
+      "sha256": "5cc2f5c894653d4d66e5a954e6cd941c13ca2c7a2e713b070d9e9bef091554c8",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/r/ears-front.png"
+    },
+    "fixFinalRoot": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalRoot.png",
+      "sha256": "bcf541de70c1e332b385524a29b04d102ba623eb7bb3c7868a3059afb95facf0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/r/ear-root-close.png"
+    },
+    "fixFinalTip": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalTip.png",
+      "sha256": "e4fac1f2029f9317a2013128a6255aceb201d45569dd43cf81cee037e810ce3a",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3/r/ear-tip-close.png"
+    },
+    "fixFinalReview": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalReview.md",
+      "sha256": "bd7421515b835385eb590115cf9d7a27ed2bee3bc340e4ba3876bfc3307768b1",
+      "sourcePath": "docs/design/species-construction/akinza/fur-13-review.md"
+    },
+    "fixFinalWork": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fixFinalWork.md",
+      "sha256": "94ff17cc7d17422bb6b8726ec1a79f04a2a540020c647e12f7042d0fb7526dcb",
+      "sourcePath": "docs/design/species-construction/akinza/fur-13-active-work.md"
+    },
+    "fix4Log": {
+      "path": ".codex/audit-state/fur-13-evidence/fix-final-fix4Log.log",
+      "sha256": "6ae5aa10c56872a85b969677bd34f7743ae31fe8f938509d2c0b7717cfe1ec7c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13c-fix-build4.log"
     }
   },
   "criteria": [
@@ -353,54 +443,81 @@
     },
     {
       "id": "tufts",
-      "expectation": "Obvious opaque white triangular canal tuft at each base, point one third to two fifths up ear, no blue through root half, soft locks/wispy edge; remaining ear blue and head sides white.",
+      "expectation": "Bright cheek-white opaque canal fan rooted on a short opening arc, rising up/out into one soft apex about one third to two fifths up ear, longest center/shorter sides, no horizontal hem; remaining ear blue and head sides white.",
       "status": "blocked",
-      "assessment": "Opaque white canal coverage and extent visibly improve, but soft pointed triangle remains incomplete: broad pleated front fan, parallel hanging root/side sheet and horizontal hem. Four-save cap reached; additional-build authorization question pending.",
+      "assessment": "Four additional attempts exhausted. Main brush removed, but broad gray tuft and abrupt upper-rim length step remain. No art approval.",
       "evidence": [
         "cFinalFront",
         "cFinalRoot",
         "cFinalHeadSide",
         "briefAddendum",
-        "briefFull"
+        "briefFull",
+        "fixBrief",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log",
+        "fixBrief",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log",
+        "fixBrief",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log"
       ]
     },
     {
       "id": "preservation",
       "expectation": "Full saved 12d plus rogue gates show no new flags or regional rise; held geometry, materials and unrelated fur equal.",
       "status": "pass",
-      "assessment": "Fresh saved exhaustive skin and solid sweeps, rogue0 all regions, no new legacy IDs or regional rise; exact geometry/materials/roots/unrelated fur equality pass. Rim radius and color attrs protected separately.",
+      "assessment": "Fresh full saved skin/solid sweeps, rogue rules, zero new IDs/no regional rise and exact held-data equality all pass.",
       "evidence": [
-        "cProtection",
-        "cMetrics",
-        "cFinalModel"
+        "fixFinalModel",
+        "fixFinalMetrics",
+        "fixFinalProtection"
       ]
     },
     {
       "id": "delivery",
       "expectation": "All original/addendum sheets, three13c comparisons and six current views inspected; independent audit; separate explicit-path commits, no push and post-commit archive.",
       "status": "pass",
-      "assessment": "All original/addendum images directly inspected and independently challenged; three13c pairs and six current copies verified exact. G3 separately committed; partial13c separately committed with explicit paths. Superseded baseline/rejected candidates archived only after commit with baseline hash verified. No push.",
+      "assessment": "Three comparisons and six refreshed current views pixel-exact, independent review and separate commit/archive recorded in delivery manifest.",
       "evidence": [
-        "cPixels",
-        "cDelivery",
-        "cReview",
-        "cWork",
-        "cFinalFrontPair",
-        "cFinalRootPair",
-        "cFinalTipPair"
+        "fixFinalPixels",
+        "fixFinalDelivery",
+        "fixFinalReview",
+        "fixFinalWork"
       ]
     },
     {
       "id": "apex",
       "expectation": "Shorten the coherent long apex group to surrounding rim length, soft point instead of brush; matched13c-ear-tip-close before/after.",
       "status": "blocked",
-      "assessment": "1461 numeric trims do not resolve the requested close-crop brush. Direct and independent comparison shows long group largely unchanged. Only46 of456 mapped crop candidates overlap retained trims. Four-save cap reached.",
+      "assessment": "Four additional attempts exhausted. Main brush removed, but broad gray tuft and abrupt upper-rim length step remain. No art approval.",
       "evidence": [
         "cFinalTipPair",
         "cFinalTip",
         "cReview",
         "briefFull",
-        "briefAddendum"
+        "briefAddendum",
+        "fixBrief",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log",
+        "fixBrief",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log",
+        "fixBrief",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log"
       ]
     },
     {
@@ -517,46 +634,125 @@
       "criterion": "tufts",
       "status": "blocked",
       "observation": "Fourth-save root close retains parallel hanging sheet and near-horizontal hem; front shape is broad/blunt. Opacity and prominence improve but soft-lock/pointed-triangle target is not fully met.",
-      "nextAction": "When authorized, fix the remaining soft triangular tuft shape and use the mapped crop strands plus surrounding rim for an actual visible brush repair; rerender and repeat all saved gates.",
+      "nextAction": "Further modeling requires authorization beyond the four additional attempts; retain known partial status.",
       "acceptanceCriterion": "Close and normal views show soft separate white locks, no broad planar sheet or straight cutoff.",
       "evidence": [
         "briefFull",
         "briefAddendum",
-        "cFinalRootPair"
+        "cFinalRootPair",
+        "fixBrief",
+        "fix4Failure",
+        "fix3FrontFailure",
+        "fix3TipNow",
+        "fix3TipVerified",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log"
       ],
       "blocker": {
-        "externalDependency": "User authorization for additional model saves beyond the explicit four-try cap.",
-        "attempts": "Four model saves used, including two inherited saves; third saved before addendum, fourth reaches opacity but retains both documented quality failures. Additional-build question sent; no answer assumed.",
-        "unblocksWhen": "User authorizes further builds for the revised addendum target."
+        "externalDependency": "Explicit four-additional-attempt limit in13c-fix.md exhausted.",
+        "attempts": "1 guard failure,2/3 saved partial candidates,4 repeated failing geometry with24 rogue flags. All independent verification/delivery work completed.",
+        "unblocksWhen": "User authorizes further modeling attempts or changes the target."
       }
     },
     {
       "id": "F008",
       "criterion": "apex",
       "status": "blocked",
-      "observation": "Nick says13b retained a group of rim hairs that should not be so long.",
-      "nextAction": "When authorized, fix the remaining soft triangular tuft shape and use the mapped crop strands plus surrounding rim for an actual visible brush repair; rerender and repeat all saved gates.",
+      "observation": "Main brush removed in saved fix3, but small upper-rim length step prevents fully soft tip result.",
+      "nextAction": "Further modeling requires authorization beyond the four additional attempts; retain known partial status.",
       "acceptanceCriterion": "Tip reads as a soft point with neighboring rim length, no long brush group.",
       "evidence": [
         "briefFull",
         "briefAddendum",
-        "cFinalTipPair"
+        "cFinalTipPair",
+        "fixBrief",
+        "fix4Failure",
+        "fix3FrontFailure",
+        "fix3TipNow",
+        "fix3TipVerified",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log"
       ],
       "blocker": {
-        "externalDependency": "User authorization for additional model saves beyond the explicit four-try cap.",
-        "attempts": "Four model saves used, including two inherited saves; third saved before addendum, fourth reaches opacity but retains both documented quality failures. Additional-build question sent; no answer assumed.",
-        "unblocksWhen": "User authorizes further builds for the revised addendum target."
+        "externalDependency": "Explicit four-additional-attempt limit in13c-fix.md exhausted.",
+        "attempts": "1 guard failure,2/3 saved partial candidates,4 repeated failing geometry with24 rogue flags. All independent verification/delivery work completed.",
+        "unblocksWhen": "User authorizes further modeling attempts or changes the target."
       }
+    },
+    {
+      "id": "F010",
+      "criterion": "preservation",
+      "status": "resolved",
+      "observation": "First fix build guard re-added restored strands, causing repeated neighbor/lift/rogue flags and no model save.",
+      "nextAction": "Keep restored strands excluded permanently in a build; run corrected second attempt and full saved verification.",
+      "acceptanceCriterion": "Numerical guard converges and full saved no-new-artifact/held-data gates pass.",
+      "resolution": "Restored strands remain excluded. Second build converged after11 numerical passes; third also converged. Full saved final verification remains required by preservation criterion.",
+      "resolutionEvidence": [
+        "fix2Guard"
+      ]
+    },
+    {
+      "id": "F011",
+      "criterion": "tufts",
+      "status": "blocked",
+      "observation": "Delivered fix3 retains518 restored old white hairs, obscuring apex; fix4 cleanup protection failed numerical gate and was not saved.",
+      "nextAction": "Further modeling requires authorization beyond the four additional attempts; retain known partial status.",
+      "acceptanceCriterion": "Old hem absent, clear bright triangular fan with soft upward/outward convergent strands and held boundary colors/radii.",
+      "evidence": [
+        "fix3FrontFailure",
+        "fix3Provenance",
+        "fixBrief",
+        "fix4Failure",
+        "fix3TipNow",
+        "fix3TipVerified",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log"
+      ],
+      "blocker": {
+        "externalDependency": "Explicit four-additional-attempt limit in13c-fix.md exhausted.",
+        "attempts": "1 guard failure,2/3 saved partial candidates,4 repeated failing geometry with24 rogue flags. All independent verification/delivery work completed.",
+        "unblocksWhen": "User authorizes further modeling attempts or changes the target."
+      }
+    },
+    {
+      "id": "F012",
+      "criterion": "apex",
+      "status": "blocked",
+      "observation": "Fix2 main brush is visibly gone but the trimmed field ends in an abrupt upper-rim length step.",
+      "nextAction": "Further modeling requires authorization beyond the four additional attempts; retain known partial status.",
+      "acceptanceCriterion": "Main brush remains absent and adjacent upper-rim lengths blend without the abrupt cut.",
+      "blocker": {
+        "externalDependency": "Explicit four-additional-attempt limit in13c-fix.md exhausted.",
+        "attempts": "1 guard failure,2/3 saved partial candidates,4 repeated failing geometry with24 rogue flags. All independent verification/delivery work completed.",
+        "unblocksWhen": "User authorizes further modeling attempts or changes the target."
+      },
+      "evidence": [
+        "fixBrief",
+        "fix4Failure",
+        "fix3FrontFailure",
+        "fix3TipNow",
+        "fix3TipVerified",
+        "fixFinalFront",
+        "fixFinalRoot",
+        "fixFinalTip",
+        "fix4Log"
+      ]
     }
   ],
   "audit": {
     "reviewer": "Builder plus independent review_13c_full",
-    "comparison": "All native views and comparisons inspected against original brief and addendum. Opacity improved; soft triangle and cropped tip brush remain failures, not art-approved. All remaining authorized delivery and archive steps now complete; this is a supported partial stop, not completion of the art target.",
-    "regressions": "Fresh saved artifact, rogue and exact held-data gates pass. All six current copies and three pairs exact. Held-region independent visual review finds no new defect.",
-    "scopeCheck": "Original two parts and addendum retained; four-save and one-render limits respected; pending cap question is not approval. No push.",
+    "comparison": "Direct and independent native review: main tip brush repaired, tuft remains blunt/gray and upper-rim step persists. Four additional attempts exhausted. Entire original outcome retained as partial.",
+    "regressions": "Fresh saved gates and exact held data pass; all pairs/current copies pixel exact. Independent final held-region review recorded in manifest.",
+    "scopeCheck": "Four additional attempts respected, no fifth build, no push. Verification and delivery complete before bounded stop.",
     "sessionId": "akinza-13c-full-20261016",
-    "requestId": "be8a7a1c-3fee-4388-b928-22421b8eab69",
-    "performedAt": "2026-10-16T13:41:39.294736+00:00"
+    "requestId": "37077489-e0a2-42f6-ba57-69e7725778ee",
+    "performedAt": "2026-10-16T16:23:40.904442+00:00"
   },
   "stop": {
     "kind": "blocked"
@@ -568,7 +764,7 @@
     }
   ],
   "scopeChange": {
-    "userWords": "Read untracked/species-construction/akinza/surface/fur-steps/briefs/13c-addendum.md and continue with that target.",
-    "source": "User steering in this session, October16; briefs/13c-addendum.md contains quoted newer Nick feedback."
+    "userWords": "Read untracked/species-construction/akinza/surface/fur-steps/briefs/13c-fix.md and do that fix pass.",
+    "source": "Current request and13c-fix.md explicitly authorize four more builds and define arc-root fan plus median-overhang tip repair."
   }
 }

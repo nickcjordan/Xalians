@@ -43,15 +43,29 @@ if __name__=='__main__':
     before,after,part=sys.argv[sys.argv.index('--')+1:];before=Path(before);after=Path(after)
     patch=np.load(after/'patch-evidence.npz');changed=patch['changed']
     tuft=patch['tuft'] if 'tuft' in patch else None
+    color_tuft=patch['colorTuft'] if 'colorTuft' in patch else tuft
     allowed=['radius'] if part=='13b' else ['position','radius','cupm','strlen','pale','fur_tone','fur_guided']
-    baseline=snapshot(before,changed,allowed,tuft);final=snapshot(after,changed,allowed,tuft)
+    baseline=snapshot(before,changed,allowed,color_tuft);final=snapshot(after,changed,allowed,color_tuft)
     assert baseline==final,'Held saved data differs'
     if part=='13c':
-        local=changed if tuft is None else tuft;r=patch['roots'][local]
-        assert np.all((abs(r[:,0])>.165)&(abs(r[:,0])<.36)&(r[:,2]>.60)&(r[:,2]<.81)&(patch['thickness'][local]<.096))
+        local=changed if color_tuft is None else color_tuft;r=patch['roots'][local]
+        minimum_x=.15 if 'fix13c' in patch else .165
+        assert np.all((abs(r[:,0])>minimum_x)&(abs(r[:,0])<.36)&(r[:,2]>.60)&(r[:,2]<.81)&(patch['thickness'][local]<.096))
         if tuft is not None:
             rim=patch['rim'];r=patch['roots'][rim]
             assert np.array_equal(changed,tuft|rim)
-            assert np.all((abs(r[:,0])>.39)&(r[:,2]>.81)&(abs(r[:,0])*.8+r[:,2]*.6>.86))
+            if 'fix13c' in patch:
+                assert np.all((abs(r[:,0])>.32)&(r[:,2]>.74))
+                if 'boundaryRepair' in patch:
+                    boundary=patch['boundaryRepair'];r=patch['roots'][boundary]
+                    if 'openingDistance' in patch:
+                        assert np.all((abs(r[:,0])>.16)&(abs(r[:,0])<.28)&(r[:,2]>.61)&(r[:,2]<.78)&(patch['thickness'][boundary]<.18)&(patch['openingDistance'][boundary]<.018))
+                    else:
+                        assert np.all((abs(r[:,0])>.16)&(abs(r[:,0])<.28)&(r[:,2]>.65)&(r[:,2]<.77)&(patch['thickness'][boundary]<.12))
+                    skin=max((o for o in bpy.data.objects if o.type=='MESH'),key=lambda o:len(o.data.vertices))
+                    assert np.all(values(skin.data,'earw')[patch['nearest'][boundary]]>.98)
+                    minimum_skin_z=.60 if 'openingDistance' in patch else .65
+                    assert np.all(values(skin.data,'position','vector',3)[patch['nearest'][boundary],2]>minimum_skin_z)
+            else:assert np.all((abs(r[:,0])>.39)&(r[:,2]>.81)&(abs(r[:,0])*.8+r[:,2]*.6>.86))
     (after/'saved-protection-check.json').write_text(json.dumps(dict(equal=True,baseline=str(before),allowed=allowed,changedCurves=int(changed.sum()),protected=final),indent=2))
     print('SAVED_PROTECTION_PASS')

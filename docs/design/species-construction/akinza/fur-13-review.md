@@ -55,12 +55,27 @@ The shared brief limits the step to four tries. Four model saves are used, inclu
 
 Independent final 13a audit: no remaining concrete brief failure. Native E detail confirms two connected flicks; F is deliberately subtle at normal size. Source, labels, framing and panel sizes reviewed. This is a mockup delivery, not selection of a default or art approval.
 
+## October16 fix pass, partial
+
+The fix brief explicitly authorized four additional attempts. Attempts1 and4 did not save because numerical guards failed. Attempt4 repeated exactly the same geometry with24 rogue flags after clearing all legacy checks, so its own verified Blender process was stopped. The committed source now detects repeated failing geometry and exits before wasting further passes. No fifth build was run.
+
+Saved attempt3 is the better partial candidate after direct and independent comparison with attempt2. It changes3,163 furnishing curves, including1,372 surviving arc hairs and6 position/length-only boundary repairs. It trims2,290 rim curves, including all2,278 requested tips exceeding the measured15.36mm median overhang. The conspicuous long brush is visibly removed. A short abrupt upper-rim length step remains.
+
+The saved-data envelope check confirms all2,278 selected tips below that fixed median: maximum104.92mm before and15.05mm after. Final independent review of all six native views found no new held-region regression. The final builder source describes rejected attempt4, not an exact reconstruction of saved attempt3; the delivered blend and patch evidence preserve attempt3 directly.
+
+The tuft target remains unmet. New upward arcs have softer flow, but518 restored inherited white hairs obscure their apex. Normal front still shows a broad, gray, blunt flap rather than a bright cheek-white triangle. The fourth attempt protected cleanup from restoration but could not pass the rogue gate and was not delivered. No artistic approval is claimed. The four-attempt limit blocks further modeling in this pass.
+
+Fresh full saved gates pass: collisions0 to0, neighbor flags42 to36, regional length1965 to1959, part transfer1618 to1610, lift74 to44, rogue0 to0. Every region is nonincreasing, with zero new flagged IDs. Solid-object gate flags0. Saved held meshes, topology, materials, transforms, roots, layout and unrelated fur are exact. All three labeled pairs and six current copies match their source pixels. The native pairs were directly inspected. Current surface is `s12-13c-fix3/surface.blend`. Metrics, current images and raw hashes are recorded in `fur-13c-fix-delivery.json`. Earlier13c records above describe the previous delivered candidate, not this fix.
+
 ## Review artifacts
 
 All paths below are under `untracked/species-construction/akinza/surface/fur-steps/`.
 
 | Part | Image |
 |---|---|
+| 13c fix front | [13c-fix-ears-front.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13c-fix-ears-front.png) |
+| 13c fix root | [13c-fix-ear-root-close.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13c-fix-ear-root-close.png) |
+| 13c fix tip | [13c-fix-ear-tip-close.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13c-fix-ear-tip-close.png) |
 | 13a close sheet | [13a-eyeliner-options.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options.png) |
 | 13a normal sheet | [13a-eyeliner-options-face.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options-face.png) |
 | 13b back comparison | [13b-head-backq.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13b-head-backq.png) |
@@ -78,4 +93,4 @@ Current-state files, all overwritten from the final surface:
 - [current-body-front.png](../../../../untracked/species-construction/akinza/surface/fur-steps/current-body-front.png)
 - [current-tails-side.png](../../../../untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png)
 
-Final preservation and delivery checks pass. Final surface is `fur-steps/s12-13c/surface.blend`; superseded13b archived after the partial commit, with original hash verified. Exact final current copies and all three labeled pairs pass pixel checks. No push. Art remains partial and unapproved; the triangle/soft-lock and cropped-brush failures remain blocked by the explicit four-build limit pending the active authorization question.
+Previous13c delivery used `fur-steps/s12-13c/surface.blend`; superseded13b was archived after that partial commit, with original hash verified. The October16 fix above supersedes that state and the old pending authorization question. Current art remains partial and unapproved; triangle/brightness and upper-rim blending are blocked by the four additional attempt limit. No push.
