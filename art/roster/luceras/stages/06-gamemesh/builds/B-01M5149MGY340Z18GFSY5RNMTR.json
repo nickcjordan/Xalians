@@ -13,12 +13,215 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "ao_1024.png",
+      "hash": "2db511dd0ba9302a8d3fd6549076a06559d81f2482206333c8392d55dcffdd47"
+    },
+    {
+      "name": "ao_2048.png",
+      "hash": "93b1f25db57862a7943c852529f6677deeed78c607ced3274300ff30a3d78c54"
+    },
+    {
+      "name": "artifact_validation.json",
+      "hash": "8a0514c923b74598a3e2cee32dd768559327472186acabc8ddd65144f1edb5cc"
+    },
+    {
+      "name": "bake_settings.json",
+      "hash": "02d4de83bfc94459f4a587a10e9d78dee5d64e53c117c811057e47dbce9251e5"
+    },
+    {
+      "name": "check_full_side.png",
+      "hash": "567cb54dd1e7b209f090601041b2ce1e0bba45ccbe7daf55c90764372bdbfac4"
+    },
+    {
+      "name": "check_full_three_quarter.png",
+      "hash": "439c8facc05b4a67c9cc947ec534bc1cf27ad17e094ad3c6d680d1e56aa23f15"
+    },
+    {
+      "name": "check_head_three_quarter.png",
+      "hash": "a454fb754dc74a550ce688f8e02471b3dee53fa669ad4deea547240066e9e838"
+    },
+    {
+      "name": "check_hind_paw_side.png",
+      "hash": "dbf58aa0ec1ca24b0f5ce15b23a6f966aa3bd6826cb45181fb2a72c2e135c3ab"
+    },
+    {
+      "name": "check_sprite.png",
+      "hash": "b3ac0106a9b27b04ee7af9e6ff4bbc1cc79657c9259c79c48a71b43ff1aabf4c"
+    },
+    {
+      "name": "completion_audit.json",
+      "hash": "7d8c7f18f492cf84317b6fa25aab1b106ee5f8e62aec35e777e83f60e02be68f"
+    },
+    {
+      "name": "gamemesh.blend",
+      "hash": "1b6463435993923ca2fd3da3f127560c1ceca68fb225c03dd5216497b5d6e67f"
+    },
+    {
+      "name": "gamemesh.glb",
+      "hash": "eea1ad3f4fc4ad01697b78ca5238fc38011871375b8ab97d363d46d8a41f4b59"
+    },
+    {
+      "name": "glb_check.json",
+      "hash": "4fffa9fd01226f1b02338149f1b0af2a11da157741f39bd6b5e596f494275edd"
+    },
+    {
+      "name": "independent_review.json",
+      "hash": "131f0c904c802a297382a7afd71f169659f3042b763345a726b0d80d3b3a2b00"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "71916e4f972002d5d4dbe36b450fb43996c0062b6f390caf85689235a7830c93"
+    },
+    {
+      "name": "normal_1024.png",
+      "hash": "fb48f26e806bb7f945db04cb6db63c5784005e07bd17d43cb74e3236018214a2"
+    },
+    {
+      "name": "normal_2048.png",
+      "hash": "3a70c93d80f3ce453fba1eb1a52232c8c59c482bed826434a6dd431dfe31e8ab"
+    },
+    {
+      "name": "normal_quality.json",
+      "hash": "e653c750027e75947e468268598ce930d7f46a20350fdcaaee2688e8ad7608ef"
+    },
+    {
+      "name": "pose_grid.png",
+      "hash": "caafb2f786cf1e055200fefbd2509a60d42ef6259f3a7b77895af7bee4d31b5d"
+    },
+    {
+      "name": "report.json",
+      "hash": "246376d39054e3d163fd0143c0b3ce0aad3348bfcd0f90346ba74f8bfebe2fc2"
+    },
+    {
+      "name": "sculpt_check.json",
+      "hash": "718ac925b62667c59390fe4b6ddafb68b87c9bdcc113fa7dc6d5761637caef2a"
+    },
+    {
+      "name": "uv_layout.png",
+      "hash": "935fc7482506657b3592811f0d9ddf409a6ff6e90b0b6673599f04774b583a25"
+    },
+    {
+      "name": "wire_full_side.png",
+      "hash": "85114bd94c9b37a216c21e918b5fcb473913adb88d1a3cd029fe34bdec8af80d"
+    },
+    {
+      "name": "wire_full_three_quarter.png",
+      "hash": "9d30f8a8ddb0760f21a9898fe4c6ae2056d3bb8b9c241b71f7366c67d0078846"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "ao_1024.png",
+        "hash": "2db511dd0ba9302a8d3fd6549076a06559d81f2482206333c8392d55dcffdd47"
+      },
+      {
+        "name": "ao_2048.png",
+        "hash": "93b1f25db57862a7943c852529f6677deeed78c607ced3274300ff30a3d78c54"
+      },
+      {
+        "name": "artifact_validation.json",
+        "hash": "8a0514c923b74598a3e2cee32dd768559327472186acabc8ddd65144f1edb5cc"
+      },
+      {
+        "name": "bake_settings.json",
+        "hash": "02d4de83bfc94459f4a587a10e9d78dee5d64e53c117c811057e47dbce9251e5"
+      },
+      {
+        "name": "check_full_side.png",
+        "hash": "567cb54dd1e7b209f090601041b2ce1e0bba45ccbe7daf55c90764372bdbfac4"
+      },
+      {
+        "name": "check_full_three_quarter.png",
+        "hash": "439c8facc05b4a67c9cc947ec534bc1cf27ad17e094ad3c6d680d1e56aa23f15"
+      },
+      {
+        "name": "check_head_three_quarter.png",
+        "hash": "a454fb754dc74a550ce688f8e02471b3dee53fa669ad4deea547240066e9e838"
+      },
+      {
+        "name": "check_hind_paw_side.png",
+        "hash": "dbf58aa0ec1ca24b0f5ce15b23a6f966aa3bd6826cb45181fb2a72c2e135c3ab"
+      },
+      {
+        "name": "check_sprite.png",
+        "hash": "b3ac0106a9b27b04ee7af9e6ff4bbc1cc79657c9259c79c48a71b43ff1aabf4c"
+      },
+      {
+        "name": "completion_audit.json",
+        "hash": "7d8c7f18f492cf84317b6fa25aab1b106ee5f8e62aec35e777e83f60e02be68f"
+      },
+      {
+        "name": "gamemesh.blend",
+        "hash": "1b6463435993923ca2fd3da3f127560c1ceca68fb225c03dd5216497b5d6e67f"
+      },
+      {
+        "name": "gamemesh.glb",
+        "hash": "eea1ad3f4fc4ad01697b78ca5238fc38011871375b8ab97d363d46d8a41f4b59"
+      },
+      {
+        "name": "glb_check.json",
+        "hash": "4fffa9fd01226f1b02338149f1b0af2a11da157741f39bd6b5e596f494275edd"
+      },
+      {
+        "name": "independent_review.json",
+        "hash": "131f0c904c802a297382a7afd71f169659f3042b763345a726b0d80d3b3a2b00"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "71916e4f972002d5d4dbe36b450fb43996c0062b6f390caf85689235a7830c93"
+      },
+      {
+        "name": "normal_1024.png",
+        "hash": "fb48f26e806bb7f945db04cb6db63c5784005e07bd17d43cb74e3236018214a2"
+      },
+      {
+        "name": "normal_2048.png",
+        "hash": "3a70c93d80f3ce453fba1eb1a52232c8c59c482bed826434a6dd431dfe31e8ab"
+      },
+      {
+        "name": "normal_quality.json",
+        "hash": "e653c750027e75947e468268598ce930d7f46a20350fdcaaee2688e8ad7608ef"
+      },
+      {
+        "name": "pose_grid.png",
+        "hash": "caafb2f786cf1e055200fefbd2509a60d42ef6259f3a7b77895af7bee4d31b5d"
+      },
+      {
+        "name": "report.json",
+        "hash": "246376d39054e3d163fd0143c0b3ce0aad3348bfcd0f90346ba74f8bfebe2fc2"
+      },
+      {
+        "name": "sculpt_check.json",
+        "hash": "718ac925b62667c59390fe4b6ddafb68b87c9bdcc113fa7dc6d5761637caef2a"
+      },
+      {
+        "name": "uv_layout.png",
+        "hash": "935fc7482506657b3592811f0d9ddf409a6ff6e90b0b6673599f04774b583a25"
+      },
+      {
+        "name": "wire_full_side.png",
+        "hash": "85114bd94c9b37a216c21e918b5fcb473913adb88d1a3cd029fe34bdec8af80d"
+      },
+      {
+        "name": "wire_full_three_quarter.png",
+        "hash": "9d30f8a8ddb0760f21a9898fe4c6ae2056d3bb8b9c241b71f7366c67d0078846"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 59.3,
+    "codexTokens": "328,203",
+    "note": "Game mesh pass 1: 11,932 triangles (hard limit 12,000, target 10,000), 40 joints, 4 influences, 0 unweighted, 2 materials, texel density ratio 1.06, normal and AO baked. Sculpt check clean. Pose grid deforms without collapse. Critic checklist at the close cameras: the ear outline is torn and jagged with a dark gap at its root; the horn top edge is lumpy (ridges faceted in silhouette); toe contours softer; muzzle slightly softer. No visible loss at sprite size. Joint edge rings unverified."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-16T01:12:48Z",
-  "briefSha256": "34e35be6cae494736c44df2a24753c3ece6738a987ef636cb52507e623246b19"
+  "briefSha256": "34e35be6cae494736c44df2a24753c3ece6738a987ef636cb52507e623246b19",
+  "checks": [],
+  "reportedAt": "2026-10-16T02:13:27Z"
 }

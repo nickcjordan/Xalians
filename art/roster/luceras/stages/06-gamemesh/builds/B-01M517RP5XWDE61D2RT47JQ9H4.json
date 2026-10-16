@@ -1,0 +1,230 @@
+{
+  "id": "B-01M517RP5XWDE61D2RT47JQ9H4",
+  "alias": "97qx",
+  "stage": "06-gamemesh",
+  "kind": "build",
+  "goal": "Stage 6 pass 2: fix ear, horn silhouette, toes and muzzle loss; verify joint rings; total at or under 11,500; Codex",
+  "scope": "whole creature",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "ao_1024.png",
+      "hash": "3a7791ece50e70a52db3e94312324632e6c830778ccc37263f772bb93cdd8564"
+    },
+    {
+      "name": "ao_2048.png",
+      "hash": "39ca12139f833cb6ff05ce7f670c4f1fca72087a21403e9cfa44acefc63501ef"
+    },
+    {
+      "name": "bake_settings.json",
+      "hash": "ff879c1025aea49e41ffd59ca343467fc3b0ba45faf5885a3e0fec133ffb7dba"
+    },
+    {
+      "name": "check_ear_side.png",
+      "hash": "4dbc033069eaca9e0d1424207dd91c017a824aa8b6b6fb1dd25f7de8dd9e8784"
+    },
+    {
+      "name": "check_ear_three_quarter.png",
+      "hash": "74573c85ee94fecf008611c13e23a015afc747b100f544bc9a1ba018f2ad722a"
+    },
+    {
+      "name": "check_full_side.png",
+      "hash": "fe825eec7848ca0ea9cfa1b6b4f69df1f7a422a02e3d38831e40152c3d3769a4"
+    },
+    {
+      "name": "check_full_three_quarter.png",
+      "hash": "9189dc2e787ad2e705eeebc6ae09c74ca9f690a9faf3cc97308a61ab82c3578c"
+    },
+    {
+      "name": "check_head_three_quarter.png",
+      "hash": "1949f15f2c5bed5452a7fcfa223c0c440af2263d5f4ac91768cc51fa13e2fce5"
+    },
+    {
+      "name": "check_hind_paw_side.png",
+      "hash": "e304b876a29cda85a6c87983945c1b90e784e922efb138ae708d88abf8289a6c"
+    },
+    {
+      "name": "check_horn_silhouette_side.png",
+      "hash": "48594f016840da57a4391eb29675456fb2f1443567652c8fd79bc759217890d3"
+    },
+    {
+      "name": "check_sprite.png",
+      "hash": "a089247d8642890c05e4943e4770c29be75cc4452c0f8d8571e9fc9edd612393"
+    },
+    {
+      "name": "gamemesh.blend",
+      "hash": "c3d7d9b22445ae6940204fdf7f1968f5e234861c0802006c6d8c7572fd6e015e"
+    },
+    {
+      "name": "gamemesh.glb",
+      "hash": "998c1c5871c2a834ede2a28a7dccc5f284c7b6c930c163cf18cd2208b4ba60fa"
+    },
+    {
+      "name": "glb_check.json",
+      "hash": "9460199e6498f58953d47b08c0128c06a32f04aaad8802aad09b6a843b681a6e"
+    },
+    {
+      "name": "joint_edge_rings.json",
+      "hash": "3c8c5cf72ff981bc4ecf0b98ca037db5824e4c2c6678c57b302febd946d174ef"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "c5af3ac3f94bef354c2dd4336d2f1263fbe25dc96ff8e2578f35b402d550ee23"
+    },
+    {
+      "name": "normal_1024.png",
+      "hash": "8d847ebf04b8c0433e915e69c0dd39b2e2bcc7e9af7e29ba19c7d7df963ee79e"
+    },
+    {
+      "name": "normal_2048.png",
+      "hash": "7e87bb1da827b527d776bc0721fe029030b3943c188af155c5d79eb98cd2cb1d"
+    },
+    {
+      "name": "normal_quality.json",
+      "hash": "585d57b53d0ac9fcbd184e98f10a7459cd2c261ff8976a76552476e7bc39c32a"
+    },
+    {
+      "name": "pose_grid.png",
+      "hash": "a4cc8f87f16b5ee0feacc82017ed9d525ca6f3904e9766284c4414c3072d1c8f"
+    },
+    {
+      "name": "report.json",
+      "hash": "c96ed7148f4d70be5c08f0929fa4c2d5d15df753b9815e94bac23a5867d253a2"
+    },
+    {
+      "name": "sculpt_check.json",
+      "hash": "718ac925b62667c59390fe4b6ddafb68b87c9bdcc113fa7dc6d5761637caef2a"
+    },
+    {
+      "name": "uv_layout.png",
+      "hash": "d98d60fd06fb041d079b7b25ce4e598ccca9a0a56a15d18e8bea7c141b501984"
+    },
+    {
+      "name": "wire_full_side.png",
+      "hash": "6f09961245cb0d12b095e15b722d170404b359e062027e2acf6f60b887d2d143"
+    },
+    {
+      "name": "wire_full_three_quarter.png",
+      "hash": "fa9f34cd4e872594ec5697ca29fe8d123df0c1f2450045eafad5ec5ee8544211"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "ao_1024.png",
+        "hash": "3a7791ece50e70a52db3e94312324632e6c830778ccc37263f772bb93cdd8564"
+      },
+      {
+        "name": "ao_2048.png",
+        "hash": "39ca12139f833cb6ff05ce7f670c4f1fca72087a21403e9cfa44acefc63501ef"
+      },
+      {
+        "name": "bake_settings.json",
+        "hash": "ff879c1025aea49e41ffd59ca343467fc3b0ba45faf5885a3e0fec133ffb7dba"
+      },
+      {
+        "name": "check_ear_side.png",
+        "hash": "4dbc033069eaca9e0d1424207dd91c017a824aa8b6b6fb1dd25f7de8dd9e8784"
+      },
+      {
+        "name": "check_ear_three_quarter.png",
+        "hash": "74573c85ee94fecf008611c13e23a015afc747b100f544bc9a1ba018f2ad722a"
+      },
+      {
+        "name": "check_full_side.png",
+        "hash": "fe825eec7848ca0ea9cfa1b6b4f69df1f7a422a02e3d38831e40152c3d3769a4"
+      },
+      {
+        "name": "check_full_three_quarter.png",
+        "hash": "9189dc2e787ad2e705eeebc6ae09c74ca9f690a9faf3cc97308a61ab82c3578c"
+      },
+      {
+        "name": "check_head_three_quarter.png",
+        "hash": "1949f15f2c5bed5452a7fcfa223c0c440af2263d5f4ac91768cc51fa13e2fce5"
+      },
+      {
+        "name": "check_hind_paw_side.png",
+        "hash": "e304b876a29cda85a6c87983945c1b90e784e922efb138ae708d88abf8289a6c"
+      },
+      {
+        "name": "check_horn_silhouette_side.png",
+        "hash": "48594f016840da57a4391eb29675456fb2f1443567652c8fd79bc759217890d3"
+      },
+      {
+        "name": "check_sprite.png",
+        "hash": "a089247d8642890c05e4943e4770c29be75cc4452c0f8d8571e9fc9edd612393"
+      },
+      {
+        "name": "gamemesh.blend",
+        "hash": "c3d7d9b22445ae6940204fdf7f1968f5e234861c0802006c6d8c7572fd6e015e"
+      },
+      {
+        "name": "gamemesh.glb",
+        "hash": "998c1c5871c2a834ede2a28a7dccc5f284c7b6c930c163cf18cd2208b4ba60fa"
+      },
+      {
+        "name": "glb_check.json",
+        "hash": "9460199e6498f58953d47b08c0128c06a32f04aaad8802aad09b6a843b681a6e"
+      },
+      {
+        "name": "joint_edge_rings.json",
+        "hash": "3c8c5cf72ff981bc4ecf0b98ca037db5824e4c2c6678c57b302febd946d174ef"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "c5af3ac3f94bef354c2dd4336d2f1263fbe25dc96ff8e2578f35b402d550ee23"
+      },
+      {
+        "name": "normal_1024.png",
+        "hash": "8d847ebf04b8c0433e915e69c0dd39b2e2bcc7e9af7e29ba19c7d7df963ee79e"
+      },
+      {
+        "name": "normal_2048.png",
+        "hash": "7e87bb1da827b527d776bc0721fe029030b3943c188af155c5d79eb98cd2cb1d"
+      },
+      {
+        "name": "normal_quality.json",
+        "hash": "585d57b53d0ac9fcbd184e98f10a7459cd2c261ff8976a76552476e7bc39c32a"
+      },
+      {
+        "name": "pose_grid.png",
+        "hash": "a4cc8f87f16b5ee0feacc82017ed9d525ca6f3904e9766284c4414c3072d1c8f"
+      },
+      {
+        "name": "report.json",
+        "hash": "c96ed7148f4d70be5c08f0929fa4c2d5d15df753b9815e94bac23a5867d253a2"
+      },
+      {
+        "name": "sculpt_check.json",
+        "hash": "718ac925b62667c59390fe4b6ddafb68b87c9bdcc113fa7dc6d5761637caef2a"
+      },
+      {
+        "name": "uv_layout.png",
+        "hash": "d98d60fd06fb041d079b7b25ce4e598ccca9a0a56a15d18e8bea7c141b501984"
+      },
+      {
+        "name": "wire_full_side.png",
+        "hash": "6f09961245cb0d12b095e15b722d170404b359e062027e2acf6f60b887d2d143"
+      },
+      {
+        "name": "wire_full_three_quarter.png",
+        "hash": "fa9f34cd4e872594ec5697ca29fe8d123df0c1f2450045eafad5ec5ee8544211"
+      }
+    ],
+    "blockedBy": "Codex usage limit reached mid-pass (resets 2026-10-22 07:55); the last Blender job finished on its own",
+    "stream": "codex",
+    "wallMinutes": 40.5,
+    "codexTokens": "203,021",
+    "note": "Incomplete: the final mesh (11,492 triangles, 4 influences, 0 unweighted, 0 non-manifold, normal and AO re-baked) was saved at 21:53 but the check renders and pose grid are from an earlier iteration (21:45) and report.json is stale. Joint edge rings not verified (the mesh is triangulated, not loop-based). Next: re-render the checks from the saved gamemesh.blend, verify ear, horn, toes and muzzle, then the one check for Nick."
+  },
+  "blockedBy": "Codex usage limit reached mid-pass (resets 2026-10-22 07:55); the last Blender job finished on its own",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-16T02:13:27Z",
+  "briefSha256": "1898b07d9d6e8545e1aa2a08b2652cac4ced0b23f0c5f41ac4d76da5278b85aa",
+  "checks": [],
+  "reportedAt": "2026-10-16T02:55:40Z"
+}
