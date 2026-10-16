@@ -1,0 +1,11 @@
+{
+  "status": "verified bounded post-commit move; no deletion",
+  "triggerCommit": "94b9002b9b81031d955076b7aa2f767ea81813f5",
+  "source": "C:\\dev\\art-data\\species-construction\\akinza\\surface\\fur-steps\\s12-13h",
+  "destination": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13h-superseded-13i",
+  "sourceModelSha256": "d4cbd5c9ab28de064c2cad5014e65101e3b3ff3334554fd46ac49562dab7887a",
+  "archivedModelSha256": "d4cbd5c9ab28de064c2cad5014e65101e3b3ff3334554fd46ac49562dab7887a",
+  "finalModelSha256": "2bbf9d1afcefc59c9ccef034fbbd394b3a426c1ccd9105fd4307eae673991681",
+  "finalModelUnchanged": true,
+  "unrelatedDataTouched": false
+}

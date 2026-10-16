@@ -1,0 +1,343 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-13i",
+  "outcome": "Restore textured 13b ear backs/rims without shaved caps, preserve13g tuft and13h eyeliner, shorten only overhanging apex hairs smoothly with20percent variation and tapered tips, show matched comparisons and sixcurrent views, no artifact increase.",
+  "authorizedScope": "Brief 13i and 13i-resume: at most two restart builds, local PC rendering, mini excluded unless hang fixed, exact 13h approved eyeliner and 13g tuft, explicit-path commit, archive only after commit, no push.",
+  "workRecord": "docs/design/species-construction/akinza/fur-13i-active-work.md",
+  "evidence": {
+    "brief": {
+      "path": ".codex/audit-state/fur-13i-evidence/brief.md",
+      "sha256": "14529d5367bb19c916a975947a14cf43b1b6ee9ce0aa32c17279fce4ac8b1994"
+    },
+    "model": {
+      "path": ".codex/audit-state/fur-13i-evidence/model.blend",
+      "sha256": "83f1304089b17688384f1cee1782ffeaf33714edca6866f6ae6a7b7d24285530"
+    },
+    "patch": {
+      "path": ".codex/audit-state/fur-13i-evidence/patch.npz",
+      "sha256": "3cd208a4323c1f5fc5c9369151bb6228f72326d5966390060b85184fc793c29d"
+    },
+    "preliminary": {
+      "path": ".codex/audit-state/fur-13i-evidence/preliminary.json",
+      "sha256": "43db0525cb4840c2a29e282043b381dff2787e75148a27504c8ccb478eeba2b2"
+    },
+    "protectedPlan": {
+      "path": ".codex/audit-state/fur-13i-evidence/protectedPlan.npz",
+      "sha256": "b4f8a8f0e34474b1c2a3ccd4e6eec584b2561592c65da188e8bea9741fee2acc"
+    },
+    "planMetrics": {
+      "path": ".codex/audit-state/fur-13i-evidence/planMetrics.json",
+      "sha256": "dc3c0bd1f0c1c356d7bb46a92ab028c164bfa7fcd906a25be6d5259e4045d956"
+    },
+    "finalModel": {
+      "path": ".codex/audit-state/fur-13i-evidence/finalModel.blend",
+      "sha256": "2bbf9d1afcefc59c9ccef034fbbd394b3a426c1ccd9105fd4307eae673991681"
+    },
+    "finalPatch": {
+      "path": ".codex/audit-state/fur-13i-evidence/finalPatch.npz",
+      "sha256": "b8b5dac39641be716bf71a457ff4e8bed5407a92f514c99af078cd69cc29a2eb"
+    },
+    "finalPlan": {
+      "path": ".codex/audit-state/fur-13i-evidence/finalPlan.npz",
+      "sha256": "08568db50542b2ff433f873b2fb4396a4e2e7a761c5eb083f63146566c7a8ded"
+    },
+    "firstModel": {
+      "path": ".codex/audit-state/fur-13i-evidence/firstModel.blend",
+      "sha256": "a071cfa4426506d0bff33e937aa9e4d3092b6a0bde4968ba54838cc22fd19f1a"
+    },
+    "resume": {
+      "path": ".codex/audit-state/fur-13i-evidence/resume.md",
+      "sha256": "f02d49a4e8754c2e7fc52e411a87600f4f75422235144601d203f2f882810e1d"
+    },
+    "held": {
+      "path": ".codex/audit-state/fur-13i-evidence/held.json",
+      "sha256": "14e96b1f9cd133e6ce36aab331e9cd866d70efe262b97dbd114c7250a8eaf819"
+    },
+    "heldLog": {
+      "path": ".codex/audit-state/fur-13i-evidence/heldLog.log",
+      "sha256": "1d7cadb9da35ad383bef4f21d1fc7978cb7da06483089819b954d85a2b556e86"
+    },
+    "finalBack": {
+      "path": ".codex/audit-state/fur-13i-evidence/finalBack.png",
+      "sha256": "b7d1d597852ddd88feda9b83c6c265309c306792414e247f513bf3c45e4a1257"
+    },
+    "finalTip": {
+      "path": ".codex/audit-state/fur-13i-evidence/finalTip.png",
+      "sha256": "640093c5cb41570d166098357ce419ed31fab2e1db0f9c3f449e82004f4ba395"
+    },
+    "baselineBack": {
+      "path": ".codex/audit-state/fur-13i-evidence/baselineBack.png",
+      "sha256": "1e9ec4037d8782347b807d43d382cc4b45d1a0f15a8ad86a4146f1de4c799369"
+    },
+    "baselineTip": {
+      "path": ".codex/audit-state/fur-13i-evidence/baselineTip.png",
+      "sha256": "14213d9a77559e6eefb951d061cfd0a3d5c0f40b5abf77dab0f55be208c01f03"
+    },
+    "firstTip": {
+      "path": ".codex/audit-state/fur-13i-evidence/firstTip.png",
+      "sha256": "131040df64cc67ffd982ee347d246f08f73de518a542fcf6febdc8449b4610ea"
+    },
+    "finalMetadata": {
+      "path": ".codex/audit-state/fur-13i-evidence/finalMetadata.json",
+      "sha256": "56164b2b772b57de69010e011fbebb5fabf2deea1696162707b56dceac285373"
+    },
+    "baseline13h": {
+      "path": ".codex/audit-state/fur-13i-evidence/baseline13h.blend",
+      "sha256": "d4cbd5c9ab28de064c2cad5014e65101e3b3ff3334554fd46ac49562dab7887a"
+    },
+    "renderProof": {
+      "path": ".codex/audit-state/fur-13i-evidence/renderProof.json",
+      "sha256": "b0eea8564436e826ee9194b3981dd310aadaa8456c97d0e1645edd842e9d4984"
+    },
+    "artifactGate": {
+      "path": ".codex/audit-state/fur-13i-evidence/artifactGate.json",
+      "sha256": "db65511726e44a46fc84e695b71f1052afbd65c3c28aa125ed3a90e5ff8b9397"
+    },
+    "artifactOrigin": {
+      "path": ".codex/audit-state/fur-13i-evidence/artifactOrigin.json",
+      "sha256": "f9197c0560dd22d0b2c8364f252bebc958b4f6c007cd14f4f77867f59f648eec"
+    },
+    "sweepMetrics": {
+      "path": ".codex/audit-state/fur-13i-evidence/sweepMetrics.json",
+      "sha256": "0cd6a52573fbbcfb794ea215211e72c3c5234ef679547aed67aa5ffe499c5aee"
+    },
+    "sweepFlags": {
+      "path": ".codex/audit-state/fur-13i-evidence/sweepFlags.npz",
+      "sha256": "b43f3047bb89572608d81ec47d898dabb8f6008de2bdfb0ff272f591f84b0dcc"
+    },
+    "collisionEvidence": {
+      "path": ".codex/audit-state/fur-13i-evidence/collisionEvidence.npz",
+      "sha256": "7c468d7e17d0f027aeaf5060204b301f8ae440842e671c004e32542b846a57a5"
+    },
+    "obstacleEvidence": {
+      "path": ".codex/audit-state/fur-13i-evidence/obstacleEvidence.npz",
+      "sha256": "02f8df5254228e3c42ab42205919feef3dee6f49d5accb827a5c169be3af1c96"
+    },
+    "rogueMetrics": {
+      "path": ".codex/audit-state/fur-13i-evidence/rogueMetrics.json",
+      "sha256": "90b65929856541f146cfac6cf1688f50ffd7e74e6675e294a8eef2f14998c11c"
+    },
+    "rogueFlags": {
+      "path": ".codex/audit-state/fur-13i-evidence/rogueFlags.npz",
+      "sha256": "f0cf49d0f2ae9b6ac125bc202fc6b5d5234beabef942f271ad016e02932bce0d"
+    },
+    "pairCheck": {
+      "path": ".codex/audit-state/fur-13i-evidence/pairCheck.json",
+      "sha256": "a0cc94c72f82b78c95dbbdbc4e852fd630b818ef648aa2d7ad4319a8d65353aa"
+    },
+    "review": {
+      "path": ".codex/audit-state/fur-13i-evidence/review.json",
+      "sha256": "a2d834b86cf87a99dcd14c01da88abc081e842a19d2cc9bc6b36edfbd77e98b3"
+    },
+    "delivery": {
+      "path": ".codex/audit-state/fur-13i-evidence/delivery.json",
+      "sha256": "83746785cb0ecf4feb051b9f895846c777d0875a4fc85ff7ca8e8032ad779d8f"
+    },
+    "workRecordSnapshot": {
+      "path": ".codex/audit-state/fur-13i-evidence/workRecordSnapshot.md",
+      "sha256": "46c557d980314bb712729e8b95a8f34a76511899fe4cdf14f9c6d4a3bfd4b957"
+    },
+    "head-backq": {
+      "path": ".codex/audit-state/fur-13i-evidence/head-backq.png",
+      "sha256": "8ae8252a361388e693338c436efb04048e251ac9ee7d0f809491c80056372dd4"
+    },
+    "ear-tip-close": {
+      "path": ".codex/audit-state/fur-13i-evidence/ear-tip-close.png",
+      "sha256": "79e62ef9f9b19ef9ef751a57a26b9b09e2ca58b573bfcaa0cc21ffc2174d5d81"
+    },
+    "current-ears-front": {
+      "path": ".codex/audit-state/fur-13i-evidence/current-ears-front.png",
+      "sha256": "7eedf0e437fd1c996e48f11ad80cedb63f4ac1d36b184999d310037fb2a00f27"
+    },
+    "current-head-side": {
+      "path": ".codex/audit-state/fur-13i-evidence/current-head-side.png",
+      "sha256": "5e864357f4aaf248248aece8e6501da3512760a2fe0ac654104345da3569f062"
+    },
+    "current-head-backq": {
+      "path": ".codex/audit-state/fur-13i-evidence/current-head-backq.png",
+      "sha256": "c9c5e3af336cb325a0e3d3fd5fb98b0601517a44e604ca1f3ca65efdc1fba5b4"
+    },
+    "current-body-backq": {
+      "path": ".codex/audit-state/fur-13i-evidence/current-body-backq.png",
+      "sha256": "ff79cde591206a04b77b41ac4fcd1ac23438231bceacf5057b44dff5afba5b49"
+    },
+    "current-body-front": {
+      "path": ".codex/audit-state/fur-13i-evidence/current-body-front.png",
+      "sha256": "e482fda6aba61a8ee8da6ed35ddac3c498d0eefc981923238c39718c00eab190"
+    },
+    "current-tails-side": {
+      "path": ".codex/audit-state/fur-13i-evidence/current-tails-side.png",
+      "sha256": "e23a0bf02ef1a5f1ac1f0d45ed7570a1b665859c6c7b91fdedf052f020ba84b1"
+    },
+    "archive": {
+      "path": ".codex/audit-state/fur-13i-evidence/archive.json",
+      "sha256": "5dbd86380b92d79d3d76fea67d76c7d48eed0fa7210a6dfc67371dd7f42e51f0"
+    }
+  },
+  "criteria": [
+    {
+      "id": "restoration",
+      "expectation": "Ear backs/rims return to13b apart from localized authorized apex trimming;13g tuft,13h eyeliner and unrelated data exact.",
+      "status": "pass",
+      "assessment": "Final native 13h comparison and independent full-view review show continuous textured backs without caps/seams. Source-mask union, exact untrimmed 13b paths, all held meshes/materials/tuft/liner/unrelated data and two-hop prefix/taper checks pass.",
+      "evidence": [
+        "held",
+        "heldLog",
+        "finalModel",
+        "baseline13h",
+        "head-backq",
+        "review"
+      ]
+    },
+    {
+      "id": "apex",
+      "expectation": "Visible long apex brush reduction with smooth transition,20percent variation and fine taper, no new wires or bare caps.",
+      "status": "pass",
+      "assessment": "Final 13b comparison shows the targeted descending bundle visibly shorter and finer, with upper ridge/back texture held. A few fine inherited crossing/short descending hairs remain; no new visible wire or cap.",
+      "evidence": [
+        "ear-tip-close",
+        "held",
+        "review",
+        "finalPlan"
+      ]
+    },
+    {
+      "id": "artifacts",
+      "expectation": "Fresh full body skin/solid/length/transfer/lift/rogue sweep has zero new IDs and no regional rise vs13h.",
+      "status": "blocked",
+      "assessment": "Fresh full 422620-strand gate fails: ears length19->35, lift29->83; no new collision/transfer/regional/rogue IDs, other regions unchanged. Original 13b flags account for 16 length and 53 lift flags. Curve3 is one new relative-lift flag despite lower physical clearance.",
+      "evidence": [
+        "artifactGate",
+        "artifactOrigin",
+        "sweepMetrics",
+        "sweepFlags",
+        "collisionEvidence",
+        "obstacleEvidence",
+        "rogueMetrics",
+        "review",
+        "resume"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Two nativebeforeleft/afterright pairs and sixcurrentviews inspected; independentreview; logs, explicitcommit, postcommitarchive, no push.",
+      "status": "pass",
+      "assessment": "Two native before-left/after-right comparisons and all six current views inspected and pixel-checked; independent review complete. Explicit commit and verified postcommit archive completed; no push.",
+      "evidence": [
+        "head-backq",
+        "ear-tip-close",
+        "pairCheck",
+        "renderProof",
+        "review",
+        "delivery",
+        "archive"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "artifacts",
+      "status": "blocked",
+      "observation": "Original 27 rogue flags are repaired. Final fresh gate instead has 16 revived 13b neighbor-length flags and 53 revived lift flags, plus one new relative-lift flag separately recorded as F005. Exact source restoration conflicts with the strict no-increase gate.",
+      "nextAction": "After Nick chooses exact restoration versus minimal flagged-path corrections and authorizes further model work, correct the inherited flagged paths or explicitly record an approved gate exception; rerun all gates and views.",
+      "acceptanceCriterion": "No newflags/regionalrise under agreed scope, or explicituserinstructionto retain exactrestorationandreportgatefailure.",
+      "evidence": [
+        "artifactGate",
+        "artifactOrigin",
+        "held",
+        "review",
+        "resume"
+      ],
+      "blocker": {
+        "externalDependency": "User scope decision for exact 13b restoration versus strict gate, plus further-build authorization beyond the exhausted two-build restart limit.",
+        "attempts": "Two local restart saves; measured apex plans eliminate rogue flags and correct the eligible apex length outlier. Fresh full sweeps and independent raw-NPZ audit prove remaining inherited source flags. Constraint question asked early and unanswered; nonapex paths preserved. All remaining independent delivery finished.",
+        "unblocksWhen": "Nick prioritizes the conflicting constraints and authorizes any additional model save needed."
+      }
+    },
+    {
+      "id": "F003",
+      "criterion": "apex",
+      "status": "resolved",
+      "observation": "First native close retained conspicuous lower-left wire bundle; second build is saved but not yet visibly reviewed.",
+      "nextAction": "Render final close and compare with 13b; independent review required. At most two restart saves, already consumed.",
+      "acceptanceCriterion": "Visible apex group reduction without new cap or seam.",
+      "evidence": [
+        "protectedPlan"
+      ],
+      "resolution": "Final focused cut and taper visibly retract the prior long lower-left bundle. Independent native comparison finds no new cap, seam or long wire. Short inherited crossing hairs remain.",
+      "resolutionEvidence": [
+        "finalTip",
+        "baselineTip",
+        "firstTip",
+        "held",
+        "finalPlan"
+      ]
+    },
+    {
+      "id": "F004",
+      "criterion": "restoration",
+      "status": "resolved",
+      "observation": "Added strict prefix test rejects sequentially resampled apex curve 18319 against original polyline.",
+      "nextAction": "Verify that strand against actual preserved first-build polyline; retain strict original-path check for all other hairs and inspect final result.",
+      "acceptanceCriterion": "Saved prefix, held-data and taper checks pass with explicit sequential provenance.",
+      "evidence": [
+        "protectedPlan"
+      ],
+      "resolution": "Final native saved verification validates matching prior topology/root and both monotone shortening hops for 18319. All other trims remain within 0.002 mm of original 13b polylines. Full held-data and taper checks pass.",
+      "resolutionEvidence": [
+        "held",
+        "heldLog",
+        "firstModel",
+        "finalModel"
+      ]
+    },
+    {
+      "id": "F005",
+      "criterion": "artifacts",
+      "status": "blocked",
+      "observation": "Trimmed apex curve 3 newly triggers the neighbor-relative lift gate versus 13b and 13h, although its length decreases 99.251->95.867 mm and clearance decreases 72.385->69.400 mm.",
+      "nextAction": "With additional-build authorization, measure a further localized apex shortening/transition correction for curve3 that satisfies the unchanged relative lift gate without returning the long brush, then rerun saved checks and views.",
+      "acceptanceCriterion": "Zero new lift IDs and no regional increase under explicitly agreed restoration scope.",
+      "evidence": [
+        "artifactGate",
+        "artifactOrigin",
+        "sweepFlags",
+        "collisionEvidence",
+        "review",
+        "resume"
+      ],
+      "blocker": {
+        "externalDependency": "Additional model-build authorization; the explicit two-build restart allowance is exhausted.",
+        "attempts": "Both restart saves used; final fresh sweep detects the relative lift flag. Completing non-model delivery.",
+        "unblocksWhen": "Nick authorizes a further build beyond the explicit restart cap."
+      }
+    },
+    {
+      "id": "F002",
+      "criterion": "delivery",
+      "status": "out_of_scope",
+      "observation": "Earlier mini render consumed CPU without writing an image; that hang remains unfixed.",
+      "rationale": "The resume brief explicitly says to skip mini if the hang is not understood and fixed. Mini was skipped; all required final renders and sweeps ran locally on the PC.",
+      "scopeSource": "untracked/species-construction/akinza/surface/fur-steps/briefs/13i-resume.md",
+      "evidence": [
+        "resume",
+        "renderProof",
+        "delivery"
+      ]
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent review_13i, native visual and raw-NPZ audit",
+    "comparison": "All seven native final renders and both comparisons inspected against actual 13h and archived 13b; visual cap and targeted bundle correction pass. Whole-body held data and source ancestry pass.",
+    "regressions": "Strict full saved artifact gate fails on 16 length/54 lift increases in ears; 69 category flags revived from 13b and one new relative-lift flag. Collision/regional/transfer IDs unchanged and rogue0. Other fur and approved liner/tuft held exactly.",
+    "scopeCheck": "Only recorded ear rim/back restoration and local apex trimming. One prior-run save and exactly two restart saves; no third restart save, mini use, threshold changes, nonapex exceptions or push. All executable non-model work completed.",
+    "sessionId": "akinza-fur-13i-resume",
+    "requestId": "62593bd0-315d-4cea-800b-679b1f1f4ab1",
+    "performedAt": "2026-10-16T21:47:59.723507+00:00"
+  },
+  "stop": {
+    "kind": "blocked",
+    "reason": "Visual target achieved, but strict gate remains blocked by conflicting exact-restoration scope and exhausted explicit build cap. All independent authorized work, including commit and archive, is complete."
+  }
+}

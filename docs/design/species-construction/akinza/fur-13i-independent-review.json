@@ -1,0 +1,34 @@
+{
+  "reviewer": "/root/review_13i",
+  "performedAt": "2026-10-16T21:36:58.380499+00:00",
+  "scope": "13i and 13i-resume only; held 13g tuft, approved 13h G1-ribbon, all other fur and geometry.",
+  "visualCriteria": "pass",
+  "caps": "Both actual 13h shaved caps and hard texture boundaries are gone; directional textured 13b-like ear backs return.",
+  "apex": "Descending lower-left bundle visibly retracts and thins versus 13b and restart1, with upper ridge and back coat held.",
+  "regressions": "No new bald cap, clipping seam, prominent wire, body/tail fur change or silhouette regression observed across all requested views.",
+  "pairs": "Correct visible before-left/now-right labels, matched native framing.",
+  "stillOff": [
+    "A few inherited thin crossing hairs remain near the apex.",
+    "A few short bright descending hairs remain; the former conspicuous long bundle is reduced."
+  ],
+  "heldOutsideScope": [
+    "Broad/smooth 13g canal tufts and inherited tiny dark squiggle near the head-side upper tuft."
+  ],
+  "numericGate": "fail: independently verified raw NPZ; 16 new neighbor-length and 54 new lift flags versus 13h; no new collision, regional-length, transfer or rogue flags.",
+  "reviewedArtifacts": {
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/surface.blend": "2bbf9d1afcefc59c9ccef034fbbd394b3a426c1ccd9105fd4307eae673991681",
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/held-data.json": "14e96b1f9cd133e6ce36aab331e9cd866d70efe262b97dbd114c7250a8eaf819",
+    "untracked/species-construction/akinza/surface/fur-steps/13i-head-backq.png": "8ae8252a361388e693338c436efb04048e251ac9ee7d0f809491c80056372dd4",
+    "untracked/species-construction/akinza/surface/fur-steps/13i-ear-tip-close.png": "79e62ef9f9b19ef9ef751a57a26b9b09e2ca58b573bfcaa0cc21ffc2174d5d81",
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/after/ears-front.png": "1a3877dda1108ac96fde567f6e4b5f3c0d064ccf7ae06855e4756758cb6ac340",
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/after/head-side.png": "18291ccc35f05afee7fc5b9fd5fa99a350f12c13906f5d49582edd471f0f1b1c",
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/after/head-backq.png": "b7d1d597852ddd88feda9b83c6c265309c306792414e247f513bf3c45e4a1257",
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/after/body-backq.png": "c129ea7fd3a2060fb1db4f3be220e31967e9066f672f548aeee89b45cfaa2ee9",
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/after/body-front.png": "3bea9cd7c3ac34e18be206edd8fedfa0b5cde8ff91f431eaa70eeed702669197",
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/after/tails-side.png": "ab5841a7834b65eb956f4235ad9048f8f15c68f66a6248f87f81bb075f0d4222",
+    "untracked/species-construction/akinza/surface/fur-steps/s12-13i/after/ear-tip-close.png": "640093c5cb41570d166098357ce419ed31fab2e1db0f9c3f449e82004f4ba395"
+  },
+  "approval": "Independent visual assessment; no user artistic approval or full gate pass claimed.",
+  "numericOrigins": "All 16 length and 53 lift flags existed in 13b. Curve 3 newly triggers relative lift despite physical clearance decreasing from 72.385 to 69.400 mm and length decreasing from 99.251 to 95.867 mm.",
+  "wholeOutcome": "Visual criteria pass; strict artifact gate fails. Two restart builds are exhausted. Finish honest records, commit, archive and report; no further model save or nonapex exception is authorized."
+}

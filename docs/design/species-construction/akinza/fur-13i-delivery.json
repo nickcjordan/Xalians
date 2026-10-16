@@ -1,0 +1,49 @@
+{
+  "status": "incomplete: strict artifact gate",
+  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-13i/surface.blend",
+  "surfaceSha256": "2bbf9d1afcefc59c9ccef034fbbd394b3a426c1ccd9105fd4307eae673991681",
+  "restartBuilds": 2,
+  "priorRunSaves": 1,
+  "restoredCurves": 13614,
+  "apexTrimmedCurves": 1470,
+  "images": {
+    "head-backq": "untracked/species-construction/akinza/surface/fur-steps/13i-head-backq.png",
+    "ear-tip-close": "untracked/species-construction/akinza/surface/fur-steps/13i-ear-tip-close.png",
+    "current-ears-front": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png",
+    "current-head-side": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png",
+    "current-head-backq": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png",
+    "current-body-backq": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png",
+    "current-body-front": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png",
+    "current-tails-side": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+  },
+  "heldDataPass": true,
+  "visualAssessment": "Builder and independent reviewer: caps restored and targeted long bundle visibly shortened; no new visible regression.",
+  "artifactGatePass": false,
+  "newFlags": {
+    "collision": 0,
+    "neighborLength": 16,
+    "regionalLength": 0,
+    "partTransfer": 0,
+    "lift": 54,
+    "rogue": 0
+  },
+  "uniqueNewFlagStrands": 56,
+  "rogueTotal": 0,
+  "skinCollisionFlags": 0,
+  "existingSolidCollisionFlags": 338,
+  "stillOff": [
+    "A few inherited thin crossing hairs remain near the apex.",
+    "A few short bright descending hairs remain; the former conspicuous long bundle is reduced."
+  ],
+  "heldOutsideScope": [
+    "Broad/smooth 13g canal tufts and inherited tiny dark squiggle near the head-side upper tuft."
+  ],
+  "blockedBy": "Exact 13b restoration revives old gate flags, and one trimmed apex strand newly triggers relative lift. Constraint question unanswered; two-build restart cap exhausted.",
+  "compute": "Local PC exclusive slot, one Blender process at a time.",
+  "mini": "Skipped: earlier CPU-without-image render hang not understood and fixed.",
+  "localCommit": "completed with explicit paths",
+  "archive": "verified after first local commit",
+  "archivePath": "C:\\Users\\njord\\.claude\\scratch-archive\\Xalians\\2026-10-15\\s12-13h-superseded-13i",
+  "pushPerformed": false,
+  "approval": "No user artistic approval or full task completion claimed."
+}
