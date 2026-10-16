@@ -8,12 +8,439 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "composite_front_vs_sheet.png",
+      "hash": "282a450ce280154e91cac4cbb259fa8f80920c1a50ee96fe274abd287cdce8df"
+    },
+    {
+      "name": "composite_head_vs_sheet.png",
+      "hash": "25f795a964f2beeba844ae28801db906a5e96f64d22632d09eac28c381321837"
+    },
+    {
+      "name": "composite_hind_leg_vs_sheet.png",
+      "hash": "c7c1ca5141d6b9f13d256b4a4d2fd4b2b3aebb727a6b32369850c915cecc4bbc"
+    },
+    {
+      "name": "composite_runtime_front_vs_sheet.png",
+      "hash": "cd88e23e5fd2c6c9ceb405d06a93e21f62a4c2e67bc4e9bd2dbd9be3b27f576e"
+    },
+    {
+      "name": "composite_runtime_head_vs_sheet.png",
+      "hash": "5b7c155555620b875058149935fd37717fd984a769da9dfb2b38a6a81c727cde"
+    },
+    {
+      "name": "composite_runtime_hind_leg_vs_sheet.png",
+      "hash": "dba8e7c5c69dee341323fd2c2339f1c82c8d3057dbfc9ae02a4ef4b95957a997"
+    },
+    {
+      "name": "composite_runtime_phone_vs_sheet.png",
+      "hash": "4069e96ad7af8c933e27b28f309ed1bc4a340876d9ddf63b0b5676d5ff7f2346"
+    },
+    {
+      "name": "composite_runtime_side_vs_sheet.png",
+      "hash": "8493fafe9e9e802585b6298f7666860bd1236bb0f23e410b8387dae83534ef54"
+    },
+    {
+      "name": "composite_runtime_sprite_vs_sheet.png",
+      "hash": "0228f02f11beb6b992503506da36757a56c86dcc6564286918791acd40f56aad"
+    },
+    {
+      "name": "composite_runtime_tail_plume_vs_sheet.png",
+      "hash": "e359e57f3fdefb47548d13fd3ee6d45d6f54cf50f9ae841865ae8e22ea5f68b6"
+    },
+    {
+      "name": "composite_runtime_three_quarter_vs_sheet.png",
+      "hash": "672fcebb2e892fb2b7b425d42ca27195a1b9c5cc3dd694807336fb8d538fe8c8"
+    },
+    {
+      "name": "composite_side_vs_sheet.png",
+      "hash": "c36886601de574e9ece8297b3011a2dead588815975f0845550187a422b7db10"
+    },
+    {
+      "name": "composite_sprite_vs_sheet.png",
+      "hash": "c0c7d3b51aee61951acc3f409e2c756c5fa75b727f304e8395cb637626354f2d"
+    },
+    {
+      "name": "composite_tail_plume_vs_sheet.png",
+      "hash": "096c610705027cfe51d739201e6ad0360cadcc3e20bc597f923070b7ed3ce1f1"
+    },
+    {
+      "name": "composite_three_quarter_vs_sheet.png",
+      "hash": "d82aeaaff262b3f7c81b1c3a534a9eed85925835a83f99c5ec9617352bc33e79"
+    },
+    {
+      "name": "luceras_surface.glb",
+      "hash": "126784105e39f74beeb89df398d2e65c7376d6934e9346aadf415472755dd3b3"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "b5be16a30e558310f9963cd431f7bc86908de1b79fc5f41b59e64ec6c5dad26c"
+    },
+    {
+      "name": "report.json",
+      "hash": "fcb4c17fb719d1ed7e86cd3490e8a7b3dd1ef3383bcb2b3c2cc34210044c0498"
+    },
+    {
+      "name": "runtime_check.json",
+      "hash": "cbcdf5d7562421eb5c5dcc918285acf086854fc3bed3a191df2d80c7c0eb68af"
+    },
+    {
+      "name": "runtime_front.png",
+      "hash": "1bad7bbeddfe4735e355e5f35992fa41b439f980ad3851e983b48bbb5e139262"
+    },
+    {
+      "name": "runtime_head.png",
+      "hash": "9edeae99e81d3c4546a066edfefe5193ecbadb36bea81a31c3ecab8ef90d9cb6"
+    },
+    {
+      "name": "runtime_hind_leg.png",
+      "hash": "cce29be7e2d954dd7721cb886678fc39fb1cdc8254fd89a1e2b287f4002016c8"
+    },
+    {
+      "name": "runtime_motion_00.png",
+      "hash": "32a59c3fd0c45fa529e52105f510f52b991ce019accdfbec8a0e6900ec776145"
+    },
+    {
+      "name": "runtime_motion_01.png",
+      "hash": "00898163e2dcfb6ecb2ce1a75a7a60fe131fc0fcfcf7b2d3a3fa2e9b67c893a3"
+    },
+    {
+      "name": "runtime_motion_02.png",
+      "hash": "c22184b6faa58898cae0f2b175139c057029503e3f2a3ccddae91bcbb24bd2e5"
+    },
+    {
+      "name": "runtime_motion_03.png",
+      "hash": "c8ef45810b3b65c9214d76df2a8934a298a1309d97b69cba414a15110ba2e7c9"
+    },
+    {
+      "name": "runtime_motion_04.png",
+      "hash": "db3fd3e816ec4805fbb51fd1b67757228d5ab71554140f9926a29bb4952feb95"
+    },
+    {
+      "name": "runtime_motion_05.png",
+      "hash": "1c3979f36d9331f5a3e983de7770b158c491c2c56f9188480b6becf7ce4ff5f6"
+    },
+    {
+      "name": "runtime_motion_06.png",
+      "hash": "dd2d83779367dad35789b31e496acd6ab02d57446a3d1b1e1c7d783c341a68c7"
+    },
+    {
+      "name": "runtime_motion_07.png",
+      "hash": "9c77a1d9a441b4674439730eee0029c24ffdd7413fca7fe7c1e37c2d93e60db2"
+    },
+    {
+      "name": "runtime_motion_08.png",
+      "hash": "b92cdcf8c90d3d8573d72f832f9c5b9ca675a9ee28dd54b798af35ff2ccb35c5"
+    },
+    {
+      "name": "runtime_motion_09.png",
+      "hash": "5ae870e89f8e50c817da5fa018cdefa2cb9e72789647a18e8e42fdbd2bd11f40"
+    },
+    {
+      "name": "runtime_motion_10.png",
+      "hash": "b34ad3be974eee3ae89da2d7e8e1511890ac09c1d7f90595aa52dda8d2b5fe07"
+    },
+    {
+      "name": "runtime_motion_11.png",
+      "hash": "8f8178e7f116f3e17574adedf31eb5cb160958431bdcd14de5a1482a17cd0ab0"
+    },
+    {
+      "name": "runtime_motion_12.png",
+      "hash": "cb320f9e1968367d58638dd79f31a535a89345b2922171b6460f43000ab36c05"
+    },
+    {
+      "name": "runtime_motion_13.png",
+      "hash": "0da49bd355c5b4b2c84c9b47c3ce7c490cde1b898918b8f0471510621ca0c2c1"
+    },
+    {
+      "name": "runtime_motion_14.png",
+      "hash": "8c33c40842a35777e0d92d1be53bb6f722a9be6bfda346f5462a5c7a421bc406"
+    },
+    {
+      "name": "runtime_motion_15.png",
+      "hash": "7dac995a35a294d163a6f2704573ac3f187fbe034b16e8e10273d6920c24f3cb"
+    },
+    {
+      "name": "runtime_motion_16.png",
+      "hash": "d2c86aff0a0f889d13d06279ecc666d0ab449638ad6ed22c34c319f823fdcc77"
+    },
+    {
+      "name": "runtime_motion_17.png",
+      "hash": "c65168504e8a05f29075ba891c417a2a205409cd56145150e368578eadfee61b"
+    },
+    {
+      "name": "runtime_motion_18.png",
+      "hash": "59584afef563d4bd629bd9fa206ad528a90946ccaa14f7e47b4daffd81a538e9"
+    },
+    {
+      "name": "runtime_motion_19.png",
+      "hash": "6e29c6603af92414b030bf200a162c156d186da4d6c874db8ec0c6610c50373a"
+    },
+    {
+      "name": "runtime_motion_20.png",
+      "hash": "b2d04d1b690358047ec67da41538d17e68b892ee79d9f01019b883bbf7ad1cfa"
+    },
+    {
+      "name": "runtime_motion_21.png",
+      "hash": "5801756f959eca6fcf7f6b90e5a11704b53e725d40f137bd24b7dd89d0d6c958"
+    },
+    {
+      "name": "runtime_motion_22.png",
+      "hash": "9ebc42340fa1e7015d9c22ac152e7e647bc83844a2760917cc14f7013e26910b"
+    },
+    {
+      "name": "runtime_motion_23.png",
+      "hash": "7d214cec15f7689950398e1b12db7d985383b0e07a10432f674b018e0cb4b0ca"
+    },
+    {
+      "name": "runtime_phone.png",
+      "hash": "6e9d704a4a0f943309f2ea894a6ce2922ef73e3e2df5965f7ba8ceda79c07efd"
+    },
+    {
+      "name": "runtime_side.png",
+      "hash": "c36d0def023eae590585578c87719af64f03e48257617897bb0a3d183e3415de"
+    },
+    {
+      "name": "runtime_sprite.png",
+      "hash": "811189f5783c36c79a0b3c8d93432c84b669218c2fd6339d86237738e1f4abb3"
+    },
+    {
+      "name": "runtime_tail_plume.png",
+      "hash": "f49676215a9dc2c8fcaa69e49c2593f7fd1f72279e3198fc240d3b7658bbcbce"
+    },
+    {
+      "name": "runtime_three_quarter.png",
+      "hash": "1e627e365e3a0710ad7b089220763dd7bd0704649622977b2748ef857a36b322"
+    },
+    {
+      "name": "surface.blend",
+      "hash": "20a7e1ebcf892b1cf7589a4751146665d05fcacbc7aa6d451309f96d2598347d"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "composite_front_vs_sheet.png",
+        "hash": "282a450ce280154e91cac4cbb259fa8f80920c1a50ee96fe274abd287cdce8df"
+      },
+      {
+        "name": "composite_head_vs_sheet.png",
+        "hash": "25f795a964f2beeba844ae28801db906a5e96f64d22632d09eac28c381321837"
+      },
+      {
+        "name": "composite_hind_leg_vs_sheet.png",
+        "hash": "c7c1ca5141d6b9f13d256b4a4d2fd4b2b3aebb727a6b32369850c915cecc4bbc"
+      },
+      {
+        "name": "composite_runtime_front_vs_sheet.png",
+        "hash": "cd88e23e5fd2c6c9ceb405d06a93e21f62a4c2e67bc4e9bd2dbd9be3b27f576e"
+      },
+      {
+        "name": "composite_runtime_head_vs_sheet.png",
+        "hash": "5b7c155555620b875058149935fd37717fd984a769da9dfb2b38a6a81c727cde"
+      },
+      {
+        "name": "composite_runtime_hind_leg_vs_sheet.png",
+        "hash": "dba8e7c5c69dee341323fd2c2339f1c82c8d3057dbfc9ae02a4ef4b95957a997"
+      },
+      {
+        "name": "composite_runtime_phone_vs_sheet.png",
+        "hash": "4069e96ad7af8c933e27b28f309ed1bc4a340876d9ddf63b0b5676d5ff7f2346"
+      },
+      {
+        "name": "composite_runtime_side_vs_sheet.png",
+        "hash": "8493fafe9e9e802585b6298f7666860bd1236bb0f23e410b8387dae83534ef54"
+      },
+      {
+        "name": "composite_runtime_sprite_vs_sheet.png",
+        "hash": "0228f02f11beb6b992503506da36757a56c86dcc6564286918791acd40f56aad"
+      },
+      {
+        "name": "composite_runtime_tail_plume_vs_sheet.png",
+        "hash": "e359e57f3fdefb47548d13fd3ee6d45d6f54cf50f9ae841865ae8e22ea5f68b6"
+      },
+      {
+        "name": "composite_runtime_three_quarter_vs_sheet.png",
+        "hash": "672fcebb2e892fb2b7b425d42ca27195a1b9c5cc3dd694807336fb8d538fe8c8"
+      },
+      {
+        "name": "composite_side_vs_sheet.png",
+        "hash": "c36886601de574e9ece8297b3011a2dead588815975f0845550187a422b7db10"
+      },
+      {
+        "name": "composite_sprite_vs_sheet.png",
+        "hash": "c0c7d3b51aee61951acc3f409e2c756c5fa75b727f304e8395cb637626354f2d"
+      },
+      {
+        "name": "composite_tail_plume_vs_sheet.png",
+        "hash": "096c610705027cfe51d739201e6ad0360cadcc3e20bc597f923070b7ed3ce1f1"
+      },
+      {
+        "name": "composite_three_quarter_vs_sheet.png",
+        "hash": "d82aeaaff262b3f7c81b1c3a534a9eed85925835a83f99c5ec9617352bc33e79"
+      },
+      {
+        "name": "luceras_surface.glb",
+        "hash": "126784105e39f74beeb89df398d2e65c7376d6934e9346aadf415472755dd3b3"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "b5be16a30e558310f9963cd431f7bc86908de1b79fc5f41b59e64ec6c5dad26c"
+      },
+      {
+        "name": "report.json",
+        "hash": "fcb4c17fb719d1ed7e86cd3490e8a7b3dd1ef3383bcb2b3c2cc34210044c0498"
+      },
+      {
+        "name": "runtime_check.json",
+        "hash": "cbcdf5d7562421eb5c5dcc918285acf086854fc3bed3a191df2d80c7c0eb68af"
+      },
+      {
+        "name": "runtime_front.png",
+        "hash": "1bad7bbeddfe4735e355e5f35992fa41b439f980ad3851e983b48bbb5e139262"
+      },
+      {
+        "name": "runtime_head.png",
+        "hash": "9edeae99e81d3c4546a066edfefe5193ecbadb36bea81a31c3ecab8ef90d9cb6"
+      },
+      {
+        "name": "runtime_hind_leg.png",
+        "hash": "cce29be7e2d954dd7721cb886678fc39fb1cdc8254fd89a1e2b287f4002016c8"
+      },
+      {
+        "name": "runtime_motion_00.png",
+        "hash": "32a59c3fd0c45fa529e52105f510f52b991ce019accdfbec8a0e6900ec776145"
+      },
+      {
+        "name": "runtime_motion_01.png",
+        "hash": "00898163e2dcfb6ecb2ce1a75a7a60fe131fc0fcfcf7b2d3a3fa2e9b67c893a3"
+      },
+      {
+        "name": "runtime_motion_02.png",
+        "hash": "c22184b6faa58898cae0f2b175139c057029503e3f2a3ccddae91bcbb24bd2e5"
+      },
+      {
+        "name": "runtime_motion_03.png",
+        "hash": "c8ef45810b3b65c9214d76df2a8934a298a1309d97b69cba414a15110ba2e7c9"
+      },
+      {
+        "name": "runtime_motion_04.png",
+        "hash": "db3fd3e816ec4805fbb51fd1b67757228d5ab71554140f9926a29bb4952feb95"
+      },
+      {
+        "name": "runtime_motion_05.png",
+        "hash": "1c3979f36d9331f5a3e983de7770b158c491c2c56f9188480b6becf7ce4ff5f6"
+      },
+      {
+        "name": "runtime_motion_06.png",
+        "hash": "dd2d83779367dad35789b31e496acd6ab02d57446a3d1b1e1c7d783c341a68c7"
+      },
+      {
+        "name": "runtime_motion_07.png",
+        "hash": "9c77a1d9a441b4674439730eee0029c24ffdd7413fca7fe7c1e37c2d93e60db2"
+      },
+      {
+        "name": "runtime_motion_08.png",
+        "hash": "b92cdcf8c90d3d8573d72f832f9c5b9ca675a9ee28dd54b798af35ff2ccb35c5"
+      },
+      {
+        "name": "runtime_motion_09.png",
+        "hash": "5ae870e89f8e50c817da5fa018cdefa2cb9e72789647a18e8e42fdbd2bd11f40"
+      },
+      {
+        "name": "runtime_motion_10.png",
+        "hash": "b34ad3be974eee3ae89da2d7e8e1511890ac09c1d7f90595aa52dda8d2b5fe07"
+      },
+      {
+        "name": "runtime_motion_11.png",
+        "hash": "8f8178e7f116f3e17574adedf31eb5cb160958431bdcd14de5a1482a17cd0ab0"
+      },
+      {
+        "name": "runtime_motion_12.png",
+        "hash": "cb320f9e1968367d58638dd79f31a535a89345b2922171b6460f43000ab36c05"
+      },
+      {
+        "name": "runtime_motion_13.png",
+        "hash": "0da49bd355c5b4b2c84c9b47c3ce7c490cde1b898918b8f0471510621ca0c2c1"
+      },
+      {
+        "name": "runtime_motion_14.png",
+        "hash": "8c33c40842a35777e0d92d1be53bb6f722a9be6bfda346f5462a5c7a421bc406"
+      },
+      {
+        "name": "runtime_motion_15.png",
+        "hash": "7dac995a35a294d163a6f2704573ac3f187fbe034b16e8e10273d6920c24f3cb"
+      },
+      {
+        "name": "runtime_motion_16.png",
+        "hash": "d2c86aff0a0f889d13d06279ecc666d0ab449638ad6ed22c34c319f823fdcc77"
+      },
+      {
+        "name": "runtime_motion_17.png",
+        "hash": "c65168504e8a05f29075ba891c417a2a205409cd56145150e368578eadfee61b"
+      },
+      {
+        "name": "runtime_motion_18.png",
+        "hash": "59584afef563d4bd629bd9fa206ad528a90946ccaa14f7e47b4daffd81a538e9"
+      },
+      {
+        "name": "runtime_motion_19.png",
+        "hash": "6e29c6603af92414b030bf200a162c156d186da4d6c874db8ec0c6610c50373a"
+      },
+      {
+        "name": "runtime_motion_20.png",
+        "hash": "b2d04d1b690358047ec67da41538d17e68b892ee79d9f01019b883bbf7ad1cfa"
+      },
+      {
+        "name": "runtime_motion_21.png",
+        "hash": "5801756f959eca6fcf7f6b90e5a11704b53e725d40f137bd24b7dd89d0d6c958"
+      },
+      {
+        "name": "runtime_motion_22.png",
+        "hash": "9ebc42340fa1e7015d9c22ac152e7e647bc83844a2760917cc14f7013e26910b"
+      },
+      {
+        "name": "runtime_motion_23.png",
+        "hash": "7d214cec15f7689950398e1b12db7d985383b0e07a10432f674b018e0cb4b0ca"
+      },
+      {
+        "name": "runtime_phone.png",
+        "hash": "6e9d704a4a0f943309f2ea894a6ce2922ef73e3e2df5965f7ba8ceda79c07efd"
+      },
+      {
+        "name": "runtime_side.png",
+        "hash": "c36d0def023eae590585578c87719af64f03e48257617897bb0a3d183e3415de"
+      },
+      {
+        "name": "runtime_sprite.png",
+        "hash": "811189f5783c36c79a0b3c8d93432c84b669218c2fd6339d86237738e1f4abb3"
+      },
+      {
+        "name": "runtime_tail_plume.png",
+        "hash": "f49676215a9dc2c8fcaa69e49c2593f7fd1f72279e3198fc240d3b7658bbcbce"
+      },
+      {
+        "name": "runtime_three_quarter.png",
+        "hash": "1e627e365e3a0710ad7b089220763dd7bd0704649622977b2748ef857a36b322"
+      },
+      {
+        "name": "surface.blend",
+        "hash": "20a7e1ebcf892b1cf7589a4751146665d05fcacbc7aa6d451309f96d2598347d"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 49.1,
+    "codexTokens": "398,141",
+    "note": "Surface pass 3: coat values measured within 2 of the sheet, pattern as the sheet, horns matte with crests. Critic read: the creature reads as the sheet's coloring; the coat reads short and smooth where the sheet is shaggy; the plume edge has a white jagged halo; small card notches underneath. Presented to Nick with the shagginess question."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-16T16:17:43Z",
-  "briefSha256": "583fb057cf87609b479212eb28c77f282f07853e2dfb3485f7dea359ce54d55f"
+  "briefSha256": "583fb057cf87609b479212eb28c77f282f07853e2dfb3485f7dea359ce54d55f",
+  "checks": [],
+  "reportedAt": "2026-10-16T17:07:56Z"
 }

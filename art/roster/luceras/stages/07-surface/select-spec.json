@@ -1,0 +1,73 @@
+{
+ "title": "Luceras Surface",
+ "heading": "Luceras: the look (standard finish)",
+ "lede": "Stage 7 of 11. The coat, pattern, fur, horns, eyes and claws, rendered in the same three.js renderer the game uses on phones, beside your model sheet. Coat colors are measured to match the sheet within a couple of steps; the pattern follows it. The open question is how shaggy the fur should be in the game: the sheet is a painting with fur in every strand; this build carries the fur in the texture plus tufts along the outline. Approve the look, or say what needs work and in which view.",
+ "fallback": "Approvals cannot be saved from this view; reply in chat.",
+ "compositeEmpty": "Confirm closes the standard look; next come the four finishes and the lighting style, both yours to pick.",
+ "confirmed": "Confirmed; finishes and lighting style come next.",
+ "fold": {
+  "title": "What the fur costs",
+  "text": "A phone draws fur three ways: painted into the texture (cheap, what most of the coat is now), see-through tufts along the outline (what the chest, belly, legs and plume have, raised to 15,000 triangles for this), or stacked see-through shells over the whole body (the shaggiest, and the most expensive on phones because every shell is drawn over the last). More shagginess means more tufts or shells; the frame cost is measured on your phone at the export stage either way. Three Codex passes so far: about 3 hours, about 980K Codex tokens."
+ },
+ "order": [
+  "look"
+ ],
+ "elements": {
+  "look": {
+   "name": "Standard look",
+   "mode": "gallery",
+   "question": "Is this the look, and is the fur shaggy enough for the game?",
+   "judge": [
+    "Phone size: does it read as your sheet's creature?",
+    "Coat color and pattern: right?",
+    "Fur: shaggy enough, or push it further?",
+    "Horns, eyes, nose, plume: right?"
+   ],
+   "reading": [],
+   "recommend": null,
+   "note": "Known: the coat reads shorter and smoother than the sheet's shaggy fur; the plume edge has a slightly jagged white rim; a few small dark notches under the belly at close range. Whiskers and claws are in.",
+   "views": [
+    {
+     "label": "Phone size",
+     "blob": "4069e96ad7af8c933e27b28f309ed1bc4a340876d9ddf63b0b5676d5ff7f2346",
+     "caption": "At phone size in the game renderer, left; your sheet, right"
+    },
+    {
+     "label": "Side",
+     "blob": "8493fafe9e9e802585b6298f7666860bd1236bb0f23e410b8387dae83534ef54",
+     "caption": "Game renderer left, sheet right"
+    },
+    {
+     "label": "Front",
+     "blob": "cd88e23e5fd2c6c9ceb405d06a93e21f62a4c2e67bc4e9bd2dbd9be3b27f576e",
+     "caption": "Game renderer left, sheet right"
+    },
+    {
+     "label": "Three-quarter",
+     "blob": "672fcebb2e892fb2b7b425d42ca27195a1b9c5cc3dd694807336fb8d538fe8c8",
+     "caption": "Game renderer left, sheet right"
+    },
+    {
+     "label": "Head",
+     "blob": "5b7c155555620b875058149935fd37717fd984a769da9dfb2b38a6a81c727cde",
+     "caption": "Game renderer left, sheet right"
+    },
+    {
+     "label": "Tail plume",
+     "blob": "e359e57f3fdefb47548d13fd3ee6d45d6f54cf50f9ae841865ae8e22ea5f68b6",
+     "caption": "Game renderer left, sheet right"
+    },
+    {
+     "label": "Hind leg",
+     "blob": "dba8e7c5c69dee341323fd2c2339f1c82c8d3057dbfc9ae02a4ef4b95957a997",
+     "caption": "Game renderer left, sheet right"
+    },
+    {
+     "label": "Sprite size",
+     "blob": "0228f02f11beb6b992503506da36757a56c86dcc6564286918791acd40f56aad",
+     "caption": "192 px, left; sheet, right"
+    }
+   ]
+  }
+ }
+}
