@@ -1,12 +1,12 @@
 # Mac mini Blender compute
 
-Implemented 2026-10-16. This is interactive art compute, not an additional CI runner. No CI registration, runner labels, VM sizing or WSL memory configuration was changed.
+Implemented 2026-10-16. This is interactive art compute, not an additional CI runner. No CI registration, runner labels, CI VM sizing or WSL memory configuration was changed. The compute VM was resized with Nick's approval.
 
 ## Route and installation
 
 The Intel mini uses the same official Linux x86_64 Blender **5.2.2 LTS**, build **d13f752e3b9c**, as the PC's WSL installation. Blender's [requirements](https://www.blender.org/download/requirements/) say 4.5 LTS is the last Intel macOS release; the [5.2 release directory](https://download.blender.org/release/Blender5.2/) supplies Linux x64 and macOS ARM64, with no Intel macOS package. A native 4.5 install would not meet the exact-version requirement.
 
-Reused the existing idle Colima `default` VM: x86_64, 3 vCPUs, 4 GiB RAM, Docker. The separate surfaced-art CI Lima VM remains at its existing 10 vCPUs and 8 GiB. Adding an 8-thread compute VM would allocate more memory and CPU alongside CI, so this initial installation conservatively uses three compute threads. The PC exposes 24 WSL CPUs; this deployment has one eighth of that thread capacity, rather than the brief's estimated half.
+Reused the existing Colima `default` VM: x86_64, Docker. Nick approved raising it from 3 vCPUs/4 GiB to **8 vCPUs/6 GiB** on 2026-10-16. Blender containers receive **8 CPUs and 5632 MiB (5.5 GiB, about 5.9 GB)**, leaving 512 MiB for the guest OS. The separate surfaced-art CI Lima VM remains at its existing 10 vCPUs and 8 GiB. The PC exposes 24 WSL CPUs. CPU quotas are ceilings, not reservations; CI retains priority through nice values and container pausing.
 
 The mini already had Colima, Lima and Docker under `~/.mini-runner/`. Noninteractive SSH must source `~/.mini-runner/env.sh`. The installer explicitly selects `unix://$HOME/.colima/default/docker.sock`; it never changes the Docker context or selects the CI VM's Docker daemon.
 
@@ -22,14 +22,16 @@ From the new worktree:
 
 ```powershell
 python scripts/mini_blender/install.py
+# Explicitly resize the idle compute VM to the approved caps:
+python scripts/mini_blender/install.py --resize-compute
 ```
 
-This copies the Dockerfile and supervisor under `~/.mini-blender/`, builds `mini-blender:5.2.2`, checks the downloaded Blender archive against the publisher's SHA-256 file, and prints the installed build. It requires the existing Colima VM to be running. It does not use sudo, Homebrew, a paid service, a license purchase, or a new VM. The reference checkout had unrelated uncommitted hook edits, so the prescribed worktree command refused; a fresh fetch and equivalent `git worktree add` created this sibling without changing those files.
+This copies the Dockerfile, supervisor and inferred-asset guard under `~/.mini-blender/`, builds `mini-blender:5.2.2`, checks the downloaded Blender archive against the publisher's SHA-256 file, and prints the installed build. Without `--resize-compute`, it requires the existing Colima VM to be running. With that explicit option, it refuses to resize when a compute container is active, stops and restarts only Colima at 8 CPUs/6 GiB with auto-activation disabled, and reapplies low priority. It does not use sudo, Homebrew, a paid service, a license purchase, or a new VM. The reference checkout had unrelated uncommitted hook edits, so the prescribed worktree command refused; a fresh fetch and equivalent `git worktree add` created this sibling without changing those files.
 
 ## Resource and scheduling policy
 
 - One remote compute job holds an OS `flock` on `~/.mini-blender/compute.lock`. Jobs queue there independently of the PC slot.
-- Each container has a 3-CPU quota, 3 GiB memory limit, equal memory-plus-swap limit (no swap), low CPU shares, 256-PID limit, no network, dropped capabilities, and no exposed GPU. Blender runs headless with three threads and nice 15.
+- Each container has an 8-CPU quota, 5632 MiB memory limit, equal memory-plus-swap limit (no swap), low CPU shares, 256-PID limit, no network, dropped capabilities, and no exposed GPU. Blender runs headless with eight threads and nice 15.
 - On every job, the supervisor lowers both the Colima hostagent and the process holding that VM's disk to nice 15. Apple's VZ CPU worker is a separate XPC process with PPID 1; lowering only the hostagent is insufficient. The CI worker's distinct disk keeps it out of this selection.
 - The supervisor confirms a live `Runner.Listener` in the CI VM, then checks for `Runner.Worker`. Active CI pauses the compute container and resumes it after CI becomes idle. Missing listeners, unknown status and probe errors also yield compute. Checks occur roughly every 2 seconds between work, with a 15-second timeout per probe and 5-second polling while paused. This is bounded cooperative priority, not instantaneous preemption or memory reclamation: a paused container still holds RAM.
 - A 24-hour deadline covers queueing, CI waits and execution. The client sends heartbeat bytes. EOF or 45 seconds without a heartbeat cancels compute. Cancellation waits for the supervisor's lifetime lock and confirms container removal before deleting the mount. A daemon failure retains the workspace and reports the cleanup failure.
@@ -79,9 +81,22 @@ Evidence includes `blender.log` and `result.json`. Remote results contain wall t
 
 ## Shared slot adoption
 
-The shared `C:/dev/src/xalians-creature-pipeline/art/pipeline/slot/slot.py` belongs to another session and was not edited. The second-capacity route is usable now through `scripts/mini-blender.py --route auto`, reading that slot's actual lock files.
+The shared `C:/dev/src/xalians-creature-pipeline/art/pipeline/slot/slot.py` belongs to another session and was not edited. This branch contains a copy with a change limited to `cmd_run`. Existing `slot.py run blender ... -- <command>` callers need no command changes after that branch adopts the helper files and patch. A free slot runs locally. A busy slot attempts inference and spills to `mini`; unsafe inference or unavailable transport logs a reason and resumes the original local wait. A genuine remote Blender failure returns failure. GPU calls stay local. Set `XALIANS_MINI=0` to disable automatic spillover or `XALIANS_MINI_EVIDENCE` to select its evidence directory.
 
-For the slot owner to expose it through the existing command, add an explicit manifest-aware subcommand such as `slot.py run-job <manifest> --evidence <dir>`. Delegate it to this runner with `--route auto --slot <that slot.py>`. Do not wrap that delegation in `slot.py run blender`, since it would reserve a local slot even when the job runs remotely. Keep the existing acquire/release/run/gpu behavior unchanged. Arbitrary existing `slot.py run blender -- <command>` calls cannot spill automatically: the command lacks a declaration of dependencies, output paths and mappings. Callers must supply the manifest or migrate to the new entry point. Raw GPU jobs remain local.
+Inference accepts direct Blender 5.2.2 commands, including `wsl -d Ubuntu --exec <blender>`, with `-b`. It gathers positional blends, every `--python` script, recursively imported sibling modules/packages, existing named configuration inputs, and explicit output locations. Script-relative resources and resolvable filesystem/Blender/NumPy reads are included. Named input folders may contain only recognized data files, at most 256 files/2 GiB in total. Windows and WSL paths map into a private drive mirror, preserving the original working directory and relative layout. The remote runner owns the eight-thread cap and supplies a Python failure exit code if the caller omitted one.
+
+Analysis is conservative static inference for trusted local scripts, not a Python sandbox or a proof of arbitrary program equivalence. Shell wrappers, dynamic imports, process/network calls, unresolved paths, stateful append/update/exclusive writes, empty input directories, and reads from existing output locations fall back locally. A remote Blender preflight opens every inferred blend and requires its external resources to be declared and present; unprovided assets, image sequences, UDIM and disk simulation caches require a manifest or local execution. Preflight failure returns to the local wait without copying partial outputs. Explicit manifests remain available for jobs beyond the inferred subset.
+
+After this follow-up PR merges, the creature-pipeline owner can adopt without replacing their slot file:
+
+```powershell
+git fetch origin
+git restore --source origin/main -- scripts/mini_blender scripts/mini-blender.py docs/design/mini-blender-slot-adoption.patch
+git apply --check docs/design/mini-blender-slot-adoption.patch
+git apply docs/design/mini-blender-slot-adoption.patch
+```
+
+Run those commands in the creature-pipeline branch, review its current local changes first, and resolve any failed patch check against the small `cmd_run` diff. The patch is against the copied slot baseline, rather than an instruction to overwrite another session's file. Adopt helpers and slot change together. Do not wrap the manifest runner in `slot.py run blender`, which would reserve a local slot for remote work.
 
 ## Reproducing the fur comparison
 
@@ -98,7 +113,7 @@ python scripts/mini_blender/benchmark.py compare
 
 Run the two routes sequentially when using these same output paths. A busy local slot must become available before the local command succeeds. The comparison helper requires Pillow and NumPy; the runner itself uses Python's standard library. The job is the real `body-front` camera at 768x1024, 32 Cycles CPU samples with denoising, T7 palette and current eyeliner, retaining all 420,420 fur strands.
 
-Measured results (one run per machine under ambient load):
+Initial three-thread results (one run per machine under ambient load, retained as the baseline):
 
 | Measurement | PC WSL | Intel mini |
 |---|---:|---:|
@@ -115,7 +130,7 @@ The mini's whole job was about 5.1 times slower; it adds capacity while the PC i
 
 The full fur run used image `7360373764ec`. While it ran, the final image added forwarding of explicitly user-generated SIGILL; the kernel RDTSCP path used by Cycles is unchanged. Final-image timer tests cover this added negative case, and final-image denoised cube and container-control checks exercise the installed setup. Exact image and shim hashes are in [installation evidence](mini-blender-evidence/installation.json).
 
-Validation: 19 regression tests pass in WSL, and the supervisor suite passes on the mini. Real-container checks cover a denoised Cycles cube, a simulated five-second CI pause and resume, intentional Blender failure with diagnostics, and folder cleanup. The long queue wait observed by the second job while the fur container held the lock confirms remote serialization. The preliminary real fur rerun was canceled through the control path; its container and folder were removed before the successful run. Windows local-worker startup and a real busy-local-slot spillover also returned the expected Blender build.
+Initial validation: 19 regression tests passed in WSL, and the supervisor suite passed on the mini. Real-container checks covered a denoised Cycles cube, a simulated five-second CI pause and resume, intentional Blender failure with diagnostics, and folder cleanup. The long queue wait observed by the second job while the fur container held the lock confirmed remote serialization. The preliminary real fur rerun was canceled through the control path; its container and folder were removed before the successful run. Windows local-worker startup and a real busy-local-slot spillover also returned the expected Blender build.
 
 ```powershell
 wsl -d Ubuntu --exec python3 -m unittest discover -s /mnt/c/dev/src/xalians-mini-blender-compute/scripts/mini_blender -v
@@ -123,6 +138,31 @@ scp scripts/mini_blender/live_checks.py mini:.mini-blender/live_checks.py
 ssh mini 'python3 .mini-blender/live_checks.py'
 ```
 
+## Eight-thread follow-up and command-only proof
+
+The rerun used the exact same eight-file input snapshot and unchanged PC baseline. A command-only `slot.py run blender --wait 0 -- wsl -d Ubuntu --exec <blender> ...` invocation inferred eight inputs and one output folder, passed blend-resource preflight, rendered on the mini and copied outputs back. No manifest was supplied to the slot. At dispatch, the production shared lock directory held the Akinza session's exclusive GPU-class token, owned by `Akinza fur serial CPU Blender`; that token blocks local Blender acquisition. The proof did not modify or release that other session's token.
+
+| Measurement | PC baseline | Mini, 3 threads | Mini, 8 threads |
+|---|---:|---:|---:|
+| Whole job wall time | 179.03 s | 915.20 s | **659.61 s (10m 59.6s)** |
+| Script including load and setup | 178.3 s | 909.5 s | 648.6 s |
+| Render only | 25.4 s | 426.3 s | **229.1 s (3m 49.1s)** |
+| Client including transfers | N/A | 919.45 s | 665.48 s |
+| Peak Blender RSS | Not measured | 2,443,864 KiB | **2,465,412 KiB (2.35 GiB)** |
+| CI pause | N/A | 0 s | 0 s |
+
+The new whole-job measurement includes the added blend preflight. The phase RSS values are 871,524 KiB for preflight and 2,465,412 KiB for rendering; the reported peak is their maximum, not their sum. This run reduced whole-job time by about 28% and render time by about 46% against the three-thread run. Ambient load and setup variation remain part of these single-run measurements. The mini still takes about 3.7 times the PC's whole-job time.
+
+Decoded output remains pixel-identical to the PC: **zero differing pixels, mean and maximum channel difference zero**, at 768x1024 RGB. The full image was opened and inspected. [Measurements](mini-blender-followup-evidence/comparison.json), [command-only dispatch proof](mini-blender-followup-evidence/command-only-proof.json), [inferred job](mini-blender-followup-evidence/inferred-job.json), [render log](mini-blender-followup-evidence/mini-fur-render.txt) and [live caps](mini-blender-followup-evidence/installation.json) preserve the result and image ID. The final inference code produces the same manifest as the executed job.
+
+Follow-up validation passes 37 tests in WSL and 25 on Windows, with 12 POSIX-only skips on Windows. A real unsafe inline-Python command logged its reason and followed local timeout, without launching mini work. The independent review and regression evidence are in [review](mini-blender-followup-evidence/review.md) and [verification](mini-blender-followup-evidence/verification.json). Real container checks repeat CI pause/resume, diagnostic failure and cleanup at the new caps, and verify that an undeclared blend image stops preflight before the render script executes.
+
+## Authorized Messages cleanup
+
+The same follow-up authorized clearing local Messages history. `CloudKitSyncingEnabled` in `com.apple.madrid.plist` was verified false immediately before deletion and again afterward. Messages.app was closed. History databases, attachments, archives, drafts and content caches were cleared, preserving preferences byte-for-byte and leaving iMessage sign-in alone. The remaining Sync remote-record and regenerated LiteSegment content tables have zero rows. No message contents were exported.
+
+Free space immediately around cleanup rose from **52,540,493,824 to 98,696,671,232 bytes**, about **48.9 to 91.9 GiB**, an increase of 43.0 GiB. Later render uploads and ordinary activity can change available space. See [cleanup](mini-blender-followup-evidence/messages-cleanup.json) and [final read-only verification](mini-blender-followup-evidence/messages-final-verification.json).
+
 ## Limits
 
-CPU-only capacity is a throughput addition when the PC queue is occupied, not a promise that the mini renders faster. Three threads are intentionally conservative. Jobs over 3 GiB fail rather than borrowing CI's memory; Raising caps requires reviewing the host budget. Matching Blender binaries do not guarantee identical pixels across CPU instruction sets or denoiser implementations. Embedded absolute paths, undeclared dependencies, programs other than Blender and GPU jobs require caller adaptation. No always-on launch service or additional CI runner was registered. After a mini reboot, the existing Colima startup must finish before jobs can run; CI status must be readable for compute to proceed.
+CPU-only capacity is a throughput addition when the PC queue is occupied, not a promise that the mini renders faster. Jobs over 5.5 GiB fail rather than borrowing CI's memory. Matching Blender binaries do not guarantee identical pixels across CPU instruction sets or denoiser implementations. Embedded absolute paths, unresolved dependencies, programs other than Blender and GPU jobs require caller adaptation or local fallback. No always-on launch service or additional CI runner was registered. After a mini reboot, the existing Colima startup must finish before jobs can run; CI status must be readable for compute to proceed.

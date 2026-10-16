@@ -1,0 +1,18 @@
+{
+  "syncEnabled": false,
+  "remainingFolderItems": {
+    "Attachments": 0,
+    "Archive": 0,
+    "Drafts": 0
+  },
+  "historyDatabases": [],
+  "databaseRowCounts": {},
+  "messagesAppRunning": false,
+  "freeBytes": 98447691776,
+  "mutationsPerformed": false,
+  "remainingContentStoreRows": {
+    "ZREMOTERECORD": 0,
+    "ZREMOTERECORDDATA": 0,
+    "ZLITEMESSAGESEGMENT": 0
+  }
+}

@@ -156,7 +156,11 @@ def mini(job, host, evidence):
         archive = Path(scratch) / 'inputs.tar'
         config = Path(scratch) / 'job.json'
         config.write_text(json.dumps({'args': [job.arg(a, remote=True) for a in job.config['args']],
-                                     'outputs': [p for _, p in job.outputs]}), encoding='utf-8')
+                                     'outputs': [p for _, p in job.outputs],
+                                     'inferred': job.config.get('inferred', False),
+                                     'blendInputs': ['/job/' + job.mapped(p) for p in job.config.get('blend_inputs', [])],
+                                     'inputPaths': ['/job/' + p for _, p in job.inputs],
+                                     'cwd': '/job/' + job.mapped(job.config['cwd']) if job.config.get('cwd') else '/job'}), encoding='utf-8')
         with tarfile.open(archive, 'w') as tar:
             tar.add(config, arcname='job.json')
             for path, target in job.inputs:

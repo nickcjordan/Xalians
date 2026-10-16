@@ -1,0 +1,20 @@
+{
+  "returncode": 3,
+  "log": "mini spillover unsafe/unavailable: inline Python, console or external Python environment requires a manifest; waiting for local Blender slot\ntimeout waiting for blender slot\n",
+  "heldAtDispatch": {
+    "blender": [],
+    "gpu": [
+      {
+        "token": "gpu:0:6e238161a44d4f709c7ffa3b84dc1ddc",
+        "class": "gpu",
+        "slot": 0,
+        "owner": "Akinza fur serial CPU Blender",
+        "pid": 33212,
+        "host": "win",
+        "started": "2026-10-16T09:12:18",
+        "heartbeat": 1792160038.1717484
+      }
+    ]
+  },
+  "purpose": "Unsafe command logs a reason and follows local waiting/timeout; no mini job launched."
+}

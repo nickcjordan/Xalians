@@ -1,0 +1,26 @@
+{
+  "pauseResume": {
+    "returncode": 0,
+    "wallSeconds": 15.84327605,
+    "ciPausedSeconds": 5.073000030999999,
+    "memoryLimitBytes": 5905580032,
+    "threads": 8,
+    "inferenceUnsafe": false
+  },
+  "failureDiagnostics": {
+    "returncode": 1,
+    "wallSeconds": 15.586612627999997,
+    "ciPausedSeconds": 5.043433920000002,
+    "memoryLimitBytes": 5905580032,
+    "threads": 8,
+    "inferenceUnsafe": false
+  },
+  "unsafePreflight": {
+    "returncode": 99,
+    "wallSeconds": 2.7980502670000043,
+    "ciPausedSeconds": 0.0,
+    "memoryLimitBytes": 5905580032,
+    "threads": 8,
+    "inferenceUnsafe": true
+  }
+}
