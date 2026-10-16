@@ -1,11 +1,13 @@
 """One serial render per framing for each requested A/D eyeliner mix."""
-import subprocess, sys, json, hashlib
+import argparse, subprocess, sys, json, hashlib
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[2]
 WORK=ROOT/'untracked/species-construction/akinza/surface/fur-steps'
-SURFACE=WORK/'s12-13b'
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--surface',type=Path,default=WORK/'s12-13b',help='Use the archived baseline after 13c supersedes 13b.')
+SURFACE=parser.parse_args().surface
 OUT=WORK/'s13d'
 OUT.mkdir(exist_ok=True)
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
@@ -33,4 +35,4 @@ for view,name in [('eye-close','13d-eyeliner-mix.png'),('head-front','13d-eyelin
         sheet.paste(Image.open(OUT/label/f'{view}.png').convert('RGB'),(i*w,44))
     sheet.save(WORK/name)
 assert sha(SURFACE/'surface.blend')==before
-(OUT/'mockup-evidence.json').write_text(json.dumps(dict(default='current',surface=str(SURFACE.relative_to(ROOT)),baselineSha256=before,savedSurfaceUnchanged=True,styles=styles),indent=2))
+(OUT/'mockup-evidence.json').write_text(json.dumps(dict(default='current',surface=str(SURFACE),baselineSha256=before,savedSurfaceUnchanged=True,styles=styles),indent=2))

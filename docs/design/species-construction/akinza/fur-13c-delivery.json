@@ -1,0 +1,335 @@
+{
+  "part": "13c",
+  "status": "partial, quality failures retained",
+  "surface": {
+    "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/surface.blend",
+    "sha256": "ef867f9db57d27812b5b7d4fc73da02e630207963584b8eb7b076f4722007e79"
+  },
+  "beforeSha256": "ea6cd7e69affb1b8847a8885f812efc8b2ce48049dd4015a0db0d4ef2b35ea29",
+  "modelTries": 4,
+  "furnishingCurves": 3324,
+  "rimTrimmed": 1461,
+  "heldDataEqual": true,
+  "artifactGate": {
+    "collision": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 0,
+          "after": 0
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "neighborLength": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 9,
+          "after": 9
+        },
+        "ears": {
+          "before": 41,
+          "after": 33
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "regionalLength": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1965,
+          "after": 1965
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "partTransfer": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 1598,
+          "after": 1598
+        },
+        "ears": {
+          "before": 20,
+          "after": 20
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "lift": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 5,
+          "after": 5
+        },
+        "ears": {
+          "before": 83,
+          "after": 68
+        },
+        "arms": {
+          "before": 1,
+          "after": 1
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    },
+    "rogue": {
+      "newFlags": 0,
+      "regions": {
+        "chest-ribs": {
+          "before": 0,
+          "after": 0
+        },
+        "neck": {
+          "before": 0,
+          "after": 0
+        },
+        "head": {
+          "before": 0,
+          "after": 0
+        },
+        "ears": {
+          "before": 0,
+          "after": 0
+        },
+        "arms": {
+          "before": 0,
+          "after": 0
+        },
+        "hands": {
+          "before": 0,
+          "after": 0
+        },
+        "hips": {
+          "before": 0,
+          "after": 0
+        },
+        "legs": {
+          "before": 0,
+          "after": 0
+        },
+        "feet": {
+          "before": 0,
+          "after": 0
+        },
+        "tails": {
+          "before": 0,
+          "after": 0
+        }
+      }
+    }
+  },
+  "visualFailures": [
+    "Root/side tuft retains parallel hanging sheet and horizontal hem; front fan broad/blunt instead of clear triangle.",
+    "Conspicuous long brush in matched tip crop remains largely unchanged."
+  ],
+  "capQuestion": "Additional model builds requested; no answer received or assumed.",
+  "archive": {
+    "afterCommit": true,
+    "baseline": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13b-superseded-13c",
+    "baselineHashVerified": true,
+    "rejected2": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13c-rejected-try2",
+    "obsolete3": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13c-obsolete-try3"
+  },
+  "evidence": {
+    "13c-ears-front.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13c-ears-front.png",
+      "sha256": "517f5b1fa296b4d327e45ece98b232ca19d93e4e32ad1e360348e2f50132a3d3"
+    },
+    "13c-ear-root-close.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13c-ear-root-close.png",
+      "sha256": "3926d4dfb47a2edbcc6c1eece212059f247bf7fd9d0ed138906c9af5a80adc2f"
+    },
+    "13c-ear-tip-close.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13c-ear-tip-close.png",
+      "sha256": "70cd8145b4e5d046de36d1b1031f20821064fbe14e9255971dfdae99ceace6fb"
+    },
+    "current-ears-front.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png",
+      "sha256": "5ad2ddd9e4f4e4dde0330f8b30bb66dde42225808007158cf91b48bbbc2b5602"
+    },
+    "current-head-side.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png",
+      "sha256": "3309e647f656f9bf07ca927a964f7b2f32b0f20d3c5f0ff72a830bbddc885aa5"
+    },
+    "current-head-backq.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png",
+      "sha256": "cf3d32b1c671dae1fc02a8cfd961c071851d16b5baf33b25c937c5ef9abb7480"
+    },
+    "current-body-backq.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png",
+      "sha256": "a470c3abf3bb5cb4b3ab2ec46f200ff5769be87212b32baf1669f2aeeec68aee"
+    },
+    "current-body-front.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png",
+      "sha256": "8bcaf92bcc57d59afe3e89fc1a25d577dd9a0de8c977aa4fa0498094740ff2ee"
+    },
+    "current-tails-side.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png",
+      "sha256": "f9c08270c018dc445a5ad289add7114c437f0b3088d318f2abf37cbcfd25b721"
+    }
+  }
+}

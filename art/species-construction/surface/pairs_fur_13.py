@@ -4,6 +4,7 @@ from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont
 before,after,part=map(str,sys.argv[1:4]);before=Path(before);after=Path(after);work=after.parent
 views=['head-backq','ear-tip-close'] if part=='13b' else ['ears-front','ear-root-close']
+if part=='13c' and (before/'ear-tip-close.png').exists():views.append('ear-tip-close')
 font=ImageFont.truetype('C:/Windows/Fonts/arial.ttf',24)
 for view in views:
     ims=[Image.open(p/f'{view}.png').convert('RGB') for p in (before,after/'r')];assert ims[0].size==ims[1].size

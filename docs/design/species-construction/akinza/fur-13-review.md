@@ -41,8 +41,41 @@ The final additive diagnostic includes straightness relative to neighbors, tip-e
 
 Full saved legacy totals: collision 0 -> 0, neighbor length 76 -> 50, regional length 2067 -> 1965, part transfer 1707 -> 1618, lift 104 -> 89. No new flagged IDs or regional increases. Separate solid-object collision flags 0. Final labeled back and ear-tip pairs inspected and pixel-for-pixel sources checked. Promoted surface: `fur-steps/s12-13b/surface.blend`. Not user-approved.
 
-## 13c: prominent ear furnishings
+## 13c: addendum candidate, partial
 
-Pending model work. Hold skin blue down to the crease, white head sides, fixed geometry, T7, approved face/head/body and held 12e tails. Do not treat passing numerical checks as art approval.
+Partial candidate: `fur-steps/s12-13c/surface.blend`, built from 13b. The October16 addendum replaces the earlier airy-root target with an opaque intentional white triangle at each canal, soft locks and wispy tips, plus shortening the coherent brush at the ear apex.
+
+Fourth save retains 3,324 local furnishing edits and 1,461 apex trims. Normal front shows obvious opaque white bases extending about one third up/out into each ear, with the rest blue and head sides white. Direct and independent review finds a substantive remaining gap: front fan is broad/blunt and root/side views retain parallel hanging fibers and a near-horizontal hem. This is not a soft-lock quality pass or art approval.
+
+The exact apex close comparison is also incomplete as a repair: the conspicuous long left/down brush is almost unchanged. Its mapped 456 curve candidates overlap only 46 surviving trims. Numerically shortened hairs are not evidence that Nick's requested group was fixed. The changed far outline is visible in normal front, but the required close-crop outcome is unmet.
+
+All eight required unique views rendered and directly inspected. Fresh saved skin and solid sweeps have zero gate collisions; rogue count 0 in every region. Legacy totals collision 0 to 0, neighbor 50 to 42, regional 1965 to 1965, transfer 1618 to 1618, lift 89 to 74, with zero new flagged IDs. Exact saved held-data and per-region gates pass. Three labeled comparisons and all six current copies are directly inspected and pixel-for-pixel verified against the final renders.
+
+The shared brief limits the step to four tries. Four model saves are used, including two inherited saves and the third saved before the addendum. Additional builds were requested through the active user question; no answer is assumed. Further model saves are held pending that scope decision. G3 is separately committed as 0fcf7eb4 with no push; its full measured width still looks narrower than original A and its broad ends are blunt.
 
 Independent final 13a audit: no remaining concrete brief failure. Native E detail confirms two connected flicks; F is deliberately subtle at normal size. Source, labels, framing and panel sizes reviewed. This is a mockup delivery, not selection of a default or art approval.
+
+## Review artifacts
+
+All paths below are under `untracked/species-construction/akinza/surface/fur-steps/`.
+
+| Part | Image |
+|---|---|
+| 13a close sheet | [13a-eyeliner-options.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options.png) |
+| 13a normal sheet | [13a-eyeliner-options-face.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options-face.png) |
+| 13b back comparison | [13b-head-backq.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13b-head-backq.png) |
+| 13b tip comparison | [13b-ear-tip-close.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13b-ear-tip-close.png) |
+| 13c front comparison | [13c-ears-front.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13c-ears-front.png) |
+| 13c tip comparison | [13c-ear-tip-close.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13c-ear-tip-close.png) |
+| 13c root comparison | [13c-ear-root-close.png](../../../../untracked/species-construction/akinza/surface/fur-steps/13c-ear-root-close.png) |
+
+Current-state files, all overwritten from the final surface:
+
+- [current-ears-front.png](../../../../untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png)
+- [current-head-side.png](../../../../untracked/species-construction/akinza/surface/fur-steps/current-head-side.png)
+- [current-head-backq.png](../../../../untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png)
+- [current-body-backq.png](../../../../untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png)
+- [current-body-front.png](../../../../untracked/species-construction/akinza/surface/fur-steps/current-body-front.png)
+- [current-tails-side.png](../../../../untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png)
+
+Final preservation and delivery checks pass. Final surface is `fur-steps/s12-13c/surface.blend`; superseded13b archived after the partial commit, with original hash verified. Exact final current copies and all three labeled pairs pass pixel checks. No push. Art remains partial and unapproved; the triangle/soft-lock and cropped-brush failures remain blocked by the explicit four-build limit pending the active authorization question.

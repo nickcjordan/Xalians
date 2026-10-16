@@ -1,10 +1,12 @@
 """Rerun the full 12d sweep on the held 13b surface used for 13d mockups."""
-import subprocess,sys,json
+import argparse,subprocess,sys,json
 from pathlib import Path
 import numpy as np
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[2]
 WORK=ROOT/'untracked/species-construction/akinza/surface/fur-steps'
-SURFACE=WORK/'s12-13b';OUT=WORK/'s13d/r'
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--surface',type=Path,default=WORK/'s12-13b')
+SURFACE=parser.parse_args().surface;OUT=WORK/'s13d/r'
 for script in ('sweep_fur_12d.py','sweep_obstacles_12d.py'):
     subprocess.run([sys.executable,str(HERE/'run_fur_12e.py'),script,f'13d-{script}.log','--',str(SURFACE),str(OUT)],check=True)
 subprocess.run([sys.executable,str(HERE/'analyze_sweep_12d.py'),str(OUT)],check=True)

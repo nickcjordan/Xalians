@@ -8,7 +8,7 @@ from refine_ear_root_12b2 import values
 
 def digest(v):return hashlib.sha256(v.tobytes()).hexdigest()
 
-def snapshot(path,changed,allowed):
+def snapshot(path,changed,allowed,tuft=None):
     bpy.ops.wm.open_mainfile(filepath=str(path/'surface.blend'))
     # Reuse the established material graph serialization without its CLI body.
     namespace={'__file__':str(Path(__file__).with_name('verify_fur_12f.py'))}
@@ -31,19 +31,27 @@ def snapshot(path,changed,allowed):
         if a.data_type not in ('FLOAT','FLOAT_VECTOR','INT','BOOLEAN'):continue
         w=3 if a.data_type=='FLOAT_VECTOR' else 1;v=np.empty(len(a.data)*w,np.float32 if a.data_type.startswith('FLOAT') else np.int32)
         a.data.foreach_get('vector' if w==3 else 'value',v);v=v.reshape(-1,w)
-        if a.name in allowed:v=v[~(changed if a.domain=='CURVE' else pointmask)]
+        if a.name in allowed:
+            mask=changed
+            if tuft is not None and a.name not in ('position','strlen'):mask=tuft
+            v=v[~(mask if a.domain=='CURVE' else np.repeat(mask,np.diff(np.r_[s,len(cu.points)])))]
         attrs[a.name]=digest(v)
     result['fur']=dict(attrs=attrs,starts=digest(s),roots=digest(values(cu,'position','vector',3)[s]),matrix=[list(v) for v in bpy.data.objects['Akinza fur'].matrix_world],slots=[m.name for m in cu.materials])
     return result
 
 if __name__=='__main__':
     before,after,part=sys.argv[sys.argv.index('--')+1:];before=Path(before);after=Path(after)
-    changed=np.load(after/'patch-evidence.npz')['changed']
+    patch=np.load(after/'patch-evidence.npz');changed=patch['changed']
+    tuft=patch['tuft'] if 'tuft' in patch else None
     allowed=['radius'] if part=='13b' else ['position','radius','cupm','strlen','pale','fur_tone','fur_guided']
-    baseline=snapshot(before,changed,allowed);final=snapshot(after,changed,allowed)
+    baseline=snapshot(before,changed,allowed,tuft);final=snapshot(after,changed,allowed,tuft)
     assert baseline==final,'Held saved data differs'
     if part=='13c':
-        patch=np.load(after/'patch-evidence.npz');r=patch['roots'][changed]
-        assert np.all((abs(r[:,0])>.165)&(abs(r[:,0])<.36)&(r[:,2]>.60)&(r[:,2]<.81)&(patch['thickness'][changed]<.096))
+        local=changed if tuft is None else tuft;r=patch['roots'][local]
+        assert np.all((abs(r[:,0])>.165)&(abs(r[:,0])<.36)&(r[:,2]>.60)&(r[:,2]<.81)&(patch['thickness'][local]<.096))
+        if tuft is not None:
+            rim=patch['rim'];r=patch['roots'][rim]
+            assert np.array_equal(changed,tuft|rim)
+            assert np.all((abs(r[:,0])>.39)&(r[:,2]>.81)&(abs(r[:,0])*.8+r[:,2]*.6>.86))
     (after/'saved-protection-check.json').write_text(json.dumps(dict(equal=True,baseline=str(before),allowed=allowed,changedCurves=int(changed.sum()),protected=final),indent=2))
     print('SAVED_PROTECTION_PASS')

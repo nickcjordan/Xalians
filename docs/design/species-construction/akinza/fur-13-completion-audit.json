@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "akinza-fur-13",
-  "outcome": "Execute the complete three-part fur run in briefs/13.md while holding approved appearance and geometry, for Claude and Nick to review.",
-  "authorizedScope": "Material-only eyeliner mockups with default current; sparse rogue repairs; prominent ear furnishings; at most four tries per part; serial WSL Blender; three commits and no push.",
+  "outcome": "Complete the earlier13a/13b delivery and13c under briefs/13c-full.md plus13c-addendum.md: obvious opaque white triangular canal tufts, shortened coherent ear-tip fringe, comparisons and six refreshed views, separate commits, no push.",
+  "authorizedScope": "Material-only eyeliner mockups with default current; sparse rogue repairs; prominent ear furnishings; at most four tries per part; serial WSL Blender; three commits and no push. User steering October16 explicitly applies13c-addendum.md, superseding airy blue-separated root target with opaque triangular canal coverage and adding coherent apex shortening.",
   "workRecord": "docs/design/species-construction/akinza/fur-13-active-work.md",
   "evidence": {
     "A-eye-close": {
@@ -129,6 +129,196 @@
       "path": ".codex/audit-state/fur-13-evidence/bEarPair.png",
       "sha256": "1edb1d3568e1ae84220ea5c920cd4054c4caf46f070483041b9dd496b6d39fc5",
       "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13b-ear-tip-close.png"
+    },
+    "cTry1Front": {
+      "path": ".codex/audit-state/fur-13-evidence/cTry1Front.png",
+      "sha256": "b4d5b1fc8a66404d2c29c92246d340f628038eddcd29476948affa66e272a6ae",
+      "sourcePath": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13c-rejected-try1/r/ears-front.png"
+    },
+    "cTry1Root": {
+      "path": ".codex/audit-state/fur-13-evidence/cTry1Root.png",
+      "sha256": "ae3ce5d425e8db19061b0c60a5ffc8b760f576c1b94cf42afe046655c8545ca1",
+      "sourcePath": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13c-rejected-try1/r/ear-root-close.png"
+    },
+    "cFrontPair": {
+      "path": ".codex/audit-state/fur-13-evidence/cFrontPair.png",
+      "sha256": "f8d9f699237c430024d2c75bd05cee8db3ce8ef9c815d940cb236178515c8f1b",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13c-ears-front.png"
+    },
+    "cRootPair": {
+      "path": ".codex/audit-state/fur-13-evidence/cRootPair.png",
+      "sha256": "495a06b79c16a2cf7b0473eb4e0ee6169024cc21a895597d9f1104ad017f3999",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13c-ear-root-close.png"
+    },
+    "cRoot": {
+      "path": ".codex/audit-state/fur-13-evidence/cRoot.png",
+      "sha256": "b7b30f3d878f65ded4770a5072a3daaed4ef56a6ca99c681decb18148087badf",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-try2/r/ear-root-close.png"
+    },
+    "cModel": {
+      "path": ".codex/audit-state/fur-13-evidence/cModel.blend",
+      "sha256": "e006b4612bf884284fb4ef2ad99b038e0e834aa7a23f452d65a7f4471c023675",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-try2/surface.blend"
+    },
+    "current-ears-front": {
+      "path": ".codex/audit-state/fur-13-evidence/current-ears-front.png",
+      "sha256": "9833012624a09133e11b5e964b3791f428cb46a96ceb2887bdb612e7db78ee13",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png"
+    },
+    "current-head-side": {
+      "path": ".codex/audit-state/fur-13-evidence/current-head-side.png",
+      "sha256": "25d6549a25b7de40ce87faf64129ae47d243c4b75d38265a3de1c4422c5d9e55",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png"
+    },
+    "current-head-backq": {
+      "path": ".codex/audit-state/fur-13-evidence/current-head-backq.png",
+      "sha256": "d2465f45bb70497c0423f684df95a51a1e37cfcf9ebd3b332e79a0b346229fc4",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png"
+    },
+    "current-body-backq": {
+      "path": ".codex/audit-state/fur-13-evidence/current-body-backq.png",
+      "sha256": "c582c51180bed0ce56392409c43f4abf35fb7a1e641e0188a217f9007740b151",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png"
+    },
+    "current-body-front": {
+      "path": ".codex/audit-state/fur-13-evidence/current-body-front.png",
+      "sha256": "b4a46019c8285deb332985eebd46ad1e3ea1bc52df62e9b37b234838e8712a1f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png"
+    },
+    "current-tails-side": {
+      "path": ".codex/audit-state/fur-13-evidence/current-tails-side.png",
+      "sha256": "42b6aa86c91de6fd06bd15d4335fa727282ceb6be71db92802fc0cc9c995912c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+    },
+    "cFinalFront": {
+      "path": ".codex/audit-state/fur-13-evidence/cFinalFront.png",
+      "sha256": "ad777e7112fecad7e7a86faf9fdcc36f32cf101c3557c301131d85b723c35bdb",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/r/ears-front.png"
+    },
+    "cFinalRoot": {
+      "path": ".codex/audit-state/fur-13-evidence/cFinalRoot.png",
+      "sha256": "54ba32b78047312a5d5401e1b392752a3ddd3574223581e88831d28444d0291e",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/r/ear-root-close.png"
+    },
+    "briefAddendum": {
+      "path": ".codex/audit-state/fur-13-evidence/briefAddendum.md",
+      "sha256": "aae6a403ed79305afb5bc33169d1f2fc888c615d88a87e5005fea9660f6af292",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/13c-addendum.md"
+    },
+    "briefFull": {
+      "path": ".codex/audit-state/fur-13-evidence/briefFull.md",
+      "sha256": "382008a64df50d964c52ff63ae76121f5767451bd08206db951d1a151ffafe05",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/13c-full.md"
+    },
+    "cFinalModel": {
+      "path": ".codex/audit-state/fur-13-evidence/cFinalModel.blend",
+      "sha256": "ef867f9db57d27812b5b7d4fc73da02e630207963584b8eb7b076f4722007e79",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/surface.blend"
+    },
+    "cProtection": {
+      "path": ".codex/audit-state/fur-13-evidence/cProtection.json",
+      "sha256": "db6e7852b666a0d451ea022ac1dda3e6d40d69e219b699b431ca54a10db4a006",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/saved-protection-check.json"
+    },
+    "cMetrics": {
+      "path": ".codex/audit-state/fur-13-evidence/cMetrics.json",
+      "sha256": "db0cc25e55471de2a8f207a554a6e02586a66a380ae955ad159ace80b01a9681",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/metrics.json"
+    },
+    "cPixels": {
+      "path": ".codex/audit-state/fur-13-evidence/cPixels.json",
+      "sha256": "e8ef5a5504e82e9729972a1e12227f0ffe41029c3c005e8fb8000db7c66cf469",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/delivery-pixels.json"
+    },
+    "cFinalTip": {
+      "path": ".codex/audit-state/fur-13-evidence/cFinalTip.png",
+      "sha256": "0be127e20948a2c8e93b66d552ce1d79895c3ef645e2fc6c14bf26d60dda048f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/r/ear-tip-close.png"
+    },
+    "cFinalFrontPair": {
+      "path": ".codex/audit-state/fur-13-evidence/cFinalFrontPair.png",
+      "sha256": "517f5b1fa296b4d327e45ece98b232ca19d93e4e32ad1e360348e2f50132a3d3",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13c-ears-front.png"
+    },
+    "cFinalRootPair": {
+      "path": ".codex/audit-state/fur-13-evidence/cFinalRootPair.png",
+      "sha256": "3926d4dfb47a2edbcc6c1eece212059f247bf7fd9d0ed138906c9af5a80adc2f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13c-ear-root-close.png"
+    },
+    "cFinalTipPair": {
+      "path": ".codex/audit-state/fur-13-evidence/cFinalTipPair.png",
+      "sha256": "70cd8145b4e5d046de36d1b1031f20821064fbe14e9255971dfdae99ceace6fb",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13c-ear-tip-close.png"
+    },
+    "cFinalHeadSide": {
+      "path": ".codex/audit-state/fur-13-evidence/cFinalHeadSide.png",
+      "sha256": "3dcf75a9f5b6249defd6cb190a450ea10177e0a73881aaa82ca744dce87252fb",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13c/r/head-side.png"
+    },
+    "cDelivery": {
+      "path": ".codex/audit-state/fur-13-evidence/cDelivery.json",
+      "sha256": "2a7aa450fe0397861c55853dd64811ecc6ac3a2750c8ae245b723a7aa9b35502",
+      "sourcePath": "docs/design/species-construction/akinza/fur-13c-delivery.json"
+    },
+    "cReview": {
+      "path": ".codex/audit-state/fur-13-evidence/cReview.md",
+      "sha256": "77039dd478c1b120ae4d9490cf0abc5a913b219b887e212b3998edb6f3d6679d",
+      "sourcePath": "docs/design/species-construction/akinza/fur-13-review.md"
+    },
+    "g3Close": {
+      "path": ".codex/audit-state/fur-13-evidence/g3Close.png",
+      "sha256": "5091848b08173a15fbb5e402a44764c7936a7b274887854b9d5218168dfda101",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13d/G3/eye-close.png"
+    },
+    "g3Face": {
+      "path": ".codex/audit-state/fur-13-evidence/g3Face.png",
+      "sha256": "531eb03aab0920c9c368465bfbccc3f352d22f2e83997e396f0537de1db7fbc0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13d/G3/head-front.png"
+    },
+    "g3SheetClose": {
+      "path": ".codex/audit-state/fur-13-evidence/g3SheetClose.png",
+      "sha256": "0e3ebec214931f179128bbfde0a5037cbcda8af13e6df93f564fe0c641a463ad",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13d-eyeliner-mix.png"
+    },
+    "g3SheetFace": {
+      "path": ".codex/audit-state/fur-13-evidence/g3SheetFace.png",
+      "sha256": "5d6e576048ce788ee5120eebe173fc901bc33a25ec3252e23227cf32a5d0dad6",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13d-eyeliner-mix-face.png"
+    },
+    "final-current-ears-front": {
+      "path": ".codex/audit-state/fur-13-evidence/final-current-ears-front.png",
+      "sha256": "5ad2ddd9e4f4e4dde0330f8b30bb66dde42225808007158cf91b48bbbc2b5602",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-ears-front.png"
+    },
+    "final-current-head-side": {
+      "path": ".codex/audit-state/fur-13-evidence/final-current-head-side.png",
+      "sha256": "3309e647f656f9bf07ca927a964f7b2f32b0f20d3c5f0ff72a830bbddc885aa5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-side.png"
+    },
+    "final-current-head-backq": {
+      "path": ".codex/audit-state/fur-13-evidence/final-current-head-backq.png",
+      "sha256": "cf3d32b1c671dae1fc02a8cfd961c071851d16b5baf33b25c937c5ef9abb7480",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-head-backq.png"
+    },
+    "final-current-body-backq": {
+      "path": ".codex/audit-state/fur-13-evidence/final-current-body-backq.png",
+      "sha256": "a470c3abf3bb5cb4b3ab2ec46f200ff5769be87212b32baf1669f2aeeec68aee",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-backq.png"
+    },
+    "final-current-body-front": {
+      "path": ".codex/audit-state/fur-13-evidence/final-current-body-front.png",
+      "sha256": "8bcaf92bcc57d59afe3e89fc1a25d577dd9a0de8c977aa4fa0498094740ff2ee",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-body-front.png"
+    },
+    "final-current-tails-side": {
+      "path": ".codex/audit-state/fur-13-evidence/final-current-tails-side.png",
+      "sha256": "f9c08270c018dc445a5ad289add7114c437f0b3088d318f2abf37cbcfd25b721",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/current-tails-side.png"
+    },
+    "cWork": {
+      "path": ".codex/audit-state/fur-13-evidence/cWork.md",
+      "sha256": "2bb9b7129c7abd42d275f0dc885bf195f17b15ec272c926066adbf30a5313ac5",
+      "sourcePath": "docs/design/species-construction/akinza/fur-13-active-work.md"
     }
   },
   "criteria": [
@@ -163,24 +353,67 @@
     },
     {
       "id": "tufts",
-      "expectation": "Clearly prominent dense longer white soft separate locks reaching the lower half of the inner ear, with blue between tips and white head sides.",
-      "status": "pending",
-      "assessment": "Work in progress; not yet demonstrated.",
-      "evidence": []
+      "expectation": "Obvious opaque white triangular canal tuft at each base, point one third to two fifths up ear, no blue through root half, soft locks/wispy edge; remaining ear blue and head sides white.",
+      "status": "blocked",
+      "assessment": "Opaque white canal coverage and extent visibly improve, but soft pointed triangle remains incomplete: broad pleated front fan, parallel hanging root/side sheet and horizontal hem. Four-save cap reached; additional-build authorization question pending.",
+      "evidence": [
+        "cFinalFront",
+        "cFinalRoot",
+        "cFinalHeadSide",
+        "briefAddendum",
+        "briefFull"
+      ]
     },
     {
       "id": "preservation",
       "expectation": "Full saved 12d plus rogue gates show no new flags or regional rise; held geometry, materials and unrelated fur equal.",
-      "status": "pending",
-      "assessment": "Work in progress; not yet demonstrated.",
-      "evidence": []
+      "status": "pass",
+      "assessment": "Fresh saved exhaustive skin and solid sweeps, rogue0 all regions, no new legacy IDs or regional rise; exact geometry/materials/roots/unrelated fur equality pass. Rim radius and color attrs protected separately.",
+      "evidence": [
+        "cProtection",
+        "cMetrics",
+        "cFinalModel"
+      ]
     },
     {
       "id": "delivery",
-      "expectation": "All named sheets, comparisons and six current views inspected at full size, independent audit, three separate explicit-path commits, no push and archive handling.",
-      "status": "pending",
-      "assessment": "Work in progress; not yet demonstrated.",
-      "evidence": []
+      "expectation": "All original/addendum sheets, three13c comparisons and six current views inspected; independent audit; separate explicit-path commits, no push and post-commit archive.",
+      "status": "pass",
+      "assessment": "All original/addendum images directly inspected and independently challenged; three13c pairs and six current copies verified exact. G3 separately committed; partial13c separately committed with explicit paths. Superseded baseline/rejected candidates archived only after commit with baseline hash verified. No push.",
+      "evidence": [
+        "cPixels",
+        "cDelivery",
+        "cReview",
+        "cWork",
+        "cFinalFrontPair",
+        "cFinalRootPair",
+        "cFinalTipPair"
+      ]
+    },
+    {
+      "id": "apex",
+      "expectation": "Shorten the coherent long apex group to surrounding rim length, soft point instead of brush; matched13c-ear-tip-close before/after.",
+      "status": "blocked",
+      "assessment": "1461 numeric trims do not resolve the requested close-crop brush. Direct and independent comparison shows long group largely unchanged. Only46 of456 mapped crop candidates overlap retained trims. Four-save cap reached.",
+      "evidence": [
+        "cFinalTipPair",
+        "cFinalTip",
+        "cReview",
+        "briefFull",
+        "briefAddendum"
+      ]
+    },
+    {
+      "id": "g3",
+      "expectation": "G3 close and normal in G1 framing, G1/G2 frozen, labeled mix sheets, separate commit and unchanged default.",
+      "status": "pass",
+      "assessment": "Committed0fcf7eb4. G3 rendered once each framing at full measured95th-percentile upper width; visibly bolder than G1/G2 but narrower than original A, blunt ends disclosed under one-render cap.",
+      "evidence": [
+        "g3Close",
+        "g3Face",
+        "g3SheetClose",
+        "g3SheetFace"
+      ]
     }
   ],
   "findings": [
@@ -259,18 +492,83 @@
         "bRogue",
         "beforeRogue"
       ]
+    },
+    {
+      "id": "F006",
+      "criterion": "tufts",
+      "status": "resolved",
+      "observation": "Invocation1 creates a more prominent bright white fan but separate soft locks merge into a continuous fine-hair veil, especially viewer-left. Direct and independent native review agree.",
+      "nextAction": "Replace continuous long band with discrete converging curved lock families above short pale undercoat; inspect new native front/root views and run saved guards.",
+      "acceptanceCriterion": "Both ears show distinct soft tip groups with blue gaps while retaining the prominence and white root gain.",
+      "evidence": [
+        "cTry1Front",
+        "cTry1Root"
+      ],
+      "resolution": "Discrete converging curved families above short white undercoat produce separate tip groups on both ears. Native front and root close directly inspected and independently reviewed; fine hair texture remains. Full saved regression gates pending in preservation criterion.",
+      "resolutionEvidence": [
+        "cFrontPair",
+        "cRootPair",
+        "cRoot",
+        "current-ears-front"
+      ]
+    },
+    {
+      "id": "F007",
+      "criterion": "tufts",
+      "status": "blocked",
+      "observation": "Fourth-save root close retains parallel hanging sheet and near-horizontal hem; front shape is broad/blunt. Opacity and prominence improve but soft-lock/pointed-triangle target is not fully met.",
+      "nextAction": "When authorized, fix the remaining soft triangular tuft shape and use the mapped crop strands plus surrounding rim for an actual visible brush repair; rerender and repeat all saved gates.",
+      "acceptanceCriterion": "Close and normal views show soft separate white locks, no broad planar sheet or straight cutoff.",
+      "evidence": [
+        "briefFull",
+        "briefAddendum",
+        "cFinalRootPair"
+      ],
+      "blocker": {
+        "externalDependency": "User authorization for additional model saves beyond the explicit four-try cap.",
+        "attempts": "Four model saves used, including two inherited saves; third saved before addendum, fourth reaches opacity but retains both documented quality failures. Additional-build question sent; no answer assumed.",
+        "unblocksWhen": "User authorizes further builds for the revised addendum target."
+      }
+    },
+    {
+      "id": "F008",
+      "criterion": "apex",
+      "status": "blocked",
+      "observation": "Nick says13b retained a group of rim hairs that should not be so long.",
+      "nextAction": "When authorized, fix the remaining soft triangular tuft shape and use the mapped crop strands plus surrounding rim for an actual visible brush repair; rerender and repeat all saved gates.",
+      "acceptanceCriterion": "Tip reads as a soft point with neighboring rim length, no long brush group.",
+      "evidence": [
+        "briefFull",
+        "briefAddendum",
+        "cFinalTipPair"
+      ],
+      "blocker": {
+        "externalDependency": "User authorization for additional model saves beyond the explicit four-try cap.",
+        "attempts": "Four model saves used, including two inherited saves; third saved before addendum, fourth reaches opacity but retains both documented quality failures. Additional-build question sent; no answer assumed.",
+        "unblocksWhen": "User authorizes further builds for the revised addendum target."
+      }
     }
   ],
   "audit": {
-    "reviewer": "Builder plus independent review_13",
-    "comparison": "13a delivered and13b visual/numeric outcome inspected;13c remains unbuilt.",
-    "regressions": "13b saved meshes/materials/topology/transforms/roots and all non-radius hair attributes equal. Full saved legacy/rogue gates pass.13c still requires construction and its own regression checks.",
-    "scopeCheck": "All three parts remain in scope; no default art approval.",
-    "sessionId": "01a14217-f65b-7ad0-9d9b-7d371f00827a",
-    "requestId": "3cbafcd6-3db0-42ed-b12e-72dce74c1e36",
-    "performedAt": "2026-10-16T01:59:35.763196+00:00"
+    "reviewer": "Builder plus independent review_13c_full",
+    "comparison": "All native views and comparisons inspected against original brief and addendum. Opacity improved; soft triangle and cropped tip brush remain failures, not art-approved. All remaining authorized delivery and archive steps now complete; this is a supported partial stop, not completion of the art target.",
+    "regressions": "Fresh saved artifact, rogue and exact held-data gates pass. All six current copies and three pairs exact. Held-region independent visual review finds no new defect.",
+    "scopeCheck": "Original two parts and addendum retained; four-save and one-render limits respected; pending cap question is not approval. No push.",
+    "sessionId": "akinza-13c-full-20261016",
+    "requestId": "be8a7a1c-3fee-4388-b928-22421b8eab69",
+    "performedAt": "2026-10-16T13:41:39.294736+00:00"
   },
   "stop": {
-    "kind": "continue"
+    "kind": "blocked"
+  },
+  "scopeChanges": [
+    {
+      "source": "User October16: Read untracked/species-construction/akinza/surface/fur-steps/briefs/13c-addendum.md and continue with that target.",
+      "reason": "Newer Nick feedback requests opaque intentional triangle and coherent rim shortening."
+    }
+  ],
+  "scopeChange": {
+    "userWords": "Read untracked/species-construction/akinza/surface/fur-steps/briefs/13c-addendum.md and continue with that target.",
+    "source": "User steering in this session, October16; briefs/13c-addendum.md contains quoted newer Nick feedback."
   }
 }
