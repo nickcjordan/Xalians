@@ -1,6 +1,6 @@
 # Mac mini Blender compute
 
-Implemented 2026-10-16. This is interactive art compute, not an additional CI runner. No CI registration, runner labels, VM sizing or WSL memory configuration was changed.
+Implemented 2026-10-16. This is interactive art compute, not an additional CI runner. No CI registration, runner labels, CI VM sizing or WSL memory configuration was changed. The compute VM was resized with Nick's approval.
 
 ## Route and installation
 
@@ -137,6 +137,31 @@ wsl -d Ubuntu --exec python3 -m unittest discover -s /mnt/c/dev/src/xalians-mini
 scp scripts/mini_blender/live_checks.py mini:.mini-blender/live_checks.py
 ssh mini 'python3 .mini-blender/live_checks.py'
 ```
+
+## Eight-thread follow-up and command-only proof
+
+The rerun used the exact same eight-file input snapshot and unchanged PC baseline. A command-only `slot.py run blender --wait 0 -- wsl -d Ubuntu --exec <blender> ...` invocation inferred eight inputs and one output folder, passed blend-resource preflight, rendered on the mini and copied outputs back. No manifest was supplied to the slot. At dispatch, the production shared lock directory held the Akinza session's exclusive GPU-class token, owned by `Akinza fur serial CPU Blender`; that token blocks local Blender acquisition. The proof did not modify or release that other session's token.
+
+| Measurement | PC baseline | Mini, 3 threads | Mini, 8 threads |
+|---|---:|---:|---:|
+| Whole job wall time | 179.03 s | 915.20 s | **659.61 s (10m 59.6s)** |
+| Script including load and setup | 178.3 s | 909.5 s | 648.6 s |
+| Render only | 25.4 s | 426.3 s | **229.1 s (3m 49.1s)** |
+| Client including transfers | N/A | 919.45 s | 665.48 s |
+| Peak Blender RSS | Not measured | 2,443,864 KiB | **2,465,412 KiB (2.35 GiB)** |
+| CI pause | N/A | 0 s | 0 s |
+
+The new whole-job measurement includes the added blend preflight. The phase RSS values are 871,524 KiB for preflight and 2,465,412 KiB for rendering; the reported peak is their maximum, not their sum. This run reduced whole-job time by about 28% and render time by about 46% against the three-thread run. Ambient load and setup variation remain part of these single-run measurements. The mini still takes about 3.7 times the PC's whole-job time.
+
+Decoded output remains pixel-identical to the PC: **zero differing pixels, mean and maximum channel difference zero**, at 768x1024 RGB. The full image was opened and inspected. [Measurements](mini-blender-followup-evidence/comparison.json), [command-only dispatch proof](mini-blender-followup-evidence/command-only-proof.json), [inferred job](mini-blender-followup-evidence/inferred-job.json), [render log](mini-blender-followup-evidence/mini-fur-render.txt) and [live caps](mini-blender-followup-evidence/installation.json) preserve the result and image ID. The final inference code produces the same manifest as the executed job.
+
+Follow-up validation passes 37 tests in WSL and 25 on Windows, with 12 POSIX-only skips on Windows. A real unsafe inline-Python command logged its reason and followed local timeout, without launching mini work. The independent review and regression evidence are in [review](mini-blender-followup-evidence/review.md) and [verification](mini-blender-followup-evidence/verification.json). Real container checks repeat CI pause/resume, diagnostic failure and cleanup at the new caps, and verify that an undeclared blend image stops preflight before the render script executes.
+
+## Authorized Messages cleanup
+
+The same follow-up authorized clearing local Messages history. `CloudKitSyncingEnabled` in `com.apple.madrid.plist` was verified false immediately before deletion and again afterward. Messages.app was closed. History databases, attachments, archives, drafts and content caches were cleared, preserving preferences byte-for-byte and leaving iMessage sign-in alone. The remaining Sync remote-record and regenerated LiteSegment content tables have zero rows. No message contents were exported.
+
+Free space immediately around cleanup rose from **52,540,493,824 to 98,696,671,232 bytes**, about **48.9 to 91.9 GiB**, an increase of 43.0 GiB. Later render uploads and ordinary activity can change available space. See [cleanup](mini-blender-followup-evidence/messages-cleanup.json) and [final read-only verification](mini-blender-followup-evidence/messages-final-verification.json).
 
 ## Limits
 

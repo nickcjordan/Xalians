@@ -8,6 +8,11 @@
   "historyDatabases": [],
   "databaseRowCounts": {},
   "messagesAppRunning": false,
-  "freeBytes": 98448171008,
-  "mutationsPerformed": false
+  "freeBytes": 98447691776,
+  "mutationsPerformed": false,
+  "remainingContentStoreRows": {
+    "ZREMOTERECORD": 0,
+    "ZREMOTERECORDDATA": 0,
+    "ZLITEMESSAGESEGMENT": 0
+  }
 }

@@ -1,0 +1,46 @@
+{
+  "mappings": [
+    {
+      "source": "C:/",
+      "target": "drive-c"
+    }
+  ],
+  "inputs": [
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/review_fur_12d.py",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/surface/surface-info.json",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/surface/surface.blend",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/render_surface.py",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/tiger_stripes.py",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/eyeliner_styles.py",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/akinza-surface.json",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/akinza-palettes.json"
+  ],
+  "outputs": [
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-followup/render"
+  ],
+  "args": [
+    "-b",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/review_fur_12d.py",
+    "--",
+    "--surface",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/surface",
+    "--out",
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-followup/render",
+    "--views",
+    "body-front",
+    "--samples",
+    "32",
+    "--palette",
+    "T7",
+    "--device",
+    "CPU"
+  ],
+  "inferred": true,
+  "blend_inputs": [
+    "C:/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/surface/surface.blend"
+  ],
+  "cwd": "C:/dev/src/xalians-mini-blender-compute"
+}

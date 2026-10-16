@@ -1,0 +1,9 @@
+{
+  "remainingJobFolders": [],
+  "remainingComputeContainers": [],
+  "ciBusy": false,
+  "binaryAndShimSha256": [
+    "bafec183e960819c76fe213c000cdb2284c53a87ef6791812f8728b51f07145b  /usr/local/bin/blender",
+    "d15b89549d39a5e0471e94c34ff8f1fdb03428fd12ce968cd5ffb9dcc3964f3a  /opt/rdtscp_compat.so"
+  ]
+}

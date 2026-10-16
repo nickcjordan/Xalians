@@ -7,7 +7,7 @@
   "evidence": {
     "guide": {
       "path": "docs/design/mini-blender-compute.md",
-      "sha256": "1138b4088b94216edb7c129adfe8d817aa04f81237c0ad28cc8086ace79c07ad"
+      "sha256": "e3fbb6cdbc38f2f7974271e1ea98d4696f49eaeef5040b244f47f0eaeef9465f"
     },
     "inference": {
       "path": "scripts/mini_blender/infer.py",
@@ -39,7 +39,7 @@
     },
     "liveChecks": {
       "path": "scripts/mini_blender/live_checks.py",
-      "sha256": "a640d7371eb46e2f8ebabcf75e1274f96f8a31e6da75ea893bcf7ce53980b871"
+      "sha256": "08ae9e8286630937717189c4569152e3d71d681de8c8abe0a925909f2416a033"
     },
     "slot": {
       "path": "art/pipeline/slot/slot.py",
@@ -55,7 +55,7 @@
     },
     "verification": {
       "path": "docs/design/mini-blender-followup-evidence/verification.json",
-      "sha256": "ea2580d5bccb3e3f2cb9963f6c28d92eb16ffdcda0788c439af39466220e1521"
+      "sha256": "d43e8b2446cb5f67248a0a8bcee6daa7e229e24e7d77675cb6542ed61d6757ea"
     },
     "messages": {
       "path": "docs/design/mini-blender-followup-evidence/messages-cleanup.json",
@@ -63,15 +63,47 @@
     },
     "messagesFinal": {
       "path": "docs/design/mini-blender-followup-evidence/messages-final-verification.json",
-      "sha256": "888d12768c22774ee9496306b5a0ca0a0fa41f9051516c1a2ad035fcd912c9d0"
+      "sha256": "7d71cc9f33affd116151f74196fe8301c935c300b262b328fcece7b4a2d39547"
     },
     "review": {
       "path": "docs/design/mini-blender-followup-evidence/review.md",
-      "sha256": "d480d64ad66d40de5b6bb867cd75592d5a23afd9c023a16ecbaa1a006e3c0d80"
+      "sha256": "8a8c7ca8b292e02b9ebe198d282ac09785c67708eb2ff4067ca0fee6d272e204"
     },
     "unsafeFallback": {
       "path": "docs/design/mini-blender-followup-evidence/unsafe-local-fallback.json",
       "sha256": "db4293b3cc028b34e5b5a317839d346ddcd8ec3ee8ba5221ccb29916ca179119"
+    },
+    "comparison": {
+      "path": "docs/design/mini-blender-followup-evidence/comparison.json",
+      "sha256": "30912dcac9762bf5a9d24bbe466612a4c97cb0427c59b240fd284bdb798b44f4"
+    },
+    "proof": {
+      "path": "docs/design/mini-blender-followup-evidence/command-only-proof.json",
+      "sha256": "29150465fafca0eb2344111e70feaeb586a537b6fcba40b9ee475e08924daade"
+    },
+    "renderLog": {
+      "path": "docs/design/mini-blender-followup-evidence/mini-fur-render.txt",
+      "sha256": "122de6fd6ddc1fc79f71b76ec4f73f0db5aff9ba1b0a93d4c4f62bb19418f29c"
+    },
+    "inferredJob": {
+      "path": "docs/design/mini-blender-followup-evidence/inferred-job.json",
+      "sha256": "dfd47095e557c2d38121a019fe9174abc2275048499dc22e3f35fb5ed0768e6f"
+    },
+    "liveResults": {
+      "path": "docs/design/mini-blender-followup-evidence/live-checks.json",
+      "sha256": "42fcc7c302c6ad8c138ec44842d2ffef70bd6fe586e4c3c529d5d465780e13fb"
+    },
+    "preflightLog": {
+      "path": "docs/design/mini-blender-followup-evidence/live-preflight.txt",
+      "sha256": "e5f122dfd7e246ee8348be26e2ca106eb4991f73d578411e57f088b4e02a3a0d"
+    },
+    "cleanup": {
+      "path": "docs/design/mini-blender-followup-evidence/cleanup.json",
+      "sha256": "458100a83bf26fac3b8d8b6af702f6fdca94b6c36423ae10c7605d574e7c3661"
+    },
+    "miniImage": {
+      "path": "untracked/mini-blender-followup/render/body-front.png",
+      "sha256": "7c614c964b8196435f10c9512b69b8bfc1d21c5213f9900c84ea0392e8d70f2b"
     },
     "pcImage": {
       "path": "untracked/mini-blender-benchmark/local/body-front.png",
@@ -114,11 +146,18 @@
     {
       "id": "benchmark",
       "expectation": "Rerun the exact real Akinza job, through command-only busy-local-slot spill, and report time, peak RSS and pixel comparison.",
-      "status": "pending",
-      "assessment": "Full exact-snapshot command-only job running; wait for its result and queued real lifecycle checks.",
+      "status": "pass",
+      "assessment": "Same eight-file snapshot; command-only proof and exact decoded comparison, phase peak RSS and timing recorded. Real lifecycle/preflight rejection and cleanup verified.",
       "evidence": [
+        "comparison",
+        "proof",
+        "renderLog",
+        "miniImage",
         "pcImage",
-        "inputHashes"
+        "inputHashes",
+        "liveResults",
+        "preflightLog",
+        "cleanup"
       ]
     },
     {
@@ -159,9 +198,15 @@
     {
       "id": "F002",
       "criterion": "benchmark",
-      "status": "open",
+      "status": "resolved",
       "observation": "Eight-thread real command-only fur proof and post-refactor lifecycle checks must finish.",
-      "nextAction": "Finish required evidence and audit it before publication/completion."
+      "resolution": "Required actual result inspected and recorded.",
+      "resolutionEvidence": [
+        "comparison",
+        "proof",
+        "liveResults",
+        "cleanup"
+      ]
     },
     {
       "id": "F003",
@@ -178,7 +223,7 @@
     "scopeCheck": "No edits to reference/Akinza/creature-pipeline worktrees. CI VM/WSL unchanged. Explicit approved Messages deletion preserved settings. Branch adoption remains for the other session, with exact instructions provided as requested.",
     "sessionId": "mini-blender-followup-20261016",
     "requestId": "c59f1510-7497-44a5-bcb7-0efebf82ccbd",
-    "performedAt": "2026-10-16T14:14:45.188228+00:00"
+    "performedAt": "2026-10-16T14:22:53.246441+00:00"
   },
   "stop": {
     "kind": "continue"

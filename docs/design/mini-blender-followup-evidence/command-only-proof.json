@@ -1,0 +1,47 @@
+{
+  "command": [
+    "wsl",
+    "-d",
+    "Ubuntu",
+    "--exec",
+    "/home/njord/.local/opt/blender-5.2.2-linux-x64/blender",
+    "-b",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "/mnt/c/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/scripts/review_fur_12d.py",
+    "--",
+    "--surface",
+    "/mnt/c/dev/src/xalians-mini-blender-compute/untracked/mini-blender-benchmark/source/surface",
+    "--out",
+    "/mnt/c/dev/src/xalians-mini-blender-compute/untracked/mini-blender-followup/render",
+    "--views",
+    "body-front",
+    "--samples",
+    "32",
+    "--palette",
+    "T7",
+    "--device",
+    "CPU"
+  ],
+  "heldAtDispatch": {
+    "blender": [],
+    "gpu": [
+      {
+        "token": "gpu:0:169c2dab20d844be981cdc6a76456abf",
+        "class": "gpu",
+        "slot": 0,
+        "owner": "Akinza fur serial CPU Blender",
+        "pid": 11336,
+        "host": "win",
+        "started": "2026-10-16T08:58:26",
+        "heartbeat": 1792159667.357116
+      }
+    ]
+  },
+  "heldOwnToken": null,
+  "slotLocksRoot": "C:\\dev\\art-data\\pipeline\\locks",
+  "returncode": 0,
+  "wallSeconds": 665.9884248999879,
+  "manifestSuppliedToSlot": false
+}

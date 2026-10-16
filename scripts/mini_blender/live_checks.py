@@ -29,6 +29,7 @@ def check(fail=False):
             's.render.filepath="/job/work/cube.png"\nbpy.ops.render.render(write_still=True)\n'
             'time.sleep(8)\npathlib.Path("/job/work/output.txt").write_text("ok")\n'
             'image=bpy.data.images.new("missing external asset",width=1,height=1)\n'
+            'image.use_fake_user=True\n'
             'image.source="FILE"\nimage.filepath="/job/not-declared.png"\n'
             'bpy.ops.wm.save_as_mainfile(filepath="/job/work/unsafe.blend")\n'))
         config = root / 'job.json'
@@ -86,11 +87,11 @@ def check_inferred_unsafe():
     with tarfile.open(fileobj=output) as tar:
         stats = json.load(tar.extractfile('result.json'))
         log = tar.extractfile('blender.log').read().decode()
-    assert code == 99 and stats['inferenceUnsafe']
-    assert 'INFERENCE_UNSAFE:' in log and 'render must not execute' not in log
-    assert not job.exists()
     (remote.ROOT / 'live-preflight.json').write_text(json.dumps(stats, indent=2))
     (remote.ROOT / 'live-preflight.log').write_text(log)
+    assert code == 99 and stats['inferenceUnsafe'], stats
+    assert 'INFERENCE_UNSAFE:' in log and 'render must not execute' not in log
+    assert not job.exists()
     return stats
 
 
