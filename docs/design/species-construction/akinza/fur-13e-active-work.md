@@ -1,0 +1,19 @@
+# Akinza fur step 13e work record
+
+Status: partial and visually incomplete. The one-build-plus-one-fix cap is exhausted. No third build, art approval, push, or full fur-stage completion is claimed.
+
+Intended outcome: make approved G1 the `G1-outer` default, with a full dark ring entirely outside the visible globe edge, G1 upper outer emphasis, thin complete lower line, and fur reaching the liner without a bare band. Deliver matched eye-close and normal-face before/after sheets.
+
+Authorized scope: step13e only, starting from13c-fix3. Preserve assembled-3300 geometry and other fur regions. One build plus at most one fix, serial Blender with mini spillover while PC occupied, fresh full12d artifact gate, separate explicit-path commit without push, then bounded archive. Existing ear fan/rim issues remain outside this step.
+
+Attempt1 used signed distance from the globe on skin and whole hair roots. Native close/face inspection and independent audit found black lash spikes and excessive lower thickness. Its remaining sweep was canceled after rejection; no full first gate pass is claimed. The model and four images were preserved.
+
+The one fix extracts anterior skin/globe intersection contours, measures outward width in the2-degree close camera plane, and clips color along hair POINT attributes. It removes black spikes and the heavy lower band. It fails the requested full ring: most outer/right liner is absent, its upper endpoint is abrupt, and G1 upper outer weight is too weak. This failure is visible in both requested views and independently confirmed. The smooth gray outer border remains exposed. Thresholded close-image diagnostic gives upper-corner maximum inscribed dark-line diameter18.868px before versus8.246px final; this is diagnostic evidence, not art acceptance.
+
+Likely cause, still an inference: the world-Y half-space eligibility filter excludes part of a tilted globe/lid. A later authorized correction should use true anterior eye/lid eligibility and preserve G1 apparent rendered widths rather than transfer globe-normal world distances directly into projected-distance units.
+
+Completed evidence: final saved model reopened and all27 objects' physical coordinates, topology, original attributes, curve starts, transforms and material slots match baseline exactly. Original material graphs restore exactly after style roundtrip. `G1-outer` is mechanically configured as default; its artistic result is not approved. Fresh complete skin/eye/nose/claw sweeps and strengthened rogue analysis pass, zero new flags and no regional increase: collision0, neighbor36, regional1959, transfer1610, lift44, rogue0, solid collisions0. No held-face regression is visible; outside-eye maximum pixel delta2. Both requested sheets preserve native pixels, framing and scale, before left/after right, and were directly and independently inspected.
+
+Delivery: `untracked/species-construction/akinza/surface/fur-steps/s12-13e/surface.blend`, `13e-eyeliner-close.png`, and `13e-eyeliner-face.png`. Source, metrics, review, delivery manifest and blocked audit are in the separate step13e commit. No push. After that commit, resolved bounds and hashes were checked before archiving13c-fix3 as `C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13c-fix3-superseded-13e` and attempt1 as `s12-13e-rejected-try1` in the same archive. Current model hash held. No deletion. Audit mirrors bind the exact current model/images and checks; raw SHA-256 values and archive lineage are in `fur-13e-delivery.json`.
+
+Next unfinished action requires explicit authorization beyond the brief's exhausted two-build cap: repair full outer/lower continuity and upper outer weight, rerender the same two views, repeat all saved gates. All currently authorized verification, comparisons, logs, commit and archive work is complete. F003 stays blocked, and overall13e outcome stays incomplete.

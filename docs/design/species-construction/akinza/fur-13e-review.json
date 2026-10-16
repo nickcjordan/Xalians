@@ -1,0 +1,25 @@
+{
+  "eyeExclusionBox": [
+    390,
+    340,
+    635,
+    470
+  ],
+  "outsideEyeChangedPixels": 9964,
+  "outsideEyeMaxChannelDelta": 2,
+  "outsideEyePixelsDeltaOver8": 0,
+  "independentReview": "Final close/face fail full ring and G1 upper outer weight. No visible held-region regression; F003 remains blocked by explicit one-build-plus-one-fix cap.",
+  "closeDarkLineDiagnostic": {
+    "method": "Neutral dark pixels maxRGB<120 and channel spread<20; tall connected liner component; twice maximum distance transform in named crops. Diagnostic only, not art acceptance.",
+    "measurements": {
+      "before": {
+        "upperArcMaxInscribedDiameterPixels": 18.868,
+        "upperOuterMaxInscribedDiameterPixels": 18.868
+      },
+      "final": {
+        "upperArcMaxInscribedDiameterPixels": 8.246,
+        "upperOuterMaxInscribedDiameterPixels": 8.246
+      }
+    }
+  }
+}

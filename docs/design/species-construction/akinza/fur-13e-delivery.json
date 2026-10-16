@@ -1,0 +1,87 @@
+{
+  "step": "13e",
+  "status": "partial, not artistically complete",
+  "styleDefault": "G1-outer",
+  "attempts": 2,
+  "attemptLimit": "One build plus at most one fix",
+  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/surface.blend",
+  "beforeSurfaceSha256": "70f0f23ee1cc271a833ee816faf2c21738bb5e402a261d635b7b662c9e63ed0f",
+  "artifacts": {
+    "model": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/surface.blend",
+      "sha256": "7a0b2fe68e9344a7bca8c5394d1068698da230e41e81f91c3ec64035bcaab390"
+    },
+    "finalClose": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/after/eye-close.png",
+      "sha256": "90db59c08753e1268e9216cc1bb59660861118b8c83d13cdadcfca436432e9a6"
+    },
+    "finalFace": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/after/head-front.png",
+      "sha256": "975f331cb22fe2887fc4d42bebe275f334203b51754ce4ff5a8890798877a1d9"
+    },
+    "pairClose": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13e-eyeliner-close.png",
+      "sha256": "c1692d68575203e7b7be268462d4d7bba23034a457f1736fd3301c12846e50e0"
+    },
+    "pairFace": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13e-eyeliner-face.png",
+      "sha256": "654cfb5bb1bd49c957c16e7677ff363aee7f117cc88d6b99a5012d2fffb11a97"
+    },
+    "held": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/held-data.json",
+      "sha256": "4264c5069ca37c658ca43821c4da08662067e50107450ad5627b82d51c9b05ac"
+    },
+    "roundtrip": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/style-roundtrip.json",
+      "sha256": "8b4abd86477b88379447a2c30aa2081973a9665bdfc168d0107e3ef1186e776b"
+    },
+    "flags": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/r/sweep-flags.npz",
+      "sha256": "8c0b5be3a84366e28413b4d32036aba769012e59c96ded42a4afa90af70e3420"
+    },
+    "solids": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/r/obstacle-evidence.npz",
+      "sha256": "463099625a2dcf809aaa871c6de6e81620394fc71d36b6184dd50ddf20db466c"
+    },
+    "rogue": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/r/rogue-flags.npz",
+      "sha256": "cb9a551b2954740e90d2efa464d149cb6da008169a9ac4673ab6ad2fd183aa94"
+    }
+  },
+  "checks": {
+    "physicalDataExact": true,
+    "originalMaterialRoundtripExact": true,
+    "freshFullSweepNoNewFlags": true,
+    "noRegionalCountIncrease": true,
+    "rogue": 0,
+    "solidCollisions": 0,
+    "pairPixelsExact": true,
+    "independentReview": true
+  },
+  "unresolved": [
+    "Outer/right ring missing with abrupt upper termination and exposed gray border.",
+    "Lower/outer line disappears at normal face size.",
+    "G1 upper outer weight too weak."
+  ],
+  "authorizationBlocker": "Explicit two-build cap exhausted; no third build authorized.",
+  "firstAttempt": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13e-rejected-try1; rejected for lash fan and heavy lower. Remaining first sweep canceled, no full first gate pass claimed.",
+  "archive": {
+    "postCommit": true,
+    "resolvedBoundsChecked": true,
+    "hashesVerified": true,
+    "moves": [
+      {
+        "from": "untracked/species-construction/akinza/surface/fur-steps/s12-13c-fix3",
+        "to": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13c-fix3-superseded-13e",
+        "surfaceSha256": "70f0f23ee1cc271a833ee816faf2c21738bb5e402a261d635b7b662c9e63ed0f"
+      },
+      {
+        "from": "untracked/species-construction/akinza/surface/fur-steps/s12-13e-try1",
+        "to": "C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-13e-rejected-try1",
+        "surfaceSha256": "3198eb7f88308fad17a580732da072ff620640ced79385d73ae48808d6712476"
+      }
+    ]
+  },
+  "push": false,
+  "commitMessage": "Akinza fur step 13e: move G1 outward and record the incomplete ring"
+}

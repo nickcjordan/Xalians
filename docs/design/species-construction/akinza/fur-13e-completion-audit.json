@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-13e",
+  "outcome": "G1-outer default: dark full ring entirely outside the visible eyeball edge, upper outward thickness, thin lower, fur to edge; matched close/face delivery and unchanged other regions.",
+  "authorizedScope": "Step13e only, held13c fix3 geometry and physical fur, one build plus at most one fix, commit only and archive superseded surface.",
+  "workRecord": "docs/design/species-construction/akinza/fur-13e-active-work.md",
+  "evidence": {
+    "source": {
+      "path": "art/species-construction/surface/eyeliner_styles.py",
+      "sha256": "48a326b42b12386c53f5e5bcd97603ecb3e2c40ce676da1fb437f34d8c05b197"
+    },
+    "firstClose": {
+      "path": ".codex/audit-state/fur-13e-evidence/firstClose.png",
+      "sha256": "9b4e61cdc4963790a4abba185909774f9bcd88a47050bedc615af7b372aafea0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13e-preview/after-eye-close.png"
+    },
+    "firstFace": {
+      "path": ".codex/audit-state/fur-13e-evidence/firstFace.png",
+      "sha256": "5603585b50fb7c76069b9967a67522a65b92d975d86424bf760fb487427b4eb4",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13e-preview/after-head-front.png"
+    },
+    "held": {
+      "path": ".codex/audit-state/fur-13e-evidence/held.json",
+      "sha256": "4264c5069ca37c658ca43821c4da08662067e50107450ad5627b82d51c9b05ac",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/held-data.json"
+    },
+    "roundtrip": {
+      "path": ".codex/audit-state/fur-13e-evidence/roundtrip.json",
+      "sha256": "8b4abd86477b88379447a2c30aa2081973a9665bdfc168d0107e3ef1186e776b",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/style-roundtrip.json"
+    },
+    "finalClose": {
+      "path": ".codex/audit-state/fur-13e-evidence/finalClose.png",
+      "sha256": "90db59c08753e1268e9216cc1bb59660861118b8c83d13cdadcfca436432e9a6",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/after/eye-close.png"
+    },
+    "brief": {
+      "path": ".codex/audit-state/fur-13e-evidence/brief.md",
+      "sha256": "5dc75a463621493cf8d2460797410cf6c104efd393eee0ca849abca56390389d",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/briefs/13e.md"
+    },
+    "finalFace": {
+      "path": ".codex/audit-state/fur-13e-evidence/finalFace.png",
+      "sha256": "975f331cb22fe2887fc4d42bebe275f334203b51754ce4ff5a8890798877a1d9",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/after/head-front.png"
+    },
+    "model": {
+      "path": ".codex/audit-state/fur-13e-evidence/model.blend",
+      "sha256": "7a0b2fe68e9344a7bca8c5394d1068698da230e41e81f91c3ec64035bcaab390",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/surface.blend"
+    },
+    "pairClose": {
+      "path": ".codex/audit-state/fur-13e-evidence/pairClose.png",
+      "sha256": "c1692d68575203e7b7be268462d4d7bba23034a457f1736fd3301c12846e50e0",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13e-eyeliner-close.png"
+    },
+    "pairFace": {
+      "path": ".codex/audit-state/fur-13e-evidence/pairFace.png",
+      "sha256": "654cfb5bb1bd49c957c16e7677ff363aee7f117cc88d6b99a5012d2fffb11a97",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13e-eyeliner-face.png"
+    },
+    "flags": {
+      "path": ".codex/audit-state/fur-13e-evidence/flags.npz",
+      "sha256": "8c0b5be3a84366e28413b4d32036aba769012e59c96ded42a4afa90af70e3420",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/r/sweep-flags.npz"
+    },
+    "solids": {
+      "path": ".codex/audit-state/fur-13e-evidence/solids.npz",
+      "sha256": "463099625a2dcf809aaa871c6de6e81620394fc71d36b6184dd50ddf20db466c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/r/obstacle-evidence.npz"
+    },
+    "rogue": {
+      "path": ".codex/audit-state/fur-13e-evidence/rogue.npz",
+      "sha256": "cb9a551b2954740e90d2efa464d149cb6da008169a9ac4673ab6ad2fd183aa94",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-13e/r/rogue-flags.npz"
+    },
+    "metrics": {
+      "path": "docs/design/species-construction/akinza/fur-13e-metrics.json",
+      "sha256": "350fab70c6740f816d5b5f5db4d8fc77b9af8d888975e467cf9de383a413b5a1"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-13e-review.json",
+      "sha256": "5b8184e98d482e44df7e87978d59940f270622cca4f6b1db4478ec8737af5b6b"
+    },
+    "delivery": {
+      "path": "docs/design/species-construction/akinza/fur-13e-delivery.json",
+      "sha256": "d45d378b3a37066680ef4acc5e4b89c03887905a51bb533226c385e6f8fd3184"
+    }
+  },
+  "criteria": [
+    {
+      "id": "ring",
+      "expectation": "Visible external full G1 ring, outward upper emphasis, thin lower and no bare fur band.",
+      "status": "blocked",
+      "assessment": "Final native close removes black spikes and heavy lower band, but outer/right liner is missing and upper outer emphasis is too weak. Direct and independent inspection agree. Two authorized builds exhausted. Normal face inspected: liner reads as broken thin upper arcs and largely disappears on outer sides.",
+      "evidence": [
+        "finalClose",
+        "firstClose",
+        "brief",
+        "finalFace"
+      ]
+    },
+    {
+      "id": "default",
+      "expectation": "G1-outer default with usable legacy style selection.",
+      "status": "pass",
+      "assessment": "G1-outer configured as default; saved baseline material backup supports exact original graph restoration and final roundtrip assert passed.",
+      "evidence": [
+        "source",
+        "roundtrip"
+      ]
+    },
+    {
+      "id": "held",
+      "expectation": "Saved mesh and physical fur unchanged outside shader-only liner additions.",
+      "status": "pass",
+      "assessment": "Final saved file reopened; all27 physical object coordinates, topology, original attributes, curve starts, transforms and slots exactly match held13c fix3.",
+      "evidence": [
+        "held"
+      ]
+    },
+    {
+      "id": "artifacts",
+      "expectation": "Fresh complete12d body sweep, zero new flags and no regional count rise.",
+      "status": "pass",
+      "assessment": "Fresh complete saved skin and separate-object sweeps plus strengthened rogue test pass: every region unchanged, zero new IDs/clusters; collision0, neighbor36, regional1959, transfer1610, lift44, rogue0.",
+      "evidence": [
+        "metrics",
+        "flags",
+        "solids",
+        "rogue",
+        "model"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Two native matched pairs, direct and independent inspection, logs, separate commit and bounded archive, no push.",
+      "status": "pass",
+      "assessment": "Both canonical sheets pixel exact and directly/independently inspected, correct before/after order/framing; logs and separate partial commit complete, bounded archives after commit with hashes held, no push. Source and saved current candidate match. Art remains explicitly blocked under ring criterion.",
+      "evidence": [
+        "pairClose",
+        "pairFace",
+        "delivery",
+        "review",
+        "model"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "ring",
+      "status": "resolved",
+      "observation": "First full-size close/face render has black whole-hair spikes and a lower ring thicker than the upper arc. Independently confirmed. Not accepted as final.",
+      "nextAction": "Use the one authorized fix: image-plane boundary distances and per-point hair tint. Inspect both final views.",
+      "evidence": [
+        "firstClose",
+        "firstFace"
+      ],
+      "resolution": "Projected per-point fields remove the black lash fan and excessive lower thickness. Final close proves those specific first-build defects fixed; full-ring failure remains separately recorded as F003.",
+      "resolutionEvidence": [
+        "finalClose"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "default",
+      "status": "resolved",
+      "observation": "Independent source review found legacy style restoration issue; source corrected, final saved surface must include baseline backup.",
+      "nextAction": "Build final saved surface from held13c baseline and run exact graph roundtrip check.",
+      "resolution": "Final save rebuilt from held13c fix3 with original material backup, unconditional restoration and halo default restoration; exact graph roundtrip passes.",
+      "resolutionEvidence": [
+        "roundtrip",
+        "held"
+      ]
+    },
+    {
+      "id": "F003",
+      "criterion": "ring",
+      "status": "blocked",
+      "observation": "Final close has an open outer/right ring with an abrupt upper endpoint, faint lower-right arc and insufficient G1 outward-corner weight. Smooth gray border remains exposed at missing side.",
+      "nextAction": "After explicit cap extension, replace suspect world-Y eligibility with true anterior eye/lid coverage, calibrate G1 rendered upper widths, rebuild full ring, rerender both views and repeat complete saved gates.",
+      "acceptanceCriterion": "Continuous dark ring exactly outside full visible globe; upper arc retains G1 weight toward outer corner, thin complete lower, no spikes or bare band.",
+      "evidence": [
+        "finalClose",
+        "firstClose",
+        "brief",
+        "finalFace"
+      ],
+      "blocker": {
+        "externalDependency": "Step13e expressly permits one build plus at most one fix. Both saved attempts used.",
+        "attempts": "Exactly two saved builds: first lash fan/heavy lower; one fix removes those but leaves missing outer ring and weak upper weight. All authorized final views, complete saved gates, pairs, independent audit, logs, separate commit and post-commit archives completed. No third build or push.",
+        "unblocksWhen": "Nick explicitly authorizes an additional modeling build or changes the target."
+      }
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder plus independent review_13e native close/face and pair audits",
+    "comparison": "Final candidate is visibly incomplete: outer/lower ring missing and upper outer weight weak. First spikes and heavy lower fixed. Two-build cap exhausted. No art approval.",
+    "regressions": "Exact saved physical data and style roundtrip pass; fresh full artifact and rogue gates unchanged. Direct/independent held-face review finds no regression, maximum outside-eye channel delta2. Both pairs pixel exact.",
+    "scopeCheck": "Exactly one build plus one fix. F003 remains blocked by explicit brief cap. All executable authorized verification/delivery/commit/archive actions complete. No third build, geometry change, push or art approval. This record does not mark earlier ear work or whole Akinza complete.",
+    "sessionId": "akinza-fur-13e",
+    "requestId": "37363a44-3586-46b2-89f9-43385ef4040b",
+    "performedAt": "2026-10-16T17:30:12.425131+00:00"
+  },
+  "stop": {
+    "kind": "blocked"
+  }
+}
