@@ -101,6 +101,10 @@
       "path": "docs/design/mini-blender-followup-evidence/cleanup.json",
       "sha256": "458100a83bf26fac3b8d8b6af702f6fdca94b6c36423ae10c7605d574e7c3661"
     },
+    "publication": {
+      "path": "docs/design/mini-blender-followup-evidence/publication.json",
+      "sha256": "e83f81aca0d46c1f157b362f49e2702b8302389f972e9ac5a4aff4f181048849"
+    },
     "miniImage": {
       "path": "untracked/mini-blender-followup/render/body-front.png",
       "sha256": "7c614c964b8196435f10c9512b69b8bfc1d21c5213f9900c84ea0392e8d70f2b"
@@ -173,11 +177,12 @@
     {
       "id": "publication",
       "expectation": "Update guide, publish explicit-path follow-up commits and an auto-merge PR because814merged.",
-      "status": "pending",
-      "assessment": "Guide and adoption instructions updated. Publish after benchmark acceptance.",
+      "status": "pass",
+      "assessment": "Follow-up PR published with auto-merge; adoption instructions and current evidence included.",
       "evidence": [
         "guide",
-        "adoption"
+        "adoption",
+        "publication"
       ]
     }
   ],
@@ -211,9 +216,14 @@
     {
       "id": "F003",
       "criterion": "publication",
-      "status": "open",
+      "status": "resolved",
       "observation": "Prior PR814merged; a follow-up auto-merge PR is required.",
-      "nextAction": "Finish required evidence and audit it before publication/completion."
+      "resolution": "Required actual result inspected and recorded.",
+      "resolutionEvidence": [
+        "publication",
+        "guide",
+        "adoption"
+      ]
     }
   ],
   "audit": {
@@ -223,9 +233,9 @@
     "scopeCheck": "No edits to reference/Akinza/creature-pipeline worktrees. CI VM/WSL unchanged. Explicit approved Messages deletion preserved settings. Branch adoption remains for the other session, with exact instructions provided as requested.",
     "sessionId": "mini-blender-followup-20261016",
     "requestId": "c59f1510-7497-44a5-bcb7-0efebf82ccbd",
-    "performedAt": "2026-10-16T14:22:53.246441+00:00"
+    "performedAt": "2026-10-16T14:23:56.686679+00:00"
   },
   "stop": {
-    "kind": "continue"
+    "kind": "complete"
   }
 }

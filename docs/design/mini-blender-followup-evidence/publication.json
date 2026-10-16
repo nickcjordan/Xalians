@@ -1,0 +1,54 @@
+{
+  "autoMergeRequest": {
+    "authorEmail": null,
+    "commitBody": null,
+    "commitHeadline": null,
+    "mergeMethod": "MERGE",
+    "enabledAt": "2026-10-16T14:23:31Z",
+    "enabledBy": {
+      "id": "MDQ6VXNlcjEyNzg2NjA0",
+      "is_bot": false,
+      "login": "nickcjordan",
+      "name": "Nick Jordan"
+    }
+  },
+  "headRefOid": "18f3325019aa85a0e805ba4ed6e22f498e536487",
+  "mergeStateStatus": "BLOCKED",
+  "number": 815,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/nickcjordan/Xalians/actions/runs/38915370773/job/117021342682",
+      "name": "Build frontend",
+      "startedAt": "2026-10-16T14:23:30Z",
+      "status": "IN_PROGRESS",
+      "workflowName": "CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/nickcjordan/Xalians/actions/runs/38915371060/job/117021344360",
+      "name": "Terraform plan",
+      "startedAt": "2026-10-16T14:23:30Z",
+      "status": "IN_PROGRESS",
+      "workflowName": "Deploy backend"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/nickcjordan/Xalians/actions/runs/38915370773/job/117021342955",
+      "name": "Content package",
+      "startedAt": "2026-10-16T14:23:30Z",
+      "status": "IN_PROGRESS",
+      "workflowName": "CI"
+    }
+  ],
+  "url": "https://github.com/nickcjordan/Xalians/pull/815",
+  "observedAt": "2026-10-16T14:23:56.174656+00:00",
+  "note": "Observed after implementation/evidence commits; final audit metadata is committed afterward and latest head is verified again before the stop receipt."
+}

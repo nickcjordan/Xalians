@@ -35,6 +35,8 @@ Nick approved all three parts of `mini-followup.md` on 2026-10-16:
 - Real new-cap container checks passed: denoised cube, simulated five-second CI pause/resume, diagnostic failure, unsafe blend preflight exit 99 before render, and empty remote job/container cleanup. The unsafe test fixture needed a fake user to retain its unused image in the blend; rerunning the corrected fixture passes. Installed official binary and timer shim hashes match the prior final installation.
 - Final read-only Messages check also confirms the Sync remote-record stores and regenerated LiteSegment message store have zero content rows. Account metadata remains preserved.
 
-## Next unfinished action
+## Publication and final outcome
 
-Finish the whole-outcome review and follow-up audit, publish the follow-up PR with auto-merge, and record publication verification. Other-branch adoption is intentionally supplied as an exact patch and instructions, not performed in that session's worktree.
+Follow-up [PR #815](https://github.com/nickcjordan/Xalians/pull/815) is published with merge-method auto-merge enabled. CI was running at publication; passing checks will allow its merge. The PR body includes exact adoption commands. Implementation and measured evidence commits are 584e2965 and 18f33250; the final audit/publication metadata commit follows them. The prior PR #814 is already merged.
+
+All three authorized parts have actual-result evidence. The final independent whole-outcome review confirmed pixel equality and found one stale VM-sizing sentence, now corrected. The task-specific completion audit binds current evidence and records the resolved findings. No authorized implementation or verification remains unfinished. Other-branch adoption is intentionally supplied as an exact patch and instructions, not performed in that session's worktree.
