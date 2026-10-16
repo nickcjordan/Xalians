@@ -1,0 +1,17 @@
+{
+  "id": "N-01M51490SA6FP8QQRJP7WFN0B7",
+  "alias": "gy73",
+  "stage": "05-sculpt",
+  "who": "nick",
+  "words": "Nick 2026-10-15 on the forelegs fix page: 'i think it looks good'. Legs, paws and tail approved (parts 3 to 5): hind legs B-xcbx above the paws, generated paws with toes and small blunt claws (B-23xc..B-ycqv), tail B-e6bc, forelegs reverted to generated (B-mwsc). Stage 5 sculpt candidate: luceras_sculpt.blend.",
+  "date": "2026-10-16",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5142CAPSHRW8YMNG8YY5WSC",
+    "evidence": [
+      "d1203576f1f786fb8ae68097dde1e9fe344db0c6108b5077c0f9524d58a35754"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-16T01:12:28Z"
+}

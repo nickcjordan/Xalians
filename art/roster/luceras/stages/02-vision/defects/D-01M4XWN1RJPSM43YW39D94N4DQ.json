@@ -9,6 +9,7 @@
   "attempts": [
     "N-01M4XWN1RDZWQWV3AME3936QZV"
   ],
-  "status": "open",
-  "createdAt": "2026-10-14T19:01:31Z"
+  "status": "closed",
+  "createdAt": "2026-10-14T19:01:31Z",
+  "closedAt": "2026-10-16T01:12:39Z"
 }

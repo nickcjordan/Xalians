@@ -130,7 +130,8 @@ def aggregate_stage(key, stage):
                 a[k] += int(r.get(k, 0))
         rep = b.get("report") or {}
         blender += float(rep.get("blenderSeconds", 0) or 0)
-        codex += int(rep.get("codexTokens", 0) or 0)
+        # Codex logs print counts with thousands separators ("289,605"); reports may carry them as text.
+        codex += int(str(rep.get("codexTokens", 0) or 0).replace(",", "").strip() or 0)
     return {
         "tokens": tot, "byRole": by_role, "blenderMinutes": round(blender / 60.0, 2),
         "codexTokens": codex, "buildCount": len(builds), "buildsWithoutTranscripts": uncovered,

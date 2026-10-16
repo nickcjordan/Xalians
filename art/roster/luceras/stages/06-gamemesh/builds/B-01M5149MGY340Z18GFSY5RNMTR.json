@@ -1,0 +1,24 @@
+{
+  "id": "B-01M5149MGY340Z18GFSY5RNMTR",
+  "alias": "8ezj",
+  "stage": "06-gamemesh",
+  "kind": "build",
+  "goal": "Stage 6: full-tier game mesh from the approved sculpt (QuadriFlow, UVs, bakes, weights, deformation test); Codex",
+  "scope": "whole creature",
+  "defect": null,
+  "holds": [],
+  "inputs": [
+    {
+      "path": "d1203576f1f786fb8ae68097dde1e9fe344db0c6108b5077c0f9524d58a35754",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T01:12:48Z",
+  "briefSha256": "34e35be6cae494736c44df2a24753c3ece6738a987ef636cb52507e623246b19"
+}

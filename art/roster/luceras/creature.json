@@ -101,15 +101,19 @@
       "closedAt": "2026-10-14T20:42:53Z"
     },
     "05-sculpt": {
+      "state": "closed",
+      "approval": "N-01M51490SA6FP8QQRJP7WFN0B7",
+      "evidence": [
+        "d1203576f1f786fb8ae68097dde1e9fe344db0c6108b5077c0f9524d58a35754"
+      ],
+      "openedAt": "2026-10-14T20:42:53Z",
+      "closedAt": "2026-10-16T01:12:56Z"
+    },
+    "06-gamemesh": {
       "state": "open",
       "approval": null,
       "evidence": [],
-      "openedAt": "2026-10-14T20:42:53Z"
-    },
-    "06-gamemesh": {
-      "state": "not-started",
-      "approval": null,
-      "evidence": []
+      "openedAt": "2026-10-16T01:12:48Z"
     },
     "07-surface": {
       "state": "not-started",

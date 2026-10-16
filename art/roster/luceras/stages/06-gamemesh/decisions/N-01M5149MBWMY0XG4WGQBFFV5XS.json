@@ -1,0 +1,14 @@
+{
+  "id": "N-01M5149MBWMY0XG4WGQBFFV5XS",
+  "alias": "d47z",
+  "stage": "06-gamemesh",
+  "who": "orchestrator",
+  "words": "Slice answer for stage 6: the per-module base meshes of the roster layer (decision 6) do not exist yet; for Luceras the game mesh is QuadriFlow retopology of the approved sculpt with symmetry, the rigid parts decimated, one UV set, normal and occlusion baked from the sculpt, weights transferred. Production answer unchanged: base meshes per module, built after the slice proves the chain, with this mesh as the first comparison.",
+  "date": "2026-10-16",
+  "kind": "ruling",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-16T01:12:48Z"
+}
