@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5104H4Y8EHS1XYX0EXGK97B",
+  "alias": "7txf",
+  "stage": "05-sculpt",
+  "kind": "build",
+  "goal": "Stage 5 paws: fill the reconstruction pits, four toes per paw with one claw each, audit all four paws; Codex",
+  "scope": "all four paws",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T00:00:07Z",
+  "briefSha256": "3a5edaec2a6621527b0c695e01e823eaf17f6c4a9b6de61d278c18f959999610"
+}

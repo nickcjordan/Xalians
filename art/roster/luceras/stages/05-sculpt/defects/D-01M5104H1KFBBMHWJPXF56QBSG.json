@@ -1,0 +1,12 @@
+{
+  "id": "D-01M5104H1KFBBMHWJPXF56QBSG",
+  "alias": "e6zx",
+  "stage": "05-sculpt",
+  "description": "Nick: two holes in the right fore paw, and five toe lumps with four claws. The holes are pits the reconstruction made (pass 6 report listed a fore dorsal pit and distal notch; the critic missed it). Clay has four toes per paw.",
+  "camera": "fore_paws_front",
+  "region": "right fore paw (and audit all four)",
+  "origin": "B-ss73",
+  "attempts": [],
+  "status": "open",
+  "createdAt": "2026-10-16T00:00:07Z"
+}

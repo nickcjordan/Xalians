@@ -123,3 +123,5 @@ Read this first when resuming the creature pipeline. Design of record: [creature
 31. Codex holds its own work honestly when the brief says to (B-dp38 and B-jas4 both marked "hold"); the critic still decides, and the second hold was the best result so far.
 32. A session restart orphans background runs from this session's view though they keep running; a background until-loop on the run's wall file restores the completion notice.
 
+**Lesson 33 (2026-10-15, Nick caught it):** the critic read judged the claws and missed two holes and a fifth toe lump on the right fore paw, both visible in the image it was reading, and both already listed in the builder's own pass 6 report. A critic read must start with a fixed checklist before judging the change asked for: count digits, claws, eyes and other repeated parts per side; scan for holes, pits, dark spots and floating pieces; read every item in the builder's 'remaining' list and either fix it or put it on the page. Then judge the change.
+
