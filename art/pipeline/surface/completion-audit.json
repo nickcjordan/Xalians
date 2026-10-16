@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "B-rmyz-surface-pass1",
+  "outcome": "Timeboxed surface pass delivered with open art defects.",
+  "authorizedScope": "Stage 7 pass 1 standard surface and proof; no geometry redesign.",
+  "workRecord": "art/pipeline/surface/WORK_RECORD.md",
+  "stop": {
+    "kind": "user_stop",
+    "userWords": "Cap 75 minutes; stop editing at 60 and spend the rest on the final renders, the runtime screenshots and the report.",
+    "source": "User task brief"
+  },
+  "findings": [
+    {
+      "id": "plume_seam",
+      "severity": "major",
+      "observation": "Thin bright central seam is conspicuous in three.js. The crossed sheets still read as a flat feather, not a volume of hair tufts.",
+      "next_action": "Rework the plume center registration and crossed-sheet silhouette while staying within the 58 remaining triangles."
+    },
+    {
+      "id": "hind_roots",
+      "severity": "major",
+      "observation": "Black rectangular hind-fringe root tabs and regular comb spacing are visible in close views.",
+      "next_action": "Bury or reshape roots, soften the root mask, and stagger tuft length and angle."
+    },
+    {
+      "id": "chest_cards",
+      "severity": "major",
+      "observation": "Runtime chest ruff forms two brighter strips that do not blend into the coat.",
+      "next_action": "Match the card values and normal response to the chest or remove unnecessary chest cards."
+    },
+    {
+      "id": "fur_flow",
+      "severity": "major",
+      "observation": "Body and inner-leg fur contains broad wavy bands. Texture flow is not yet convincing short strand fur on the face and neck or longer clumps on the body.",
+      "next_action": "Reduce low-frequency normal variation and author directional, region-specific clump masks."
+    },
+    {
+      "id": "white_pattern",
+      "severity": "major",
+      "observation": "White muzzle cheeks and side chest/belly coverage are less broad and less white than the approved sheet. The plume uses a pale lower-center sweep and dark crown; this does not fully satisfy white-toward-tips wording.",
+      "next_action": "Expand sheet-registered white masks, check the plume tip pattern against Nick's chosen sheet, and compare again under neutral runtime lighting."
+    },
+    {
+      "id": "skin_attachment",
+      "severity": "moderate",
+      "observation": "Hind-fringe roots stay within 0.60 mm at rest but separate up to 2.55 mm in the tested hock pose.",
+      "next_action": "Interpolate weights at each card root from the exact supporting triangle and repeat deformation tests."
+    },
+    {
+      "id": "temporal_mobile",
+      "severity": "unverified",
+      "observation": "A 24-angle runtime orbit was inspected. Continuous animation flicker and physical mobile GPU performance were not measured.",
+      "next_action": "Review a continuous orbit and tail/hock animation on target mobile hardware."
+    }
+  ],
+  "report": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-surface\\pass1\\report.json",
+  "result": {
+    "canStop": true,
+    "disposition": "user_stop",
+    "problems": []
+  }
+}

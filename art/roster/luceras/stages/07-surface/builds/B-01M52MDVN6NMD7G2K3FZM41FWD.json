@@ -1,0 +1,19 @@
+{
+  "id": "B-01M52MDVN6NMD7G2K3FZM41FWD",
+  "alias": "nv32",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Stage 7 pass 2: pattern placed as the sheet, shaggy silhouette fringe (cap 15,000), card faults, horn, nose and ear materials; Codex",
+  "scope": "whole creature",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T15:13:58Z",
+  "briefSha256": "761265a777a9c080cc0d14c8b39eef10283e38c7f4ae92aeda3dc0edde118ce2"
+}

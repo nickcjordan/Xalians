@@ -13,12 +13,167 @@
       "sha256": null
     }
   ],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "composite_front_vs_sheet.png",
+      "hash": "b5919df96e3357e1af1554e27c3c425a61bf227eadc4402e3eab4c9eddf27295"
+    },
+    {
+      "name": "composite_head_vs_sheet.png",
+      "hash": "6023daecfa2b982db53f22d87f42d92f5167d14aa1083aa927fa3bae83ae5c8f"
+    },
+    {
+      "name": "composite_hind_leg_vs_sheet.png",
+      "hash": "3fb4d9be72f93b95e9a0c2b59f93dae9d96908b83c1a3ada67f4e9f87bff48c4"
+    },
+    {
+      "name": "composite_runtime_front_vs_sheet.png",
+      "hash": "d19ec303f28e5d719f6f8bf3b3d44f83631f9f9d91b72cb9da22b187024b17aa"
+    },
+    {
+      "name": "composite_runtime_head_vs_sheet.png",
+      "hash": "9106a8641ad6b06eaab29436a863215f2786f8defb1b0dce1dd432d9a0d6c026"
+    },
+    {
+      "name": "composite_runtime_hind_leg_vs_sheet.png",
+      "hash": "4c53d0feb8e123877076db0c0351ae819d12da898d1183d299ffd3f7c9669d3f"
+    },
+    {
+      "name": "composite_runtime_side_vs_sheet.png",
+      "hash": "90ab23f6f27dc06f2d2beec5153fda14517e285e35f2da009f3bf25055e8b5a6"
+    },
+    {
+      "name": "composite_runtime_sprite_vs_sheet.png",
+      "hash": "48033f2fcf21114c034f422ada43848b0c2e93b610074d5a681159d1e46c10ef"
+    },
+    {
+      "name": "composite_runtime_tail_plume_vs_sheet.png",
+      "hash": "e03a57bc9822ef9b2d55a91b9b467e406d6bdcb060333d6b5fe45eca8c1b9089"
+    },
+    {
+      "name": "composite_runtime_three_quarter_vs_sheet.png",
+      "hash": "31b62cb77657dd9aeefd411ecb18086a7278e895ca346ff6fbf3f4f51b6b4cf9"
+    },
+    {
+      "name": "composite_side_vs_sheet.png",
+      "hash": "22c1fe22d00fcec343cc178dbd5e3136a642f34723cdc2468a480670a1267c6e"
+    },
+    {
+      "name": "composite_sprite_vs_sheet.png",
+      "hash": "cecd2a5b2854a9e2c85920e4c682e612bf07db2c85e316ff86cd18f3003e875b"
+    },
+    {
+      "name": "composite_tail_plume_vs_sheet.png",
+      "hash": "5ba82ed585d49e1bb83aaafe1ec8d79fa42865b7ef16a6159801fee65d0748b5"
+    },
+    {
+      "name": "composite_three_quarter_vs_sheet.png",
+      "hash": "2c4a10a82b0f7658a475bdb84a2792ae8584481adee259dbd20169c2c5014de8"
+    },
+    {
+      "name": "luceras_surface.glb",
+      "hash": "f5e5b4ac53e093e2202b7f466e850cb40ff926289820ab26c934a64a85ac3563"
+    },
+    {
+      "name": "measurements.json",
+      "hash": "7675f43c374e7ffa18cc6ac336b73563ee4e34d8cc343c49d4047596ae357e5e"
+    },
+    {
+      "name": "report.json",
+      "hash": "95928028c3a8fb4feb3a97f90445d4a36431538c87a6d0aa2199f119c37c65f7"
+    },
+    {
+      "name": "surface.blend",
+      "hash": "2ee433cdff5de982174f41954e36b552113d801cf98e4312a7cb07034c2c064e"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "composite_front_vs_sheet.png",
+        "hash": "b5919df96e3357e1af1554e27c3c425a61bf227eadc4402e3eab4c9eddf27295"
+      },
+      {
+        "name": "composite_head_vs_sheet.png",
+        "hash": "6023daecfa2b982db53f22d87f42d92f5167d14aa1083aa927fa3bae83ae5c8f"
+      },
+      {
+        "name": "composite_hind_leg_vs_sheet.png",
+        "hash": "3fb4d9be72f93b95e9a0c2b59f93dae9d96908b83c1a3ada67f4e9f87bff48c4"
+      },
+      {
+        "name": "composite_runtime_front_vs_sheet.png",
+        "hash": "d19ec303f28e5d719f6f8bf3b3d44f83631f9f9d91b72cb9da22b187024b17aa"
+      },
+      {
+        "name": "composite_runtime_head_vs_sheet.png",
+        "hash": "9106a8641ad6b06eaab29436a863215f2786f8defb1b0dce1dd432d9a0d6c026"
+      },
+      {
+        "name": "composite_runtime_hind_leg_vs_sheet.png",
+        "hash": "4c53d0feb8e123877076db0c0351ae819d12da898d1183d299ffd3f7c9669d3f"
+      },
+      {
+        "name": "composite_runtime_side_vs_sheet.png",
+        "hash": "90ab23f6f27dc06f2d2beec5153fda14517e285e35f2da009f3bf25055e8b5a6"
+      },
+      {
+        "name": "composite_runtime_sprite_vs_sheet.png",
+        "hash": "48033f2fcf21114c034f422ada43848b0c2e93b610074d5a681159d1e46c10ef"
+      },
+      {
+        "name": "composite_runtime_tail_plume_vs_sheet.png",
+        "hash": "e03a57bc9822ef9b2d55a91b9b467e406d6bdcb060333d6b5fe45eca8c1b9089"
+      },
+      {
+        "name": "composite_runtime_three_quarter_vs_sheet.png",
+        "hash": "31b62cb77657dd9aeefd411ecb18086a7278e895ca346ff6fbf3f4f51b6b4cf9"
+      },
+      {
+        "name": "composite_side_vs_sheet.png",
+        "hash": "22c1fe22d00fcec343cc178dbd5e3136a642f34723cdc2468a480670a1267c6e"
+      },
+      {
+        "name": "composite_sprite_vs_sheet.png",
+        "hash": "cecd2a5b2854a9e2c85920e4c682e612bf07db2c85e316ff86cd18f3003e875b"
+      },
+      {
+        "name": "composite_tail_plume_vs_sheet.png",
+        "hash": "5ba82ed585d49e1bb83aaafe1ec8d79fa42865b7ef16a6159801fee65d0748b5"
+      },
+      {
+        "name": "composite_three_quarter_vs_sheet.png",
+        "hash": "2c4a10a82b0f7658a475bdb84a2792ae8584481adee259dbd20169c2c5014de8"
+      },
+      {
+        "name": "luceras_surface.glb",
+        "hash": "f5e5b4ac53e093e2202b7f466e850cb40ff926289820ab26c934a64a85ac3563"
+      },
+      {
+        "name": "measurements.json",
+        "hash": "7675f43c374e7ffa18cc6ac336b73563ee4e34d8cc343c49d4047596ae357e5e"
+      },
+      {
+        "name": "report.json",
+        "hash": "95928028c3a8fb4feb3a97f90445d4a36431538c87a6d0aa2199f119c37c65f7"
+      },
+      {
+        "name": "surface.blend",
+        "hash": "2ee433cdff5de982174f41954e36b552113d801cf98e4312a7cb07034c2c064e"
+      }
+    ],
+    "blockedBy": "nothing",
+    "stream": "codex",
+    "wallMinutes": 64.1,
+    "codexTokens": "297,538",
+    "note": "Surface pass 1. Critic read against the sheet (three.js renders): plume and horn shape right, eyes amber with goat pupil. Far from the sheet on: pattern placement (sheet: narrow white blaze forehead to nose, white muzzle and chin, one continuous white bib from throat over chest to belly, white inner legs and backs of the hind legs, dark gray head sides, back, flanks and outer legs, dark tail shaft; build: pale gray face, blotchy white patches, pale tail shaft); shaggy silhouette (species appearance line 2 'Shaggy fur': the sheet's outline is tufty all over, build reads as smooth skin); horns too glossy (sheet matte dark brown, bronze ridge crests); nose black (sheet pink-gray); inner ears gray (sheet pink-gray); card faults the builder named (plume seam, hind root tabs, chest strips, wavy fur bands)."
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-10-16T14:08:28Z",
-  "briefSha256": "2ef134e32408aba4ddeb767e792f3c7e3790cb0a258a8678dce06079b78936f5"
+  "briefSha256": "2ef134e32408aba4ddeb767e792f3c7e3790cb0a258a8678dce06079b78936f5",
+  "checks": [],
+  "reportedAt": "2026-10-16T15:13:58Z"
 }
