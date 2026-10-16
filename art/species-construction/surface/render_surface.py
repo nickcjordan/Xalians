@@ -11,6 +11,7 @@ import json
 import math
 import sys
 import time
+import hashlib
 from pathlib import Path
 
 import bpy
@@ -481,6 +482,7 @@ def main():
     parser.add_argument('--views', default=','.join(VIEWS))
     parser.add_argument('--device', default='CPU')
     parser.add_argument('--palette', default=None)
+    parser.add_argument('--eyeliner', default=None, choices=('current','none','hairline','upper','cat-eye','ice-blue'))
     parser.add_argument('--hide-fur', action='store_true')
     parser.add_argument('--clay', action='store_true', help='with --hide-fur: the skin in one neutral matte gray, to judge the shape alone')
     parser.add_argument('--alpha', action='store_true', help='transparent background, RGBA (silhouette measures)')
@@ -570,6 +572,9 @@ def main():
     if args.palette:
         pals = json.loads((Path(__file__).resolve().parent/'akinza-palettes.json').read_text())
         apply_palette(pals[args.palette], pals[args.palette].get('skinFactor', pals['skinFactor']))
+    from eyeliner_styles import configured
+    configured(args.eyeliner)
+    eyeliner_source_hash = hashlib.sha256((Path(__file__).resolve().parent/'eyeliner_styles.py').read_bytes()).hexdigest()
     setup_world(scene)
     rig = make_rig()
     cam_data = bpy.data.cameras.new('surface camera')
@@ -593,6 +598,8 @@ def main():
     (args.out/'index.json').write_text(json.dumps({
         'strands': info.get('strands'), 'strandPoints': info.get('strandPoints'), 'samples': args.samples,
         'engine': 'CYCLES CPU with denoise', 'images': records, 'renderSecondsTotal': round(sum(r['seconds'] for r in records), 1),
+        'eyeliner': args.eyeliner or json.loads((Path(__file__).resolve().parent/'akinza-surface.json').read_text()).get('eyeliner', {}).get('style', 'current'),
+        'eyelinerSourceSha256': eyeliner_source_hash,
         'wallSecondsIncludingLoad': total}, indent=2))
 
 

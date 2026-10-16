@@ -1,0 +1,50 @@
+{
+  "part": "13a",
+  "surfaceChanged": false,
+  "baselineSha256": "e9b68fada7b033c0d844617cf4f1053a4cb0c0f1bf0acf8889b28ca09032cb0b",
+  "default": "current",
+  "panels": {
+    "A": {
+      "eye-close": "f1d01264a476bc863571b9e1f9b6c9cb609281a494b38bdecc1855d83ba06213",
+      "head-front": "036e2da2fb913f98867b867e7623db68aab82de36d703e0c87083a055f336ad5"
+    },
+    "B": {
+      "eye-close": "ab72fb566ef1fbd4b2fa3b604adfdf6cb7bd002ebce40808e062603b2c81edce",
+      "head-front": "0408e8c58d1adcb6bf21cf92e76469f9bbfa04d745a818d04996015a64db103d"
+    },
+    "C": {
+      "eye-close": "bd50110346286ecd95ca0d361f5b8ed7a6c4ea6059905cc5a561261cf041bc6d",
+      "head-front": "45807b57fbf71c734079b53c3f86688da789354c85b567b7f318007f6ed4df1a"
+    },
+    "D": {
+      "eye-close": "f2d4fee3a3b75a1746fe92861ac3694745aced8bd65afd71f7778b610b21e144",
+      "head-front": "fad18de6cfdc1d00136b5819489e8e29d9530ca27ccd2f257565bd235a013f32"
+    },
+    "E": {
+      "eye-close": "d9780b967beb1ef03b6466db09c863936ecca2d53a03970526495fe2bc339a9b",
+      "head-front": "a3728498efd68877274e321e36b3abe7ad7093cb4e62aa7eb9cdf9446757148b"
+    },
+    "F": {
+      "eye-close": "49f8ef5f480c201207ee8bc4bf1982c37f7fb89d5dd546713f2c8f26ef5a09cd",
+      "head-front": "ba1a2a3cf85c951692fdb99ed775746c2ce6a000fd5ca04dc602043d21c90add"
+    }
+  },
+  "images": {
+    "13a-eyeliner-options.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options.png",
+      "size": [
+        3000,
+        2088
+      ],
+      "sha256": "09af45aa8cfe69c84c90e8e271700542ba8595f348a0289369bb0624152dbd51"
+    },
+    "13a-eyeliner-options-face.png": {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options-face.png",
+      "size": [
+        3072,
+        1422
+      ],
+      "sha256": "3bf79a20a98337a180fd93a1393ae364e072b6580767e51a13123f74aae6a2f4"
+    }
+  }
+}

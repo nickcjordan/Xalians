@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-fur-13",
+  "outcome": "Execute the complete three-part fur run in briefs/13.md while holding approved appearance and geometry, for Claude and Nick to review.",
+  "authorizedScope": "Material-only eyeliner mockups with default current; sparse rogue repairs; prominent ear furnishings; at most four tries per part; serial WSL Blender; three commits and no push.",
+  "workRecord": "docs/design/species-construction/akinza/fur-13-active-work.md",
+  "evidence": {
+    "A-eye-close": {
+      "path": ".codex/audit-state/fur-13-evidence/A-eye-close.png",
+      "sha256": "f1d01264a476bc863571b9e1f9b6c9cb609281a494b38bdecc1855d83ba06213",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/A/eye-close.png"
+    },
+    "A-head-front": {
+      "path": ".codex/audit-state/fur-13-evidence/A-head-front.png",
+      "sha256": "036e2da2fb913f98867b867e7623db68aab82de36d703e0c87083a055f336ad5",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/A/head-front.png"
+    },
+    "B-eye-close": {
+      "path": ".codex/audit-state/fur-13-evidence/B-eye-close.png",
+      "sha256": "ab72fb566ef1fbd4b2fa3b604adfdf6cb7bd002ebce40808e062603b2c81edce",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/B/eye-close.png"
+    },
+    "B-head-front": {
+      "path": ".codex/audit-state/fur-13-evidence/B-head-front.png",
+      "sha256": "0408e8c58d1adcb6bf21cf92e76469f9bbfa04d745a818d04996015a64db103d",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/B/head-front.png"
+    },
+    "C-eye-close": {
+      "path": ".codex/audit-state/fur-13-evidence/C-eye-close.png",
+      "sha256": "bd50110346286ecd95ca0d361f5b8ed7a6c4ea6059905cc5a561261cf041bc6d",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/C/eye-close.png"
+    },
+    "C-head-front": {
+      "path": ".codex/audit-state/fur-13-evidence/C-head-front.png",
+      "sha256": "45807b57fbf71c734079b53c3f86688da789354c85b567b7f318007f6ed4df1a",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/C/head-front.png"
+    },
+    "D-eye-close": {
+      "path": ".codex/audit-state/fur-13-evidence/D-eye-close.png",
+      "sha256": "f2d4fee3a3b75a1746fe92861ac3694745aced8bd65afd71f7778b610b21e144",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/D/eye-close.png"
+    },
+    "D-head-front": {
+      "path": ".codex/audit-state/fur-13-evidence/D-head-front.png",
+      "sha256": "fad18de6cfdc1d00136b5819489e8e29d9530ca27ccd2f257565bd235a013f32",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/D/head-front.png"
+    },
+    "F-eye-close": {
+      "path": ".codex/audit-state/fur-13-evidence/F-eye-close.png",
+      "sha256": "49f8ef5f480c201207ee8bc4bf1982c37f7fb89d5dd546713f2c8f26ef5a09cd",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/F/eye-close.png"
+    },
+    "F-head-front": {
+      "path": ".codex/audit-state/fur-13-evidence/F-head-front.png",
+      "sha256": "ba1a2a3cf85c951692fdb99ed775746c2ce6a000fd5ca04dc602043d21c90add",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/F/head-front.png"
+    },
+    "E-eye-close": {
+      "path": ".codex/audit-state/fur-13-evidence/E-eye-close.png",
+      "sha256": "d9780b967beb1ef03b6466db09c863936ecca2d53a03970526495fe2bc339a9b",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/E/eye-close.png"
+    },
+    "E-head-front": {
+      "path": ".codex/audit-state/fur-13-evidence/E-head-front.png",
+      "sha256": "a3728498efd68877274e321e36b3abe7ad7093cb4e62aa7eb9cdf9446757148b",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s13a/E/head-front.png"
+    },
+    "sheetClose": {
+      "path": ".codex/audit-state/fur-13-evidence/sheetClose.png",
+      "sha256": "09af45aa8cfe69c84c90e8e271700542ba8595f348a0289369bb0624152dbd51",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options.png"
+    },
+    "sheetFace": {
+      "path": ".codex/audit-state/fur-13-evidence/sheetFace.png",
+      "sha256": "3bf79a20a98337a180fd93a1393ae364e072b6580767e51a13123f74aae6a2f4",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/13a-eyeliner-options-face.png"
+    }
+  },
+  "criteria": [
+    {
+      "id": "eyeliner",
+      "expectation": "Six labeled visibly distinct styles in close and normal framing; current default unchanged and reproducible one-line switch.",
+      "status": "pass",
+      "assessment": "All six native close/head views and both final sheets directly inspected; distinct treatments, connected flicks, correct labels, no stale panel pixels and unchanged default/baseline.",
+      "evidence": [
+        "sheetClose",
+        "sheetFace",
+        "E-eye-close",
+        "C-eye-close"
+      ]
+    },
+    {
+      "id": "rogue",
+      "expectation": "Body-wide rogue test with before/after regional counts, visible ear-tip repair and requested comparisons.",
+      "status": "pending",
+      "assessment": "Work in progress; not yet demonstrated.",
+      "evidence": []
+    },
+    {
+      "id": "tufts",
+      "expectation": "Clearly prominent dense longer white soft separate locks reaching the lower half of the inner ear, with blue between tips and white head sides.",
+      "status": "pending",
+      "assessment": "Work in progress; not yet demonstrated.",
+      "evidence": []
+    },
+    {
+      "id": "preservation",
+      "expectation": "Full saved 12d plus rogue gates show no new flags or regional rise; held geometry, materials and unrelated fur equal.",
+      "status": "pending",
+      "assessment": "Work in progress; not yet demonstrated.",
+      "evidence": []
+    },
+    {
+      "id": "delivery",
+      "expectation": "All named sheets, comparisons and six current views inspected at full size, independent audit, three separate explicit-path commits, no push and archive handling.",
+      "status": "pending",
+      "assessment": "Work in progress; not yet demonstrated.",
+      "evidence": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "rogue",
+      "status": "open",
+      "observation": "Baseline crop contains straight isolated hairs extending past the ear silhouette; initial length-only diagnostic missed contrary-flow strands.",
+      "nextAction": "Use flow and envelope tests, repair sparse outliers, inspect the exact crop and run full saved gates.",
+      "acceptanceCriterion": "Visible ear-tip strays removed with no new regional artifacts."
+    },
+    {
+      "id": "F002",
+      "criterion": "eyeliner",
+      "status": "resolved",
+      "observation": "The first C mockup retained upper-heavy width from the old geometric band, failing the requested even hairline.",
+      "nextAction": "Render the fixed physical skin-boundary band and inspect it at close and normal size.",
+      "acceptanceCriterion": "C is a visibly thin soft gray-blue line with comparable width around the eye.",
+      "resolution": "Changed to signed physical distance at the skin boundary; fresh C is visibly thin all around at close and normal framing. Independent review confirms no heavy upper arc.",
+      "resolutionEvidence": [
+        "C-eye-close",
+        "C-head-front"
+      ]
+    },
+    {
+      "id": "F003",
+      "criterion": "eyeliner",
+      "status": "resolved",
+      "observation": "First cat-eye render had a detached dash beyond the upper arc rather than a connected flick.",
+      "nextAction": "Render the inward/upward connected flick across the existing globe band, skin and adjacent short hair shader.",
+      "acceptanceCriterion": "E has a short upturned flick visibly connected to the upper line.",
+      "resolution": "Connected the field across the existing globe band, skin and adjacent short fur, then deepened E only to charcoal blue. Both short flicks are visible in native head view; fixed light leaves the left a little fainter.",
+      "resolutionEvidence": [
+        "E-eye-close",
+        "E-head-front",
+        "sheetFace"
+      ]
+    },
+    {
+      "id": "F004",
+      "criterion": "eyeliner",
+      "status": "resolved",
+      "observation": "Connected E left wing has lower apparent contrast under the fixed key light at normal head framing.",
+      "nextAction": "Render deeper charcoal-blue E at unchanged width and inspect both native outer corners.",
+      "acceptanceCriterion": "Both short connected flicks read at normal framing.",
+      "resolution": "Connected the field across the existing globe band, skin and adjacent short fur, then deepened E only to charcoal blue. Both short flicks are visible in native head view; fixed light leaves the left a little fainter.",
+      "resolutionEvidence": [
+        "E-eye-close",
+        "E-head-front",
+        "sheetFace"
+      ]
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder; independent review_13 source audit received",
+    "comparison": "Original brief and native baseline inspected; new results pending.",
+    "regressions": "No model mutations yet.",
+    "scopeCheck": "All three parts remain in scope; no default art approval.",
+    "sessionId": "01a14217-f65b-7ad0-9d9b-7d371f00827a",
+    "requestId": "3cbafcd6-3db0-42ed-b12e-72dce74c1e36",
+    "performedAt": "2026-10-16T01:06:58.638925+00:00"
+  },
+  "stop": {
+    "kind": "continue"
+  }
+}

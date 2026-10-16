@@ -74,3 +74,5 @@ Step 12e fix partial: root fill .489-.527 of mid width and smoother soft outer a
 
 **Step 12f partial (2026-10-15).** Visible white ear-base furnishings and all eight requested views/pairs; full saved artifact/held-data gates pass. Still a compact curtain-like medial fan, not soft broad fennec locks. Four-try cap used; not approved. Surface s12f; s12e-fix retained.
 - 2026-10-15 approvals (Nick, review page comments): F7 hind soles ("yes"), F10a coat T7 ("yes"), F10e muzzle ("yes that does look better"), F12a eyes and nose fur to the edge ("yes this is better"), F12d fur bug fixes and chest ("yes looks better"). From 12c on, Codex builds the fur steps and Claude reviews (Nick 2026-10-15, Claude quota).
+
+Step 13a: six labeled material-only eyeliner options at close and normal head framing; current default and s12f hash unchanged. Physical thin line fixes upper-heavy first C; connected charcoal cat-eye fixes detached first E. Still off: no-liner smooth white globe rim, left cat-eye flick slightly fainter in fixed light. Sheets 13a-eyeliner-options.png and 13a-eyeliner-options-face.png. No model save or push.
