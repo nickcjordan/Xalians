@@ -1,0 +1,24 @@
+{
+  "id": "B-01M52GNXSV32QV0P308EEVGY29",
+  "alias": "rmyz",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Stage 7 pass 1: standard-finish surface on the approved game mesh: coat color and pattern, texture fur, fur fringe cards (plume, feathered hind legs), horn, eye, claw materials, whiskers; Codex",
+  "scope": "whole creature",
+  "defect": null,
+  "holds": [],
+  "inputs": [
+    {
+      "path": "294527ef89b8711ba0e94edb8981bde76a0e3be5126ddb86e35ed1346636cc4f",
+      "sha256": null
+    }
+  ],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T14:08:28Z",
+  "briefSha256": "2ef134e32408aba4ddeb767e792f3c7e3790cb0a258a8678dce06079b78936f5"
+}

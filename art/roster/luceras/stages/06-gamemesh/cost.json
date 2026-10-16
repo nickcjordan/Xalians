@@ -1,0 +1,22 @@
+{
+  "tokens": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "byRole": {},
+  "blenderMinutes": 0.0,
+  "codexTokens": 1128674,
+  "buildCount": 6,
+  "buildsWithoutTranscripts": [
+    "8ezj",
+    "97qx",
+    "db8w",
+    "8xwt",
+    "sgkc",
+    "csbd"
+  ],
+  "closedAt": "2026-10-16T14:08:03Z",
+  "approval": "N-01M52GN4CCFWJ9P2ZW1GXZ0PFF"
+}

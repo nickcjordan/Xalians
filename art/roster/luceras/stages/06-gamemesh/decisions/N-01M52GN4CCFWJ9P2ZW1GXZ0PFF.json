@@ -1,0 +1,17 @@
+{
+  "id": "N-01M52GN4CCFWJ9P2ZW1GXZ0PFF",
+  "alias": "xewa",
+  "stage": "06-gamemesh",
+  "who": "nick",
+  "words": "Nick 2026-10-16 on the game mesh page: 'yeah looks good to me'. Game mesh approved: 11,478 triangles, decimated from the approved sculpt.",
+  "date": "2026-10-16",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M52F5W1D4T4GPE2Y8VQPJSCR",
+    "evidence": [
+      "c0be472a40d904b759e3fa4c0e576ff3581bfe738fd2b88803fcd76cce769c31"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-16T14:08:02Z"
+}

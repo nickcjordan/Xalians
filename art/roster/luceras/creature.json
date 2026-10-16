@@ -110,15 +110,19 @@
       "closedAt": "2026-10-16T01:12:56Z"
     },
     "06-gamemesh": {
+      "state": "closed",
+      "approval": "N-01M52GN4CCFWJ9P2ZW1GXZ0PFF",
+      "evidence": [
+        "c0be472a40d904b759e3fa4c0e576ff3581bfe738fd2b88803fcd76cce769c31"
+      ],
+      "openedAt": "2026-10-16T01:12:48Z",
+      "closedAt": "2026-10-16T14:08:03Z"
+    },
+    "07-surface": {
       "state": "open",
       "approval": null,
       "evidence": [],
-      "openedAt": "2026-10-16T01:12:48Z"
-    },
-    "07-surface": {
-      "state": "not-started",
-      "approval": null,
-      "evidence": []
+      "openedAt": "2026-10-16T14:08:03Z"
     },
     "08-rig": {
       "state": "not-started",
