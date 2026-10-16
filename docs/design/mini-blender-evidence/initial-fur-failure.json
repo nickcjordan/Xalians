@@ -1,0 +1,9 @@
+{
+  "returncode": 132,
+  "wallSeconds": 588.656212051,
+  "ciPausedSeconds": 0.0,
+  "memoryLimitBytes": 3221225472,
+  "threads": 3,
+  "transferAndWallSeconds": 592.5826823999814,
+  "route": "mini"
+}

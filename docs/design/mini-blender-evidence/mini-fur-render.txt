@@ -1,0 +1,30 @@
+00:02.340  blend            | Read blend: "/job/work/benchmark/source/surface/surface.blend"
+15:11.887  render           | Saved: '/job/work/benchmark/render/body-front.png'
+tiger4 nodes 4790
+rendered body-front in 426.3s
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:34:58)
+
+Blender quit
+	Command being timed: "env LD_PRELOAD=/opt/rdtscp_compat.so blender -t 3 -b --python-exit-code 1 --python /job/work/benchmark/source/scripts/review_fur_12d.py -- --surface /job/work/benchmark/source/surface --out /job/work/benchmark/render --views body-front --samples 32 --palette T7 --device CPU"
+	User time (seconds): 1854.44
+	System time (seconds): 103.53
+	Percent of CPU this job got: 214%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 15:12.26
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2443864
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 287
+	Minor (reclaiming a frame) page faults: 694185
+	Voluntary context switches: 63288
+	Involuntary context switches: 129985
+	Swaps: 0
+	File system inputs: 35696
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

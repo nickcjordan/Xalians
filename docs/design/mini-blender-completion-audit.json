@@ -1,0 +1,319 @@
+{
+  "schemaVersion": 1,
+  "id": "mini-blender-compute",
+  "outcome": "Use the Intel Mac mini as a bounded second exact-version Blender machine with usable slot spillover, a real Akinza comparison and an auto-merge PR.",
+  "authorizedScope": "Install free compute tools and scripts, preserve CI and WSL configuration and all other worktrees, write and publish only the new worktree; no purchases, passwords or CI registration.",
+  "workRecord": "docs/design/mini-blender-active-work.md",
+  "evidence": {
+    "runner": {
+      "path": "scripts/mini_blender/mini_blender.py",
+      "sha256": "a96dd29986f5157121a567b3eee3fabc15298a4f02b2e57a1617b30dbcdccfe8"
+    },
+    "supervisor": {
+      "path": "scripts/mini_blender/remote.py",
+      "sha256": "40c452f36d535394c423672a2167e648f26c0f56b33a59952fc216ddb17b69a2"
+    },
+    "worker": {
+      "path": "scripts/mini_blender/local_worker.py",
+      "sha256": "896c4e395cb336e4a5d02425b6e34211b00a05092f8d046a49104a7c48f0e876"
+    },
+    "shim": {
+      "path": "scripts/mini_blender/rdtscp_compat.c",
+      "sha256": "7c260906ac4a3c70bbb92e12ac0cbc9db126e01c9fb9106d113f4169d232cae7"
+    },
+    "shimTest": {
+      "path": "scripts/mini_blender/rdtscp_check.c",
+      "sha256": "236371adcc88ddbda6a7eb92b5bbf9f255ad43cf433e723cd0355ca0794f70e9"
+    },
+    "image": {
+      "path": "scripts/mini_blender/Dockerfile",
+      "sha256": "5394b45b4f3ef145fc4a7a752bb9094ae9c768435266a64fbabe4492b6465804"
+    },
+    "tests": {
+      "path": "docs/design/mini-blender-evidence/tests.txt",
+      "sha256": "d30866254734a7e71d2e37090fd948341998bcc717fff2ea8238532f4065625c"
+    },
+    "guide": {
+      "path": "docs/design/mini-blender-compute.md",
+      "sha256": "efe302b2b94c3e6399294dc51ded95d6944d9c3e19838cce2c0f950b300c9eab"
+    },
+    "localResult": {
+      "path": "untracked/mini-blender-benchmark/local-evidence/result.json",
+      "sha256": "0cdbeb41b2cf3355007fbaeaf55e7d05e8d7738b379fc2682c8c41268602fa77"
+    },
+    "firstFailure": {
+      "path": "untracked/mini-blender-benchmark/first-failure-evidence/result.json",
+      "sha256": "0dffca9e820adf9c61cc2633c56cc50ecd919dc77b0de9623033ed93f4904a2c"
+    },
+    "comparison": {
+      "path": "docs/design/mini-blender-evidence/comparison.json",
+      "sha256": "d2b1ec13b693dad64b0e684dce664cfb3e256c3be737f21fa1065e84ed19f6fd"
+    },
+    "miniLog": {
+      "path": "docs/design/mini-blender-evidence/mini-fur-render.txt",
+      "sha256": "0893bd714a6fe6e26be87572c415bfad65094baea4a92b14d97c0ddc5c5aeb9f"
+    },
+    "pcLog": {
+      "path": "docs/design/mini-blender-evidence/local-fur-render.txt",
+      "sha256": "93826ed9658fdbdb5b70f2084d7fde09bd35cbe7627154ce196ed83b0ed6d1c4"
+    },
+    "installation": {
+      "path": "docs/design/mini-blender-evidence/installation.json",
+      "sha256": "46cd08fb3e9f1bf50ed05f918ec45e5cd43f58f900700d3154ae24ca542fcc6a"
+    },
+    "inputs": {
+      "path": "docs/design/mini-blender-evidence/input-hashes.json",
+      "sha256": "0abe40dc6308a6458c1e040040392d1987fc4e32dadd41dcc958039ea2c1e879"
+    },
+    "liveSuccess": {
+      "path": "docs/design/mini-blender-evidence/live-success.json",
+      "sha256": "f3d8c92639ee368793387f85d5f6c2c29026a51a949560bdc0f8ffbe2db773a8"
+    },
+    "liveFailure": {
+      "path": "docs/design/mini-blender-evidence/live-failure.json",
+      "sha256": "342ea2c918e67b287c7192d87e3f1c8552c7ac39102b7d305ac740e52cbc9855"
+    },
+    "liveSuccessLog": {
+      "path": "docs/design/mini-blender-evidence/live-success.txt",
+      "sha256": "29db2f3fc119f218284fb2d4385f6e5c3b767c6d85bc2c552b6e9b65fe99adcd"
+    },
+    "liveFailureLog": {
+      "path": "docs/design/mini-blender-evidence/live-failure.txt",
+      "sha256": "cd1e4ea1e98aaffa9a0d7dd9f86cbbef8e457fdb91fee9b0948f4db50f4703aa"
+    },
+    "cleanup": {
+      "path": "docs/design/mini-blender-evidence/cleanup.json",
+      "sha256": "5c441430b11b26f7bd7d25fadcb3148ac12c1218d5608de5297ed4ab6847b72d"
+    },
+    "measuredShim": {
+      "path": "docs/design/mini-blender-evidence/measured-rdtscp-compat.c.txt",
+      "sha256": "ee5cf0ec181474ef2354723a8a2de4fbf24b2847f5e8d0ad6b535d74078942b2"
+    },
+    "shimRevision": {
+      "path": "docs/design/mini-blender-evidence/shim-revision.diff.txt",
+      "sha256": "fe99cae71aa50e0f253c4b729a094373625b7dfb00de5d03f285c8c99f5a8502"
+    },
+    "review": {
+      "path": "docs/design/mini-blender-evidence/review.md",
+      "sha256": "59e4b39cbf735cce4bd427315ef1bafa39338d0f5de1ea963d7b8942447b7cd1"
+    },
+    "miniImage": {
+      "path": "untracked/mini-blender-benchmark/mini/body-front.png",
+      "sha256": "50ddc2b131d05fd7ff1239147e769e75eefda8b1fc3c238a63ff4e93293a1c9f"
+    },
+    "pcImage": {
+      "path": "untracked/mini-blender-benchmark/local/body-front.png",
+      "sha256": "c2b068930a9666fe04ddda7003fd5aece546eba9007fd050fc1adfab6cbabcf2"
+    },
+    "cancellation": {
+      "path": "docs/design/mini-blender-evidence/cancellation.json",
+      "sha256": "cf034713a30a9df6acf05e5210459447153f6fb9f993d15dee06b7e8c91ddd8a"
+    }
+  },
+  "criteria": [
+    {
+      "id": "route",
+      "expectation": "Exact official Linux x64 Blender 5.2.2 runs on Intel mini with unchanged CI and WSL configuration.",
+      "status": "pass",
+      "assessment": "Matching Blender binary SHA-256 bafec183e960819c76fe213c000cdb2284c53a87ef6791812f8728b51f07145b on both machines; shimmed denoised cube succeeds.",
+      "evidence": [
+        "image",
+        "shim",
+        "guide"
+      ]
+    },
+    {
+      "id": "scheduling",
+      "expectation": "Bound remote compute, serialize it and yield to CI; clean only after work stops.",
+      "status": "pass",
+      "assessment": "Resource caps and CI priority verified; real final-image denoised cube, CI pause/resume, intentional failure, cancellation and cleanup pass. No remaining job folders or containers.",
+      "evidence": [
+        "supervisor",
+        "tests",
+        "guide",
+        "liveSuccess",
+        "liveFailure",
+        "cleanup",
+        "cancellation"
+      ]
+    },
+    {
+      "id": "runner",
+      "expectation": "Selective manifest transfers with explicit PC/WSL mapping and usable local-slot spillover.",
+      "status": "pass",
+      "assessment": "Real small local and auto spillover jobs return matching build. Case aliases, traversal, collision and cancellation tests pass.",
+      "evidence": [
+        "runner",
+        "worker",
+        "tests"
+      ]
+    },
+    {
+      "id": "benchmark",
+      "expectation": "Complete the same real current Akinza fur render on both machines and inspect pixel difference, timing and peak remote RSS.",
+      "status": "pass",
+      "assessment": "Independent decoded RGB comparison found zero differing pixels at768x1024. Mini915.20s wall/426.3s render/2.33GiB peak versus PC179.03s/25.4s. Measured/final image provenance confirms only unrelated user-signal forwarding changed; final cube and lifecycle checks pass.",
+      "evidence": [
+        "comparison",
+        "miniLog",
+        "pcLog",
+        "miniImage",
+        "pcImage",
+        "installation",
+        "shimRevision",
+        "liveSuccess",
+        "liveFailure",
+        "review"
+      ]
+    },
+    {
+      "id": "publication",
+      "expectation": "Document results, commit explicit paths, push, open PR and enable auto merge.",
+      "status": "pending",
+      "assessment": "All implementation and full-image validation complete. Operating guide and evidence prepared; next authorized action is commit, push, PR and auto merge.",
+      "evidence": [
+        "guide"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F001",
+      "criterion": "runner",
+      "status": "resolved",
+      "observation": "Windows case aliases could overwrite input files.",
+      "resolution": "Casefolded overlap checks and declared file/directory spelling normalization reject collisions and support Linux transfers.",
+      "resolutionEvidence": [
+        "runner",
+        "tests"
+      ]
+    },
+    {
+      "id": "F002",
+      "criterion": "scheduling",
+      "status": "resolved",
+      "observation": "Remote cancellation could delete an active mount.",
+      "resolution": "Client EOF watchdog, cancel marker and supervisor lifetime flock await termination; daemon errors retain data.",
+      "resolutionEvidence": [
+        "supervisor",
+        "tests"
+      ]
+    },
+    {
+      "id": "F003",
+      "criterion": "runner",
+      "status": "resolved",
+      "observation": "Local slot could release while WSL Blender lived.",
+      "resolution": "Local worker kills and reaps its process tree on pipe EOF, and the slot owner awaits worker exit.",
+      "resolutionEvidence": [
+        "worker",
+        "runner",
+        "tests"
+      ]
+    },
+    {
+      "id": "F004",
+      "criterion": "scheduling",
+      "status": "resolved",
+      "observation": "Pause could fail during container startup or completion.",
+      "resolution": "Wait for running status and tolerate completed-process removal races; live pause/resume succeeded.",
+      "resolutionEvidence": [
+        "supervisor",
+        "tests"
+      ]
+    },
+    {
+      "id": "F005",
+      "criterion": "scheduling",
+      "status": "resolved",
+      "observation": "Supervisor failures lost diagnostics.",
+      "resolution": "Structured error archive returns logs and result before cleanup.",
+      "resolutionEvidence": [
+        "supervisor",
+        "tests"
+      ]
+    },
+    {
+      "id": "F006",
+      "criterion": "scheduling",
+      "status": "resolved",
+      "observation": "Failed unpause or removal could hang the global lock.",
+      "resolution": "Bound Docker control calls and process waits, check unpause/removal and reject orphan containers.",
+      "resolutionEvidence": [
+        "supervisor",
+        "tests"
+      ]
+    },
+    {
+      "id": "F007",
+      "criterion": "scheduling",
+      "status": "resolved",
+      "observation": "Host VM vCPU XPC process retained default niceness.",
+      "resolution": "Disk-holder identification applies nice15 only to compute VM processes. CI VZ worker remains nice0.",
+      "resolutionEvidence": [
+        "supervisor",
+        "guide"
+      ]
+    },
+    {
+      "id": "F008",
+      "criterion": "runner",
+      "status": "resolved",
+      "observation": "Windows host resources could admit an unsafe second WSL render.",
+      "resolution": "Query WSL available memory and load before existing slot capacity calculation. WSL settings unchanged.",
+      "resolutionEvidence": [
+        "runner",
+        "tests"
+      ]
+    },
+    {
+      "id": "F009",
+      "criterion": "scheduling",
+      "status": "resolved",
+      "observation": "Nonblocking SSH stdin EAGAIN could kill heartbeat thread.",
+      "resolution": "Retry EAGAIN; regression test verifies later EOF cancels correctly.",
+      "resolutionEvidence": [
+        "supervisor",
+        "tests"
+      ]
+    },
+    {
+      "id": "F010",
+      "criterion": "benchmark",
+      "status": "resolved",
+      "observation": "VZ lacks RDTSCP and the unmodified Cycles timer crashed. A narrowly reviewed compatibility shim fixes the cube, but full fur result is not verified.",
+      "resolution": "RDTSCP compatibility implementation passed instruction/register and negative-signal tests, final installed-image denoised cube and lifecycle checks. Full fur render completed below the cap with zero decoded pixel difference from PC. Independent review accepted proportionate validation of isolated later user-signal forwarding.",
+      "resolutionEvidence": [
+        "comparison",
+        "miniImage",
+        "pcImage",
+        "miniLog",
+        "measuredShim",
+        "shimRevision",
+        "installation",
+        "liveSuccess",
+        "liveFailure",
+        "review"
+      ]
+    },
+    {
+      "id": "F011",
+      "criterion": "publication",
+      "status": "open",
+      "observation": "Results are not published in a PR yet.",
+      "nextAction": "After final verification, commit explicit files, push branch, open full-description PR and enable auto merge."
+    }
+  ],
+  "audit": {
+    "reviewer": "Codex primary plus scoped independent adversarial reviewer",
+    "comparison": "Compared every brief requirement with installed compute, actual full fur outputs, identical Blender binary hashes, selective transfers, shared-slot route, CI/lifetime controls and operating guide. Implementation passes; publication remains executable.",
+    "regressions": "19 WSL tests and 12 macOS supervisor tests pass; final installed image passed denoised cube, real pause/resume and intentional failure cleanup. Independent reviewer confirmed decoded image equality and no further substantive code defects.",
+    "scopeCheck": "Preserved original full outcome, CI VM, WSL memory, reference edits and other worktree source.",
+    "sessionId": "mini-blender-compute-20261016",
+    "requestId": "04fa4928-c33f-4f4f-abe5-51de6ea5ba1d",
+    "performedAt": "2026-10-16T13:42:13.376439+00:00"
+  },
+  "stop": {
+    "kind": "continue"
+  }
+}

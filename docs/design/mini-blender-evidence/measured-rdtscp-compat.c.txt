@@ -1,0 +1,53 @@
+/* Intel VZ omits RDTSCP. Emulate only that timer instruction using the guest's
+ * supported RDTSC and Linux CPU ID, leaving the official Blender binary intact.
+ * This is a single-node timer compatibility aid, not a general instruction
+ * emulator: CPU migration between getcpu and RDTSC can affect timing metadata.
+ * Install only over SIG_DFL; other illegal instructions remain fatal.
+ */
+#define _GNU_SOURCE
+#include <cpuid.h>
+#include <errno.h>
+#include <signal.h>
+#include <stdint.h>
+#include <string.h>
+#include <sys/syscall.h>
+#include <ucontext.h>
+#include <unistd.h>
+
+static struct sigaction previous;
+
+static void emulate(int sig, siginfo_t *info, void *context)
+{
+    ucontext_t *state = context;
+    const unsigned char *instruction = (const unsigned char *)state->uc_mcontext.gregs[REG_RIP];
+    if (info->si_code > 0 && instruction[0] == 0x0f && instruction[1] == 0x01 && instruction[2] == 0xf9) {
+        int saved_errno = errno;
+        unsigned int cpu = 0, low, high;
+        syscall(SYS_getcpu, &cpu, NULL, NULL);
+        __asm__ volatile("lfence\n\trdtsc\n\tlfence" : "=a"(low), "=d"(high) : : "memory");
+        state->uc_mcontext.gregs[REG_RAX] = low;
+        state->uc_mcontext.gregs[REG_RDX] = high;
+        state->uc_mcontext.gregs[REG_RCX] = cpu;
+        state->uc_mcontext.gregs[REG_RIP] += 3;
+        errno = saved_errno;
+        return;
+    }
+    (void)sig;
+    sigaction(SIGILL, &previous, NULL);
+    /* Returning retries the original instruction with the default action. */
+}
+
+__attribute__((constructor)) static void install(void)
+{
+    unsigned int a, b, c, d;
+    if (__get_cpuid(0x80000001, &a, &b, &c, &d) && (d & (1u << 27)))
+        return;
+    if (sigaction(SIGILL, NULL, &previous) != 0 || previous.sa_handler != SIG_DFL)
+        return;
+    struct sigaction action;
+    memset(&action, 0, sizeof(action));
+    sigemptyset(&action.sa_mask);
+    action.sa_sigaction = emulate;
+    action.sa_flags = SA_SIGINFO;
+    sigaction(SIGILL, &action, NULL);
+}

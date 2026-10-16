@@ -1,0 +1,68 @@
+{
+  "dimensions": [
+    1024,
+    768,
+    3
+  ],
+  "meanAbsoluteChannelDifference8bit": 0.0,
+  "maximumChannelDifference8bit": 0,
+  "differentPixels": 0,
+  "differentPixelPercent": 0.0,
+  "miniPeakRssKiB": 2443864,
+  "mini": {
+    "returncode": 0,
+    "wallSeconds": 915.195394872,
+    "ciPausedSeconds": 0.0,
+    "memoryLimitBytes": 3221225472,
+    "threads": 3,
+    "transferAndWallSeconds": 919.4501705000002,
+    "route": "mini",
+    "render": {
+      "strands": 420420,
+      "strandPoints": 3772268,
+      "samples": 32,
+      "engine": "CYCLES CPU with denoise",
+      "images": [
+        {
+          "view": "body-front",
+          "image": "body-front.png",
+          "seconds": 426.3,
+          "resolution": [
+            768,
+            1024
+          ]
+        }
+      ],
+      "renderSecondsTotal": 426.3,
+      "eyeliner": "current",
+      "eyelinerSourceSha256": "04fe987e8824441317dd04283102347cf17c27552124df3cec4b9c83735d8460",
+      "wallSecondsIncludingLoad": 909.5
+    }
+  },
+  "local": {
+    "route": "local",
+    "returncode": 0,
+    "wallSeconds": 179.02878809999675,
+    "render": {
+      "strands": 420420,
+      "strandPoints": 3772268,
+      "samples": 32,
+      "engine": "CYCLES CPU with denoise",
+      "images": [
+        {
+          "view": "body-front",
+          "image": "body-front.png",
+          "seconds": 25.4,
+          "resolution": [
+            768,
+            1024
+          ]
+        }
+      ],
+      "renderSecondsTotal": 25.4,
+      "eyeliner": "current",
+      "eyelinerSourceSha256": "04fe987e8824441317dd04283102347cf17c27552124df3cec4b9c83735d8460",
+      "wallSecondsIncludingLoad": 178.3
+    }
+  }
+}

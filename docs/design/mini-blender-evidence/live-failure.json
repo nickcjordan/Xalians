@@ -1,0 +1,7 @@
+{
+  "returncode": 1,
+  "wallSeconds": 15.611677738999997,
+  "ciPausedSeconds": 5.0853138300000005,
+  "memoryLimitBytes": 3221225472,
+  "threads": 3
+}

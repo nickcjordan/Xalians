@@ -1,0 +1,7 @@
+--- measured-shim
++++ installed-shim
+@@ -35 +34,0 @@
+-    (void)sig;
+@@ -36,0 +36,2 @@
++    if (info->si_code <= 0)
++        raise(sig);
