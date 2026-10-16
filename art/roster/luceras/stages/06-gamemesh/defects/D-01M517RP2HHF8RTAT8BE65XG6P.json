@@ -6,7 +6,10 @@
   "camera": "check_head_three_quarter",
   "region": "ears, horns",
   "origin": "B-8ezj",
-  "attempts": [],
+  "attempts": [
+    "B-01M528WWGBGNK69NMR4WPC4BJZ",
+    "B-01M52BDK82YY89BZGW64GY98XK"
+  ],
   "status": "open",
   "createdAt": "2026-10-16T02:13:27Z"
 }

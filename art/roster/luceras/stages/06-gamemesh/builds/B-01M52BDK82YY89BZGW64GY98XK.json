@@ -1,0 +1,19 @@
+{
+  "id": "B-01M52BDK82YY89BZGW64GY98XK",
+  "alias": "8xwt",
+  "stage": "06-gamemesh",
+  "kind": "build",
+  "goal": "Stage 6 pass 4: tail root step, ear root bridge and dark patch, fore paw facets; Codex",
+  "scope": "tail root, ears, fore paws",
+  "defect": "D-01M517RP2HHF8RTAT8BE65XG6P",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T12:36:33Z",
+  "briefSha256": "603e91d538f0ffc04c6d80145b530ac5406ed808a34aba71330a92dfcaaba1ce"
+}

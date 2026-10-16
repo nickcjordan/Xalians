@@ -1,0 +1,15 @@
+{
+  "id": "N-01M52BDK3JTWGJKZDYKG23C2P4",
+  "alias": "ebk8",
+  "stage": "06-gamemesh",
+  "who": "orchestrator",
+  "words": "Audit after B-97qx and B-db8w: at sprite size and full-body cameras the game mesh shows no loss; what remains is close-range and comes from two causes. Real geometry faults (the step under the tail root, the ear-root bridge and its dark bake patch) are fixable; the rest (rounder toe ends, muzzle and instep at extreme close range) is the cost of an 11,500-triangle budget and is carried by the normal map. Outcome: rescope the next pass to the three geometry faults plus smoothing the fore paw claw-seat facets, using the 500 spare triangles, then present to Nick with the budget-limited differences named.",
+  "date": "2026-10-16",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M517RP2HHF8RTAT8BE65XG6P",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-16T12:36:33Z"
+}
