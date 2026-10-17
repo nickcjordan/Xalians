@@ -9,7 +9,13 @@ HERE=Path(__file__).resolve().parent;sys.path.insert(0,str(HERE))
 from verify_fur_13 import digest
 from concha_fix14_paths import baseline
 work=HERE.parents[2]/'untracked/species-construction/akinza/surface/fur-steps'
-after=work/sys.argv[sys.argv.index('--')+1];before=baseline(work)
+args=sys.argv[sys.argv.index('--')+1:]
+after=work/args[0]
+if '--before' in args:before=work/args[args.index('--before')+1]
+elif json.loads((after/'surface-info.json').read_text()).get('conchaFix2_14'):
+ from concha_fix2_14_paths import baseline as fix2_baseline
+ before=fix2_baseline(work)
+else:before=baseline(work)
 out=after/'r';out.mkdir(exist_ok=True)
 patch=np.load(after/'patch-evidence.npz');probe=np.load(work/'14-fix-probe.npz')
 starts=probe['starts'];changed=patch['changed'];color=patch['color']
@@ -85,6 +91,34 @@ if 'undercoatRoots' in patch:
  assert info['additionalFurObjects']==['Akinza concha tuft 14','Akinza inner ear undercoat 14 fix']
  (out/'undercoat-attachment.json').write_text(json.dumps(dict(roots=len(actual),maxTriangleAttachmentError=float(np.max(np.linalg.norm(actual-expected,axis=1))),minFrontFacing=float(-normals[:,1].max()),allAdditionalSystemsDeclared=True),indent=2)+'\n')
 info=json.loads((after/'surface-info.json').read_text())
+if info.get('conchaFix2_14'):
+ assert bpy.data.objects.get('Akinza inner ear undercoat 14 fix') is None
+ assert info['additionalFurObjects']==['Akinza concha tuft 14']
+ white=bpy.data.objects['Akinza concha tuft 14'].data
+ actual=values(white,'position','vector',3).reshape(patch['children'].shape)
+ actual_radius=values(white,'radius').reshape(patch['radii'].shape)
+ assert np.array_equal(actual,patch['children']) and np.array_equal(actual_radius,patch['radii'])
+ np.savez_compressed(out/'native-profile-evidence.npz',**{name:values(cu,name) for name in ('radius','cupm','pale','fur_tone','fur_guided','concha_velvet14')})
+ (out/'white-roundtrip.json').write_text(json.dumps(dict(curves=len(white.curves),points=len(white.points),positionsAndRadiiExact=True,retiredFineSystemAbsent=True,allAdditionalSystemsDeclared=True),indent=2)+'\n')
+ if info.get('finalWhiteFix2_14',{}).get('nativeChangedFromA')==0:
+  candidates=[work/'s12-14-fix2a',Path('C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix2a-rejected-14-fix2'),Path('/mnt/c/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix2a-rejected-14-fix2')]
+  previous=next(folder for folder in candidates if (folder/'surface.blend').exists())
+  def nonwhite_snapshot(folder):
+   bpy.ops.wm.open_mainfile(filepath=str(folder/'surface.blend'));result={}
+   for ob in bpy.data.objects:
+    if ob.type not in ('MESH','CURVES'):continue
+    attributes={}
+    if ob.name!='Akinza concha tuft 14':
+     for attr in ob.data.attributes:
+      if attr.data_type not in ('FLOAT','FLOAT_VECTOR','INT','INT8','BOOLEAN'):continue
+      width=3 if attr.data_type=='FLOAT_VECTOR' else 1
+      v=np.empty(len(attr.data)*width,np.float32 if attr.data_type.startswith('FLOAT') else np.int32)
+      attr.data.foreach_get('vector' if width==3 else 'value',v);attributes[attr.name]=digest(v)
+    result[ob.name]=dict(attributes=attributes,matrix=[list(row) for row in ob.matrix_world],slots=[m.name for m in ob.data.materials])
+   return result,{m.name:helpers['material_graph'](m) for m in bpy.data.materials if m.use_nodes and m.users>0}
+  previous_data,previous_mats=nonwhite_snapshot(previous);final_data,final_mats=nonwhite_snapshot(after)
+  assert previous_data==final_data and previous_mats==final_mats,'Final white refinement changed nonwhite data'
+  (out/'nonwhite-exact.json').write_text(json.dumps(dict(allNonwhiteDataAndMaterialsExact=True,sourceSha256=hashlib.sha256((previous/'surface.blend').read_bytes()).hexdigest(),surfaceSha256=hashlib.sha256((after/'surface.blend').read_bytes()).hexdigest()),indent=2)+'\n')
 if info.get('finalWhiteVisibility14Fix',{}).get('nativeChangedFromFix2')==0:
  candidates=[work/'s12-14-fix2',Path('C:/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix2-rejected-14-fix'),Path('/mnt/c/Users/njord/.claude/scratch-archive/Xalians/2026-10-15/s12-14-fix2-rejected-14-fix')]
  previous=next(folder for folder in candidates if (folder/'surface.blend').exists())
@@ -116,7 +150,8 @@ if decision.exists():
   import subprocess
   def win(path):
    path=str(path.resolve());assert path.startswith('/mnt/');return path[5].upper()+':'+path[6:]
-  subprocess.run(['/mnt/c/Python314/python.exe',win(HERE/'finish_concha_fix14.py'),after.name,'--gate-only'],check=True)
+  gate_script='finish_concha_fix2_14.py' if info.get('conchaFix2_14') else 'finish_concha_fix14.py'
+  subprocess.run(['/mnt/c/Python314/python.exe',win(HERE/gate_script),after.name,'--gate-only'],check=True)
   views='head-side,head-backq,body-backq,body-front,tails-side'
   if not all((after/'after'/f'{view}.png').exists() for view in views.split(',')):
    sys.argv=['render_concha_fix14.py','--',after.name,views]

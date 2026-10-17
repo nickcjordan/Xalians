@@ -1,0 +1,227 @@
+{
+  "status": "Decision views pass visual brief in primary and independent review; full saved artifact/regression/delivery checks in progress.",
+  "surface": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/surface.blend",
+  "surfaceSha256": "52c1e2ea42223f05f7c0873584697fba897e17f032f41dcbc974a0f28f3c3e2b",
+  "beforeSha256": "6652a702fc1d77b3372d7031d894a2e669ed3be889ab1b1092ad3060f656b44e",
+  "buildsUsed": 2,
+  "buildLimit": 2,
+  "nativeCurves": 420420,
+  "whiteCurves": 5520,
+  "totalCurves": 425940,
+  "retiredFineBlueCurves": 68286,
+  "scope": {
+    "geometryExact": true,
+    "allNativeRootsExact": true,
+    "protected13iExact": true,
+    "heldOldTransitionRadiusExact": true,
+    "donorProfilesChecked": 4279,
+    "retiredFineSystemAbsent": true,
+    "blueContinuation": {
+      "curves": 3713,
+      "lengthMm": [
+        8.209163323044777,
+        11.481238529086113,
+        15.83487316966057
+      ],
+      "rootRadius": [
+        0.000699999975040555,
+        0.000699999975040555,
+        0.000699999975040555
+      ],
+      "foldedMeanFlow": [
+        0.8854766488075256,
+        0.3562167286872864,
+        0.07347550243139267
+      ],
+      "rootSpacing": [
+        0.0007195572595761109,
+        0.001414053574469244,
+        0.0022411128368287512
+      ]
+    },
+    "heldReference": {
+      "curves": 3016,
+      "lengthMm": [
+        8.600113447755575,
+        12.130928691476583,
+        15.630075708031654
+      ],
+      "rootRadius": [
+        0.000699999975040555,
+        0.000699999975040555,
+        0.000699999975040555
+      ],
+      "foldedMeanFlow": [
+        0.9562351107597351,
+        0.06871287524700165,
+        0.1389254331588745
+      ],
+      "rootSpacing": [
+        0.0007974677684250179,
+        0.0015352507585751946,
+        0.002393417007038645
+      ]
+    },
+    "whiteCurves": 5520,
+    "whiteArcLengths": [
+      0.07334957271814346,
+      0.09232228323817253,
+      0.11612857133150101,
+      0.14721323549747467,
+      0.19890382885932922
+    ],
+    "whiteBodyRadius": [
+      4.519723552220967e-05,
+      6.738548472640105e-05,
+      8.260869944933803e-05
+    ],
+    "whiteRootAttachment": "Full saved skin sweep and exact white path/radius roundtrip",
+    "velvetOutsideSmallMouth": 0,
+    "visualCaveat": "Metrics support actual native visual inspection; they do not establish seamlessness or furnishing quality.",
+    "whiteFrontTriangleAttachmentMax": 0.0009578361641615629
+  },
+  "nonwhiteExact": {
+    "allNonwhiteDataAndMaterialsExact": true,
+    "sourceSha256": "baadee82e9ff5e707ac0d121f9beed197a659bfaf187cf17273c8c34c669b1e3",
+    "surfaceSha256": "52c1e2ea42223f05f7c0873584697fba897e17f032f41dcbc974a0f28f3c3e2b"
+  },
+  "build": {
+    "build": "s12-14-fix2b",
+    "sourceSha256": "6652a702fc1d77b3372d7031d894a2e669ed3be889ab1b1092ad3060f656b44e",
+    "nativeEdited": 4281,
+    "nativeProfileReplaced": 4279,
+    "colorMatched": 5781,
+    "transitionTrimmed": 2,
+    "donorPool": 3016,
+    "retiredFineFibers": 68286,
+    "whiteFibers": 5520,
+    "whiteLocks": 12,
+    "whiteRootRadiusMicrons": [
+      60,
+      145
+    ],
+    "whiteShaftWidthAt60Percent": 0.6048424561983193,
+    "nativeRootsExact": true,
+    "collisionLiftedNative": 237,
+    "profileOrColorMapped": 6592
+  },
+  "whiteFinal": {
+    "sourceSha256": "baadee82e9ff5e707ac0d121f9beed197a659bfaf187cf17273c8c34c669b1e3",
+    "nativeChangedFromA": 0,
+    "mainFibers": 4320,
+    "wisps": 1200,
+    "curvedProjectedPaths": true,
+    "blueSkinAndMaterialsPreserved": true
+  },
+  "childPrefixRepairs": [
+    {
+      "iteration": 0,
+      "child": 849,
+      "oldLength": 0.17438918352127075,
+      "newLength": 0.13414052246823505,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 1353,
+      "oldLength": 0.17469088733196259,
+      "newLength": 0.1427890003421024,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 1794,
+      "oldLength": 0.17979185283184052,
+      "newLength": 0.14667576554975603,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 1819,
+      "oldLength": 0.17504997551441193,
+      "newLength": 0.14271574168948628,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 2236,
+      "oldLength": 0.16942198574543,
+      "newLength": 0.1380307579823961,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 2682,
+      "oldLength": 0.13829348981380463,
+      "newLength": 0.11321713597296203,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 2736,
+      "oldLength": 0.13644637167453766,
+      "newLength": 0.11055992459179234,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 3627,
+      "oldLength": 0.17076310515403748,
+      "newLength": 0.13673068175437855,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 4527,
+      "oldLength": 0.1884445995092392,
+      "newLength": 0.1481944661572455,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 4579,
+      "oldLength": 0.1910315454006195,
+      "newLength": 0.14043529068961327,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 4965,
+      "oldLength": 0.17934931814670563,
+      "newLength": 0.13450212338191334,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 4968,
+      "oldLength": 0.162855863571167,
+      "newLength": 0.13291956917955072,
+      "rootExact": true,
+      "collisionChecked": true
+    },
+    {
+      "iteration": 0,
+      "child": 5024,
+      "oldLength": 0.16206790506839752,
+      "newLength": 0.13208024176930566,
+      "rootExact": true,
+      "collisionChecked": true
+    }
+  ],
+  "stillOff": [
+    "White core remains dense at normal framing.",
+    "White roots form a conspicuous rolled oval along the opening."
+  ],
+  "noPush": true
+}

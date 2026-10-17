@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "id": "akinza-step14-fix2",
+  "outcome": "Execute14-fix2.md: continuous matching blue inner-ear coat and clearly visible white up/out furnishing, preserving held data and passing unchanged artifact gate.",
+  "authorizedScope": "At most two new saved builds. Before=step14fix. Commit only, no push.",
+  "workRecord": "docs/design/species-construction/akinza/fur-14-fix2-active-work.md",
+  "evidence": {
+    "brief": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/brief.md",
+      "sha256": "132d80abfee6614f5b2aa717e0d7d06e5696ea3a5aea2ee06ac545d6e5f39e1d"
+    },
+    "beforeFront": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/beforeFront.png",
+      "sha256": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ears-front.png"
+    },
+    "beforeClose": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/beforeClose.png",
+      "sha256": "ea5f69227a4f98db416ff4eefadfa6b2a59ba8fee93b8e6711177141d1f65054",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ear-root-close.png"
+    },
+    "whiteOnlyDiagnosis": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/whiteOnlyDiagnosis.png",
+      "sha256": "557987aaedddd6d98b75771c5641a908ea00bb8b32412ef801003c07d82d329c",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-fix2-diagnosis/original-white-only.png"
+    },
+    "visibilityDiagnosis": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/visibilityDiagnosis.json",
+      "sha256": "4c493f0b558f608840fa50ed34bc4f278c0c9c19701c8f4c5005a8b1591cdb5f",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/14-fix2-diagnosis/visibility.json"
+    },
+    "candidateAFront": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/candidateAFront.png",
+      "sha256": "57522c08d0e99ff16ab47f541f09ff3f0057dc78990803a07aeae65a0adadd97",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2a/after/ears-front.png"
+    },
+    "candidateAClose": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/candidateAClose.png",
+      "sha256": "aa1d85ceeb41f38f4bf4d501d842863b34aa8f2c86ec02df01fb38a12a257cba",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2a/after/ear-root-close.png"
+    },
+    "candidateAScope": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/candidateAScope.json",
+      "sha256": "c663b8e66adc6145b34fd04d1838b1167fceb94ea616c1d87621520d1d9b54d9",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2a/scope-profile.json"
+    },
+    "finalFront": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/finalFront.png",
+      "sha256": "70789ae50d552ab389b8009dc408baf9c9dd7a8b9ed0020297df32e99283d431",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/after/ears-front.png"
+    },
+    "finalClose": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/finalClose.png",
+      "sha256": "ff3653fca06efd51abed67911829a4fcc87225d08605620c29278d7c472edd72",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/after/ear-root-close.png"
+    },
+    "scope": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/scope.json",
+      "sha256": "f7d4753b01d1ce3de51acd78e15cb5387fa9206698284b1eed7dbb48f2907a4d",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/scope-profile.json"
+    },
+    "held": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/held.json",
+      "sha256": "15e3ff20c713d50ceb0b588ca281d62a99e91e706633d1ccf42d58ed5d7e08d1",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/r/held-data.json"
+    },
+    "nonwhiteExact": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/nonwhiteExact.json",
+      "sha256": "97986fee4881ad51629773655d6d07b17164540a098e90f4a34b8a67233ce316",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/r/nonwhite-exact.json"
+    },
+    "rootAttachment": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/rootAttachment.json",
+      "sha256": "06497c047be68db8e1511b5ac9300f386d6ffdd76b8a3f3ab53fdf7212227fad",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/r/root-attachment.json"
+    },
+    "whiteRoundtrip": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/whiteRoundtrip.json",
+      "sha256": "8019ede4e8f37e454c90a837695b56e5fad0eef5ae7978c6419391c004eab4ca",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/r/white-roundtrip.json"
+    },
+    "childRepairs": {
+      "path": ".codex/audit-state/fur-14-fix2-evidence/childRepairs.json",
+      "sha256": "cc9d75e56725bee6201239b58202b544f05acb5fd0d1434f4fd4092ffbbca04a",
+      "sourcePath": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/child-prefix-repairs.json"
+    },
+    "review": {
+      "path": "docs/design/species-construction/akinza/fur-14-fix2-independent-review.json",
+      "sha256": "8708658c61626b103b99304f1946f133dd56b5f12f9be20c633c8840322a2fe7"
+    }
+  },
+  "criteria": [
+    {
+      "id": "blue",
+      "expectation": "Blue refill matches surrounding length,density,clumping and direction with no seam; subtle shortening only at cup mouth.",
+      "status": "pass",
+      "assessment": "Final front/close show continuous native-like blue groom. Saved nonwhite comparison toA is exact; donor profiles, original root density,700umradii and small mouth falloff verified.",
+      "evidence": [
+        "finalFront",
+        "finalClose",
+        "scope",
+        "nonwhiteExact",
+        "review"
+      ]
+    },
+    {
+      "id": "white",
+      "expectation": "Clearly white wispy soft locks grow from lower/front rim up/out over lowerthird, readable at normal framing.",
+      "status": "pass",
+      "assessment": "Final bright white hair is visible at normal framing, rooted lower/front rim and leaning up/out. Close shows curved separated strands and uneven wisps. Primary and independent reviews find brief met; dense core and rolled root remain stylistic weaknesses.",
+      "evidence": [
+        "finalFront",
+        "finalClose",
+        "whiteRoundtrip",
+        "scope",
+        "review"
+      ]
+    },
+    {
+      "id": "gate",
+      "expectation": "Unchanged full saved artifact gate has no new IDs or regional rises.",
+      "status": "pending",
+      "assessment": "Diagnosis and implementation pending.",
+      "evidence": [
+        "brief"
+      ]
+    },
+    {
+      "id": "held",
+      "expectation": "Cups,13i backs,13h liner and unrelated data exact; roots attached to actual original sheet.",
+      "status": "pass",
+      "assessment": "All geometry/topology, held object/material data, protected13i union and13h liner exact; every native root exact. Final white-only refinement preserves ALLnonwhite data/materials fromA. Saved white roots within0.958mmof actualfront triangles.",
+      "evidence": [
+        "held",
+        "scope",
+        "nonwhiteExact",
+        "rootAttachment"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Native before/after pairs, six current images, independent review, local commit, exact archival and no push.",
+      "status": "pending",
+      "assessment": "Diagnosis and implementation pending.",
+      "evidence": [
+        "brief"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F14FIX2-1",
+      "criterion": "blue",
+      "status": "resolved",
+      "observation": "Blue refill matches surrounding length,density,clumping and direction with no seam; subtle shortening only at cup mouth.",
+      "nextAction": "Implement and verify against actual saved native results within two-build cap.",
+      "evidence": [
+        "beforeFront",
+        "beforeClose"
+      ],
+      "resolution": "Final saved native-template blue continuation has no felt seam in native front/close. Complete donor radius profiles, root spacing, same-sheet adaptation and nonwhite exactness independently verified.",
+      "resolutionEvidence": [
+        "finalFront",
+        "finalClose",
+        "scope",
+        "nonwhiteExact",
+        "review"
+      ]
+    },
+    {
+      "id": "F14FIX2-2",
+      "criterion": "white",
+      "status": "resolved",
+      "observation": "CandidateAwhite forms a dense straight blade despite clear brightness/rooting.",
+      "nextAction": "Inspect finalBcurvedshafts andwisps atnative front/close; finish complete saved tests and wholeoutcome audit.",
+      "evidence": [
+        "candidateAFront",
+        "candidateAClose"
+      ],
+      "resolution": "Curved shafts and independent wisps replace A blades; final normal/close show visible up/out hair with uneven fine ends, independently reviewed. Dense core/rolled root disclosed as style limitations.",
+      "resolutionEvidence": [
+        "finalFront",
+        "finalClose",
+        "whiteRoundtrip",
+        "scope",
+        "review"
+      ]
+    },
+    {
+      "id": "F14FIX2-3",
+      "criterion": "gate",
+      "status": "open",
+      "observation": "Unchanged full saved artifact gate has no new IDs or regional rises.",
+      "nextAction": "Implement and verify against actual saved native results within two-build cap.",
+      "evidence": [
+        "brief"
+      ]
+    },
+    {
+      "id": "F14FIX2-4",
+      "criterion": "held",
+      "status": "resolved",
+      "observation": "Cups,13i backs,13h liner and unrelated data exact; roots attached to actual original sheet.",
+      "nextAction": "Implement and verify against actual saved native results within two-build cap.",
+      "evidence": [
+        "brief"
+      ],
+      "resolution": "Saved held-data, exact nonwhite-toA, native attachment and independent front-triangle checks pass.",
+      "resolutionEvidence": [
+        "held",
+        "scope",
+        "nonwhiteExact",
+        "rootAttachment"
+      ]
+    },
+    {
+      "id": "F14FIX2-5",
+      "criterion": "delivery",
+      "status": "open",
+      "observation": "Native before/after pairs, six current images, independent review, local commit, exact archival and no push.",
+      "nextAction": "Implement and verify against actual saved native results within two-build cap.",
+      "evidence": [
+        "brief"
+      ]
+    }
+  ],
+  "audit": {
+    "reviewer": "Codex with scoped independent adversarial reviewer",
+    "comparison": "Final native front/close inspected against14-fix2brief by primary and independent reviewers. Both visible repairs pass; final whole-creature review pending.",
+    "regressions": "Full saved checks required after candidate.",
+    "scopeCheck": "Exactly two saved builds. Failed pre-save imports/rogue guard produced no additional model or review variant. All native roots held; fine system physically removed; every replacement hair tested. No third save or quality endorsement by user.",
+    "sessionId": "akinza-fur-14-fix2",
+    "requestId": "b24d58e3-1c09-4aa8-b788-0a97c43e27d5",
+    "performedAt": "2026-10-17T00:36:12.457128+00:00"
+  },
+  "stop": {
+    "kind": "continue"
+  }
+}

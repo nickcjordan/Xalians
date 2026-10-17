@@ -9,19 +9,29 @@ import numpy as np
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
-def guard(source,out,points,starts,counts,radius,strlen,children,radii,changed,tree,collision):
+def guard(source,out,points,starts,counts,radius,strlen,children,radii,changed,tree,collision,native_only_baseline=False,trim_children=False):
  here=Path(__file__).resolve().parent
  base=dict(np.load(source/'r/evidence.npz'));col=dict(np.load(source/'r/collision-evidence.npz'))
- before=np.load(source/'r/sweep-flags.npz');oldrogue=np.load(source/'r/rogue-flags.npz')['rogue']
+ before=dict(np.load(source/'r/sweep-flags.npz'));oldrogue=np.load(source/'r/rogue-flags.npz')['rogue']
  from concha_14_paths import baseline as baseline13i
  protected=np.load(baseline13i(source.parent)/'patch-evidence.npz')
  protected=protected['restore']|protected['trim']|protected['changed']
  n=len(starts);allstarts=np.r_[starts,len(points)+np.arange(len(children))*children.shape[1]]
  allcounts=np.r_[counts,np.full(len(children),children.shape[1])]
+ original_total=len(before['region'])
+ if native_only_baseline:
+  # Replaced dedicated systems have no retained strand identity. Their old
+  # flags must all be zero; every replacement strand gets all unchanged tests.
+  for key in ('collision','neighborLength','regionalLength','partTransfer','lift'):
+   assert not before[key][n:].any(),'Cannot discard a flagged dedicated system'
+  assert not oldrogue[n:].any()
+  before={key:v[:n] if len(v)==original_total else v for key,v in before.items()}
+  oldrogue=oldrogue[:n]
+  col={key:v[:n] if len(v)==original_total else v for key,v in col.items()}
  extra=len(allstarts)-len(before['region'])
  assert extra>=0
  col={key:np.r_[v,np.zeros(extra,dtype=v.dtype)] for key,v in col.items()}
- transition=np.zeros(n,bool);history=[];pre=out/'pre-save';pre.mkdir(exist_ok=True)
+ transition=np.zeros(n,bool);history=[];child_repairs=[];pre=out/'pre-save';pre.mkdir(exist_ok=True)
  dirty=np.r_[changed,np.ones(len(children),bool)]
  def win(path):
   path=str(path.resolve());assert path.startswith('/mnt/');return path[5].upper()+':'+path[6:]
@@ -54,6 +64,8 @@ def guard(source,out,points,starts,counts,radius,strlen,children,radii,changed,t
   # Preserve their existing test data for the pre-save neighborhood analysis.
   if not (pre/'obstacle-evidence.npz').exists():
    obstacles=dict(np.load(source/'r/obstacle-evidence.npz'))
+   if native_only_baseline:
+    obstacles={key:v[:n] if v.ndim==1 and len(v)==original_total else v for key,v in obstacles.items()}
    obstacles={key:np.r_[v,np.zeros(extra,dtype=v.dtype)] if v.ndim==1 and len(v)==len(before['region']) else v for key,v in obstacles.items()}
    np.savez_compressed(pre/'obstacle-evidence.npz',**obstacles)
   for script in ('analyze_sweep_12d.py','rogue_hairs_13.py'):
@@ -67,8 +79,20 @@ def guard(source,out,points,starts,counts,radius,strlen,children,radii,changed,t
   history.append(report);(out/'guard-history.json').write_text(json.dumps(history,indent=2)+'\n')
   print('FIX_GUARD',iteration,report,flush=True)
   if not bad.any():break
-  assert not bad[n:].any(),'White tuft requires a design correction'
+  assert trim_children or not bad[n:].any(),'White tuft requires a design correction'
   dirty=bad.copy()
+  for i in np.where(bad[n:])[0]:
+   path=children[i];arc=np.r_[0,np.cumsum(np.linalg.norm(np.diff(path,axis=0),axis=1))]
+   target=min(float(arc[-1])*.82,float(flags['neighborMedian'][n+i])*1.15)
+   for retry in range(12):
+    candidate=np.column_stack([np.interp(np.linspace(0,target,len(path)),arc,path[:,k]) for k in range(3)])
+    if not collision(candidate):break
+    target*=.8
+   else:raise AssertionError('White prefix repair collides; no save')
+   assert np.array_equal(candidate[0],path[0]),'White prefix repair moved root'
+   children[i]=candidate
+   child_repairs.append(dict(iteration=iteration,child=int(i),oldLength=float(arc[-1]),newLength=float(np.linalg.norm(np.diff(candidate,axis=0),axis=1).sum()),rootExact=True,collisionChecked=True))
+  if child_repairs:(out/'child-prefix-repairs.json').write_text(json.dumps(child_repairs,indent=2)+'\n')
   for i in np.where(bad[:n])[0]:
    root=roots[i];normal=base['curve_nrm'][i]
    side_crease=(root[1]<-.015 and abs(root[0])<.19)

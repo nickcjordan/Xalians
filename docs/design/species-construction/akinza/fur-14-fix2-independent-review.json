@@ -1,0 +1,115 @@
+{
+  "scope": "Second step 14 fix pass only; at most two new saved builds. Cups, 13i ear backs, and 13h eyeliner held. Independent scoped diagnosis and review; no user approval inferred.",
+  "currentSource": "s12-14-fix3",
+  "status": "Final candidate decision views meet visual target in reviewer assessment; required regression views, pairs, and full artifact gates remain pending.",
+  "differencesFirst": [
+    "White furnishing renders as a faint cup-side crescent rather than a clear up/out white tuft at normal framing.",
+    "Filled blue bed is much finer, shorter, denser, and steeper-combed than surrounding approved inner-ear hair."
+  ],
+  "diagnosis": {
+    "white": "Saved paths are 22-114 mm long and rise up/out; they do not geometrically curl. An approximate projected-front skin-vertex test found no sampled skin occlusion. Aggressive taper makes only the root row optically prominent, which follows the side crescent. This approximate test does not exclude hair occlusion or photometric effects.",
+    "whiteMedianDiameterPixelsAtNormal1024": {
+      "root": 0.13256,
+      "t.4": 0.05743,
+      "t.6": 0.02978,
+      "t.8": 0.01004
+    },
+    "blueReference": "4,008 held native front-cup curves just outside the patch, U .14-.23. Length Q25/50/75 = 10.06/12.18/14.35 mm; median root radius 700 microns. Mean folded-X unit flow (.952, .073, .144); median root spacing 1.528 mm.",
+    "blueBed": "Undercoat length Q10/50/90 = 2.50/7.17/9.18 mm; root radius 85-135 microns. Mean flow (.743, .160, .598); median root spacing .251 mm. Fine felt texture follows the combined radius, density, length, and direction mismatch."
+  },
+  "proposedDesignReview": {
+    "blue": "Retire fine undercoat. Rotate held neighbors actual nine-point path and radius/color profiles to the same-sheet normal for the prior 4,279 native paths. Preserve 276 transition prefixes and the held boundary. Shorten only the immediate cup mouth and fade quickly to the full native profile. This addresses the measured mismatch.",
+    "white": "7,200 total fibers, lower/front rim arc 170-280 degrees, longest middle 80-130 mm, six soft locks per ear, shaft retains about 75 percent width through 60 percent length before a wispy end taper, 120-180 micron roots, and 30 mm lift. This addresses under-visible shafts and side-only roots.",
+    "challenge": "Avoid a solid fan or feather from increased opacity: use child transverse spread, length jitter, soft overlapping locks, and irregular wispy boundaries. Native template rotation must preserve actual curve/radius profiles and pass fresh collision tests.",
+    "gate": "Preserve identity of the 420,420 native curves. Require every regenerated child flag to be zero and no regional increases. Independently verify deleted old child systems had zero flags; do not change thresholds."
+  },
+  "findings": [
+    {
+      "id": "F14FIX2-V1",
+      "status": "resolved in final candidate decision views; full regression pending",
+      "acceptance": "At normal framing, bright white hair visibly rises from the opening up/out across the lower third with soft locks and wispy longest-middle tips.",
+      "observation": "First candidate fixes visibility and lean, but smooth dense blade/ribbon appearance still fails soft wispy locks.",
+      "resolution": "Normal front clearly shows white up/out furnishing. Native close shows curved individual hairs, soft fan, and uneven fine wisps rather than a dense straight blade."
+    },
+    {
+      "id": "F14FIX2-V2",
+      "status": "resolved by first candidate and held for final white-only revision",
+      "acceptance": "The blue bed matches neighboring length, density, clumping, direction, and thickness with a continuous boundary; only the immediate cup mouth is shortened and deepened.",
+      "resolution": "Native front and close inspected. Coarse native-like blue hair replaces fine felt bed and visually continues surrounding groom."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/patch-evidence.npz",
+      "sha256": "3777b3d6b15410afd7137f2ea3e833a28a130dfbd8105d139dc92850b75a6faf"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/evidence.npz",
+      "sha256": "f94b7ced33256b696bfd96b683e33d7ac48db9bfde857fc5a3a2beb00fabfdc5"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/r/sweep-flags.npz",
+      "sha256": "2d8b49f5b2128797c6ab3ab852730fe57e42984a48390af4c8f13cf0f78fd07e"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ears-front.png",
+      "sha256": "64ea27fcbe8e020db50d8cc07d3fb918129d93b792f8676aa127ee9f0ddcdf40"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix3/after/ear-root-close.png",
+      "sha256": "ea5f69227a4f98db416ff4eefadfa6b2a59ba8fee93b8e6711177141d1f65054"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/briefs/14-fix2.md",
+      "sha256": "132d80abfee6614f5b2aa717e0d7d06e5696ea3a5aea2ee06ac545d6e5f39e1d"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2a/after/ears-front.png",
+      "sha256": "57522c08d0e99ff16ab47f541f09ff3f0057dc78990803a07aeae65a0adadd97"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2a/after/ear-root-close.png",
+      "sha256": "aa1d85ceeb41f38f4bf4d501d842863b34aa8f2c86ec02df01fb38a12a257cba"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/after/ears-front.png",
+      "sha256": "70789ae50d552ab389b8009dc408baf9c9dd7a8b9ed0020297df32e99283d431"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/after/ear-root-close.png",
+      "sha256": "ff3653fca06efd51abed67911829a4fcc87225d08605620c29278d7c472edd72"
+    },
+    {
+      "path": "untracked/species-construction/akinza/surface/fur-steps/s12-14-fix2b/r/nonwhite-exact.json",
+      "sha256": "97986fee4881ad51629773655d6d07b17164540a098e90f4a34b8a67233ce316"
+    }
+  ],
+  "implementationCodeReview": {
+    "status": "No concrete blocking code bug found before first save. Actual images and fresh saved tests remain required.",
+    "files": [
+      "build_concha_fix2_14.py",
+      "finish_concha_fix2_14.py",
+      "guard_concha_fix14.py",
+      "check_concha_fix14.py"
+    ],
+    "evidence": "Native roots stay exact; complete donor path/radius profiles are rotated to same-sheet normals and collision-tested. Fine object is removed and manifest declares replacement white system. White roots span lower/front rim and shaft opacity persists through most length.",
+    "gate": "Native-only reference mode independently asserts zero flags on retired children, preserves native identities, and requires every replacement child to pass unchanged tests. Finish checks actual whole-region before counts.",
+    "remainingRisk": "White overlap could produce dense ribbons. Donor sampling and normal rotation could still create visual grooming discontinuity; inspect front and close before second build."
+  },
+  "candidate": "s12-14-fix2b",
+  "firstCandidateReview": {
+    "nativeFrontInspected": true,
+    "nativeCloseInspected": true,
+    "differencesFirst": "White furnishing is now clearly visible and leans up/out, but reads as dense smooth white blades or ribbons with long nearly straight sides and hard pointed splits. Blue groom blends much better with surrounding ear at normal framing; prior broad smooth patch is no longer obvious.",
+    "remainingAction": "Inspect native close before final white-only correction. Preserve blue/native/skin/material data exact.",
+    "secondProposal": "Curved shafts, varied endpoint directions, broader overlapping locks, thinner independent wisps, and meaningful transverse endpoint variation address blade edges. Avoid six isolated paper prongs or uniform long wispy perimeter.",
+    "closeFinding": "Blue groom shows continuous coarse native-like strands matching surrounding thickness and direction, with no visible felt seam or white scalp. White has individual hair texture but collective shape is a dense straight tapering blade with smooth shared long edges; normal-framing ribbon finding remains.",
+    "gateLimitation": "Held saved-data check passed; first full artifact sweep intentionally incomplete. No full gate success claimed for candidate a."
+  },
+  "finalCandidateDecisionViews": {
+    "frontAndCloseInspected": true,
+    "assessment": "Basic visual requirements pass in the two decision views. White furnishing is bright and readable at a glance, grows from the opening, and leans up/out over the lower inner ear. Close resolves provisional ribbon concern: continuous curved hairs separate into a broad soft fan with uneven fine wisps instead of straight shared blade edges. Blue native-like groom remains continuous.",
+    "stillOff": "The white core remains dense and the root forms a conspicuous rolled oval around the opening. These are remaining stylistic weaknesses; the inspected result reads as hair and does not establish a substantive unmet brief requirement by themselves.",
+    "limitation": "Independent reviewer assessment is not user approval or whole-task completion. Remaining five views, pairs, exact holds, and fresh full saved artifact gates are pending. Two saved builds consumed; no third authorized."
+  }
+}
