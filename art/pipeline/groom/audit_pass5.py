@@ -1,0 +1,22 @@
+"""Pure completion evaluator. No git commands or repository snapshots."""
+from pathlib import Path
+import json,hashlib,datetime,importlib.util,shutil
+T=Path(__file__).parent;ROOT=T.parents[2];O=Path('C:/dev/art-data/pipeline/codex-stream/luceras-groom/pass5')
+read=lambda n:json.loads((O/n).read_text())
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+def write(path,value):path.write_text(json.dumps(value,indent=2))
+checks=read('delivery_checks.json');visual=read('visual_review.json');now=datetime.datetime.now(datetime.timezone.utc)
+names=['groom.blend','build_groom.py','parameters.json','measurements.json','body_material_preservation_check.json','geometry_check.json','curve_checks.json','deformation_check.json','delivery_checks.json','visual_review.json','independent_review_final.json','iter_notes.json']
+evidence={'inspection_utc':now.isoformat(),'artifact_hashes':{n:sha(O/n) for n in names},'technical':checks,'visual':visual,'independent':read('independent_review_final.json'),'no_git':'User prohibits git. Pure evaluator imported directly; no git commands, hooks or snapshots.'};ep=T/'audit_evidence_pass5.json';write(ep,evidence)
+criteria=[]
+for key,expect,passed in [('sculpt','Preserve approved original mesh positions, vertex order and topology.',checks['approved_source_unchanged'] and checks['original_mesh_geometry_unchanged']),('body','Preserve inherited body curve coordinates and material arrays exactly.',checks['body_preserved']),('shipping','Crisp 192px sprite and 512px portrait, 4x Lanczos method and honest frame costs.',checks['shipping_4x_no_denoise'] and checks['shipping_exports_match']),('attachment','Every guide and child follows a bent surface without detached roots.',checks['deformation_passed'] and checks['all_surface_bound']),('proof','Fresh required renders, sheet/runtime comparisons, pass4/pass5/sheet sprite and plume, measured cost and hashes.',checks['technical_delivery_passed']),('look','Layered plume along curl, separated toes and less circular seated upper lid meet the sheet comparison.',not visual['remaining'])]:
+ criteria.append({'id':key,'expectation':expect,'status':'pass' if passed else 'fail','assessment':'Current visual comparison and technical evidence. Numerical checks are not artistic approval.','evidence':['current']})
+findings=[{'id':v['id'],'criterion':'look','status':'open','observation':v['difference'],'nextAction':v['next_action'],'acceptanceCriterion':v['acceptance']} for v in visual['remaining']]
+cutoff=datetime.datetime(2026,10,16,23,12,tzinfo=datetime.timezone.utc)
+stop={'kind':'user_stop','userWords':'Cap: 50 minutes. Stop editing at 38.','source':'User Pass5 B-7qgf brief. Started22:34UTC; edits stop23:12UTC and hard stop23:24UTC.','scope':'Requested edit cutoff reached. Final renders, measurements and report completed in remaining time. Visual findings are retained and not claimed fixed.'} if now>=cutoff else {'kind':'continue'}
+if not findings and checks['technical_delivery_passed']:stop={'kind':'complete'}
+r={'schemaVersion':1,'id':'luceras-B-7qgf-pass5','outcome':'Crisp shipping sprite and portrait, layered plume over curled tail, separated toes, tested upper lid, preserved approved body, current proof and reapplicable groom.','authorizedScope':'Pass5 and groom tooling. No source sculpt edits, git, installs or paid services. User timing limits govern.','workRecord':'art/pipeline/groom/WORK_RECORD_pass5.md','evidence':{'current':{'path':'art/pipeline/groom/audit_evidence_pass5.json','sha256':sha(ep)}},'criteria':criteria,'findings':findings,'audit':{'reviewer':'Builder and independent /root/visual_audit','comparison':'Actual current render proof, approved sheets, delivered pass4 and live pass3.','regressions':'Sculpt geometry, exact body fingerprints, attachment, clearance, toes, plume and shipping freshness checked.','scopeCheck':'Approved source read only; temporary proof rig saved separately.'},'stop':stop}
+write(T/'completion_audit_pass5.json',r)
+spec=importlib.util.spec_from_file_location('completion_audit',ROOT/'scripts/completion_audit.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);result=module.evaluate(r,ROOT);result['no_git_invoked']=True;result['not_artistic_approval']=True;write(T/'completion_audit_result_pass5.json',result)
+for n in ('audit_evidence_pass5.json','completion_audit_pass5.json','completion_audit_result_pass5.json'):shutil.copy2(T/n,O/n)
+print(json.dumps(result,indent=2))

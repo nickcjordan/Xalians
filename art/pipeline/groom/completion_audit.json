@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "id": "B-gwvn-groom",
+  "outcome": "Give the approved Luceras sculpt film-quality strand fur matching the approved sheet, with a reapplicable groom and complete render/cost proof.",
+  "authorizedScope": "Read-only approved sculpt and reference worktree; new groom tooling and pass1 artifacts. No git, installs or paid services. Stop groom editing at 75 minutes and finish by 90 minutes.",
+  "workRecord": "art/pipeline/groom/WORK_RECORD.md",
+  "evidence": {
+    "current": {
+      "path": "art/pipeline/groom/audit_evidence.json",
+      "sha256": "5960458470f22b6b2a9c3bfc9cf0a3cc6606fc4b4b9627d9ac05053c2c68180b"
+    }
+  },
+  "criteria": [
+    {
+      "id": "geometry",
+      "expectation": "Preserve the approved mesh coordinates, vertex order and topology.",
+      "assessment": "All original mesh signatures and approved source file SHA-256 pass.",
+      "status": "pass",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "groom",
+      "expectation": "Use regional surface-bound hair curves with transferred pattern and required materials.",
+      "assessment": "Built and rendered from the delivered script and parameters, with exact strand counts and region attributes.",
+      "status": "pass",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "deformation",
+      "expectation": "Prove a bent pose follows the surface without changing the base mesh.",
+      "assessment": "Numerical root and strand-length checks pass; temporary-rig wedges were corrected and reviewed.",
+      "status": "pass",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Deliver all requested renders, composites and measured costs.",
+      "assessment": "Delivery integrity checks cover all eight views, comparisons and CPU timings.",
+      "status": "pass",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "look",
+      "expectation": "Match the approved model sheet in coat values, regional fur and pointed plume character.",
+      "assessment": "Body shag is improved, but plume remains silkier and more diffuse and shaded flank values remain low. Nick has not approved this look.",
+      "status": "fail",
+      "evidence": [
+        "current"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "F_PLUME",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Plume retains long airy tips and larger separate locks than the dense small interlocking sheet tufts.",
+      "nextAction": "In a subsequent authorized groom pass, refine the volumetric lock structure while retaining surface roots and the resolved base and curtain fixes."
+    },
+    {
+      "id": "F_VALUES",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Sampled shaded flank remains below the supplied approximate target, despite closer back and white values.",
+      "nextAction": "Refine neutral light and hair response using matched region samples without repainting the solved pattern."
+    },
+    {
+      "id": "F_POSE",
+      "criterion": "deformation",
+      "status": "resolved",
+      "observation": "Early temporary test weighting produced skin wedges.",
+      "resolution": "Added complementary stationary and moving bone weights; final bend and attachment evidence reviewed.",
+      "resolutionEvidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "F_CURTAIN",
+      "criterion": "groom",
+      "status": "resolved",
+      "observation": "Early plume guide stems formed a smooth vertical hair curtain and a downward base spear.",
+      "resolution": "Added layered short base guides and three-dimensional long stems, capped short shaft length and bounded guide pull. Final previews and renders show these defects resolved.",
+      "resolutionEvidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "F_REGIONAL",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Bib and hind feathering are silkier and less compactly tufted than the sheet.",
+      "nextAction": "Refine clump structure in these zones while retaining exposed toes and the approved mesh."
+    },
+    {
+      "id": "F_FACE",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Eye and face shading is simplified and inner-ear fur reads sparse.",
+      "nextAction": "Refine iris, short face and ear fur presentation without changing approved sculpt geometry."
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder plus independent groom_review agent",
+    "comparison": "Actual final Cycles renders compared with supplied sheet views and live pass3.",
+    "regressions": "Final bare-part, toe, attachment, geometry, output and symmetry checks recorded.",
+    "scopeCheck": "No original mesh geometry edits. Remaining look defects are retained, not declared approved or complete.",
+    "performedAt": "2026-10-16T19:08:59.954060+00:00",
+    "sessionId": "not-created-user-prohibited-git",
+    "requestId": "not-created-user-prohibited-git"
+  },
+  "stop": {
+    "kind": "user_stop",
+    "userWords": "The cap is 90 minutes. Stop editing at 75, and spend the rest on the final renders and the report.",
+    "source": "User B-gwvn task, Limits section. Editing cutoff 2026-10-16 18:58:46 UTC has passed."
+  }
+}

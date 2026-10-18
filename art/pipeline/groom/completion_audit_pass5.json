@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "id": "luceras-B-7qgf-pass5",
+  "outcome": "Crisp shipping sprite and portrait, layered plume over curled tail, separated toes, tested upper lid, preserved approved body, current proof and reapplicable groom.",
+  "authorizedScope": "Pass5 and groom tooling. No source sculpt edits, git, installs or paid services. User timing limits govern.",
+  "workRecord": "art/pipeline/groom/WORK_RECORD_pass5.md",
+  "evidence": {
+    "current": {
+      "path": "art/pipeline/groom/audit_evidence_pass5.json",
+      "sha256": "24c8d5547212735255084b8ffb4ef23da3c3c794a2c0d4713e3bb110e99176aa"
+    }
+  },
+  "criteria": [
+    {
+      "id": "sculpt",
+      "expectation": "Preserve approved original mesh positions, vertex order and topology.",
+      "status": "pass",
+      "assessment": "Current visual comparison and technical evidence. Numerical checks are not artistic approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "body",
+      "expectation": "Preserve inherited body curve coordinates and material arrays exactly.",
+      "status": "pass",
+      "assessment": "Current visual comparison and technical evidence. Numerical checks are not artistic approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "shipping",
+      "expectation": "Crisp 192px sprite and 512px portrait, 4x Lanczos method and honest frame costs.",
+      "status": "pass",
+      "assessment": "Current visual comparison and technical evidence. Numerical checks are not artistic approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "attachment",
+      "expectation": "Every guide and child follows a bent surface without detached roots.",
+      "status": "pass",
+      "assessment": "Current visual comparison and technical evidence. Numerical checks are not artistic approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "proof",
+      "expectation": "Fresh required renders, sheet/runtime comparisons, pass4/pass5/sheet sprite and plume, measured cost and hashes.",
+      "status": "pass",
+      "assessment": "Current visual comparison and technical evidence. Numerical checks are not artistic approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "look",
+      "expectation": "Layered plume along curl, separated toes and less circular seated upper lid meet the sheet comparison.",
+      "status": "fail",
+      "assessment": "Current visual comparison and technical evidence. Numerical checks are not artistic approval.",
+      "evidence": [
+        "current"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "D-gnev",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Plume now follows more of the curl and the white base loops are removed. Dark upper locks are still too long and sparse, and the white band is narrower than the approved sheet. The defect is partially resolved.",
+      "nextAction": "Shorten and broaden the upper dark locks into more overlapping layers, and widen the continuous inner white band without changing the accepted body.",
+      "acceptanceCriterion": "The full side and plume close show a densely layered last third with a continuous inner white band and no long isolated crown needles."
+    },
+    {
+      "id": "toe-crease-finish",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Toe lobes and small claws are individually readable, but the local creases are somewhat angular and drawn-looking in the three-quarter view.",
+      "nextAction": "Soften and vary only the localized skin-value trough edges and fur breaks, preserving separated lobes, gray tops and exposed small claws.",
+      "acceptanceCriterion": "Toes remain individually readable with natural, softly irregular creases in the close and three-quarter views."
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent /root/visual_audit",
+    "comparison": "Actual current render proof, approved sheets, delivered pass4 and live pass3.",
+    "regressions": "Sculpt geometry, exact body fingerprints, attachment, clearance, toes, plume and shipping freshness checked.",
+    "scopeCheck": "Approved source read only; temporary proof rig saved separately."
+  },
+  "stop": {
+    "kind": "user_stop",
+    "userWords": "Cap: 50 minutes. Stop editing at 38.",
+    "source": "User Pass5 B-7qgf brief. Started22:34UTC; edits stop23:12UTC and hard stop23:24UTC.",
+    "scope": "Requested edit cutoff reached. Final renders, measurements and report completed in remaining time. Visual findings are retained and not claimed fixed."
+  }
+}

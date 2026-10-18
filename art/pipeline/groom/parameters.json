@@ -1,0 +1,32 @@
+{
+  "build_id": "B-gwvn",
+  "seed": 7319,
+  "guides": 12000,
+  "children": 360000,
+  "points": 9,
+  "root_radius": 0.000105,
+  "lengths": {
+    "body": 0.022,
+    "head": 0.004,
+    "neck": 0.008,
+    "bib": 0.038,
+    "belly": 0.032,
+    "hind": 0.034,
+    "leg": 0.013,
+    "toes": 0.0025,
+    "ear": 0.003,
+    "shaft": 0.007,
+    "plume": 0.3
+  },
+  "clump": 0.78,
+  "frizz": 0.06,
+  "hair_color_scale": 0.5,
+  "samples_preview": 48,
+  "samples_final": 96,
+  "preview_size": 900,
+  "final_size": 1145,
+  "device": "CPU",
+  "denoise": true,
+  "hair_dark_scale": 1.1,
+  "plume_dark_tone": 0.3
+}

@@ -1,0 +1,144 @@
+{
+  "inspected_utc": "2026-10-16T21:36:54.186776+00:00",
+  "source": "Resume user request and current outputs, not another task audit",
+  "hashes": {
+    "groom.blend": "4481aff6752f837580c2dfbfe628bfd6a017042fa425a8b24f987c87e9797f32",
+    "build_groom.py": "e9e326835ed9de113a27e5554c648fcf64a819428a9fa2419a14605b71858563",
+    "parameters.json": "8e650cc4288b43d0598c59f6007d772f06b2cd1a23b83c94f87b9305cb084aa8",
+    "build_state.json": "5e7b3cee734318dcb16f2e69b0cf704fe65af9ab2211ce518de6dda5b3c9c632",
+    "resume_state.json": "24ecc387bff5658b89dd11b8cbb20918d71d048bb7a0e08cf5fc023f547f066a",
+    "iter_notes.json": "8391e69feed7f3a961050dd394f9daabba5996e6d77deee90f83c5bcb57b1966",
+    "independent_review_final.json": "3edb304c9196c639c566664524dbc42389b6717c87189ad670e5fc42063bdf88",
+    "measurements.json": "e05d089725fa733c55b541cc70a749992bce0afd61475ffcb2789a651c8691a3"
+  },
+  "saved_groom_state": {
+    "build_id": "B-pq45",
+    "blender": "5.2.2 LTS",
+    "seconds": 12.910986362999893,
+    "iteration": "10",
+    "input": "/mnt/c/dev/art-data/pipeline/codex-stream/luceras-merge/revert-forelegs/luceras_sculpt.blend"
+  },
+  "selected_state": {
+    "build_id": "B-pq45",
+    "selected_iteration": 11,
+    "status": "incomplete_slot_blocked_at_user_cap",
+    "resume_started_utc": "2026-10-16T20:53:07Z",
+    "editing_cutoff_utc": "2026-10-16T21:26:07Z",
+    "hard_stop_utc": "2026-10-16T21:38:07Z",
+    "final_frames_required": [
+      "side",
+      "three_quarter",
+      "front",
+      "head",
+      "hind_leg",
+      "tail_plume",
+      "portrait",
+      "sprite"
+    ],
+    "warning": "Existing final render filenames may be earlier iterations until measurements confirm iteration11.",
+    "queued_launch_cancelled": true,
+    "saved_groom_iteration": 10,
+    "selected_candidate_iteration": 11,
+    "candidate_rendered": false,
+    "last_built_pair": [
+      "build_groom_last_built.py",
+      "parameters_last_built.json"
+    ],
+    "candidate_pair": [
+      "build_groom.py",
+      "parameters.json"
+    ],
+    "cancelled_utc": "2026-10-16T21:36:54.126258+00:00"
+  },
+  "independent": {
+    "build_id": "B-pq45",
+    "reviewer": "Independent adversarial review agent",
+    "status": "NOT APPROVED: selected iteration11 is queued and has not been reviewed",
+    "selected_iteration": 11,
+    "selected_iteration_rendered": false,
+    "scope": "Read-only groom/script review, visual review of iteration8 side/head/hind and masks, iteration9 side/front/three-quarter/head, and iteration10 side. No Blender process started by reviewer. This review does not certify mixed render_ files as one final build.",
+    "findings": [
+      {
+        "priority": "high",
+        "area": "plume",
+        "finding": "Iteration9 became a fine comb of nearly regular thin spikes. Iteration10 discrete shared endpoints changed it into larger smooth spear-shaped locks. Neither matches compact overlapping pointed tufts in the sheet. Inner white band orientation improved from symmetric feather, but opacity and layered shape remain unresolved.",
+        "next_action": "Inspect selected iteration11 side and tail close after completion; retain unresolved status unless compact overlapping tufts are actually visible."
+      },
+      {
+        "priority": "high",
+        "area": "coat",
+        "finding": "Iteration10 primary mean78.72 vs sheet82.22, p25 61.28 vs69.92, median71.78 vs80.92, p75 89.21 vs92.13. IQR27.93 vs22.21 and std26.92 vs20.05. Mean alone is within4, distribution is not.",
+        "next_action": "Measure selected iteration11 using unchanged primary spatial masks and report all quartiles plus IQR/std without approval based only on mean."
+      },
+      {
+        "priority": "medium",
+        "area": "paws",
+        "finding": "Iteration9 restored dark gray fur texture and small discrete claws. Front and three-quarter toes are distinguishable, but side still merges into broad flattened pads. Iteration8 hind close showed broad dark feet with weak toe joints.",
+        "next_action": "Check selected final hind close and sprite, particularly toe separation and small claws."
+      },
+      {
+        "priority": "medium",
+        "area": "eyes",
+        "finding": "Iteration9 continuous dark socket ring improves seating. Horizontal pupil and one soft wet catchlight remain; no obvious hair intrusion. Iris remains a relatively uniform amber disk and face/eye presentation differs from the sheet.",
+        "next_action": "Inspect iteration11 tightened head proof; do not claim sheet match from retained pupil or highlight alone."
+      },
+      {
+        "priority": "low",
+        "area": "body fur",
+        "finding": "Fine wiry body texture and broken small-tuft outline are retained in reviewed resume renders. No return to pass2 broad regular body shingles. White bib is visibly gray compared with reference; preserved-white scope limits further calibration.",
+        "next_action": "Preserve body scale and report any remaining value difference rather than silently repainting the approved white pattern."
+      }
+    ],
+    "reproducibility": {
+      "assessment": "Script has deterministic seed, unchanged geometry signature check, triangle-index/barycentric surface-frame attachment, editable hair curves and a temporary-armature proof routine. This is code inspection, not an independently executed rebuild.",
+      "dependencies": [
+        "approved sculpt",
+        "surface pass3 surface.blend",
+        "surface pass3 basecolor_2048.png",
+        "surface pass3 cameras.json",
+        "repository lookdev.py"
+      ],
+      "restriction": "Reapplication requires same object name, topology, local coordinates and rest pose. Root attachment is equivalent custom Geometry Nodes reconstruction, no UV added. Final deformation_check must correspond to selected iteration."
+    },
+    "mask_audit": {
+      "primary": "Broad spatial masks include dark interior coat and bright strand tips, with eye/horn/white/background/plume exclusions. Tail correction is plausible. Outer fur silhouette is conservatively omitted, so primary numeric match is interior-mask evidence, not complete silhouette luminance.",
+      "supplement": "independent_silhouette_sensitivity.json",
+      "iteration": 8,
+      "expanded_mean_render_sheet": [
+        85.56519168015588,
+        82.51862418009073
+      ],
+      "expanded_p25_render_sheet": [
+        67.5656,
+        69.8464
+      ],
+      "expanded_p50_render_sheet": [
+        79.9908,
+        80.9146
+      ],
+      "expanded_p75_render_sheet": [
+        97.0,
+        92.2034
+      ],
+      "expanded_iqr_render_sheet": [
+        29.4344,
+        22.357
+      ],
+      "limitations": "Manual dorsal expansion adds7.49percent render area and1.59percent sheet area, because primary render mask leaves more dense visible edge hair out. Fine gaps and antialiasing mix background with fur, especially sharp sheet points. No luminance threshold was used. Expansion does not replace primary calibration and cannot prove exact silhouette match."
+    },
+    "checklist": {
+      "bald_patches": "No obvious bald patch in reviewed8/9/10 views; selected11 pending.",
+      "hair_poking_spikes": "Body acceptable; plume smooth spear/comb appearance fails reference in9/10. Selected11 pending.",
+      "floating_strands": "No obvious disconnected body strands; basal plume flyaways/tangles persist in9/10. Attachment numerical proof for selected11 pending.",
+      "eye_or_nose_intrusion": "No obvious intrusion in iteration9 head. Selected11 pending.",
+      "buried_toes": "Iteration9 front/three-quarter readable but side weak; final hind close pending.",
+      "dark_black_spots": "No anomalous isolated black patches in reviewed views; paw/socket darkness is broad and intentional. Final pending.",
+      "left_right_asymmetry": "Iteration9 front broadly balanced; selected11 front pending."
+    },
+    "blockedBy": [
+      "Selected iteration11 rendering is queued behind another builder slot at time of this review. Hard user time cap may prevent complete final proof."
+    ],
+    "approval": "No artistic approval granted. Nick approves the look. Do not describe queued output, mixed iteration proofs or incomplete final checks as completed."
+  },
+  "no_git": "Only pure completion_audit.evaluate is imported. No git, discovery, snapshots or seal."
+}

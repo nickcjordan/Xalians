@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Luceras rig review</title>
+<style>body{margin:0;background:#20242a;color:#eee;font:15px system-ui}header{padding:14px;display:flex;gap:15px;align-items:center}select,button{font:inherit;padding:6px;background:#333c48;color:white;border:1px solid #697685}canvas{display:block}#status{font-size:13px;color:#bac7d8}</style>
+<header><strong>Luceras · B-v3g9</strong><select id="pose"><option>Rest</option><option>Crouch</option><option>Leap</option><option>Landing</option><option>Head left and up</option><option>Tail side and up</option><option>Foreleg step</option><option>Breath in</option></select><button id="play">Play review</button><span id="status">Loading game mesh...</span></header>
+<script type="importmap">{"imports":{"three":"https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const scene=new THREE.Scene();scene.background=new THREE.Color('#20242a');
+const camera=new THREE.PerspectiveCamera(35,1,.01,100);camera.position.set(1.6,.9,1.6);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));document.body.append(renderer.domElement);
+const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,.45,0);orbit.update();
+scene.add(new THREE.HemisphereLight(0xffffff,0x647080,2));const light=new THREE.DirectionalLight(0xffffff,2.3);light.position.set(2,4,3);scene.add(light);
+const grid=new THREE.GridHelper(3,30,0x606976,0x343c47);scene.add(grid);
+let mixer,action,playing=false;const clock=new THREE.Clock();
+const status=document.querySelector('#status');const picker=document.querySelector('#pose');
+new GLTFLoader().load('luceras_rigged.glb',g=>{
+ scene.add(g.scene);let triangles=0,skinned=0,bones=new Set();g.scene.traverse(o=>{if(o.isMesh){triangles+=(o.geometry.index?.count||o.geometry.attributes.position.count)/3;if(o.isSkinnedMesh){skinned++;for(const b of o.skeleton.bones)bones.add(b.name)}}});
+ mixer=new THREE.AnimationMixer(g.scene);action=mixer.clipAction(g.animations[0]);action.play();mixer.setTime(0);
+ window.rigReview={loaded:true,triangles,skinnedMeshes:skinned,joints:bones.size,clips:g.animations.map(x=>x.name),renderer:renderer.info};status.textContent=`${triangles.toLocaleString()} triangles · ${bones.size} joints · ${skinned} skinned meshes`;
+},undefined,e=>{status.textContent='Load failed: '+e;window.rigReview={loaded:false,error:String(e)}});
+picker.onchange=()=>{playing=false;if(mixer){action.reset().play();mixer.setTime(Math.min((1+picker.selectedIndex*10)/30,action.getClip().duration-0.000001))}document.querySelector('#play').textContent='Play review'};
+document.querySelector('#play').onclick=()=>{playing=!playing;document.querySelector('#play').textContent=playing?'Pause':'Play review'};
+function resize(){renderer.setSize(innerWidth,innerHeight-64);camera.aspect=innerWidth/(innerHeight-64);camera.updateProjectionMatrix()}addEventListener('resize',resize);resize();
+renderer.setAnimationLoop(()=>{const dt=clock.getDelta();if(playing&&mixer)mixer.update(dt);renderer.render(scene,camera)});
+</script></html>

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "id": "luceras-B-spm3-pass4",
+  "outcome": "Deliver authored plume and eyelid guides, restored gray paws and dark face with unchanged body groom, fresh measured proof and reapplication support.",
+  "authorizedScope": "Pass4 outputs and grooming tooling only. No sculpt geometry changes, git, installs or paid services. User timing limits apply.",
+  "workRecord": "art/pipeline/groom/WORK_RECORD_pass4.md",
+  "evidence": {
+    "current": {
+      "path": "art/pipeline/groom/audit_evidence_pass4.json",
+      "sha256": "4c2b7717d75ce08f37f69cfabb9095f01a5bdd6a10a4b152235737f15aeae041"
+    }
+  },
+  "criteria": [
+    {
+      "id": "sculpt",
+      "expectation": "Keep all approved original mesh coordinates, vertex order and topology unchanged.",
+      "status": "pass",
+      "assessment": "See current technical and visual evidence; numerical success is not art approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "body",
+      "expectation": "Preserve the frozen iteration11 body groom and material attributes.",
+      "status": "fail",
+      "assessment": "See current technical and visual evidence; numerical success is not art approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "attachment",
+      "expectation": "Surface-bound curves follow a bent hind leg and tail with stable roots and lengths.",
+      "status": "pass",
+      "assessment": "See current technical and visual evidence; numerical success is not art approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "All requested current renders, comparisons, measured costs and reapplication script are present.",
+      "status": "fail",
+      "assessment": "See current technical and visual evidence; numerical success is not art approval.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "look",
+      "expectation": "Dense layered dark/white plume, seated eyes, slate face and individually readable gray toes match the sheet.",
+      "status": "fail",
+      "assessment": "See current technical and visual evidence; numerical success is not art approval.",
+      "evidence": [
+        "current"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "D-gnev",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Plume is dense, with dark crest, white inner band and dark pointed tips, but too many terminal bundles are long parallel needles. The white band reads as a rippled blade rather than clearly overlapping shorter locks.",
+      "nextAction": "Build the saved iteration6 candidate with shortened irregular local bundles and inspect both side and plume close.",
+      "acceptanceCriterion": "Dense softly shaggy layered fur with crisp irregular dark points and continuous white inner band, matching sheet silhouette."
+    },
+    {
+      "id": "D-c674",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Authored slate eyelid rim connects the globe to the face and leaves a large amber iris open, but upper lid shape remains too circular and eye still has some button-like projection.",
+      "nextAction": "Test the saved candidate upper-lid arc, then refine skin-rooted guide coverage without changing eye mesh.",
+      "acceptanceCriterion": "Eye visibly seated under a shaped lid, large open iris, moderate horizontal pupil, one soft catchlight."
+    },
+    {
+      "id": "B-spm3-paws",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Gray paw tops and small dark claws are restored, but toe bodies remain merged broad forms, most obvious in front and hind close.",
+      "nextAction": "Use short localized fur breaks and skin value separation between existing toe lobes while keeping original mesh untouched.",
+      "acceptanceCriterion": "Individual toes readable from side and three-quarter with small exposed claws, without black slipper or buried-toe appearance."
+    },
+    {
+      "id": "B-spm3-body-material-preservation",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Inherited body strand paths and global groom parameters are preserved, but deleting old plume and some paw children before material random draws shifts per-strand tone assignments. Exact body material preservation is not proven for delivered iteration5.",
+      "nextAction": "Build the saved iteration6 correction that draws full original arrays before local replacement, and compare independent frozen iteration11 material fingerprints.",
+      "acceptanceCriterion": "Body coordinate, coat color, gain and strand tone fingerprints match frozen iteration11 outside authorized local edits."
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder and independent /root/visual_audit",
+    "comparison": "Current Cycles proof beside approved sheet, delivered pass3 and live pass3.",
+    "regressions": "Geometry, binding, body fingerprints, freshness, bare parts, toes and symmetry checked.",
+    "scopeCheck": "Original source untouched. Temporary test rig saved separately."
+  },
+  "stop": {
+    "kind": "user_stop",
+    "userWords": "Cap60minutes. Stop editing at48.",
+    "source": "User Pass4 B-spm3 brief. Started21:39:14UTC; edit cutoff22:27:14UTC, hard stop22:39:14UTC.",
+    "scope": "Model editing closed at the requested limit. Open artistic findings retained. Final proof and reporting completed in the remaining time."
+  }
+}

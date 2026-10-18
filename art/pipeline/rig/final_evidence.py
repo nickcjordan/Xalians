@@ -1,0 +1,42 @@
+"""Record selection, evidence freshness, visual findings and the final manual audit."""
+from pathlib import Path
+import json,hashlib,datetime
+OUT=Path(r'C:\dev\art-data\pipeline\codex-stream\luceras-rig\pass1')
+HERE=Path(__file__).parent
+def load(n):return json.loads((OUT/n).read_text(encoding='utf-8-sig'))
+def write(n,v):(OUT/n).write_text(json.dumps(v,indent=2))
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+poses=['rest','crouch','leap','landing','head_left_up','tail_side_up','foreleg_step','breath_in']
+regions=['shoulder','elbow','hip','hock','neck','tail_base','neck_under_jaw']
+notes=load('iter_notes.json')
+notes['iterations']=[x for x in notes['iterations'] if x['iteration']<3]+[
+ dict(iteration=3,changes='Retained up to ten sculpt influences while limiting game weights to four. Tightened full-pose camera framing.',review='Selected. Crouch chest is rounder; shoulder speckling reduced. Sharp sculpt inner-elbow pinches remain. Leap hip has radial puckering and rump has a ledge beneath the tail. Under-jaw and hock silhouettes remain continuous. Both bodies follow the same action.',images_reviewed=['deformation_sheet.png','final_crouch_closeups.png','final_leap_closeups.png','final_crouch_neck_under_jaw_pair.png','final_leap_neck_under_jaw_pair.png']),
+ dict(iteration=4,changes='Tested localized Corrective Smooth after the sculpt armature, 30 iterations, factor 0.75, at shoulders, elbows, hips, neck base and tail root.',review='Rejected. Some rump ripples softened, but inner-elbow pinches and major rump ledge persisted. Not included in rig.blend.',images_reviewed=['iter4_crouch_elbow_sculpt.png','iter4_crouch_hip_sculpt.png','iter4_leap_tail_base_sculpt.png']),
+ dict(iteration=5,changes='Tested dual-quaternion volume-preserving skinning on the sculpt.',review='Rejected. Increased elbow, shoulder, hip and rump pinching. Not included in rig.blend.',images_reviewed=['iter5_crouch_closeups.png','iter5_leap_closeups.png'])]
+notes['selected_iteration']=3
+notes['remaining']=[
+ 'Sculpt inner-elbow pinches remain in deep crouch and leap. Local pose-space corrective shape keys still need to be authored and validated; none are included in this pass.',
+ 'Leap hip puckering and a sharp upper-thigh/rump ledge beneath the tail remain on both bodies. This is not a clean deformation approval.',
+ 'Minor sculpt surface pinches near the cheek and horn base remain visible in close crops.',
+ 'Sculpt and game share bone poses but are not geometrically identical: maximum sampled motion difference is 9.25 mm in crouch; worst pose p95 is 0.879 mm.',
+ 'Exported breath-in does not match Blender: game-body bounds differ by 14.511 mm and eye bounds by 11.448 mm. The other seven poses match within 0.001 mm. Suspected missing scale-inheritance compensation must be fixed and rigid accessories retested in the GLB.',
+ 'The three.js viewer is supplied, but browser smoke testing is blocked by an empty browser inventory. No browser was installed.'
+]
+write('iter_notes.json',notes)
+names=['weighted.blend','rig.blend','luceras_rigged.glb','measurements.json','bake_test.json','review_action.json','glb_check.json','gltf_validation.json','deformation_sheet.png']
+names += ['final_'+p+'_'+k+'.png' for p in poses for k in ['sculpt','game','pair']]
+names += ['final_'+p+'_'+r+'_'+k+'.png' for p in ['crouch','leap'] for r in regions for k in ['sculpt','game','pair']]
+cut=datetime.datetime.fromisoformat('2026-10-16T13:29:53-05:00').timestamp()
+items=[dict(path=n,exists=(OUT/n).exists(),mtime_utc=datetime.datetime.fromtimestamp((OUT/n).stat().st_mtime,datetime.timezone.utc).isoformat(),sha256=sha(OUT/n),fresh=(OUT/n).stat().st_mtime>=cut) for n in names if (OUT/n).exists()]
+same={n:sha(OUT/n)==sha(OUT/'iteration3'/n) for n in ['weighted.blend','rig.blend','luceras_rigged.glb','measurements.json']}
+write('artifact_freshness.json',dict(selected_iteration=3,passed=len(items)==len(names) and all(x['fresh'] for x in items) and all(same.values()),selected_checkpoint_matches=same,files=items))
+m=load('measurements.json');geom=load('geometry_preservation.json')
+checklist=dict(holes=dict(topology_unchanged=geom['all_exact'],assessment='No new open silhouette holes observed. Original boundary-edge counts and connected parts are unchanged. This does not certify absence of self-intersections.'),tearing=dict(assessment='No detached pieces observed. Dark slit-like folds remain at elbows and hip/rump, so visual quality is unresolved.'),origin_or_flying=dict(passed=all(o['vertices_at_origin']==0 and o['vertices_farther_than_3m']==0 and o['finite'] for p in m['pose_checks'].values() for objs in p.values() for o in objs)),rigid_parts=dict(passed=all(m['checks'][k] for k in ['sculpt_rigid_parts','game_rigid_parts','game_eyes_rigid','ear_blades_rigid']),ear_coverage='Measured rigid ear subsets are 9150 left and 9146 right vertices. Original threshold selections were 9222 and 9517; remaining root-transition samples are blended after symmetry. No visible blade bending was seen.'),symmetry={k:[dict(name=o['name'],**o['bilateral_weight_symmetry']) for o in v['objects'] if 'bilateral_weight_symmetry' in o] for k,v in m['bodies'].items()},part_counts=dict(unchanged=geom['all_exact'],sculpt=37,game=23),visual_approval=False)
+write('self_review_checklist.json',checklist)
+evidence={n:dict(path=str(OUT/n),sha256=sha(OUT/n)) for n in ['rig.blend','luceras_rigged.glb','deformation_sheet.png','final_crouch_closeups.png','final_leap_closeups.png','measurements.json','iter_notes.json','artifact_freshness.json']}
+audit=dict(schemaVersion=1,id='B-v3g9-stage8',outcome='One deformation skeleton for both frozen bodies, a Blender control rig, tested baking, a validated game GLB and a clean eight-pose deformation sheet.',authorizedScope='Only rig pass1 and rig tooling. No source geometry edits, groom edits, git, installs or paid tools. Stop asset editing at 1:43 PM and finish by 1:58 PM.',workRecord=str(HERE/'WORK_RECORD.md'),evidence=evidence,criteria=[dict(id='technical',status='pass',assessment='All recorded technical checks pass for selected iteration 3.'),dict(id='visual',status='fail',assessment='Elbow, hip and rump folds remain. No art approval claimed.'),dict(id='runtime',status='blocked',assessment='Viewer supplied; browser unavailable.')],findings=[dict(id='VISUAL-001',status='open',observation=notes['remaining'][0],nextAction='Author sculpt-only pose-space correctives and rerun all bend evidence.',acceptance='No sharp inner-elbow slit-like folds in crouch or leap.'),dict(id='VISUAL-002',status='open',observation=notes['remaining'][1],nextAction='Refine hip weights and author localized sculpt correctives; resync game and recheck shared motion.',acceptance='Continuous hip/rump volume without the ledge or radial puckering.'),dict(id='RUNTIME-001',status='open',observation=notes['remaining'][-1],nextAction='Open viewer in an available browser and exercise every pose and playback.',acceptance='GLB loads, all poses display, and console has no errors.')],audit=dict(reviewer='Builder plus independent /root/audit visual and technical review',comparison='Compared current final images to all eight requested poses and seven diagnostic regions.',regressions='Rejected iterations 2, 4 and 5. Selected iteration 3 matches its retained checkpoint hashes.',scopeCheck='No narrowed quality claim. Incomplete visual work is explicit.',performedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(),checker='Manual audit. scripts/completion_audit.py was not executed because it invokes git, prohibited by the user.'),stop=dict(kind='user_time_limit',reason='User instructed a 60-minute asset-editing cutoff and 75-minute total cap. Preserve the best validated pass and unresolved findings rather than imply approval.'))
+write('completion_audit.json',audit)
+audit['criteria'].append(dict(id='export_pose_equivalence',status='fail',assessment=notes['remaining'][-2]))
+audit['findings'].append(dict(id='EXPORT-001',status='open',observation=notes['remaining'][-2],nextAction='Bake evaluated parent-relative transforms for glTF, including scale-inheritance compensation, then recheck all poses and rigid accessories.',acceptance='All exported poses match Blender within 0.01 mm and exported rigid-part lengths stay constant.'))
+audit['audit']['regressions']+=' Final independent CPU-to-Blender comparison discovered a breath-in export mismatch. Validator success is not pose-equivalence proof.'
+write('completion_audit.json',audit)

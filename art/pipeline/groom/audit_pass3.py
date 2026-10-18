@@ -1,0 +1,23 @@
+"""Evaluate the task evidence directly without invoking git or repository hooks."""
+from pathlib import Path
+import json,hashlib,datetime,importlib.util,shutil
+T=Path(__file__).parent;ROOT=T.parents[2];O=Path('C:/dev/art-data/pipeline/codex-stream/luceras-groom/pass3')
+def read(n):return json.loads((O/n).read_text())
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def write(p,d):p.write_text(json.dumps(d,indent=2))
+names=['delivery_checks.json','visual_review.json','independent_review_final.json','geometry_check.json','deformation_check.json','color_measurements.json','measurements.json','iter_notes.json','groom.blend','build_groom.py','parameters.json']
+e={'inspection_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'artifact_hashes':{n:sha(O/n) for n in names},'technical':read('delivery_checks.json'),'visual':read('visual_review.json'),'independent':read('independent_review_final.json'),'no_git':'User prohibited git. Imported pure evaluate() only; no repository discovery, snapshots, hook sealing or git commands.'}
+ep=T/'audit_evidence_pass3.json';write(ep,e)
+visual=e['visual'];checks=e['technical'];criteria=[]
+for key,expect,passed,assessment in [('sculpt','Keep approved source and all original mesh positions/order/topology unchanged.',checks['approved_source_unchanged'] and checks['original_mesh_geometry_unchanged'],'Hash and coordinate/topology signatures inspected.'),('attachment','Provide reproducible surface-bound curves and bent pose proof.',checks['surface_attachment_bend_passed'] and all(checks['tooling_matches'].values()),'Zero root error, negligible length change; bent pose visually inspected. No guarantee for untested rig poses.'),('delivery','Supply all requested final renders, comparisons, dimensions, measurements and hashes.',checks['technical_delivery_passed'],'All required files and measured CPU final frames checked.'),('look','Match fine wiry fur, dark-coat distribution, asymmetric layered plume, readable paws and seated amber eyes.',visual['status']!='needs_revision','Visible requested improvements are present. Residual sheet differences remain in plume lock layering, silky bib/feathering and eye/nose realism.')]:
+ criteria.append({'id':key,'expectation':expect,'status':'pass' if passed else 'fail','assessment':assessment,'evidence':['current']})
+findings=[]
+for i,item in enumerate(visual.get('remaining',[])):
+ findings.append({'id':'visual_'+str(i+1),'criterion':'look','status':'open','observation':item,'nextAction':'Continue the recorded groom/material refinement against the matching sheet if another pass is authorized after this timed build.','acceptanceCriterion':'Current full-resolution and game-size renders reduce this difference without changing approved sculpt geometry or reintroducing artifacts.'})
+now=datetime.datetime.now(datetime.timezone.utc);cutoff=datetime.datetime(2026,10,16,21,26,7,tzinfo=datetime.timezone.utc)
+stop={'kind':'user_stop','userWords':'This resume has a45-minute cap. Stop editing at33.','source':'User Resume pass3 B-pq45; resume started20:53:07UTC, editing cutoff21:26:07UTC, hard stop21:38:07UTC.','scope':'Editing is closed under the user time limit. Technical delivery can pass while artistic findings remain open.'} if now>=cutoff else {'kind':'continue'}
+r={'schemaVersion':1,'id':'luceras-B-pq45-pass3','outcome':'Deliver the full pass3 strand-fur revision and all requested measured proof against the approved sheet.','authorizedScope':'New pass3 files and grooming tools. No source geometry changes, git, installs or paid services. User timing cap applies.','workRecord':'art/pipeline/groom/WORK_RECORD_pass3.md','evidence':{'current':{'path':'art/pipeline/groom/audit_evidence_pass3.json','sha256':sha(ep)}},'criteria':criteria,'findings':findings,'audit':{'reviewer':'Builder plus independent /root/review','comparison':'Actual final Cycles views beside sheet, livepass3 and pass2 native game sizes, plus the three-column side proof.','regressions':'Geometry/binding, bare-part clearance, toes, symmetry and all requested outputs inspected.','scopeCheck':'Original sculpt unchanged. Temporary test rig saved separately. No edits outside grooming/output scope.'},'stop':stop}
+write(T/'completion_audit_pass3.json',r)
+spec=importlib.util.spec_from_file_location('completion_audit',ROOT/'scripts/completion_audit.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);result=m.evaluate(r,ROOT);result['not_artistic_approval']=True;result['no_git_invoked']=True;write(T/'completion_audit_result_pass3.json',result)
+for n in ('audit_evidence_pass3.json','completion_audit_pass3.json','completion_audit_result_pass3.json'):shutil.copy2(T/n,O/n)
+print(json.dumps(result,indent=2))

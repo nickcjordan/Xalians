@@ -1,0 +1,51 @@
+{
+  "build_id": "B-svtw",
+  "seed": 673219,
+  "root_radius": 7.5e-05,
+  "guides": 2400,
+  "children": 110000,
+  "max_root_height": 0.095,
+  "paw_length": 0.007,
+  "toe_length": 0.005,
+  "fringe_length": 0.012,
+  "lift": 0.48,
+  "samples_preview": 32,
+  "samples_final": 64,
+  "device": "CPU",
+  "fore_toe_centers": [
+    [
+      0.0196,
+      -0.1575
+    ],
+    [
+      0.03014,
+      -0.1695
+    ],
+    [
+      0.04285,
+      -0.1689
+    ],
+    [
+      0.0566,
+      -0.1615
+    ]
+  ],
+  "hind_toe_centers": [
+    [
+      0.1395,
+      0.0715
+    ],
+    [
+      0.1632,
+      0.0618
+    ],
+    [
+      0.1798,
+      0.0592
+    ],
+    [
+      0.1835,
+      0.0825
+    ]
+  ]
+}

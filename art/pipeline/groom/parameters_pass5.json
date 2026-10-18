@@ -1,0 +1,362 @@
+{
+  "build_id": "B-7qgf",
+  "seed": 7319,
+  "guides": 16000,
+  "children": 700000,
+  "points": 9,
+  "root_radius": 8.5e-05,
+  "lengths": {
+    "body": 0.023,
+    "head": 0.0065,
+    "neck": 0.012,
+    "bib": 0.034,
+    "belly": 0.03,
+    "hind": 0.034,
+    "leg": 0.013,
+    "toes": 0.0035,
+    "ear": 0.004,
+    "shaft": 0.007,
+    "plume": 0.3
+  },
+  "clump": 0.985,
+  "frizz": 0.09,
+  "hair_color_scale": 0.4,
+  "samples_preview": 48,
+  "samples_final": 64,
+  "preview_size": 900,
+  "final_size": 1145,
+  "device": "CPU",
+  "denoise": true,
+  "hair_dark_scale": 1.0,
+  "plume_dark_tone": 1.8,
+  "proof_each_build": false,
+  "plume_lock_width": 0.0048,
+  "flank_gain": 0,
+  "plume_radius": 0.00013,
+  "dark_tip": 0.35,
+  "plume_guide_multiplier": 6.0,
+  "body_child_density": 4,
+  "body_response": 1.95,
+  "paw_response": 3.6,
+  "dark_root": 0.42,
+  "dark_middle": 0.45,
+  "deliver_on_build": true,
+  "dark_color_floor": 0,
+  "dark_color_slope": 1,
+  "face_response": 0.6,
+  "face_skin_response": 0.75,
+  "lid_guides": 192,
+  "lid_children": 24,
+  "tuft_children": 3600,
+  "tuft_radius": 9e-05,
+  "lid_radius": 0.00014,
+  "plume_white_linear": 0.82,
+  "plume_dark_linear": 0.06,
+  "plume_tufts": [
+    {
+      "name": "crest_01",
+      "station": 0.0173913043478261,
+      "side": "upper/outer",
+      "angle": 84,
+      "length": 0.012,
+      "width": 0.0015,
+      "color": "dark",
+      "density": 0.12
+    },
+    {
+      "name": "crest_02",
+      "station": 0.12173913043478271,
+      "side": "upper/outer",
+      "angle": 76,
+      "length": 0.025,
+      "width": 0.0025,
+      "color": "dark",
+      "density": 0.25
+    },
+    {
+      "name": "crest_03",
+      "station": 0.22608695652173932,
+      "side": "upper/outer",
+      "angle": 74,
+      "length": 0.043,
+      "width": 0.004,
+      "color": "dark",
+      "density": 0.48
+    },
+    {
+      "name": "crest_04",
+      "station": 0.3304347826086959,
+      "side": "upper/outer",
+      "angle": 65,
+      "length": 0.075,
+      "width": 0.009230769230769232,
+      "color": "dark",
+      "density": 0.7
+    },
+    {
+      "name": "crest_05",
+      "station": 0.4260869565217395,
+      "side": "upper/outer",
+      "angle": 61,
+      "length": 0.095,
+      "width": 0.010307692307692308,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_06",
+      "station": 0.5043478260869569,
+      "side": "upper/outer",
+      "angle": 53,
+      "length": 0.12,
+      "width": 0.011384615384615385,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_07",
+      "station": 0.5826086956521744,
+      "side": "upper/outer",
+      "angle": 47,
+      "length": 0.15,
+      "width": 0.012461538461538461,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_08",
+      "station": 0.6521739130434788,
+      "side": "upper/outer",
+      "angle": 36,
+      "length": 0.175,
+      "width": 0.01353846153846154,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_09",
+      "station": 0.7217391304347832,
+      "side": "upper/outer",
+      "angle": 29,
+      "length": 0.202,
+      "width": 0.014615384615384615,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_10",
+      "station": 0.7913043478260876,
+      "side": "upper/outer",
+      "angle": 16,
+      "length": 0.225,
+      "width": 0.015692307692307693,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_11",
+      "station": 0.860869565217392,
+      "side": "upper/outer",
+      "angle": 8,
+      "length": 0.25,
+      "width": 0.016769230769230772,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_12",
+      "station": 0.9130434782608703,
+      "side": "upper/outer",
+      "angle": -2,
+      "length": 0.272,
+      "width": 0.017846153846153845,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_13",
+      "station": 0.9652173913043477,
+      "side": "upper/outer",
+      "angle": -14,
+      "length": 0.3,
+      "width": 0.018923076923076924,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "crest_14",
+      "station": 0.9999999999999999,
+      "side": "upper/outer",
+      "angle": -27,
+      "length": 0.332,
+      "width": 0.02,
+      "color": "dark",
+      "density": 1.0
+    },
+    {
+      "name": "inner_white_04",
+      "station": 0.3304347826086959,
+      "side": "lower/inner",
+      "angle": -25,
+      "length": 0.031446153846153846,
+      "width": 0.007615384615384616,
+      "color": "white",
+      "density": 0.25
+    },
+    {
+      "name": "inner_white_05",
+      "station": 0.4260869565217395,
+      "side": "lower/inner",
+      "angle": -30,
+      "length": 0.04790769230769231,
+      "width": 0.008153846153846154,
+      "color": "white",
+      "density": 0.5
+    },
+    {
+      "name": "inner_white_06",
+      "station": 0.5043478260869569,
+      "side": "lower/inner",
+      "angle": -42,
+      "length": 0.06153846153846154,
+      "width": 0.008692307692307694,
+      "color": "white",
+      "density": 0.75
+    },
+    {
+      "name": "inner_white_07",
+      "station": 0.5826086956521744,
+      "side": "lower/inner",
+      "angle": -30,
+      "length": 0.06286153846153847,
+      "width": 0.009230769230769232,
+      "color": "white",
+      "density": 1.0
+    },
+    {
+      "name": "inner_white_08",
+      "station": 0.6521739130434788,
+      "side": "lower/inner",
+      "angle": -48,
+      "length": 0.07815384615384616,
+      "width": 0.00976923076923077,
+      "color": "white",
+      "density": 1.0
+    },
+    {
+      "name": "inner_white_09",
+      "station": 0.7217391304347832,
+      "side": "lower/inner",
+      "angle": -37,
+      "length": 0.07781538461538462,
+      "width": 0.010307692307692308,
+      "color": "white",
+      "density": 1.0
+    },
+    {
+      "name": "inner_white_10",
+      "station": 0.7913043478260876,
+      "side": "lower/inner",
+      "angle": -52,
+      "length": 0.09476923076923077,
+      "width": 0.010846153846153846,
+      "color": "white",
+      "density": 1.0
+    },
+    {
+      "name": "inner_white_11",
+      "station": 0.860869565217392,
+      "side": "lower/inner",
+      "angle": -35,
+      "length": 0.13,
+      "width": 0.008,
+      "color": "white",
+      "density": 1.0
+    },
+    {
+      "name": "inner_white_12",
+      "station": 0.9130434782608703,
+      "side": "lower/inner",
+      "angle": -55,
+      "length": 0.11138461538461539,
+      "width": 0.011923076923076923,
+      "color": "white",
+      "density": 1.0
+    },
+    {
+      "name": "inner_white_13",
+      "station": 0.9652173913043477,
+      "side": "lower/inner",
+      "angle": -43,
+      "length": 0.10772307692307692,
+      "width": 0.012461538461538461,
+      "color": "white",
+      "density": 1.0
+    },
+    {
+      "name": "inner_white_14",
+      "station": 0.9999999999999999,
+      "side": "lower/inner",
+      "angle": -42,
+      "length": 0.16,
+      "width": 0.008,
+      "color": "white",
+      "density": 1.0
+    }
+  ],
+  "tuft_root_y_start": 0.58,
+  "tuft_root_y_span": 0.115,
+  "paw_skin_response": 1.6,
+  "paw_length": 0.0045,
+  "lid_open_width": 0.0147,
+  "lid_open_height": 0.0124,
+  "samples_tail_final": 96,
+  "transition_children": 3000,
+  "transition_guides": 16,
+  "supersample": 4,
+  "samples_small": 128,
+  "pixel_filter_width": 1.0,
+  "small_denoise": false,
+  "toe_break_width": 0.0042,
+  "toe_skin_depth": 0.45,
+  "fore_toe_centers": [
+    [
+      0.0196,
+      -0.1575
+    ],
+    [
+      0.03014,
+      -0.1695
+    ],
+    [
+      0.04285,
+      -0.1689
+    ],
+    [
+      0.0566,
+      -0.1615
+    ]
+  ],
+  "hind_toe_centers": [
+    [
+      0.1395,
+      0.0715
+    ],
+    [
+      0.1632,
+      0.0618
+    ],
+    [
+      0.1798,
+      0.0592
+    ],
+    [
+      0.1835,
+      0.0825
+    ]
+  ],
+  "lid_upper_reduction": 0.0026,
+  "lid_upper_power": 0.72,
+  "toe_bump_distance": 0.0016,
+  "inner_band_children": 12000
+}

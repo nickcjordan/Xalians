@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "luceras-B-pq45-pass3-resume",
+  "outcome": "Complete the requested pass3 strand-fur revision and all proof against sheet within the user45-minute resume cap.",
+  "authorizedScope": "Groom tooling and pass3 outputs only. Preserve source sculpt. No git, installs or paid services.",
+  "workRecord": "art/pipeline/groom/WORK_RECORD_pass3.md",
+  "evidence": {
+    "current": {
+      "path": "art/pipeline/groom/audit_evidence_pass3.json",
+      "sha256": "44d750265ee7de1e98a2e2707c752de956782268dce1f7336c4f7f04fbb16264"
+    }
+  },
+  "criteria": [
+    {
+      "id": "geometry",
+      "expectation": "Keep approved sculpt geometry unchanged.",
+      "status": "pass",
+      "assessment": "Saved geometry signature check and approved file hash verified.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "look",
+      "expectation": "Match requested coat distribution, fine body fur, compact asymmetric plume, readable paws and seated eyes.",
+      "status": "fail",
+      "assessment": "Body and paw/eye improvements inspected in prior iterations. Selected final candidate not fully verified; coat spread and plume remained unresolved in reviewed iterations.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "proof",
+      "expectation": "Deliver all selected-iteration views, comparisons, measured costs and fresh deformation proof.",
+      "status": "fail",
+      "assessment": "Shared slot delay and user cap prevented a complete selected-iteration proof set.",
+      "evidence": [
+        "current"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "final_proof_missing",
+      "criterion": "proof",
+      "status": "open",
+      "observation": "Selected iteration11 cannot be certified by mixed older render filenames or absent bend proof.",
+      "nextAction": "Run frozen builder when shared slot and a new time budget are available, then inspect all eight views and bend proof.",
+      "acceptanceCriterion": "Every requested frame and deformation test is current, measured, visually reviewed and linked."
+    },
+    {
+      "id": "coat_plume_look",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Reviewed resume iterations retain excessive coat spread and smooth or comb-like plume locks. Final candidate pending full verification.",
+      "nextAction": "Measure final coat with saved masks, review discrete plume tufts and correct remaining visual defects within a further authorized pass.",
+      "acceptanceCriterion": "Mean and quartiles within4 and compact layered asymmetric plume visible against sheet, with readable paws and seated eyes."
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder plus independent review agent",
+    "comparison": "Actual8/9/10 views and sheet, masks and distribution measurements. Selected11 status explicitly pending where absent.",
+    "regressions": "Paws and eye seating improved in9;10 coat compression regressed and was reverted in candidate11.",
+    "scopeCheck": "No source positions/topology or unrelated work changed. Shared slot respected. No git invoked."
+  },
+  "stop": {
+    "kind": "user_stop",
+    "userWords": "This resume has a45-minute cap. Stop editing at33, then produce the full pass3 proof and report.",
+    "source": "User Resume pass3 B-pq45; started20:53:07UTC, edit cutoff21:26:07UTC, hard stop21:38:07UTC.",
+    "scope": "No completion claim. Editing is closed and the shared resource delay prevents full proof inside the remaining hard cap."
+  }
+}

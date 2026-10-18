@@ -1,0 +1,9 @@
+from pathlib import Path
+import json
+T=Path(__file__).parent;O=Path('C:/dev/art-data/pipeline/codex-stream/luceras-groom/pass2');p=T/'build_groom_pass2.py';s=p.read_text()
+s=s.replace("((fan<-.15)&(v<.82))", "((fan>-.80)&(fan<-.12)&(v<.82))")
+s=s.replace("fade.inputs['From Min'].default_value=.72", "fade.inputs['From Min'].default_value=.90")
+s=s.replace("endtime=.72+.28*np.sqrt(rng.random(len(pd)))", "endtime=.94+.06*rng.random(len(pd))")
+p.write_text(s);(O/'build_groom.py').write_text(s)
+P=json.loads((O/'parameters.json').read_text());P.update(proof_each_build=True);(O/'parameters.json').write_text(json.dumps(P,indent=2));(T/'parameters_pass2.json').write_text(json.dumps(P,indent=2))
+notes=json.loads((O/'iter_notes.json').read_text());notes.append({'iteration':11,'renders':['iter11_side.png','iter11_tail_plume.png','iter11_head.png'],'coat_value':{'back_srgb':[81,78,77],'flank_srgb':[96,92,91],'bib_srgb':[192,191.5,192]},'pattern_placement':'Requested back, flank and white values are closely matched. Plume band lost visibility because its white-to-dark fade starts too early along long stems.','fur_length_by_region':'Regional body and face groom held stable.','outline_shagginess':'Body is coarse; plume still has a longer low-opacity tip halo than the sheet.','plume_shape':'Darker slate tone improves contrast, but hair-end spread is too broad.','face':'Visible short fur, dots, long white whiskers and short pink-gray inner ears. Fixed nose remains angular.','eyes':'Radial iris detail, softened horizontal pupil, dark rim and wet catchlight retained.','changed_next':['Keep white to 90 percent of each inner lock before its dark terminal point','Reduce strand-end spread to the last 6 percent of lock length for compact pointed tips','Keep only extreme outside locks dark to frame the continuous white band','Run complete temporary-armature bend proof on this candidate']});(O/'iter_notes.json').write_text(json.dumps(notes,indent=2))

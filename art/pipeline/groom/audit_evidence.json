@@ -1,0 +1,258 @@
+{
+  "build_id": "B-gwvn",
+  "audited_at_utc": "2026-10-16T19:08:59.954060+00:00",
+  "artifacts": [
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\groom.blend",
+      "sha256": "e3f371a0993c9a5fc6b450c27152006cd78ed87170fa9d3374eb53bb7a66181d"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\geometry_check.json",
+      "sha256": "6274abb8f4af33f283cac6caee479ad5e68258d131c820de95f2cc28029ab165"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\deformation_check.json",
+      "sha256": "76de69c37baa73d403fb149a93767584afca4be7d6abcf44bbbf202d28c902bf"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\delivery_checks.json",
+      "sha256": "9173269364770e6815951cd6e7fddfeafc1005479d50f18b6e4445a7fc8d5283"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\measurements.json",
+      "sha256": "daf6c64d7162508be305d4af5cc8b64ef6ed11a433b9d1e7ced7e0365d561964"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\visual_review.json",
+      "sha256": "fe19c6d2968506f8c69831800ec1b4513250ea89366a309157fdb14a754fc8a1"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\independent_review_final.json",
+      "sha256": "8eb8d8c1e034758f183cb22e0a978a7545d1c371590b80b82dc0ac75bccc6527"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\iter_notes.json",
+      "sha256": "e94ab8d22e2cd885ea89cfe5820bcf495fc84c102f0f4f2f83fc307114b9f9d7"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\render_front.png",
+      "sha256": "f875dada8f6ab4676a2f5ee13d14e56ccb4ecdd7b02a877078942037f79af0c7"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\render_head.png",
+      "sha256": "99f2c4e69629ba1b7f77d91092786e25371282516a170a2d048f55f837918788"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\render_hind_leg.png",
+      "sha256": "827efe43c63ce16ae1660a6adce733e208d62e04d1c05a34b16bf7c8464264a9"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\render_portrait.png",
+      "sha256": "b472eda53e19ca3d6345f8a4bec10589d31f1e1f3c8ea6f974ba71dd8270b1ab"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\render_side.png",
+      "sha256": "7c6cdd08cb79eaf39b788cb554d558b0acc94e3e66a1f92410947afeac096771"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\render_sprite.png",
+      "sha256": "b9fed4cb0556f2dfa59f02ba447de0676827cc5b00d76c0457ac2f76a12732eb"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\render_tail_plume.png",
+      "sha256": "7ac5bb64f02adbae58fed6de88761b7461f3b80b61def2dc86c7925dff519174"
+    },
+    {
+      "path": "C:\\dev\\art-data\\pipeline\\codex-stream\\luceras-groom\\pass1\\render_three_quarter.png",
+      "sha256": "92d0abed8e13ef5e9f6955392b96681f0996fa7698e110aff65e12196d32519f"
+    }
+  ],
+  "delivery_checks": {
+    "render_dimensions": {
+      "side": {
+        "expected": [
+          1374,
+          1145
+        ],
+        "actual": [
+          1374,
+          1145
+        ],
+        "passed": true
+      },
+      "three_quarter": {
+        "expected": [
+          1374,
+          1145
+        ],
+        "actual": [
+          1374,
+          1145
+        ],
+        "passed": true
+      },
+      "front": {
+        "expected": [
+          1145,
+          1145
+        ],
+        "actual": [
+          1145,
+          1145
+        ],
+        "passed": true
+      },
+      "head": {
+        "expected": [
+          1145,
+          1145
+        ],
+        "actual": [
+          1145,
+          1145
+        ],
+        "passed": true
+      },
+      "hind_leg": {
+        "expected": [
+          1145,
+          1145
+        ],
+        "actual": [
+          1145,
+          1145
+        ],
+        "passed": true
+      },
+      "tail_plume": {
+        "expected": [
+          1145,
+          1145
+        ],
+        "actual": [
+          1145,
+          1145
+        ],
+        "passed": true
+      },
+      "portrait": {
+        "expected": [
+          512,
+          512
+        ],
+        "actual": [
+          512,
+          512
+        ],
+        "passed": true
+      },
+      "sprite": {
+        "expected": [
+          192,
+          192
+        ],
+        "actual": [
+          192,
+          192
+        ],
+        "passed": true
+      }
+    },
+    "all_sheet_composites": true,
+    "both_runtime_composites": true,
+    "approved_source_sha256": "d1203576f1f786fb8ae68097dde1e9fe344db0c6108b5077c0f9524d58a35754",
+    "reference_hashes_verified": true,
+    "source_unchanged": true,
+    "all_original_mesh_signatures_unchanged": true,
+    "attachment_proof_passed": true,
+    "tooling_matches_delivered": {
+      "build_groom.py": true,
+      "parameters.json": true,
+      "REAPPLY.md": true,
+      "compose_proof.py": true
+    },
+    "all_final_frames_measured": true,
+    "all_final_frames_cpu_96_samples_denoised": true,
+    "strand_count_consistent": true,
+    "no_nonfinite_strand_points": true,
+    "eye_clearance_positive": true,
+    "independent_final_review_present": true,
+    "technical_delivery_passed": true,
+    "scope": "These checks establish delivery integrity and measured technical properties. They do not certify a model-sheet look match or Nick approval."
+  },
+  "visual_review": {
+    "build_id": "B-gwvn",
+    "status": "needs_revision",
+    "reviewed_utc": "2026-10-16T19:08:22.660307+00:00",
+    "reviewed_files": [
+      "render_side.png",
+      "render_three_quarter.png",
+      "render_front.png",
+      "render_head.png",
+      "render_hind_leg.png",
+      "render_tail_plume.png",
+      "render_portrait.png",
+      "render_sprite.png",
+      "deformation_side.png",
+      "deformation_hind_leg.png",
+      "deformation_check.json",
+      "final_contact.png",
+      "composite_side_vs_sheet.png",
+      "composite_side_vs_live_pass3.png"
+    ],
+    "assessment": "All requested technical artifacts are delivered. This is a reviewable strand-fur pass, not a completed sheet match or Nick-approved look.",
+    "remaining": [
+      "Plume tips are airy and silky with larger separated locks than the sheet. White underside is too diffuse.",
+      "Bib and hind feathering remain smoother and less compactly tufted than the sheet.",
+      "Shaded flank samples remain darker than the supplied approximate target, despite closer back and white values.",
+      "Face and eye presentation is simpler and inner-ear fur reads sparsely compared with the sheet. Preserve approved mesh geometry while refining materials and short fur.",
+      "Horn ridge highlights remain smoother and more uniform than the sheet."
+    ],
+    "checklist": {
+      "bald_patches": {
+        "result": "No obvious accidental body bald patches seen",
+        "note": "Inner ears remain visually sparse. Short face fur reads intentionally close."
+      },
+      "hair_poking_through_itself_in_spikes": {
+        "result": "No obvious severe crossing spike artifact seen in final views",
+        "note": "Some stiff toe-top wisps and long pointed plume groups remain. Render inspection cannot rule out every strand intersection."
+      },
+      "floating_strands": {
+        "result": "No clearly detached floating strands seen"
+      },
+      "hair_inside_eyes_or_over_nose": {
+        "result": "Visible eye and nose surfaces are clear"
+      },
+      "buried_toes": {
+        "result": "No",
+        "note": "Toe ends and dark claw tips remain exposed in front, side, hind close-up, and bent proof."
+      },
+      "dark_or_black_spots": {
+        "result": "No unexplained isolated black rendering spots seen",
+        "note": "Plume base has expected dark occlusion between locks."
+      },
+      "left_right_asymmetry": {
+        "result": "No gross unintended asymmetry seen in final front",
+        "note": "Minor strand variation and lighting differences remain; this is visual assessment rather than numerical symmetry proof."
+      }
+    },
+    "deformation": {
+      "visual_result": "Fur stays continuous over bent hind leg. Earlier sharp wedge protrusions are not visible in current proof. Raised foot overlaps the stationary foot in this camera, limiting underside inspection. No detached fur cluster is apparent.",
+      "reported_max_root_attachment_error_m": 0.0,
+      "reported_max_strand_point_motion_m": 0.14057856798171997,
+      "reported_max_strand_length_change_m": 7.264316082000732e-08,
+      "reported_moved_strand_points": 569767,
+      "reported_sculpt_base_geometry_unchanged": true,
+      "reported_passed": true,
+      "scope": "Recorded numerical results read and actual proof renders inspected. No independent Blender execution."
+    },
+    "symmetry_counts": {
+      "left_children": 178441,
+      "right_children": 181507,
+      "relative_count_difference": 0.008517897029570938,
+      "note": "Seeded random strand sampling is not exactly symmetric. Final front was visually reviewed."
+    },
+    "stop_reason": "User editing cutoff at 18:58:46 UTC has passed. Groom edits stopped before 18:53:16 UTC; remaining time used for final renders, review and report.",
+    "approval": "Nick has not approved this pass."
+  }
+}

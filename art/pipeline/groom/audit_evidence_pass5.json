@@ -1,0 +1,162 @@
+{
+  "inspection_utc": "2026-10-16T23:23:38.983632+00:00",
+  "artifact_hashes": {
+    "groom.blend": "6935fca665414df14f2e194002605ea2bea19f6c3d72ca9602abb2e7e46ce3a4",
+    "build_groom.py": "f64b7fdfa7ccffbcae78d58668ae426de5ddd6840bfd8c717ad2be298fb8ad2e",
+    "parameters.json": "1bc825843f7f72a1526e7fb7cb0fff46f74ae864bf4b1b9482ee56957b1bdf63",
+    "measurements.json": "6bb0ec3fe37a1135e7b94ad4f0894da494bd9bb3ff782768825c75a05763493a",
+    "body_material_preservation_check.json": "738733b29f564bddf06b6220bf5bc8d5241b02cbbd9eb4e79fb575f09bffda77",
+    "geometry_check.json": "6274abb8f4af33f283cac6caee479ad5e68258d131c820de95f2cc28029ab165",
+    "curve_checks.json": "eca8bebb294224e71e29fb5dc148ec3ebfb062b16e8a4c5182505fca8c773cd4",
+    "deformation_check.json": "d7f9313865b9aabe3f7ec63183ea5508dbfb320caba0e03338aafff23c549ee8",
+    "delivery_checks.json": "f540ba26a09b6c5f862418864369435470071aabd4320e4bf6a831e454fa4158",
+    "visual_review.json": "18884ba16e533587bc15ca3f8eb5545769788b17ec16002dbe9c6bd735738e2a",
+    "independent_review_final.json": "fd151ea4d702bca0087a2fa3618b140bdc9534564dafcf97ce90929c942b1189",
+    "iter_notes.json": "da1adad76a90df9900f7820ea0096400158b6687071d0d4b0c05151e4fb3eea1"
+  },
+  "technical": {
+    "build_id": "B-7qgf",
+    "selected_iteration": "8",
+    "dimensions": {
+      "side": true,
+      "three_quarter": true,
+      "front": true,
+      "head": true,
+      "hind_leg": true,
+      "tail_plume": true,
+      "portrait": true,
+      "sprite": true
+    },
+    "all_final_frames_current": true,
+    "script_matches_build": true,
+    "parameters_match_build": true,
+    "shipping_exports_match": true,
+    "sheet_composites": true,
+    "live_composites": true,
+    "required_three_column_composites": true,
+    "approved_source_unchanged": true,
+    "original_mesh_geometry_unchanged": true,
+    "deformation_passed": true,
+    "deformation_original_aggregate": "False: base tuft moves4.35mm below arbitrary10mm motion gate. See unchanged raw check and supplemental assessment.",
+    "body_preserved": true,
+    "all_finite": true,
+    "all_surface_bound": true,
+    "bare_nose_clear": true,
+    "eye_clearance_positive": true,
+    "counts_consistent": true,
+    "plume_major_tufts": 25,
+    "plume_tuft_count_in_requested_range": true,
+    "sampled_gpu_below_limit": true,
+    "cpu_only": true,
+    "shipping_4x_no_denoise": true,
+    "tooling_matches": true,
+    "technical_delivery_passed": true
+  },
+  "visual": {
+    "build_id": "B-7qgf",
+    "selected_iteration": "8",
+    "status": "review_candidate_with_time_capped_visual_findings",
+    "remaining": [
+      {
+        "id": "D-gnev",
+        "difference": "Plume now follows more of the curl and the white base loops are removed. Dark upper locks are still too long and sparse, and the white band is narrower than the approved sheet. The defect is partially resolved.",
+        "next_action": "Shorten and broaden the upper dark locks into more overlapping layers, and widen the continuous inner white band without changing the accepted body.",
+        "acceptance": "The full side and plume close show a densely layered last third with a continuous inner white band and no long isolated crown needles."
+      },
+      {
+        "id": "toe-crease-finish",
+        "difference": "Toe lobes and small claws are individually readable, but the local creases are somewhat angular and drawn-looking in the three-quarter view.",
+        "next_action": "Soften and vary only the localized skin-value trough edges and fur breaks, preserving separated lobes, gray tops and exposed small claws.",
+        "acceptance": "Toes remain individually readable with natural, softly irregular creases in the close and three-quarter views."
+      }
+    ],
+    "checklist": {
+      "bald_patches": "Pass visual inspection of all eight final views. No unintended bald body patch found. Paw tops intentionally carry very short fur and local skin-value breaks.",
+      "hair_poking_through_itself_in_spikes": "Long intentional plume tips remain more needle-like than the sheet. Record under D-gnev.",
+      "floating_strands": "Attachment geometric checks pass: all root errors zero, maximum length error0.502micrometers. Bent side shows coat following. Original aggregate false is preserved because one base tuft moves4.35mm, below arbitrary10mm gate. See deformation_assessment.json.",
+      "hair_inside_eyes_or_over_nose": "Pass. Numerical rendered-strand clearances are positive, no nose-mask points, and final head/portrait show a bare nose and clear visible iris.",
+      "buried_toes": "Pass visibility check. Final toe close shows four lobes and small exposed claws. Gray paw tops retained. Creases remain angular and side separation weaker than oblique, documented as an open finish issue.",
+      "dark_or_black_spots": "Pass visual inspection of all eight final views. No unexplained black spots. Dark claws and local toe crease values are intentional.",
+      "left_right_asymmetry": "Pass visual inspection of final front. No gross left/right groom mismatch. Stochastic strand counts differ slightly; exact bilateral strand identity is not intended."
+    },
+    "blockedBy": [],
+    "approval": "Claude and Nick review required. Numerical checks are not art approval."
+  },
+  "independent": {
+    "build_id": "B-7qgf",
+    "selected_iteration": 8,
+    "reviewer": "independent visual audit",
+    "status": "reviewed_with_remaining_visual_defects",
+    "differences_first": [
+      {
+        "defect": "D-gnev",
+        "status": "partially_resolved",
+        "finding": "The plume now begins along the curled distal tail, retains the dark outer crest and continuous white inner band, and removes the pale base loops. It still has fewer, longer needle-like dark locks and a narrower white band than the dense short overlapping locks in the sheet. The upper white carrier remains spear-like. This is not a sheet match."
+      },
+      {
+        "defect": "toe_finish",
+        "status": "open_visual_refinement",
+        "finding": "Toe lobes separate better in front and three-quarter views, and small claws remain exposed. Gray paw tops are retained. Some grooves appear angular and drawn onto a smooth paw rather than naturally separated fur lobes."
+      },
+      {
+        "defect": "sprite_crispness",
+        "status": "improved",
+        "finding": "Final 192 px sprite has visibly sharper horn edges, body fur and leg contours than pass 4. The sheet panel now contains the full tail with a safe inset. Final 512 px portrait retains clear fur detail after downsampling."
+      },
+      {
+        "defect": "D-c674",
+        "status": "conservative_correction_tested",
+        "finding": "The upper eye boundary is flatter while the seated amber eyes and horizontal pupils are retained. No new visible hair obstruction of iris or nose appears."
+      }
+    ],
+    "inspected_final_renders": [
+      "render_side.png",
+      "render_three_quarter.png",
+      "render_front.png",
+      "render_head.png",
+      "render_hind_leg.png",
+      "render_tail_plume.png",
+      "render_portrait.png",
+      "render_sprite.png"
+    ],
+    "comparison_evidence": [
+      "composite_tail_plume_pass4_pass5_sheet.png",
+      "composite_sprite_pass4_pass5_sheet.png",
+      "composite_head_vs_sheet.png"
+    ],
+    "checklist": {
+      "bald_patches": {
+        "result": "No obvious accidental bald patch on visible body surfaces. Very short paw coat is intentional."
+      },
+      "hair_spikes": {
+        "result": "Residual long needle-like plume locks remain. No obvious new body penetration spikes identified from these views."
+      },
+      "floating_strands": {
+        "result": "No obvious detached strand clusters in inspected beauty views. Technical attachment is not established by appearance alone."
+      },
+      "hair_in_eyes_or_over_nose": {
+        "result": "No obvious iris obstruction or hair covering the bare nose in head and portrait views."
+      },
+      "buried_toes": {
+        "result": "Small claws visible, toe lobe division improved. Angular groove finish remains."
+      },
+      "dark_or_black_spots": {
+        "result": "No isolated new black body patch apparent. Dark paw grooves and claws are intentional but grooves remain somewhat graphic."
+      },
+      "left_right_asymmetry": {
+        "result": "Front view shows no gross unintended groom asymmetry. This is a visual check, not exact geometric symmetry proof."
+      }
+    },
+    "body_preservation": {
+      "evidence": "body_material_preservation_check.json",
+      "selected_iteration": 8,
+      "all_equal": true,
+      "scope": "Supplied technical check reports exact float32 coordinates, root color, gain and strand tone for 470208 inherited body strands, excluding face, ears, paws and distal shaft. Independently read, not recomputed by this reviewer."
+    },
+    "toe_close": "Inspected render_toes.png. Four distinct claw-bearing lobes, gray paw tops and exposed small claws confirmed. Angular, drawn-looking skin grooves remain a finish limitation.",
+    "deformation": "Inspected deformation_side.png and deformation_check.json. Bent hind leg and tail visibly carry the coat without gross detached clusters. Supplied raw aggregate passed is false because line 552 requires every plume tuft to move more than 0.01 m; base crest_01 moves only 0.00435 m. All reported root errors are 0 and maximum strand-length error is about 5.01e-7 m, below the stated 2e-5 m tolerance. Sculpt base geometry unchanged is true. These data support attachment while the aggregate movement gate fails; do not call the raw aggregate a pass.",
+    "decision": "Final proof package has meaningful crispness, plume continuity and toe-read improvements. Preserve residual findings in report.json. No blanket sheet-match claim and no art director approval implied.",
+    "limits": "Visual inspection of all eight required final renders, extra toe close and deformation side render, plus reading supplied preservation and deformation evidence. Reviewer did not run Blender or modify groom scripts. No art director approval implied."
+  },
+  "no_git": "User prohibits git. Pure evaluator imported directly; no git commands, hooks or snapshots."
+}

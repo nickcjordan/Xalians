@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "id": "luceras-B-vmt3-pass2",
+  "outcome": "Deliver the full pass2 strand-fur revision and all requested measured proof against the approved sheet.",
+  "authorizedScope": "New pass2 files and grooming tools. No source geometry changes, git, installs or paid services. User timing cap applies.",
+  "workRecord": "art/pipeline/groom/WORK_RECORD_pass2.md",
+  "evidence": {
+    "current": {
+      "path": "art/pipeline/groom/audit_evidence_pass2.json",
+      "sha256": "fdf84419b2c24ebe8e199892d37aeb30aa6a558209eb32ade15c05c252f2aeed"
+    }
+  },
+  "criteria": [
+    {
+      "id": "sculpt",
+      "expectation": "Keep approved source and all original mesh positions/order/topology unchanged.",
+      "status": "pass",
+      "assessment": "Hash and coordinate/topology signatures inspected.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "attachment",
+      "expectation": "Provide reproducible surface-bound curves and bent pose proof.",
+      "status": "pass",
+      "assessment": "Zero root error, negligible length change; bent pose visually inspected. No guarantee for untested rig poses.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "delivery",
+      "expectation": "Supply all requested final renders, comparisons, dimensions, measurements and hashes.",
+      "status": "pass",
+      "assessment": "All required files and measured CPU final frames checked.",
+      "evidence": [
+        "current"
+      ]
+    },
+    {
+      "id": "look",
+      "expectation": "Match requested coarse sheet fur, plume and face character.",
+      "status": "fail",
+      "assessment": "Visible requested improvements are present. Residual sheet differences remain in plume lock layering, silky bib/feathering and eye/nose realism.",
+      "evidence": [
+        "current"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "visual_1",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Plume is rooted along the rising shaft and has crisp dark tips plus a continuous white inner band, but its long smooth spear-like locks still differ from the sheet compact layered tufts.",
+      "nextAction": "Continue the recorded groom/material refinement against the matching sheet if another pass is authorized after this timed build.",
+      "acceptanceCriterion": "Current full-resolution and game-size renders reduce this difference without changing approved sculpt geometry or reintroducing artifacts."
+    },
+    {
+      "id": "visual_2",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Bib and hind-leg feathering remain silkier and have more fine fringe than the sheet nested wiry tufts. Body clumps are visibly coarser than pass1.",
+      "nextAction": "Continue the recorded groom/material refinement against the matching sheet if another pass is authorized after this timed build.",
+      "acceptanceCriterion": "Current full-resolution and game-size renders reduce this difference without changing approved sculpt geometry or reintroducing artifacts."
+    },
+    {
+      "id": "visual_3",
+      "criterion": "look",
+      "status": "open",
+      "observation": "Eyes have amber texture, a horizontal pupil, a dark rim and a round wet catchlight, but remain more exposed and button-like than the sheet. The fixed nose retains an angular boundary despite softer material and marginal white fur.",
+      "nextAction": "Continue the recorded groom/material refinement against the matching sheet if another pass is authorized after this timed build.",
+      "acceptanceCriterion": "Current full-resolution and game-size renders reduce this difference without changing approved sculpt geometry or reintroducing artifacts."
+    }
+  ],
+  "audit": {
+    "reviewer": "Builder plus independent /root/review",
+    "comparison": "Actual final Cycles views beside sheet, livepass3 and pass1 native game sizes.",
+    "regressions": "Geometry/binding, bare-part clearance, toes, symmetry and all requested outputs inspected.",
+    "scopeCheck": "Original sculpt unchanged. Temporary test rig saved separately. No edits outside grooming/output scope."
+  },
+  "stop": {
+    "kind": "user_stop",
+    "userWords": "Cap: 75 minutes. Stop editing at 60.",
+    "source": "User Pass 2 (B-vmt3) Checks, timing and output; started19:11:28UTC, editing cutoff20:11:28UTC.",
+    "scope": "Editing is closed under the user time limit. Technical delivery can pass while artistic findings remain open."
+  }
+}

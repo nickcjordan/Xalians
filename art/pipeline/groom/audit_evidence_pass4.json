@@ -1,0 +1,214 @@
+{
+  "inspection_utc": "2026-10-16T22:32:11.281331+00:00",
+  "artifact_hashes": {
+    "delivery_checks.json": "fa3404377fef5065aadeafba4644abc1bede521fd2026718f9d1ecec64f4e3f2",
+    "visual_review.json": "3ada7ab08c603b1a9357d2c4008e5c7def456e1da292f2d0b2041edb9ece225f",
+    "independent_review_final.json": "f0c765551bdc2ea684f008015b67ad598a875d58f13f8a7d0a45e7593845f283",
+    "geometry_check.json": "6274abb8f4af33f283cac6caee479ad5e68258d131c820de95f2cc28029ab165",
+    "deformation_check.json": "7aefd6f7b149a00c3fadf966aaaba6fda24a634ba3aa3c68cb797f534441bf73",
+    "body_material_preservation_check.json": "fb869f8f3915810e907a074ef0f31d8e28621726880b3cd045bbc8d45115639f",
+    "render_color_measurements.json": "da47bf08899300d0dc3b7ab57bcc4bbdc357d3adaa89b774566a2b4e137058e0",
+    "measurements.json": "6d59ec8820e1f568b39bf42692ba1c99136dae3558475ad0a381c16f9b741f0d",
+    "iter_notes.json": "37b57ce97ce64dd18cd772b83ec201646b2bc0c07a6a5a74c40ec0e3eb33ea22",
+    "groom.blend": "1409d1d543dd4aad18e874278766735189ca370bf0491a72df0c1af97355f67e",
+    "build_groom.py": "649e89e96282c49c254d12bd1eedb5214518fe51317ddcd52491db8d6fbd7587",
+    "parameters.json": "1fda42b034477cc07206ce25120e648f13e7df95bff5c367fb079738dea74c4a"
+  },
+  "technical": {
+    "build_id": "B-spm3",
+    "iteration": "5",
+    "dimensions": {
+      "side": true,
+      "three_quarter": true,
+      "front": true,
+      "head": true,
+      "hind_leg": true,
+      "tail_plume": true,
+      "portrait": true,
+      "sprite": true
+    },
+    "all_final_frames_current": true,
+    "sheet_composites": true,
+    "live_composites": true,
+    "three_column_composites": true,
+    "approved_source_unchanged": true,
+    "original_mesh_geometry_unchanged": true,
+    "surface_attachment_bend_passed": true,
+    "body_paths_preserved": true,
+    "body_materials_preserved": false,
+    "finite_strands": true,
+    "surface_bound": true,
+    "bare_nose_clear": true,
+    "eye_clearance_positive": true,
+    "count_consistent": true,
+    "cpu_samples_denoise": true,
+    "sampled_gpu_below_limit": true,
+    "gpu_exact_transient_peak_measured": false,
+    "tooling_matches": {
+      "build_groom.py": true,
+      "parameters.json": true,
+      "compose_proof.py": true,
+      "measure_colors.py": true
+    },
+    "face_body_mean_difference_srgb": 2.566674279646193,
+    "face_body_within_4_levels": true,
+    "technical_delivery_passed": false
+  },
+  "visual": {
+    "build_id": "B-spm3",
+    "delivered_iteration": 5,
+    "status": "needs_revision_time_capped",
+    "approval": "No artistic approval claimed. Reviewable measured fallback, not a finished sheet match.",
+    "remaining": [
+      {
+        "id": "D-gnev",
+        "difference": "Plume is dense, with dark crest, white inner band and dark pointed tips, but too many terminal bundles are long parallel needles. The white band reads as a rippled blade rather than clearly overlapping shorter locks.",
+        "next_action": "Build the saved iteration6 candidate with shortened irregular local bundles and inspect both side and plume close.",
+        "acceptance": "Dense softly shaggy layered fur with crisp irregular dark points and continuous white inner band, matching sheet silhouette."
+      },
+      {
+        "id": "D-c674",
+        "difference": "Authored slate eyelid rim connects the globe to the face and leaves a large amber iris open, but upper lid shape remains too circular and eye still has some button-like projection.",
+        "next_action": "Test the saved candidate upper-lid arc, then refine skin-rooted guide coverage without changing eye mesh.",
+        "acceptance": "Eye visibly seated under a shaped lid, large open iris, moderate horizontal pupil, one soft catchlight."
+      },
+      {
+        "id": "B-spm3-paws",
+        "difference": "Gray paw tops and small dark claws are restored, but toe bodies remain merged broad forms, most obvious in front and hind close.",
+        "next_action": "Use short localized fur breaks and skin value separation between existing toe lobes while keeping original mesh untouched.",
+        "acceptance": "Individual toes readable from side and three-quarter with small exposed claws, without black slipper or buried-toe appearance."
+      },
+      {
+        "id": "B-spm3-body-material-preservation",
+        "difference": "Inherited body strand paths and global groom parameters are preserved, but deleting old plume and some paw children before material random draws shifts per-strand tone assignments. Exact body material preservation is not proven for delivered iteration5.",
+        "next_action": "Build the saved iteration6 correction that draws full original arrays before local replacement, and compare independent frozen iteration11 material fingerprints.",
+        "acceptance": "Body coordinate, coat color, gain and strand tone fingerprints match frozen iteration11 outside authorized local edits."
+      }
+    ],
+    "checklist": {
+      "bald_patches": "No obvious bald patch in eight views or posed proof. Short shaft transition covers the plume base.",
+      "hair_poking_through_in_spikes": "No obvious uncontrolled body intersections; authored plume has overly long needle-like terminal bundles, retained as open D-gnev.",
+      "floating_strands": "No visible detached strand mass. Every stored root passes binding checks and the posed proof follows the surface.",
+      "hair_inside_eyes_or_over_nose": "Numerical rendered eye clearance positive and bare nose mask empty. No visible crossing of iris/pupil or bare nose.",
+      "buried_toes": "Small claws and toe tips visible; broad toe bodies remain merged, retained as open paw finding.",
+      "dark_or_black_spots": "No unexplained black body patch or broad black eye ring. Intended pupils, claws, whisker follicles and contact shadows remain.",
+      "left_right_asymmetry": "No gross front silhouette or pattern mismatch. Seeded fur variation is not exactly mirrored; eyelid guides are authored bilaterally."
+    },
+    "blockedBy": [
+      {
+        "reason": "Shared slot unavailable for final iteration6 before the60minute cap.",
+        "evidence": "Queued22:14:45UTC behind rig B-a87k then Akinza step14. At22:29UTC another builder still held gpu. Canceled only own queued slot wrapper42584, verified no child process and no iteration6 Blender invocation.",
+        "impact": "Deliver completed iteration5, not unbuilt6. No further look edits after48minute cutoff.",
+        "unblock": "A new authorized timed pass with the gpu slot available to build and review the retained iteration6 candidate."
+      }
+    ],
+    "face_value": "Inherited side-mask face75.734 and body73.167sRGB luminance, difference2.567. White blaze, muzzle and chin preserved. Whole coat83.922 vs sheet82.220. These are spatial-mask measurements, not a claim of pixelwise sheet equivalence.",
+    "baseline_note": "Pass3 delivered body image is older than frozen iteration11 generator. Its different measured body value is not evidence by itself that pass4 changed iteration11 body parameters. Exact per-strand random assignment defect is separately identified in code.",
+    "reviewed": "All eight delivered iteration5 renders, sheet comparisons, full-body and detail checks, three posed proof views, independent reviews."
+  },
+  "independent": {
+    "build_id": "B-spm3",
+    "iteration": 5,
+    "status": "complete_visual_review_with_open_findings",
+    "approval": "Not approved. Honest fallback evidence if hard cap prevents iteration6 execution.",
+    "scope": "All eight iteration5 view renders inspected across current and previous audit turns, plus three deformation proof views. No Blender execution or builder edits.",
+    "evidence": [
+      "iter5_side.png",
+      "iter5_three_quarter.png",
+      "iter5_front.png",
+      "iter5_head.png",
+      "iter5_hind_leg.png",
+      "iter5_tail_plume.png",
+      "iter5_portrait.png",
+      "iter5_sprite.png",
+      "deformation_side.png",
+      "deformation_hind_leg.png",
+      "deformation_tail_plume.png",
+      "iter5_color_measurements.json",
+      "iteration5_snapshot/deformation_check.json"
+    ],
+    "prior_reviews": [
+      "independent_review_iter5_details.json",
+      "independent_review_iter5_fullbody.json"
+    ],
+    "findings": [
+      {
+        "id": "D-gnev",
+        "status": "open",
+        "difference": "Plume dense with continuous inner white band and dark tips, but long parallel needle-like bundles dominate terminal dark crest. White region remains smooth blade with rippled base rather than overlapping irregular fur locks.",
+        "action": "Iteration6 candidate reportedly varies endpoints and length distributions. Requires actual rendered evidence before resolution.",
+        "acceptance": "Dense overlapping shaggy pointed fur tufts in close and full side, without long repetitive spear read."
+      },
+      {
+        "id": "D-c674",
+        "status": "partially_resolved",
+        "difference": "Short gray lid hair connects skin to eye and broad black button ring is gone. Iris open with horizontal moderate pupil and catchlight. Upper lid arc remains weak and eye looks more circular than sheet.",
+        "action": "Iteration6 candidate reportedly adds upper arc coverage. Verify actual final head render.",
+        "acceptance": "Eye visibly seated with open iris and clear upper overlap, no slit or black ring."
+      },
+      {
+        "id": "B-spm3-paw-readability",
+        "status": "partially_resolved",
+        "difference": "Paw skin is dark gray, short fine fur visible in hind close, small separate claws visible. Toe lobes shallow and large upper paw surfaces still merged, particularly side and front hind paws.",
+        "action": "Record honest residual. Do not change approved sculpt or frozen body.",
+        "acceptance": "Individual toes readable from side and three-quarter with quiet small claws."
+      },
+      {
+        "id": "B-spm3-face-value",
+        "status": "resolved_with_masked_evidence",
+        "difference": "Earlier apparent light face in head framing is not supported by same-mask side measurement. Iteration5 face luma75.734 and body73.167 differ only2.567; white blaze/muzzle/chin preserved.",
+        "evidence": "iter5_color_measurements.json",
+        "limitation": "Applies to declared spatial masks and iteration5 lighting; not an approval of every head pixel."
+      },
+      {
+        "id": "B-spm3-body-material-preservation",
+        "status": "open_pending_builder_verification",
+        "difference": "Body geometry visually remains unchanged, but measured masked body luma shifts from pass3 63.870 to iteration5 73.167. Builder identified material RNG fingerprint correction for iteration6.",
+        "action": "Require exact baseline material fingerprint proof and rendered iteration6 if executed. If delivering5, disclose preservation deviation and unbuilt correction.",
+        "acceptance": "Accepted pass3 body groom and material preserved with concrete fingerprint evidence."
+      }
+    ],
+    "additional_views": {
+      "hind_leg": "Long white-gray feathering remains clear, fine wisps follow leg and do not bury claw tips. Toe bodies still shallow/merged.",
+      "portrait_512": "Species, horns, blaze, bib and amber eye readable. Head remains photographically flatter than sheet; eye seating residual remains.",
+      "sprite_192": "Overall species silhouette and two-tone plume readable. Long thin crest needles remain evident. Tiny toe/eye details naturally reduced."
+    },
+    "deformation": {
+      "visual_status": "pass_for_demonstrated_pose",
+      "observations": [
+        "One hind foot lifted and leg bent, feathering follows limb.",
+        "Tail and authored plume move together with no visible detached clump.",
+        "No gross curve stretching or floating hair mass in inspected proof."
+      ],
+      "reported_numerical_status": "Snapshot deformation_check.json reports passed true, base geometry unchanged and zero root error for all listed objects.",
+      "limitations": "Read-only review of generated numbers and renders, not independent execution. Head not moved in this temporary pose, so eyelid/whisker stationary results do not independently prove a head deformation."
+    },
+    "checklist": {
+      "bald_patches": "No obvious broad bald patch in inspected final5 views.",
+      "hair_spikes": "Open intentional plume needle-bundle issue; body outline tufty as retained.",
+      "floating_strands": "No gross floating strand mass in rest or demonstrated bend.",
+      "eyes_nose_hair": "No visible pupil or bare nose contamination.",
+      "buried_toes": "Claws clear but toe bodies partially merged.",
+      "dark_spots": "No isolated unexplained black spot. Broad uniform dark eyelid ring repaired.",
+      "left_right_asymmetry": "No gross front-view groom mismatch; natural strand/lighting differences remain."
+    },
+    "stop_context": "User hard cap takes precedence. Iteration6 is queued and not reviewed here. If it cannot execute, delivery should be incomplete fallback with these open findings and no quality approval claim.",
+    "final_evidence_caution": "deformation_*.png were confirmed dated iteration5 and viewed before queued6 execution. Preserve their hashes or copies before replacement.",
+    "evidence_sha256": {
+      "deformation_tail_plume.png": "602970e22e66a1d53e63939a7db849708099a6af3bb91fb2b472d053c9aa7811",
+      "iteration5_snapshot/deformation_check.json": "7aefd6f7b149a00c3fadf966aaaba6fda24a634ba3aa3c68cb797f534441bf73",
+      "deformation_side.png": "15e93964bd3aa937f9d61e4398b659c697fb18ee5757eda9bb9157012bf4a94d",
+      "iter5_color_measurements.json": "da47bf08899300d0dc3b7ab57bcc4bbdc357d3adaa89b774566a2b4e137058e0",
+      "iter5_tail_plume.png": "abfa4f42210a4749597464841bcd01f3420768cd1508b529717a720b90ab7441",
+      "iter5_hind_leg.png": "1378f5b34fe2612505b8af2a01390fc8bda40458de497d764d0261f0ab2476bb",
+      "iter5_sprite.png": "4ef260d141f37e45521f06251e2ac8fb975d99ec4d33ee89e7519a9227b5ea48",
+      "iter5_front.png": "5740cc3f2a3f4d96b5f51d2c13b26d7eb9feadc9acfe74c30b58507167e8c3d6",
+      "iter5_side.png": "a30fb8303870361f822e8a98fe54e07a0d42dd9e8708a948e5cc88cff2cce196",
+      "iter5_portrait.png": "2abccfd9e9c7e956b4adf2e95671cac6a978a6f1b01d7c8fd6ae7b294802ad84",
+      "iter5_head.png": "5ae19c10c698eab06f4d27417daa9ea540ebe423208d21ccb89479bb2e193b59",
+      "iter5_three_quarter.png": "4a6d8e06c18ad7734df332c752548aa0e58be6076418c88e8c9bfc2b8231b9b2",
+      "deformation_hind_leg.png": "c10149df28a4bd3361415f822ffa5b34f9ccabbb97d0041fd0ae181e3ad8dc40"
+    }
+  },
+  "no_git": "User prohibited git. Imported pure evaluate() only, no repository snapshots, hooks or git commands."
+}

@@ -1,0 +1,245 @@
+[
+  {
+    "iteration": 0,
+    "stage": "reference and construction review",
+    "coat_value": "Approved dark coat is neutral warm gray. Reuse pass3 texture samples; judge final values in Cycles.",
+    "pattern_placement": "Transfer existing game-body UV texture through nearest surface triangle. No repaint of body markings.",
+    "fur_length_by_region": "Short face and ears, moderate body, longer bib, belly and hind feathering. Tail plume requires strands much longer than body fur.",
+    "outline_shagginess": "Shaved sculpt has a smooth outline. Add layered clumped strands without moving mesh vertices.",
+    "plume_shape": "Sculpt contains only the thin tail shaft. Build an upward fan of long tapered strands from its terminal section.",
+    "face": "Reserve bare nose and eye sockets. Add sparse white whiskers.",
+    "eyes": "Amber iris, horizontal dark pupil, glossy coat layer.",
+    "changes": "Implemented first procedural groom, color transfer, affine surface binding, temporary hind bend proof, studio and comparison scripts. First render pending slot.",
+    "implementation_review": {
+      "status": "reviewed before first Blender build",
+      "fixes": [
+        "Exclude disconnected horns and claws from source-color projection.",
+        "Use dominant barycentric vertex for regional guide assignment.",
+        "Apply sampled regional frizz and clump attributes.",
+        "Scale interpolated children to local sampled length.",
+        "Copy exact strand counts into cost measurements.",
+        "Record actual denoise setting in proof.",
+        "Reject evaluated topology changes that invalidate attachment indices."
+      ],
+      "remaining": "Rendered visual review and numerical deformation test pending shared slot."
+    }
+  },
+  {
+    "iteration": 1,
+    "renders": [
+      "iter1_side.png",
+      "iter1_head.png"
+    ],
+    "coat_value": "Back highlight too light, flank too dark under current directional setup. Whites vary from gray shadow to very bright bib. Ground is too dark.",
+    "pattern_placement": "Transferred blaze, bib, belly and hind white remain recognizable. No repaint needed. Chin white is overextended by fur length.",
+    "fur_length_by_region": "Face is short, body too uniformly brushed. Bib grows from too high under chin. Hind feathering is long and silky.",
+    "outline_shagginess": "Too smooth with a continuous hair curtain. Needs larger pointed clumps and varied guide lengths.",
+    "plume_shape": "Wispy upward brush with overly uniform white upper section; needs convergent tufts and less uniform length.",
+    "face": "Bare nose and eyes stay clear, but chin beard is too long.",
+    "eyes": "Amber and horizontal pupil visible; high specular catchlight needs final-resolution inspection.",
+    "changes": "Reduce guide count to 4000 for larger clumps; converge children toward nearest guide tips; preserve guide length variation; shorten chin and feathering; darken horns; brighten neutral studio ground and soften the lighting balance."
+  },
+  {
+    "iteration": 2,
+    "renders": [
+      "iter2_side.png",
+      "iter2_head.png",
+      "iter2_tail_plume.png"
+    ],
+    "coat_value": "Ambient increase clips the white coat and makes gray coat too light. Ground now reads light gray.",
+    "pattern_placement": "Body markings preserved, but clipped white loses texture.",
+    "fur_length_by_region": "Chin beard reduced. Body clumps now visible but slightly large.",
+    "outline_shagginess": "Pointed locks improved substantially; some crest tufts are still coarse.",
+    "plume_shape": "Still an airy fountain. The straight upward guide model cannot express the tapered layered plume. Replace it with height-tiered curved guides and denser children.",
+    "face": "Bare nose and eyes clear. Short facial fur needs final light review.",
+    "eyes": "More amber is visible after narrowing pupil.",
+    "deformation": "Root-only test passed, but maximum strand point motion of 2.60 m reveals unacceptable affine stretching. Treat this proof as failed. Replace binding with normalized orthonormal frames and add strand-length invariance gate.",
+    "changes": "Restore lower physical illumination with separate camera-only neutral gray background. Reduce hair color scale. Replace plume guide construction. Replace stretching binding and strengthen proof criteria."
+  },
+  {
+    "iteration": 3,
+    "renders": [
+      "iter3_side.png",
+      "iter3_head.png",
+      "iter3_front.png",
+      "iter3_tail_plume.png"
+    ],
+    "coat_value": "Gray is substantially closer; white fur no longer broadly clipped, but short muzzle skin remains too bright.",
+    "pattern_placement": "Blaze, muzzle, bib, belly and hind feathering preserved. Tail white underside not reliably expressed by point-domain hair color.",
+    "fur_length_by_region": "Body locks are now shaggy and pointed; short face and ear fur present.",
+    "outline_shagginess": "Body outline is softly tufted. Tail right side retains long curved wisps.",
+    "plume_shape": "Tiered guides produce a tapered plume outline, but secondary interpolation and normal correction cause curved flyaways.",
+    "face": "Face remains constrained by approved sculpt; narrow face and small exposed eye opening differ from sheet. No mesh edits made.",
+    "eyes": "Amber horizontal pupils and corneas visible.",
+    "deformation": "Corrected orthonormal-frame binding passes: zero root error, 7.73e-8 m maximum strand-length change, 0.143 m maximum point motion. Bent render inspected; no explosive hair stretching.",
+    "changes": "Use direct nearest-guide shapes for plume children with reduced frizz and no tangent-plane correction. Move plume white gradient into Hair Info Intercept shader. Tone underlying skin down to retain detail on white muzzle."
+  },
+  {
+    "iteration": 4,
+    "renders": [
+      "iter4_side.png",
+      "iter4_head.png",
+      "iter4_three_quarter.png",
+      "iter4_tail_plume.png"
+    ],
+    "coat_value": "White muzzle now retains more detail. Body remains near storm gray.",
+    "pattern_placement": "Main pattern retained. Shader-based plume whitening is now visible on lower locks.",
+    "fur_length_by_region": "Body, bib and leg length contrast is clear.",
+    "outline_shagginess": "Body tufts read; tail locks over-converge into narrow needle shapes.",
+    "plume_shape": "Removed looping flyaways but exposed a lack of bundle width. Need three-dimensional widening through the middle of each tuft, tapering at roots and tips.",
+    "face": "Short fur remains understated; no eye or nose coverage.",
+    "eyes": "Amber is visible but exposed area remains limited by the approved sculpt.",
+    "deformation": "Independent close review found angular artifacts in the aggressively weighted lower-leg test. Replace the temporary test weights with a broader hip blend and an 18-degree bend, then inspect again.",
+    "changes": "Add radial volumetric width to plume bundles. Increase children from 220000 to 360000 with finer radii. Use a broad temporary hip blend for the proof; preserve all base coordinates."
+  },
+  {
+    "iteration": 5,
+    "renders": [
+      "iter5_side.png",
+      "iter5_head.png",
+      "iter5_tail_plume.png",
+      "iter5_hind_leg.png"
+    ],
+    "coat_value": "Back is close to target; shaded flank remains too dark. White fur is about 204 in a sampled bib area, slightly above 192 target. Background is about 192.",
+    "pattern_placement": "White underside now readable on plume; main body markings unchanged.",
+    "fur_length_by_region": "Regional contrast is maintained; toes remain visible.",
+    "outline_shagginess": "Soft body tufts and pointed plume locks now read.",
+    "plume_shape": "Volumetric widening removes needle appearance. The plume is denser and tapered with white lower locks, but needs higher-resolution review for strand detail.",
+    "face": "Muzzle retains detail after skin attenuation.",
+    "eyes": "Amber, horizontal pupil and cornea retained.",
+    "changes": "Move key to the camera-facing side and fill to the opposite side to lighten the overly shaded flank. Raise preview resolution and samples for the next detailed review."
+  },
+  {
+    "iteration": 6,
+    "renders": [
+      "iter6_side.png",
+      "iter6_head.png",
+      "iter6_tail_plume.png",
+      "iter6_front.png"
+    ],
+    "coat_value": "Neutral storm gray, with clearer visible-side illumination. White bib still brighter than the target sample.",
+    "pattern_placement": "Transferred markings preserved, white lower plume locks visible.",
+    "fur_length_by_region": "Correct short head and neck versus longer body and longest bib, belly and hind feathering.",
+    "outline_shagginess": "Body locks are broad compared with the finer layered sheet tufts.",
+    "plume_shape": "Dense pointed volume but too few broad fan-like bundles and overly uniform long central locks.",
+    "face": "Short muzzle and ear fur, bare nose and clean eye opening.",
+    "eyes": "Amber horizontal pupil and glossy cornea. Exposed eye area remains small on the approved sculpt.",
+    "deformation": "Skin-only diagnostic reproduced angular test-pose wedges. Temporary one-bone weighting normalized partial weights to a full transform. Added complementary stationary bone weights and reversed bend to lift the paw.",
+    "changes": "Double guide count to 8000, narrow plume bundles and vary their lengths to create layered tufts. Restrict and darken bronze horn highlights. Correct temporary proof rig weights."
+  },
+  {
+    "iteration": 7,
+    "renders": [
+      "iter7_side.png",
+      "iter7_head.png",
+      "iter7_tail_plume.png"
+    ],
+    "coat_value": "Dark gray body and white bib retained. White bib median sample near 193; dark shadowed flank remains below the target midtone.",
+    "pattern_placement": "Blaze, muzzle, bib, belly, legs and plume white lower locks preserved.",
+    "fur_length_by_region": "Smaller body clumps now read more like the fine sheet layers. Long bib and hind hair maintained.",
+    "outline_shagginess": "Finer pointed body silhouette; no buried toes.",
+    "plume_shape": "Still reads as long continuous grass-like bundles instead of overlapping short visible tufts. Narrowing alone did not resolve the structure.",
+    "face": "Short fuzzy face and pink-gray ears retained; whiskers too faint against the background.",
+    "eyes": "Amber goat pupils remain clear in close view; cornea has rectangular studio highlights.",
+    "deformation": "Complementary weights remove the test-pose wedges. Numerical root and length preservation pass.",
+    "changes": "Change plume guide shape to rise inside the volume and fan outward only in the last half, with bundle width concentrated around that outer lock. Give whiskers a separate white Chiang material and slightly increase radius."
+  },
+  {
+    "iteration": 8,
+    "renders": [
+      "iter8_side.png",
+      "iter8_head.png",
+      "iter8_tail_plume.png",
+      "iter8_three_quarter.png",
+      "tail_skin_only.png"
+    ],
+    "coat_value": "Neutral dark body and white areas remain consistent; plume appears too light and thin relative to reference.",
+    "pattern_placement": "Transferred pattern retained; plume white lower locks remain distinct.",
+    "fur_length_by_region": "Body and legs unchanged, regional hierarchy retained.",
+    "outline_shagginess": "Body remains softly tufted; plume branches more curved.",
+    "plume_shape": "Independent review confirms a smooth lower-right curtain persists. Skin-only diagnostic proves this is hair, not original mesh. Long guide stems remain too parallel and planar.",
+    "face": "White whiskers now visibly stronger; bare nose and ears retained.",
+    "eyes": "Amber goat pupils and clear corneas unchanged.",
+    "changes": "Add short base tufts to 28 percent of plume guides, randomize long stem depth and side curvature, fan even terminal guides, increase plume density and frizz, and darken only dark plume fibers before the white tip blend."
+  },
+  {
+    "iteration": 9,
+    "renders": [
+      "iter9_side.png",
+      "iter9_tail_plume.png"
+    ],
+    "coat_value": "Plume darker and denser; body shadow midtones still below requested values.",
+    "pattern_placement": "Main body pattern preserved. Broad white diagonal plume locks cross the dark volume too strongly.",
+    "fur_length_by_region": "Regional hierarchy retained; body clumps still somewhat oversized.",
+    "outline_shagginess": "Body shag present. A downward base plume tuft is conspicuous.",
+    "plume_shape": "Independent review confirms the smooth curtain is substantially resolved. Remaining long silky upper groups and crossing white locks differ from smaller interlocking sheet locks.",
+    "face": "Same clean short fur and visible white whiskers as iteration 8.",
+    "eyes": "Same amber pupils and glossy corneas as iteration 8.",
+    "changes": "Enforce upward plume displacement to eliminate downward base spear. Restrict white tip gradient to underside-facing lower locks. Widen plume middle slightly. Increase guides to 12000, reduce body length to 22 mm and clump to .78 with more fine frizz. Raise only dark hair response while retaining white response. Reduce ground brightness and save the neutral blend with final camera and render settings."
+  },
+  {
+    "iteration": 10,
+    "renders": [
+      "iter10_side.png",
+      "iter10_head.png",
+      "iter10_tail_plume.png",
+      "iter10_three_quarter.png",
+      "iter10_front.png",
+      "iter10_hind_leg.png"
+    ],
+    "coat_value": "Body is neutral storm gray with finer hair breakup. White response is retained. Ground was reduced too far in angled views and is now mid gray.",
+    "pattern_placement": "Transferred body markings retained. Restricting plume whitening removes the broad crossing white strip.",
+    "fur_length_by_region": "Finer 22 mm body coat now separates better from longest bib and hind feathering.",
+    "outline_shagginess": "Body reads more as soft shag than broad scales. Small spear at shaft/plume junction persists.",
+    "plume_shape": "Smooth curtain is gone; layered volume remains, but identical child endpoints make upper groups too silky and needle-like.",
+    "face": "Short fur and pink-gray ears remain; white whiskers clearly visible.",
+    "eyes": "Amber horizontal pupils and glossy corneas remain clear.",
+    "changes": "Bound nearest-guide pull by local strand length to prevent short shaft hairs stretching into spears. Vary individual plume-child length by .82 to 1.03 and slightly loosen tip convergence. Raise only camera-visible ground emission to recover a light gray studio backdrop while retaining the lower ground reflectance."
+  },
+  {
+    "iteration": 11,
+    "renders": [
+      "iter11_side.png",
+      "iter11_tail_plume.png",
+      "iter11_three_quarter.png"
+    ],
+    "coat_value": "Neutral storm coat retained; studio gray is lighter again.",
+    "pattern_placement": "Transferred main markings and white underside retained.",
+    "fur_length_by_region": "Short shaft still develops one long point at plume junction from smoothed length leaking across the zone boundary.",
+    "outline_shagginess": "Body remains softly shaggy and toes clear.",
+    "plume_shape": "Individual child length variation makes the plume read as real loose hair, but the .82 to 1.03 range softens the pointed silhouette too much.",
+    "face": "No face material or regional length changes in this iteration.",
+    "eyes": "Unchanged clean amber horizontal pupils.",
+    "changes": "Narrow plume child length variation to .94 to 1.015 and tip spread to .8 mm, balancing pointed tufts and strand breakup. Cap smoothed shaft lengths at 1.4 times the short-shaft setting and keep distal shaft strands flowing upward."
+  },
+  {
+    "iteration": 12,
+    "renders": [
+      "iter12_side.png",
+      "iter12_tail_plume.png"
+    ],
+    "coat_value": "Measured side patches: back median (64,61,60.5), upper flank (59,57,56), bib (184,184,184). Dark coat remains below the requested 80/99 region values after lower ground bounce.",
+    "pattern_placement": "Pattern retained; white lower plume remains visible without the broad crossing white strip.",
+    "fur_length_by_region": "Short shaft cap removes elongated base tuft. Regional body, bib and hind hierarchy retained.",
+    "outline_shagginess": "Independent review confirms finer softer body fur, resolved base spear and no new obvious side defect.",
+    "plume_shape": "Slab and base spear resolved. Still softer, more translucent and silkier than the dense, small interlocking sheet locks. Avoid a structural rewrite near cutoff; retain as an explicit remaining look difference.",
+    "face": "No structural change, bare nose and eyes retained.",
+    "eyes": "Amber horizontal pupils and corneas retained.",
+    "changes": "Final shader calibration only: raise dark hair response from .62 to 1.10 and white response from .45 to .50. Reduce plume dark multiplier proportionally to preserve its darker value. No geometry or pattern placement change."
+  },
+  {
+    "iteration": 13,
+    "renders": [
+      "iter13_side.png",
+      "iter13_head.png"
+    ],
+    "coat_value": "Measured preview back median (75,72,71), bib (187,186,187), rump (81.5,79,77). Back and white are close to supplied values; shaded flank medians (70,67,66) and (74,71,70) remain below the supplied flank target.",
+    "pattern_placement": "Pass3 blaze, muzzle, bib, belly, leg and tail-root pattern retained. No repaint.",
+    "fur_length_by_region": "Short face, ears and shaft remain distinct from body, bib, belly and hind feathering.",
+    "outline_shagginess": "Fine directional body shag and visible toes retained.",
+    "plume_shape": "Base spear and smooth curtain remain resolved. Plume is still softer and silkier, with larger separated locks than the compact sheet plume.",
+    "face": "Short fur and clear pink-gray nose; white whiskers and pink-gray inner ears visible. Approved sculpt facial proportions remain different from the sheet.",
+    "eyes": "Amber horizontal pupils and glossy corneas retained with no visible fur intrusion.",
+    "changes": "No further groom changes in this iteration. Proceed to the requested final 96-sample CPU render set, comparisons and report. Record remaining look differences explicitly."
+  }
+]

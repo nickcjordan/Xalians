@@ -1,0 +1,28 @@
+def deformation_proof():
+ bpy.ops.wm.open_mainfile(filepath=str(OUT/'groom.blend'));body=bpy.data.objects['luceras_blockout'];before=signature(body)
+ curves=[o for o in bpy.context.scene.objects if o.type=='CURVES']
+ for o in curves:o.hide_set(False)
+ bpy.context.view_layer.update();dg=bpy.context.evaluated_depsgraph_get();rest={o.name:array(o.evaluated_get(dg).data.attributes['position'].data,'vector') for o in curves}
+ arm=bpy.data.armatures.new('Temporary hind and tail proof');rig=bpy.data.objects.new('Temporary hind and tail proof',arm);bpy.context.scene.collection.objects.link(rig);bpy.context.view_layer.objects.active=rig;rig.select_set(True);bpy.ops.object.mode_set(mode='EDIT')
+ for name,head,tail in [('proof_fixed',(0,0,0),(0,0,.1)),('proof_hind',(.15,.17,.42),(.15,.10,.02)),('proof_tail',(0,.55,.28),(0,.69,.35))]:
+  b=arm.edit_bones.new(name);b.head=head;b.tail=tail
+ bpy.ops.object.mode_set(mode='OBJECT')
+ for o in list(bpy.context.scene.objects):
+  if o.type!='MESH' or o.name.startswith('lookdev_'):continue
+  co=np.array([o.matrix_world@v.co for v in o.data.vertices]);wt=smooth(.55,.64,co[:,1]);wh=smooth(.03,.08,co[:,0])*smooth(-.03,.03,co[:,1])*(1-smooth(.30,.46,co[:,2]))*(1-wt)
+  if not np.any(wt+wh):continue
+  for name,w in [('proof_fixed',1-wt-wh),('proof_tail',wt),('proof_hind',wh)]:
+   vg=o.vertex_groups.new(name=name)
+   for i in np.where(w>0)[0]:vg.add([int(i)],float(w[i]),'REPLACE')
+  mod=o.modifiers.new('Temporary proof armature','ARMATURE');mod.object=rig
+ for name,degrees in [('proof_hind',-18),('proof_tail',-12)]:
+  b=rig.pose.bones[name];b.rotation_mode='XYZ';b.rotation_euler.x=math.radians(degrees)
+ bpy.context.view_layer.update();dg=bpy.context.evaluated_depsgraph_get();surf=array(body.evaluated_get(dg).data.vertices,'co');checks=[]
+ for o in curves:
+  d=o.data;count=len(d.curves);N=len(d.points)//count;coords=array(o.evaluated_get(dg).data.attributes['position'].data,'vector');ids=np.stack([array(d.attributes['bind_i'+s].data,'value',1,np.int32) for s in 'abc'],axis=1);bar=np.stack([array(d.attributes['bind_'+s].data,'value',1) for s in 'abc'],axis=1);expected=np.einsum('ij,ijk->ik',bar,surf[ids]);error=np.linalg.norm(coords[::N]-expected,axis=1);move=np.linalg.norm(coords-rest[o.name],axis=1);l0=np.linalg.norm(np.diff(rest[o.name].reshape(-1,N,3),axis=1),axis=2).sum(1);l1=np.linalg.norm(np.diff(coords.reshape(-1,N,3),axis=1),axis=2).sum(1)
+  checks.append({'object':o.name,'curves':count,'points_per_curve':N,'root_error_max_m':float(error.max()),'strand_length_error_max_m':float(abs(l1-l0).max()),'max_point_motion_m':float(move.max()),'moved_points':int(sum(move>1e-5))})
+ passed=before==signature(body) and all(c['root_error_max_m']<.00002 and c['strand_length_error_max_m']<.00002 for c in checks) and all(c['max_point_motion_m']>.01 for c in checks if c['object'].startswith('Plume tuft '))
+ write('deformation_check.json',{'method':'Temporary armature bends one hind leg18degrees and the tail12degrees. Evaluate every guide, body strand, authored tuft, eyelid, whisker and follicle against the deformed surface. Original base coordinates unchanged.','passed':passed,'sculpt_base_geometry_unchanged':before==signature(body),'objects':checks})
+ bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'deformation_proof.blend'));s=bpy.context.scene;measure=json.loads((OUT/'measurements.json').read_text())
+ for view in ('side','hind_leg','tail_plume'):
+  s.camera=bpy.data.objects['groom_camera_'+view];s.render.resolution_x=768;s.render.resolution_y=768;s.render.resolution_percentage=100;s.cycles.samples=32;s.cycles.use_denoising=True;s.render.filepath=str(OUT/('deformation_'+view+'.png'));t0=time.perf_counter();bpy.ops.render.render(write_still=True);measure['frames'].append({'file':'deformation_'+view+'.png','iteration':args.iteration,'stage':'deformation','width':768,'height':768,'seconds':time.perf_counter()-t0,'samples':32,'denoise':True,'device':'CPU'});write('measurements.json',measure)

@@ -1,0 +1,17 @@
+B-pq45 pass 3
+Started 2026-10-16 20:13:25 UTC. Editing cutoff 21:01:25 UTC; hard stop 21:13:25 UTC.
+Scope: whole dark-coat distribution, half-size irregular body clumps, seated amber eyes, compact layered plume with wider white band. Preserve approved sculpt geometry and pass2 accepted details.
+Completion: all requested Cycles proofs, full-region color masks and distributions, deformation proof, costs, checklist, hashes.
+Current: first build with darker low-contrast tips, denser body guides, shorter plume layers and softer pupils. Next: review rendered result and measure coat.
+
+20:28 UTC: Iterations1-3 rendered side/head/plume. Color mask independently reviewed twice and corrected at tail shaft and far hind shin; current sheet mean82.22. Iter3 mean90.52 remains high, especially p75. Iter4 reduces flank gain and tip ceiling, changes plume from narrow central core to broad overlapping paths with short visible branches, moves white band to lower inner plume, and adds upper iris shadow. Awaiting shared Blender slot. All source mesh checks so far unchanged. CPU rendering avoids GPU allocation.
+
+20:47 UTC: Iter6 child-density trial substantially improves fine wiry lock definition. Body is now too dark; iter7 applies body/neck-only gain2.2. Plume long-root mask now follows actual rising shaft and shorter children break some long stems; upper plume remains a known sheet mismatch. Eyes retain contact fur, softer smaller-area horizontal pupil and one corneal catchlight, but round globe remains exposed. Final planned96samples, full requested dimensions, CPU. Target final render start around20:50 to preserve deadline.
+
+Resume started2026-10-16 20:53:07UTC. New editing cutoff21:26:07UTC; hard stop21:38:07UTC. Preserved groom_iter7.blend and build_groom_iter7.py. Iter8 passes mean and individual quartiles at900px; plume band now only body-facing edge. Iter9 restores independent pass2 paw gradient, narrows socket mask and plume clumps. Shared slot occupied by other builder after iter8.
+
+21:26UTC: Editing frozen at iteration11. Iter9 restored paw contrast and narrower socket mask, but plume became a comb. Iter10 introduced shared discrete tufts; color compression overshot dark and was reverted. Final11 uses60 groups,78percent short plume children, one-sided wider white group, body response1.95 and identity color compression. Full proof queued, but another GPU holder acquired slot21:25:22UTC. Hard stop remains21:38:07UTC. Do not treat existing render_* files as a consistent final generation until frame measurements confirm iteration11 for all eight.
+
+21:29UTC: Shared slot still blocked. Proof-only sample cap reduced32 with denoising, dimensions unchanged, to maximize chance of completing remaining renders inside hard cap. No further groom/appearance edits after21:26 cutoff.
+
+21:36UTC final: Required slot remained held by other GPU builder. Cancelled only own queued iteration11 launch before user hard stop. No final candidate was built or rendered. Saved groom.blend is iteration10; matching saved script/parameters are build_groom_last_built.py and parameters_last_built.json. Active build_groom.py plus parameters.json are frozen unbuilt candidate11. Existing render_* are mixed older iterations, explicitly not a full final proof. Overall task remains incomplete, not approved. Next authorized work requires a new time budget and available shared slot to build11 and inspect all proofs.

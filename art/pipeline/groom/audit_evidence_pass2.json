@@ -1,0 +1,361 @@
+{
+  "inspection_utc": "2026-10-16T20:11:53.395893+00:00",
+  "artifact_hashes": {
+    "delivery_checks.json": "cad16062a3f39ad0bdc91e6863b7e008b2707310199bd474cea3abd129d2da42",
+    "visual_review.json": "46c2c37ac6103feb3b9f049687b9fc0914dded2d679935cf1049768f596fa4a3",
+    "independent_review_final.json": "cfd7516fc3a1306fbd512aa827569250c474b1659b36efd732c24866a97b399e",
+    "geometry_check.json": "6274abb8f4af33f283cac6caee479ad5e68258d131c820de95f2cc28029ab165",
+    "deformation_check.json": "47ee1db759296000b1d00808d609980d2e0a8df1b1cf096b5a07f082837d68bf",
+    "color_measurements.json": "54dc27ca61737e6428979854c6956db39cf220f048d7d319d13bd7144226d207",
+    "measurements.json": "c42cc5748d3ceaab36dedc30825bb3efada7dd56a2a4e71312600db0fb4c1bea",
+    "iter_notes.json": "6e58b065b1c8419c2ac19267ba03cdb2595320cace2fec8f11e4c3842467fc89",
+    "groom.blend": "95f278e1c44a2bffca71837578a343de3bc3fc084ac95f98377a10ada6215a66",
+    "build_groom.py": "e36d1c83a350974402abcf528519616bbe75a6fc2e3f882e416fdff328705b0d",
+    "parameters.json": "ebcc8f931eef615206f92eebb4b988062a19c4c86b1c16c012078b72d25b3e83"
+  },
+  "technical": {
+    "missing_required_outputs": [],
+    "approved_source_sha256": "d1203576f1f786fb8ae68097dde1e9fe344db0c6108b5077c0f9524d58a35754",
+    "original_mesh_geometry_unchanged": true,
+    "surface_attachment_bend_passed": true,
+    "render_dimensions": {
+      "side": {
+        "expected": [
+          1374,
+          1145
+        ],
+        "actual": [
+          1374,
+          1145
+        ],
+        "passed": true
+      },
+      "three_quarter": {
+        "expected": [
+          1374,
+          1145
+        ],
+        "actual": [
+          1374,
+          1145
+        ],
+        "passed": true
+      },
+      "front": {
+        "expected": [
+          1145,
+          1145
+        ],
+        "actual": [
+          1145,
+          1145
+        ],
+        "passed": true
+      },
+      "head": {
+        "expected": [
+          1145,
+          1145
+        ],
+        "actual": [
+          1145,
+          1145
+        ],
+        "passed": true
+      },
+      "hind_leg": {
+        "expected": [
+          1145,
+          1145
+        ],
+        "actual": [
+          1145,
+          1145
+        ],
+        "passed": true
+      },
+      "tail_plume": {
+        "expected": [
+          1145,
+          1145
+        ],
+        "actual": [
+          1145,
+          1145
+        ],
+        "passed": true
+      },
+      "portrait": {
+        "expected": [
+          512,
+          512
+        ],
+        "actual": [
+          512,
+          512
+        ],
+        "passed": true
+      },
+      "sprite": {
+        "expected": [
+          192,
+          192
+        ],
+        "actual": [
+          192,
+          192
+        ],
+        "passed": true
+      }
+    },
+    "all_final_frames_measured": true,
+    "all_final_frames_cpu": true,
+    "strand_count_consistent": true,
+    "all_strand_points_finite": true,
+    "minimum_eye_clearance_m": 0.0008096046997684292,
+    "script_parameters_match_tooling": true,
+    "visual_checklist": {
+      "bald_patches": "No unintended large bald patch in inspected rest or bent views. Nose center and toe soles intentionally bare. Ear short fur visible.",
+      "hair_poking_through_itself_in_spikes": "No obvious explosive/crossed spike artifact. Pointed clumps are intentional; long smooth plume locks and fine body outliers remain style findings.",
+      "floating_strands": "No detached cloud or clearly detached roots visible. Surface binding numerical check passes.",
+      "hair_inside_eyes_or_over_nose": "No obvious strand across iris or nose center at head resolution. White edge fur overlaps nose border as requested. Minimum measured eye clearance0.0008096m.",
+      "buried_toes": "Rest front, three-quarter and hind close show toe forms and small claws. Paw tops are furred, not pale bare slippers. Bent test pose overlaps paws but does not detach the fur.",
+      "dark_or_black_spots": "No isolated black body render artifact seen. Intentional dark eye rims, follicle dots, paw tops, claws and plume recessed gaps remain.",
+      "left_right_asymmetry": "No gross groom imbalance in final front. Seeded strand placement differs naturally:200068 left children,200457 right children."
+    },
+    "scope": "Numerical checks establish measured technical properties. Visual inspection and artistic approval are separate.",
+    "approved_source_unchanged": true,
+    "technical_delivery_passed": true
+  },
+  "visual": {
+    "build_id": "B-vmt3",
+    "reviewed_utc": "2026-10-16T20:07:58.695341+00:00",
+    "status": "needs_revision",
+    "technical_and_artistic_status_separate": true,
+    "inspected": [
+      "render_side.png",
+      "render_three_quarter.png",
+      "render_front.png",
+      "render_head.png",
+      "render_hind_leg.png",
+      "render_tail_plume.png",
+      "render_portrait.png",
+      "render_sprite.png",
+      "final_contact.png",
+      "composite_sprite_vs_pass1.png",
+      "composite_portrait_vs_pass1.png",
+      "composite_side_vs_live_pass3.png",
+      "composite_three_quarter_vs_live_pass3.png",
+      "deformation_side.png",
+      "deformation_hind_leg.png"
+    ],
+    "comparison": "All eight sheet comparisons inspected together in final_contact.png. Detail renders and native pass1 comparisons inspected individually. Live-pass3 panels show a clear strand-fur quality increase without image retouching.",
+    "improvements": [
+      "Coarse pointed body and cheek clumps with darker roots and lighter tips, visibly stronger than pass1 at192px and512px.",
+      "Final measured back(80,78,77), flank(96,92,91), bib(192,192,192) are close to targets with no violet cast in sampled coat patches.",
+      "Plume follows the rising last third of the shaft, with compact dark points and continuous white inner stripe instead of pass1 smoky terminal brush.",
+      "Visible short face fur, whisker pad dots and14 white whiskers per side. Round catchlight replaces hard square reflection.",
+      "White foreleg fronts/insides, dark furry paw tops, visible small claws, and bronze horn crest highlights."
+    ],
+    "checklist": {
+      "bald_patches": "No unintended large bald patch in inspected rest or bent views. Nose center and toe soles intentionally bare. Ear short fur visible.",
+      "hair_poking_through_itself_in_spikes": "No obvious explosive/crossed spike artifact. Pointed clumps are intentional; long smooth plume locks and fine body outliers remain style findings.",
+      "floating_strands": "No detached cloud or clearly detached roots visible. Surface binding numerical check passes.",
+      "hair_inside_eyes_or_over_nose": "No obvious strand across iris or nose center at head resolution. White edge fur overlaps nose border as requested. Minimum measured eye clearance0.0008096m.",
+      "buried_toes": "Rest front, three-quarter and hind close show toe forms and small claws. Paw tops are furred, not pale bare slippers. Bent test pose overlaps paws but does not detach the fur.",
+      "dark_or_black_spots": "No isolated black body render artifact seen. Intentional dark eye rims, follicle dots, paw tops, claws and plume recessed gaps remain.",
+      "left_right_asymmetry": "No gross groom imbalance in final front. Seeded strand placement differs naturally:200068 left children,200457 right children."
+    },
+    "remaining": [
+      "Plume is rooted along the rising shaft and has crisp dark tips plus a continuous white inner band, but its long smooth spear-like locks still differ from the sheet compact layered tufts.",
+      "Bib and hind-leg feathering remain silkier and have more fine fringe than the sheet nested wiry tufts. Body clumps are visibly coarser than pass1.",
+      "Eyes have amber texture, a horizontal pupil, a dark rim and a round wet catchlight, but remain more exposed and button-like than the sheet. The fixed nose retains an angular boundary despite softer material and marginal white fur."
+    ],
+    "deformation_scope": "Fresh final proof bends one hind leg18degrees. Fur follows without visible new bald seam or detached cloud. Numerical root error0m, maximum strand length change1.12e-7m. Does not certify all future B-v3g9 rig poses.",
+    "approval": "Not approved by Nick. Technical delivery does not mean exact sheet match."
+  },
+  "independent": {
+    "build_id": "B-vmt3",
+    "review_type": "Independent adversarial visual review of delivered final images and fresh deformation proof",
+    "approval": "No Nick approval. No exact sheet-match claim.",
+    "assessment": "Substantial visible improvement over pass 1 and live pass 3, with the major requested changes present. The final groom still differs materially from the sheet in tuft scale and layering, plume lock character, and face realism. Technical artifact checks below found no obvious severe failure in the inspected images. These two judgments are separate.",
+    "residuals_first": [
+      {
+        "priority": 1,
+        "area": "Tuft character and regional fur",
+        "evidence": [
+          "composite_side_vs_sheet.png",
+          "composite_three_quarter_vs_sheet.png",
+          "composite_front_vs_sheet.png",
+          "composite_hind_leg_vs_sheet.png"
+        ],
+        "finding": "The sheet has denser, shorter, layered pointed tufts with clear dark separations. Final body fur is much sharper than pass 1, but still has fine bright fringe along the back and longer silky bib and hind-feathering elements. The render is shaggy, but its clump rhythm differs visibly from the sheet.",
+        "next_action_if_another_pass_is_authorized": "Shorten exceptional silhouette hairs and layer smaller pointed locks within the bib and feathering while retaining the required regional length hierarchy."
+      },
+      {
+        "priority": 2,
+        "area": "Tail plume",
+        "evidence": [
+          "render_tail_plume.png",
+          "composite_tail_plume_vs_sheet.png",
+          "composite_sprite_vs_pass1.png"
+        ],
+        "finding": "The smoky brush is replaced by compact, slate-colored pointed locks. The white inner band is continuous and roots extend along the upturn. However, locks remain longer, smoother and more spear-like than the sheet's dense layered tufts. The white band is narrower and less prominent than the reference, especially near the plume base. Some fine fringe persists at extreme tips. The dark channels between lower locks read as recessed gaps, not clearly detached or bald artifacts.",
+        "next_action_if_another_pass_is_authorized": "Broaden white coverage along the inner base and break long smooth locks into smaller nested strand clumps without restoring a diffuse halo."
+      },
+      {
+        "priority": 3,
+        "area": "Face and eyes",
+        "evidence": [
+          "render_head.png",
+          "composite_head_vs_sheet.png",
+          "composite_portrait_vs_pass1.png",
+          "composite_portrait_vs_sheet.png"
+        ],
+        "finding": "Short facial fur, dark eye surrounds, white whiskers and whisker-pad dots are now visible. The final high-resolution head resolves the earlier uncertainty about pad dots. Eyes remain exposed amber button-like forms with flat horizontal pupils and round highlights. The nose still has a sharply rectangular outer boundary. These remain conspicuous realism differences from the sheet, even though the requested horizontal goat pupil is retained.",
+        "next_action_if_another_pass_is_authorized": "Keep sculpt geometry fixed. Refine iris-edge variation, corneal depth cues and the short white fur transition at the nose perimeter. Do not replace the required horizontal pupil merely to copy the reference's rounder eye."
+      },
+      {
+        "priority": 4,
+        "area": "Game-size evidence",
+        "evidence": [
+          "composite_sprite_vs_pass1.png",
+          "composite_sprite_vs_sheet.png",
+          "composite_portrait_vs_pass1.png"
+        ],
+        "finding": "At native 192 px, pass 2 has visibly more coat texture and a sharper, narrower plume than pass 1. The white plume band and individual whiskers are weak at that size. At native 512 px, the matched portrait framing shows a clear gain in facial and body fur texture, eye rims, whisker visibility and bronze horn crests. Neither comparison establishes equivalence to the sheet.",
+        "next_action_if_another_pass_is_authorized": "Judge further plume-band and contrast changes at native sprite size as well as in close-up."
+      }
+    ],
+    "color_check": {
+      "method": "Independently recomputed the median RGB from render_side.png using the documented fixed boxes in color_measurements.json with Pillow and NumPy. These are local patch results, not whole-coat averages.",
+      "back_srgb": [
+        80,
+        78,
+        77
+      ],
+      "back_target": [
+        80,
+        77,
+        75
+      ],
+      "flank_srgb": [
+        96,
+        92,
+        91
+      ],
+      "flank_target": [
+        99,
+        94,
+        92
+      ],
+      "bib_srgb": [
+        192,
+        192,
+        192
+      ],
+      "bib_target": [
+        192,
+        191,
+        192
+      ],
+      "finding": "Documented patch numbers reproduce and are close to requested values, with R greater than B in dark patches. Broader three-quarter appearance is still lighter than the sheet in places due to lighting and strand highlights; do not extrapolate these patches to every view."
+    },
+    "checklist": {
+      "bald_patches": {
+        "result": "No obvious large unintended bald patch on body, face, legs or bent pose. Dark lower plume gaps remain visible but do not clearly expose a bald failure.",
+        "evidence": [
+          "render_side.png",
+          "render_three_quarter.png",
+          "render_hind_leg.png",
+          "render_tail_plume.png",
+          "deformation_hind_leg.png"
+        ]
+      },
+      "hair_poking_through_itself_in_spikes": {
+        "result": "No obvious explosive or erroneous crossing spikes. Intentional body and plume points remain; smooth spear-like plume locks are a style residual, not classified as an attachment artifact.",
+        "evidence": [
+          "render_tail_plume.png",
+          "render_hind_leg.png",
+          "deformation_side.png",
+          "deformation_hind_leg.png"
+        ]
+      },
+      "floating_strands": {
+        "result": "No detached strand cloud or visible root separation. Fine fringe exists but appears rooted.",
+        "evidence": [
+          "render_head.png",
+          "render_tail_plume.png",
+          "deformation_side.png",
+          "deformation_hind_leg.png"
+        ]
+      },
+      "hair_inside_eyes_or_over_nose": {
+        "result": "No obvious strand crosses the iris center or bare nose center. Short fur frames both edges. Horn shafts and claw tips remain bare.",
+        "evidence": [
+          "render_head.png",
+          "render_front.png",
+          "render_hind_leg.png"
+        ]
+      },
+      "buried_toes": {
+        "result": "Dark short fur covers paw tops. Toe ends and small claws remain visible in front, three-quarter and hind close-up. Toes are subtler than the sheet but not buried into featureless blobs.",
+        "evidence": [
+          "render_front.png",
+          "render_three_quarter.png",
+          "render_hind_leg.png"
+        ]
+      },
+      "dark_or_black_spots": {
+        "result": "No isolated black body rendering artifact seen. Dark eye rims, paws and recessed plume channels are coherent with material or occlusion.",
+        "evidence": [
+          "render_side.png",
+          "render_front.png",
+          "render_head.png",
+          "render_tail_plume.png"
+        ]
+      },
+      "left_right_asymmetry": {
+        "result": "No obvious major groom imbalance in final front. Small stochastic tuft variation remains. A thin vertical sliver between horns appears to be distant plume overlap.",
+        "evidence": [
+          "render_front.png"
+        ]
+      },
+      "leg_pattern": {
+        "result": "White fronts and insides of forelegs are plainly present; hind feathering includes white coverage. Dark paw tops correct the pale-slipper read.",
+        "evidence": [
+          "render_front.png",
+          "render_three_quarter.png",
+          "render_hind_leg.png"
+        ]
+      },
+      "ground_clearance": {
+        "result": "Hind feathering ends above the ground in final close-up; no clear floor penetration seen.",
+        "evidence": [
+          "render_hind_leg.png"
+        ]
+      }
+    },
+    "deformation_review": {
+      "evidence": [
+        "deformation_side.png",
+        "deformation_hind_leg.png"
+      ],
+      "fresh_file_times_utc": [
+        "2026-10-16 20:06:30",
+        "2026-10-16 20:06:48"
+      ],
+      "finding": "Fresh proof shows fur carried with the bent hind leg without a detached cloud, new bald seam or explosive spike. Paws overlap in the temporary pose, so this is attachment evidence rather than an animation-quality pose.",
+      "limit": "A single bent pose does not establish every rig deformation, collision case or future groom reapplication. Numerical binding evidence must be reported separately."
+    },
+    "comparison_review": {
+      "all_eight_sheet_composites": "Inspected side, three_quarter, front, head, hind_leg, tail_plume, portrait and sprite comparisons. They are labeled and show the render beside the matching reference or documented detail crop.",
+      "live_pass3": "Both side and three-quarter comparisons clearly show the move from a smooth texture-driven asset to dimensional strand fur. Different lighting and framing mean they are qualitative quality-step comparisons, not controlled color measurements.",
+      "pass1_native_sizes": "Both 192 px sprite and 512 px portrait comparisons inspected at native displayed sizes. Portrait framing is matched and permits a fairer texture comparison.",
+      "geometry_limit": "Reference and sculpt proportions and camera projection still differ. This review does not recommend changing the read-only approved sculpt to erase those differences."
+    },
+    "scope": "All eight final view contents were inspected, including portrait and sprite through their native-size composites; all twelve requested comparison composites and fresh final deformation images were inspected. No Blender execution, groom edits or geometry changes were performed by this reviewer. Cost measurements, sculpt hashes and numeric binding tests are outside this visual audit except for the explicitly reproduced color patches.",
+    "final_status": "Reviewed with substantive visual residuals. No Nick approval and no exact-match claim."
+  },
+  "no_git": "User prohibited git. Imported pure evaluate() only; no repository discovery, snapshots, hook sealing or git commands."
+}

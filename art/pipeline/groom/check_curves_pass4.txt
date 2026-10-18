@@ -1,0 +1,10 @@
+def saved_curve_checks(body,eyes):
+ co=array(body.data.vertices,'co');items=[]
+ for o in bpy.context.scene.objects:
+  if o.type!='CURVES':continue
+  d=o.data;count=len(d.curves);N=len(d.points)//count;pos=array(d.attributes['position'].data,'vector');ids=np.stack([array(d.attributes['bind_i'+s].data,'value',1,np.int32) for s in 'abc'],axis=1);bar=np.stack([array(d.attributes['bind_'+s].data,'value',1) for s in 'abc'],axis=1);expected=np.einsum('ij,ijk->ik',bar,co[ids]);error=np.linalg.norm(pos[::N]-expected,axis=1)
+  mins=[float(np.linalg.norm(pos-center,axis=1).min()-radius) for center,radius in eyes]
+  nose=(pos[:,1]<-.303)&((pos[:,0]/.018)**2+((pos[:,2]-.5105)/.0155)**2<1)
+  items.append({'object':o.name,'curves':count,'points_per_curve':N,'hidden_for_render':o.hide_render,'surface_is_sculpt':d.surface==body,'surface_deform_modifier':any(m.type=='NODES' and m.node_group is not None for m in o.modifiers),'nonfinite_points':int((~np.isfinite(pos)).sum()),'max_root_bind_error_m':float(error.max()),'eye_surface_clearance_m':mins,'points_in_bare_nose_mask':int(nose.sum()),'left_roots':int(sum(pos[::N,0]>0)),'right_roots':int(sum(pos[::N,0]<0))})
+ rendered=[i for i in items if not i['hidden_for_render']]
+ write('curve_checks.json',{'objects':items,'rendered_strands_actual':sum(i['curves'] for i in rendered),'hidden_guides_actual':sum(i['curves'] for i in items if i['hidden_for_render']),'all_finite':all(i['nonfinite_points']==0 for i in items),'all_surface_bound':all(i['surface_is_sculpt'] and i['surface_deform_modifier'] and i['max_root_bind_error_m']<.00002 for i in items),'bare_nose_clear_rendered':all(i['points_in_bare_nose_mask']==0 for i in rendered),'eye_clearance_rendered':min(min(i['eye_surface_clearance_m']) for i in rendered)})

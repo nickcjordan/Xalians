@@ -1,0 +1,17 @@
+"""Write an honest partial-delivery receipt if the user time cap blocks final proof."""
+from pathlib import Path
+import json,hashlib,datetime
+O=Path('C:/dev/art-data/pipeline/codex-stream/luceras-groom/pass3')
+def read(n):
+ p=O/n
+ return json.loads(p.read_text()) if p.exists() else {}
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+expected=['side','three_quarter','front','head','hind_leg','tail_plume','portrait','sprite']
+m=read('measurements.json');latest={f['file']:f for f in m.get('frames',[]) if f.get('stage')=='final'}
+current={k:v for k,v in latest.items() if str(v.get('iteration'))=='11'}
+missing=[v for v in expected if 'render_'+v+'.png' not in current]
+state=read('build_state.json');notes=read('iter_notes.json')
+r={'build_id':'B-pq45','status':'incomplete_at_user_time_cap','approval':'No approval or sheet-match claim.','selected_script_iteration':11,'saved_groom_iteration':state.get('iteration'),'artifact_consistency':{'groom.blend':'Last actually built iteration10, not the final selected candidate.','last_built_reproduction':['build_groom_last_built.py','parameters_last_built.json'],'frozen_unbuilt_candidate11':['build_groom.py','parameters.json'],'render_files':'Older mixed generations. See measurements and missing-views checks. Not final proof.'},'method_in_order':['Read iteration7 notes and build state; preserve its groom and script snapshots.','Continue deterministic surface-bound hair builder without source geometry changes.','Calibrate whole-coat spatial mean and quartiles, document mask correction and independent silhouette sensitivity.','Restore pass2 paw strand gradient, tighten eye socket mask, revise plume through asymmetric band and discrete tuft groups.','Freeze iteration11 at the user editing cutoff. Attempt all proof renders through the required shared slot.','Stop at user hard cap; identify missing or older-generation evidence instead of relabeling it as final.'],'iterations':notes,'what_still_remains':['Complete and inspect all iteration11 proof views and a fresh bent-pose test.','Resolve measured coat spread and any remaining plume, paw and eye differences against sheet.'],'checks':{'approved_source_unchanged':sha(Path('C:/dev/art-data/pipeline/codex-stream/luceras-merge/revert-forelegs/luceras_sculpt.blend'))=='d1203576f1f786fb8ae68097dde1e9fe344db0c6108b5077c0f9524d58a35754','saved_geometry_check':read('geometry_check.json'),'current_iteration_final_frames':current,'missing_iteration11_views':missing,'older_final_filename_generations':{k:v.get('iteration') for k,v in latest.items() if str(v.get('iteration'))!='11'},'deformation':read('deformation_check.json'),'technical_delivery_passed':False},'blockedBy':['Required shared Blender/GPU slot was unavailable for substantial portions of the45-minute resume, including a new GPU holder at21:25:22UTC.','User editing cutoff21:26:07UTC and hard stop21:38:07UTC.'],'time_limit':read('resume_state.json'),'costs':m,'color_measurements':read('color_measurements.json'),'independent_review':read('independent_review_final.json'),'checklist':read('independent_review_final.json').get('checklist',{}),'outputs':[]}
+for p in sorted(O.iterdir()):
+ if p.is_file() and p.name!='report.json' and p.suffix not in ('.blend1','.pyc'):r['outputs'].append({'path':str(p),'bytes':p.stat().st_size,'sha256':sha(p)})
+r['written_utc']=datetime.datetime.now(datetime.timezone.utc).isoformat();(O/'report.json').write_text(json.dumps(r,indent=2));print(O/'report.json')
