@@ -1,0 +1,15 @@
+{
+  "id": "N-01M58P77C4W2YDSM8JABHNE3RW",
+  "alias": "952p",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Stall audit after B-svtw and B-ykwq. Cause, from Nick's explanation: builds judged the paw from one view at a time and treated it as a volume to fur or scale, never as anatomy. A foot's top surface must be lower and flatter behind the raised knuckles, the toes curl down from the knuckle to the ground, and the hind paw is twice the fore paw's width. Fur and uniform scaling cannot create that profile. Method change: sculpt the profile directly, with vertex moves only. Specify and verify it with side-view section profiles along each toe and across the foot, matched to the sheet's paw silhouettes, and check top, front, side and three-quarter views together before any fur.",
+  "date": "2026-10-18",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-18T23:40:45Z"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "B-01M58P77G9J1ANZG7FN41WBR9F",
+  "alias": "4cj4",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Sculpt a real foot profile on all four paws: knuckles raised, toes curling down to the ground, the foot top dipping flat behind the knuckles; hind paw width brought to the fore paw width; checked from every angle and by section profiles",
+  "scope": "paw region vertex moves, claw placement, paw fur reapply, renders",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-18T23:40:45Z",
+  "briefSha256": "795d0ab49f2864915e51353ea31d82b6039d9d27b6f7f32caff7f55dad17b993"
+}
