@@ -1,0 +1,19 @@
+{
+  "id": "B-01M582B81WFEPCCKVYXK8T14TS",
+  "alias": "ykwq",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Paw size variant board: current, slimmer, slimmest (width and length scaled on all four paws, vertex moves only), each furred and rendered beside the sheet, for Nick to pick",
+  "scope": "paw region vertex scaling, paw fur length, renders",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-18T17:53:25Z",
+  "briefSha256": "db6c83b5b487494d6b35280622a236be581aa93fc3cb1a7d64894b8e8123b6fe"
+}
