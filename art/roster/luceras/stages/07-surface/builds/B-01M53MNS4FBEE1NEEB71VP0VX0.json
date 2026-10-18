@@ -1,0 +1,19 @@
+{
+  "id": "B-01M53MNS4FBEE1NEEB71VP0VX0",
+  "alias": "svtw",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Groom pass 6: paws furred continuously from the leg, soft rounded paw silhouette, toes read through fur",
+  "scope": "paw and lower-leg groom only",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-17T00:37:32Z",
+  "briefSha256": "28a7348df5e65adc2dfb9393700b01b2311ca03580f459269c32abcf291ea676"
+}

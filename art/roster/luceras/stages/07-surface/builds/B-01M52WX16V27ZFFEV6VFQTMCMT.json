@@ -1,0 +1,19 @@
+{
+  "id": "B-01M52WX16V27ZFFEV6VFQTMCMT",
+  "alias": "gwvn",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Strand-fur groom on the approved sculpt rendered in Cycles, matching the model sheet",
+  "scope": "hair curves, hair and skin materials, Cycles renders vs sheet, reapplicable groom script",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T17:42:04Z",
+  "briefSha256": "9f019b64879dc563d1ef36a0b480014d50dddb0a5bdb1c3f2f91f249146ff036"
+}

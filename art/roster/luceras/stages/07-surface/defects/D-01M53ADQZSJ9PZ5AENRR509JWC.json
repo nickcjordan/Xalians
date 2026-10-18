@@ -1,0 +1,15 @@
+{
+  "id": "D-01M53ADQZSJ9PZ5AENRR509JWC",
+  "alias": "gnev",
+  "stage": "07-surface",
+  "description": "Strand-fur plume does not read as the sheet's crisp dark pointed tufts with a white inner band (brush, spears, feather across three builds)",
+  "camera": "full_side",
+  "region": "tail_plume",
+  "origin": null,
+  "attempts": [
+    "B-01M53ADX9XENYA538NACSPD39S",
+    "B-01M53DKBKVTWWCTSK8HQEYPTTQ"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-16T21:38:23Z"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "B-01M535JKM64SPAA9CV2F6FB5D0",
+  "alias": "bvrc",
+  "stage": "08-rig",
+  "kind": "build",
+  "goal": "Rig pass 2: elbow pinches, hip/rump ledge, cheek and horn base, breath-in export scale, browser smoke test",
+  "scope": "weights, corrective shape keys, export, viewer test",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T20:13:40Z",
+  "briefSha256": "40705f0dd3b3b087e8f9ff3704689d91df5c001eba9dad778b49c63d08eefeda"
+}

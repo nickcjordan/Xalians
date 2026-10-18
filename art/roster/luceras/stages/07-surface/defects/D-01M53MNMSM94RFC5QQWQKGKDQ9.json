@@ -1,0 +1,14 @@
+{
+  "id": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "alias": "t29f",
+  "stage": "07-surface",
+  "description": "Paws read as bare smooth blocks under shaggy legs: hard fur line at the wrist and hock, flat slab top, no toe articulation (Nick: cinder blocks)",
+  "camera": "fore_paws_front",
+  "region": "paws",
+  "origin": null,
+  "attempts": [
+    "B-01M53MNS4FBEE1NEEB71VP0VX0"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-17T00:37:28Z"
+}

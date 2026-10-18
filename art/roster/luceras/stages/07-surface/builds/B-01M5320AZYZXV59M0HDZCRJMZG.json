@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5320AZYZXV59M0HDZCRJMZG",
+  "alias": "vmt3",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Groom pass 2: coarse strand-level fur at sheet value, crisp plume with white band, visible face fur, whiskers, live eyes, paw toes, horn crests",
+  "scope": "groom parameters, hair and skin materials, renders",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T19:11:16Z",
+  "briefSha256": "136c6adf273c75761195111b7af041ce40cc572ca7b1e9f0e69b610c284c7549"
+}

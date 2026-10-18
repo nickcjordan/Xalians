@@ -1,0 +1,19 @@
+{
+  "id": "B-01M53ADJ6KRZZ7ZZZ636HV15V8",
+  "alias": "a87k",
+  "stage": "08-rig",
+  "kind": "build",
+  "goal": "Rig pass 3: game hip crease, rigid islands, symmetry outliers, full pose sheet",
+  "scope": "game mesh weights, rigid parts, symmetry, proof",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T21:38:18Z",
+  "briefSha256": "c90018a107071a9be78b9ddc62b541d07bb9d5b4a4206db0a118b1d07ccf6354"
+}

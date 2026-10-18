@@ -1,0 +1,19 @@
+{
+  "id": "B-01M52WX128VD19PSYTHNZNM5QJ",
+  "alias": "v3g9",
+  "stage": "08-rig",
+  "kind": "build",
+  "goal": "One deformation skeleton driving both the sculpt (sprite route) and the game mesh (live route); control rig; deformation sheet",
+  "scope": "skeleton, skinning of sculpt and game mesh, control rig, pose sheet",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T17:42:04Z",
+  "briefSha256": "ef2cc3bac5131097fe3f9d1e45e2330c0fcc8d3d6cb23941785147c35e6acee6"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "B-01M53DKBKVTWWCTSK8HQEYPTTQ",
+  "alias": "7qgf",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Groom pass 5: crisp sprite downsampling, plume along the last third of the tail, toes, upper lid",
+  "scope": "render settings, plume guides, paw fur, eye rim",
+  "defect": "D-01M53ADQZSJ9PZ5AENRR509JWC",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T22:33:53Z",
+  "briefSha256": "fd39a71c71a72650b4fba6d693f98aa0ee76ed792904d80f217854a3bb0053a4"
+}

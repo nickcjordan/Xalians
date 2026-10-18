@@ -1,0 +1,14 @@
+{
+  "id": "D-01M53N3V33HCA8MPQ76XTRBVQ6",
+  "alias": "qkpg",
+  "stage": "07-surface",
+  "description": "Approved sculpt hind paws lost the generated reconstruction's distinct knuckled toe lobes: the toe region was smoothed to a flat wedge with claw nubs (orchestrator comparison 2026-10-16, pair_hind_paw_side/three_quarter)",
+  "camera": "hind_paw_three_quarter",
+  "region": "hind_paws",
+  "origin": null,
+  "attempts": [
+    "B-01M53N416QAQQQM9TR91GGDRFB"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-17T00:45:13Z"
+}

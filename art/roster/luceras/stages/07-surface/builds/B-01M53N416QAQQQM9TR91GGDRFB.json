@@ -1,0 +1,19 @@
+{
+  "id": "B-01M53N416QAQQQM9TR91GGDRFB",
+  "alias": "tx7x",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Restore the generated reconstruction's hind paw toe lobes on the approved sculpt by moving vertices only; reseat the small claws at the restored toe tips",
+  "scope": "hind paw region below the hock, hind claw objects",
+  "defect": "D-01M53N3V33HCA8MPQ76XTRBVQ6",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-17T00:45:19Z",
+  "briefSha256": "19fca5ee31511f8e716d1e4d208f903964fcc9290dd80d6cb7eb967cb3717c3e"
+}

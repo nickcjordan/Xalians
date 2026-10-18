@@ -1,0 +1,19 @@
+{
+  "id": "B-01M53ADX9XENYA538NACSPD39S",
+  "alias": "spm3",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Groom pass 4: authored plume tuft guides, eyelid rim guides, paws restored, face coat matched to body",
+  "scope": "groom guides and parameters, materials, renders",
+  "defect": "D-01M53ADQZSJ9PZ5AENRR509JWC",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T21:38:29Z",
+  "briefSha256": "7c89042bd8a0472e919dd8b281ba2967dddcc3f3e2efb8385900cc12e2d74d99"
+}

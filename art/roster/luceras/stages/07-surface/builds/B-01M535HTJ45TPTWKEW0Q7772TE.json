@@ -1,0 +1,19 @@
+{
+  "id": "B-01M535HTJ45TPTWKEW0Q7772TE",
+  "alias": "pq45",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Groom pass 3: whole-coat value by masked distribution, finer clumps, seated eyes, layered plume with white band",
+  "scope": "groom parameters, hair and eye materials, renders",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-16T20:13:14Z",
+  "briefSha256": "87b8a301de3e63faa939d1a1f62b1b21c022aacb5a67af5f2aff66327ed5dc8a"
+}
