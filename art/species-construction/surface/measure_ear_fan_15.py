@@ -96,7 +96,7 @@ if __name__ == '__main__':
         sheet = Image.new('RGB', (3 * w, h + 40), '#f0f0f0')
         d = ImageDraw.Draw(sheet)
         font = ImageFont.truetype('C:/Windows/Fonts/arial.ttf', 24)
-        for k, label in enumerate(['Target: painted fan (B)', 'Now: step 15 render',
+        for k, label in enumerate(['Target: painted fan (B)', sys.argv[3] if len(sys.argv) > 3 else 'Now: step 15 render',
                                    'White hair: blue = painting only, amber = render only, dark = both']):
             d.text((k * w + 12, 7), label, font=font, fill='#172532')
         sheet.paste(Image.fromarray(fan.astype(np.uint8)), (0, 40))
