@@ -144,5 +144,10 @@ for kind in ('hind', 'fore'):
                      paw_width=round(width, 1), ankle_width_narrowest=ANKLE_PAWSIZE[kind], join_section_width=sec_w, join_section_half_axes=sec_ax,
                      width_over_ankle=round(width / ANKLE_PAWSIZE[kind], 2), paw_length_ground=round(length, 1),
                      current_sculpt=dict(paw_width=round(wr['paw_width_m'] * 1000, 1), paw_length_ground=round(wr['paw_length_ground_m'] * 1000, 1), width_over_ankle=round(wr['width_ratio'], 2)))
+    # B-hxde: the PASS4 table ratios against the leg width just above the paw (side view; pawsize board narrowest leg width)
+    o_ = out[kind]; lw_ = ANKLE_PAWSIZE[kind]; SHEET_R = {'hind': (0.8, 2.5), 'fore': (1.0, 2.0)}[kind]
+    o_['sheet_ratios'] = dict(leg_width=lw_, height_over_leg=round(o_['knuckle_height_middle_toes'] / lw_, 2), length_over_leg=round(o_['paw_length_ground'] / lw_, 2),
+                             sheet_height_over_leg=SHEET_R[0], sheet_length_over_leg=SHEET_R[1],
+                             dip_middle_toes=round(o_['knuckle_height_middle_toes'] - o_['foot_top_height_middle_toes'], 1))
 out['hind_over_fore_width'] = round(out['hind']['paw_width'] / out['fore']['paw_width'], 2)
 open(OUTD / 'measurements.json', 'w').write(json.dumps(out, indent=1)); print(json.dumps({k: {kk: vv for kk, vv in v.items() if kk != 'toes'} if isinstance(v, dict) and 'toes' in v else v for k, v in out.items() if k != 'definitions'}, indent=1))
