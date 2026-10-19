@@ -4,7 +4,7 @@ briefs/16-target-painter.py (Nick's D1), written for the Blender build to cast.
 Origin, axis, 180-degree spread, length law, 80 percent reach cap against the
 painter's own ear mask, root spread along the head edge, and per-hair bend are
 the painter's. Only the hair count and seed are this build's.
-  python plan_ear_fan_16.py <out.npz>
+  python plan_ear_fan_16.py <out.npz> [hairs per ear] [seed offset]
 """
 import sys
 import math
@@ -29,13 +29,14 @@ ear[HEADIN] = False
 EARHARD = np.asarray(Image.fromarray((ear * 255).astype('uint8')).filter(ImageFilter.MinFilter(15))) > 0
 
 R = 85
-N = 3000
+N = int(sys.argv[2]) if len(sys.argv) > 2 else 3000
+SEED_OFFSET = int(sys.argv[3]) if len(sys.argv) > 3 else 0
 STEPS = 24
 EARS = [dict(side=-1, origin=(375, 362), center=math.radians(-149), cs=1, seed=1611),
         dict(side=1, origin=(649, 361), center=math.radians(-31), cs=-1, seed=1612)]
 paths, sides, us, lengths = [], [], [], []
 for e in EARS:
-    rng = np.random.default_rng(e['seed'])
+    rng = np.random.default_rng(e['seed'] + SEED_OFFSET)
     ox, oy = e['origin']
     c = e['center']
     for k in range(N):
