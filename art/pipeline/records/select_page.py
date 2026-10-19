@@ -54,7 +54,8 @@ from PIL import Image  # noqa: E402
 
 E = html.escape
 IMG_WIDTH = 720
-IMG_MAX_AREA = 900_000   # about 950 x 950 for a square render
+IMG_MAX_AREA = 2_000_000   # about 1400 x 1400 for a square render; comparison tiles need the detail
+REGRID_ASPECT = 2.2       # strips wider than this are split at their white separators and laid out two per row
 IMG_MAX_WIDTH = 2400
 JPEG_QUALITY = 82
 MAX_BYTES = 8 * 1024 * 1024
@@ -69,10 +70,45 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@40
 
 # ---------------------------------------------------------------- inputs
 
+def regrid(im):
+    """A wide comparison strip (columns separated by near-white vertical bars) -> the same columns two per row.
+    Strips of three or more columns shrink to slivers in the viewer (Nick, 2026-10-19: "kinda hard to see the details")."""
+    w, h = im.size
+    if w / float(h) < REGRID_ASPECT:
+        return im
+    px = im.load()
+    ys = range(h // 3, h, max(1, h // 24))
+    white = [x for x in range(w) if all(sum(px[x, y]) > 720 for y in ys)]
+    runs, start = [], None
+    for i, x in enumerate(white):
+        if start is None:
+            start = x
+        if i + 1 == len(white) or white[i + 1] != x + 1:
+            if x - start >= 2:
+                runs.append((start, x))
+            start = None
+    if not runs:
+        return im
+    edges, cols = [0], []
+    for a, b in runs:
+        cols.append((edges[-1], a)); edges.append(b + 1)
+    cols.append((edges[-1], w))
+    cols = [c for c in cols if c[1] - c[0] > 40]
+    if len(cols) < 3:
+        return im
+    tiles = [im.crop((a, 0, b, h)) for a, b in cols]
+    cw = max(t.width for t in tiles); gap = 8
+    rows = (len(tiles) + 1) // 2
+    out = Image.new("RGB", (2 * cw + gap, rows * h + (rows - 1) * gap), (255, 255, 255))
+    for i, t in enumerate(tiles):
+        out.paste(t, ((i % 2) * (cw + gap), (i // 2) * (h + gap)))
+    return out
+
+
 def jpeg_data_uri(h):
     """Blob hash -> JPEG data URI, scaled by pixel area (not a fixed width) so wide comparison strips keep their detail."""
     im = Image.open(blobs.get(h))
-    im = im.convert("RGB")
+    im = regrid(im.convert("RGB"))
     scale = min(1.0, (IMG_MAX_AREA / float(im.width * im.height)) ** 0.5, IMG_MAX_WIDTH / float(im.width))
     if scale < 1.0:
         im = im.resize((round(im.width * scale), round(im.height * scale)), Image.LANCZOS)
@@ -393,13 +429,13 @@ details.fold summary{cursor:pointer;font-family:var(--f-head);font-weight:600;fo
 .ov{position:fixed;inset:0;z-index:50;background:var(--scrim);display:flex;flex-direction:column;overflow:auto}
 .ov[hidden]{display:none}
 .ov-bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:1}
-.ov-body{padding:16px;max-width:1500px;width:100%;margin:0 auto}
+.ov-body{padding:16px;max-width:none;width:100%;margin:0 auto}
 .ov-ctrl{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-bottom:12px}
 .ov-stage{display:grid;grid-template-columns:1fr;gap:16px}
 .ov-stage.two{grid-template-columns:1fr 1fr}
 .ov-stage figure{margin:0}
 .ov-stage .frame{cursor:default}
-.ov-stage img{max-height:72vh;width:100%;height:auto;object-fit:contain;margin:0 auto}
+.ov-stage img{max-height:84vh;width:100%;height:auto;object-fit:contain;margin:0 auto}
 .ov-stage figcaption{margin-top:6px}
 .ov-stage figcaption strong{font-family:var(--f-head);font-weight:600;font-size:1.1rem}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
