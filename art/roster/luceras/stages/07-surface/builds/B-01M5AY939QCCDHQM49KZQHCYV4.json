@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5AY939QCCDHQM49KZQHCYV4",
+  "alias": "fyn2",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Paw pass 6: knuckle domes become the bulging ends of the bones (no cap edge), hind ridges broad and low and fading by about a third of the way up, fore checked the same",
+  "scope": "skeleton-skin paw parameters; previews only",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-19T20:40:04Z",
+  "briefSha256": "d746b2b079fe3c5a12fde53f3f241a24abe1f7251dccd687a156e2ce5635e82d"
+}
