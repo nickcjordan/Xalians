@@ -1,4 +1,4 @@
-"""B-exrv: Luceras paws as authored parts (plain numpy + scipy, no Blender).
+"""B-exrv / B-xsze / B-xv9f: Luceras paws as authored parts (plain numpy + scipy, no Blender).
 
 Each paw is a signed distance field built from swept forms, meshed with surface nets (quads) and projected onto the surface:
   * leg stub: the approved sculpt's own leg surface (signed distance to its triangles) above the join plane, handing over
@@ -53,6 +53,12 @@ def tube(p, C, R):
     return d
 
 
+def ellipsoid_d(q, c, ax, R):
+    """Approximate signed distance to an ellipsoid at c with orthonormal axes ax (3,3 rows) and half axes R (3,)."""
+    r = (q - c) @ ax.T; k0 = np.linalg.norm(r / R, axis=1) + 1e-12; k1 = np.linalg.norm(r / (R * R), axis=1) + 1e-12
+    return k0 * (k0 - 1) / k1
+
+
 def ellipse_d(x, y, a, b):
     """Approximate signed distance to an ellipse with half axes a, b (scaled-radius form, gradient-normalised)."""
     r = np.sqrt((x / a) ** 2 + (y / b) ** 2) + 1e-12
@@ -62,7 +68,7 @@ def ellipse_d(x, y, a, b):
 
 class Paw:
     def __init__(s, kind, P, base):
-        s.kind = kind; p = P[kind]; s.p = p
+        s.kind = kind; p = P[kind]; s.p = p; s.S = p.get('size', 1.0)   # B-xsze: overall paw scale about the toe line
         w = base['world']; tris = base['tris']
         # leg axis from two measured leg-section centres (mm)
         c_hi = np.array(p['leg_hi']) * MM; c_lo = np.array(p['leg_lo']) * MM
@@ -125,34 +131,85 @@ class Paw:
         r = q - s.O; return r @ s.f, r @ s.l, q[:, 2]
 
     def foot_d(s, q):
-        p = s.p['foot']; u, v, z = s.local(q); u_mm = u / MM
+        p = s.p['foot']; S = s.S; u, v, z = s.local(q); u_mm = u / MM / S
         U = np.array(p['u'], float); o = np.argsort(U); U = U[o]; uc = np.clip(u_mm, U[0], U[-1])
         g = lambda k, dflt=0.0: np.interp(uc, U, np.array(p.get(k, [dflt] * len(U)), float)[o])
-        hw = g('half_width') * MM; top = g('top') * MM; vc = g('v_center') * MM
+        hw = g('half_width') * MM * S; top = g('top') * MM * S; vc = g('v_center') * MM * S
         bot = -p['below'] * MM; zc = 0.5 * (top + bot); hh = 0.5 * (top - bot)
-        e = ellipse_d(v - vc, z - zc, hw, hh); du = (u_mm - uc) * MM
+        e = ellipse_d(v - vc, z - zc, hw, hh); du = (u_mm - uc) * MM * S
         return np.where(np.abs(du) > 0, np.sqrt(np.maximum(e, 0) ** 2 + du ** 2) + np.minimum(e, 0), e)
 
     # ---------- digits ----------
     def make_digits(s):
         p = s.p; dg = p['digits']; out = []
         for i in range(4):
-            v0 = dg['v'][i] * MM; u0 = dg['tip_u'][i] * MM; spl = np.radians(dg['splay_deg'][i]); sc = dg['scale'][i]
-            f2 = s.f * np.cos(spl) + s.l * np.sin(spl)
+            v0 = dg['v'][i] * MM * s.S; u0 = dg['tip_u'][i] * MM * s.S; spl = np.radians(dg['splay_deg'][i]); sc = dg['scale'][i] * s.S
+            f2 = s.f * np.cos(spl) + s.l * np.sin(spl); l2 = np.array([-f2[1], f2[0], 0.0])
             tipxy = s.O + s.l * v0 + s.f * u0
             def W(uu, zz):
                 return tipxy + f2 * (uu * sc * MM) + np.array([0, 0, 1.0]) * (zz * sc * MM)
             C = catmull([W(u, z) for u, z, r in dg['curve']], 8); R = np.interp(np.linspace(0, len(dg['curve']) - 1, len(C)), np.arange(len(dg['curve'])), [r * sc * MM for u, z, r in dg['curve']])
             pad = [W(u, z) for u, z, r in dg['pad']]; padR = [r * sc * MM for u, z, r in dg['pad']]
-            out.append(dict(C=C, R=R, pad=np.array(pad), padR=np.array(padR), f=f2, tip=tipxy, sc=sc, v=v0))
+            # B-xsze: digital (toe) pad, an ellipsoid under the toe that carries it on the ground
+            tp = dg.get('toe_pad')
+            tpad = None
+            if tp:
+                tpad = dict(c=W(tp['u'], tp['z']), ax=np.array([l2, f2, [0, 0, 1.0]]), R=np.array(tp['r']) * sc * MM)
+            out.append(dict(C=C, R=R, pad=np.array(pad), padR=np.array(padR), f=f2, l2=l2, tip=tipxy, sc=sc, v=v0, tpad=tpad))
         return out
 
+    def pads_d(s, q):
+        """B-xsze: main (metacarpal / metatarsal) pad as a few ellipsoid lobes under the foot behind the toes."""
+        mp = s.p.get('main_pad'); d = None
+        if not mp: return None
+        ax = np.array([s.l, s.f, [0, 0, 1.0]])
+        for lobe in mp['lobes']:
+            u, v, z, rl, rf, rz = lobe; c = s.O + s.f * (u * s.S * MM) + s.l * (v * s.S * MM) + np.array([0, 0, z * s.S * MM])
+            dd = ellipsoid_d(q, c, ax, np.array([rl, rf, rz]) * s.S * MM); d = dd if d is None else smin(d, dd, mp.get('k_lobe', 2) * MM)
+        return d
+
+    def groove_d(s, q):
+        """B-xsze: cleft carvers between neighbouring toes: a thin vertical blade on the mid plane of each pair, V-shaped
+        (zero width at its floor), fading out behind the knuckles. Returns the carver field (negative inside the blade)."""
+        g = s.p.get('groove')
+        if not g: return None
+        d = None; S = s.S
+        for i in range(3):
+            A, B = s.digits[i], s.digits[i + 1]
+            fm = A['f'] + B['f']; fm /= np.linalg.norm(fm); n = np.array([-fm[1], fm[0], 0.0]); pm = 0.5 * (A['tip'] + B['tip'])
+            r = q - pm; dm = r @ n; um = r @ fm; z = q[:, 2]
+            if g.get('mode') == 'v':
+                # B-xv9f: soft, wide V groove. The floor height follows a table along the pair's mid line (um, mm behind
+                # the tips, negative = behind), the half-width opens with height above the floor at half_angle_deg from
+                # vertical, and the carve fades out behind the knuckles and in front of the tips (small notch only).
+                bu = np.array(g['floor_u'], float); o = np.argsort(bu)   # floor_u: mm behind the tips (positive)
+                fl = np.interp(-um / (S * MM), bu[o], np.array(g['floor_z'], float)[o]) * S * MM
+                hz = z - fl; ta = np.tan(np.radians(g['half_angle_deg']))
+                hw = g.get('w0', 0.3) * S * MM + ta * np.maximum(hz, 0) + np.minimum(hz, 0) * g.get('below_close', 3.0)  # closes below the floor
+                mask = 1 - sstep(g['back'] * S * MM - g['fade'] * S * MM, g['back'] * S * MM, -um)
+                mask = mask * (1 - sstep(g.get('front', 0) * S * MM, (g.get('front', 0) + g.get('front_fade', 4)) * S * MM, um))
+                dd = np.abs(dm) - hw * mask + 8 * MM * (1 - mask)
+                d = dd if d is None else np.minimum(d, dd); continue
+            fl =(g['floor'] + g.get('floor_slope', 0.0) * np.clip(-um / (S * MM), 0, None)) * S * MM   # floor rises toward the back
+            mask = sstep(fl, fl + g['ramp'] * S * MM, z)
+            mask = mask * (1 - sstep(g['back'] * S * MM - g['fade'] * S * MM, g['back'] * S * MM, -um))
+            mask = mask * (1 - sstep(g.get('front', 6) * S * MM, (g.get('front', 6) + 3) * S * MM, um))
+            dd = np.abs(dm) - g['w'] * S * MM * mask + 8 * MM * (1 - mask)
+            d = dd if d is None else np.minimum(d, dd)
+        return d
+
     def digit_d(s, q, D):
-        d = tube(q, D['C'], D['R']); dp = tube(q, D['pad'], D['padR']); return smin(d, dp, s.p['k_pad'] * MM)
+        ls = s.p['digits'].get('lat_scale', 1.0)
+        qq = q if ls == 1.0 else q - (1 - 1 / ls) * (((q - D['tip']) @ D['l2'])[:, None] * D['l2'][None, :])
+        d = tube(qq, D['C'], D['R']) * (ls if ls < 1 else 1.0); dp = tube(qq, D['pad'], D['padR']) * (ls if ls < 1 else 1.0)
+        d = smin(d, dp, s.p['k_pad'] * MM)
+        if D['tpad'] is not None:
+            d = smin(d, ellipsoid_d(q, D['tpad']['c'], D['tpad']['ax'], D['tpad']['R']), s.p['digits']['toe_pad'].get('k', 1.5) * MM)
+        return d
 
     # ---------- whole ----------
     def bbox(s):
-        pts = [s.O + s.l * (x * MM) + s.f * (y * MM) for x in (-40, 40) for y in (-15, 28)]
+        pts = [s.O + s.l * (x * MM * s.S) + s.f * (y * MM * s.S) for x in (-40, 40) for y in (-15, 28)]
         pts += [s.heel + s.l * (x * MM) + s.f * (y * MM) for x in (-45, 45) for y in (-45, 30)]
         pts += [s.cut + np.array(d) * MM for d in ([45, 45, 0], [-45, -45, 0])]
         pts = np.array(pts); lo = np.r_[pts[:, :2].min(0), -0.004]; hi = np.r_[pts[:, :2].max(0), s.cut[2] + 0.035]
@@ -167,6 +224,15 @@ class Paw:
             for D in s.digits:
                 dd = s.digit_d(x, D); dig = dd if dig is None else smin(dig, dd, p['k_digit_digit'] * MM)
             f = smin(body, dig, p['k_digit_foot'] * MM)
+            pd = s.pads_d(x)
+            if pd is not None: f = smin(f, pd, p['main_pad'].get('k', 1.5) * MM)
+            gd = s.groove_d(x)
+            if gd is not None: f = smax(f, -gd, p['groove'].get('k', 1.0) * MM)
+            hl = p.get('heel_lift')
+            if hl:   # B-xsze: lift the underside behind the main pad so the heel rises off the ground sooner
+                u = (x - s.O) @ s.f; sl = np.tan(np.radians(hl['deg']))
+                hp = (hl['z0'] * MM + sl * (-u - hl['u0'] * s.S * MM) - x[:, 2]) / np.sqrt(1 + sl * sl)
+                f = smax(f, hp, hl.get('k', 4) * MM)
             # knuckle-to-foot crease: subtract a soft groove just behind the knuckle row is avoided; the dip comes from the forms
             f = smax(f, -x[:, 2], p['k_sole'] * MM)                     # flat sole on the ground
             t = (x - s.cut) @ s.a; f = np.maximum(f, -t)                   # cut at the join plane (cap)
@@ -269,7 +335,7 @@ def main(basep, paramsp, outp):
         for i, D in enumerate(pw.digits):
             pitch = np.radians(cpar['pitch_deg']); tgt = D['f'] * np.cos(pitch) - np.array([0, 0, 1.0]) * np.sin(pitch)
             Rm = rot_between(ce, tgt)
-            seat = D['tip'] + D['f'] * (cpar['base_u'] * MM) + np.array([0, 0, cpar['base_z'] * MM])
+            seat = D['tip'] + D['f'] * (cpar['base_u'] * MM * pw.S) + np.array([0, 0, cpar['base_z'] * MM * pw.S])
             nvx = (cv - cb) @ Rm.T + seat
             if nvx[:, 2].min() < cpar['min_z'] * MM: nvx[:, 2] += cpar['min_z'] * MM - nvx[:, 2].min()
             M = np.eye(4); M[:3, :3] = Rm; M[:3, 3] = seat - Rm @ cb

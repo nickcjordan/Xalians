@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5A9A384WYPCKDHH07C5AKQV",
+  "alias": "xsze",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Polish the authored paws in clay against the sheet on the full view board: deeper clefts and rounder separate toes, toe pads, less fist-like from the front, size toward the sheet, shorter hind heel run within the paw",
+  "scope": "authored paw part parameters and builder; previews only",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-19T14:33:36Z",
+  "briefSha256": "832db79277266762d20be83c3cf43beb3f7a5a7fe5cf7fcca848d9eb3df7510b"
+}

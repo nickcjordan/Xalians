@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5AC0GV2FNPM84FAZGWKNAX5",
+  "alias": "xv9f",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Paw polish pass 3: short round compact toes packed together (pass 2 went finger-like), soft wide V clefts, smooth cleft floors, stronger hind main pad",
+  "scope": "authored paw part parameters and builder; previews only",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-19T15:20:48Z",
+  "briefSha256": "1081445e42f8ffeed109017c3e271126b4202b9eaa1015df2b9517517d4f90ba"
+}
