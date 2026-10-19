@@ -101,3 +101,16 @@ Verify a reviewer's factual claims before acting on them. The first independent 
 Measure a proportion before correcting it. Two reviewers and the builder all read the ear fan as too narrow. Height-normalized width profiles showed the fan matched the first sheet within about .02 of figure height; the neck and torso were 30 to 40 percent too wide, which made the fan read small. Widening the fan would have compounded the real error. Normalize by figure height, not by a neighboring part that may itself be wrong.
 
 Coat masses read by their shape and flow, not their count. Spines radiating from one point read as a sea urchin, rounded shingles as feathers. Long tapered clumps that part at the midline and flow toward the wings, each overlapping several rows, read as fur. Drop any lock whose tip would leave the surface so the authored silhouette stays intact.
+
+## Judge every view, build anatomy (Luceras paws, 2026-10-16 to 10-18)
+
+About a dozen builds over three days failed on the Luceras paws. Then Nick pointed out that each one had been judged from one view at a time, and none had built a foot. Three methods failed in turn. Fur over the old shape gave a "cinder block". Uniform scaling gave A, B and C options that barely differed. Code-warping the existing vertices hit the section numbers but crushed the paw into a pancake.
+
+What worked the first time was an authored part built to an anatomy spec: a foot body and four digits, each knuckle a dome above a low flat foot top, each toe curling to the ground. It was checked on a view board, with every camera and the section profiles together.
+
+The rules:
+- A part brief states the anatomy as structure and section profiles with numbers.
+- Every build and review uses the full view board.
+- The first stall audit asks two questions: was the build judged on every view, and can the method produce the anatomy at all?
+
+These rules now live in creature-stage-contracts.md: the brief template, the reviewer template and the stall rule.

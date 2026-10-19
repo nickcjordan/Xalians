@@ -25,7 +25,7 @@ Terms: a **builder** is the agent that produces a stage's outputs; a **reviewer*
 | 2 | Vision board | reading | option sets per signature element (palette fit to the home world, coat and texture, pattern, anatomy studies, eyes and expression), each option with a plain summary; picks stored as references with a job and a not-for | block: every option carries its summary; the described features are present in every option; measure: regenerations per element | options differ visibly; each matches its summary; no option violates a must-have | Nick picks on the selection screen (records and tooling, section 4): picks, undo, none-of-these and mix orders are store writes filed as decisions bound to image hashes; a composed preview of all picks precedes Confirm; approval is the Confirm decision |
 | 3 | Model sheet | vision picks, silhouette, class rest pose | turnaround (front, three-quarter, side, back, top) in the class rest pose with limbs apart, signature close-ups, a shaved clay bare-body version with fur depth per region noted, a contradiction list | block: all views present; measure: cross-view proportion deltas, contradictions found, regenerations | proportions agree across views within tolerance; bare body is flesh, not furred silhouette in clay; every must-have visible in at least one view | Nick approves per aspect on the selection screen (one set per aspect where options exist, otherwise one approve control per aspect), checks numbered |
 | 4 | Blockout and proxy rig | sheet, class spec | blockout mesh in meters at sheet proportions; creature rig spec (joint placements); proxy-bound mesh; pose sheet (rest plus three extreme poses from the move vocabulary) | block: scale, forward axis, manifold, joint count, influences; deformation sanity (no region loses more than 30 percent volume in any pose); measure: proportion deltas to the bare sheet | proportions match the bare sheet from every standard camera; the pose sheet shows no collapse, pinching or hinge gaps; joint placements sit where the sheet implies joints | Nick approves proportions (standard cameras, bare sheet beside); the pose sheet is shown so he sees it bends, with no question on it |
-| 5 | Sculpt | blockout, sheet, reconstruction runs | per part in dependency order: previews, builds, defects, an approved build; whole-form join check | block: one closed manifold after assembly; outputs hashed; declared outside-the-part changes; measure: displacement outside the part, fit to the sheet | the targeted defect is fixed in the images; no new defect visible at game size; the part reads as the sheet's part; nothing outside the part moved undeclared | Nick approves each part (one defect per check, before and after, sheet beside, sprite-size view), then the whole form |
+| 5 | Sculpt | blockout, sheet, reconstruction runs | per part in dependency order: previews, builds, defects, an approved build; whole-form join check | block: one closed manifold after assembly; outputs hashed; declared outside-the-part changes; measure: displacement outside the part, fit to the sheet | the part reads as the sheet's part from every camera on the view board (side, front, three-quarter, top, low rear three-quarter) at once, with its section profiles matching the anatomy spec; the targeted defect is fixed in the images; no new defect visible at game size; nothing outside the part moved undeclared | Nick approves each part on a view board (every camera, before and after, sheet beside, sprite-size view), then the whole form |
 | 6 | Game mesh | sculpt, base meshes | wrapped and joined game mesh at full tier, UVs, low tier when the generator exists | block: triangles within budget, manifold, UV overlap, texel density range, deformation test in proxy poses; measure: distance to sculpt per region | sculpt and game mesh at game size show no visible loss; loops sit at joints; UV islands follow the roster layout | technical gate; Nick sees sculpt beside game mesh at game size, one check: any visible loss? |
 | 7 | Surface | game mesh, sculpt, vision palette, style bible | baked normal and occlusion, base color with pattern in UV space, material from the vocabulary, texture fur, finish variants | block: texture sizes, material count, missing maps, variants present; measure: value range against the bible | look-dev renders match the vision picks; pattern follows the body; fur length follows the sheet's regions; finishes read distinctly at game size | Nick approves the look (look-dev scene, game size and close, the four finishes side by side) |
 | 8 | Rig | game mesh, class modules, creature rig spec | deformation skeleton, skinning, corrective blend shapes where needed, control rig in Blender | block: joint count, influences, unweighted vertices, naming, socket tags, root at origin; measure: volume change per joint region in the pose sheet | the pose sheet shows clean bends at every joint; sockets sit where the contract says; no vertex belongs to a wrong module | Nick approves the deformation sheet (rest plus extreme poses, numbered joints) |
@@ -39,6 +39,8 @@ Terms: a **builder** is the agent that produces a stage's outputs; a **reviewer*
 Stage <n> <name>, creature <key>, build <alias>
 Goal, in Nick's words: "<quote, date>" (or: orchestrator's goal, stated)
 Scope: <part or stage>; includes <list>; depends on <parts>
+Anatomy spec (any part with a shape): what the part is as a structure, read from the sheet in every view it appears (e.g. a paw: foot body, four digits, knuckle dome above a low flat foot top, toe curling to the ground, clefts between digits), with numbers as section profiles (lengthwise and crosswise) and ratios to its neighbors
+Views: the build is judged on the view board, every standard camera together plus the section profiles; a change that reads right in one view and wrong in another is not done
 Defect targeted (if any): <alias>, <plain description>, <camera>, <region image>
 Holds:
   | Hold | Source (Nick quote + date, or inferred: reason) | Strength |
@@ -47,7 +49,7 @@ Inputs: <artifact paths with hashes>
 Required outputs: <list, with the validator that will run on each>
 Lessons that apply (at most five): <statement, evidence>
 Budget: <builds left, wall minutes, deadline>
-Report: outputs with hashes; the defect's result (fixed, partly, not) with evidence images; Blocked by: <hold alias or nothing> and what lifting it would allow; new defects seen; cost
+Report: outputs with hashes; the view board (clay, every camera, before | after | sheet) and the section profiles; the defect's result (fixed, partly, not) with evidence images; Blocked by: <hold alias or nothing> and what lifting it would allow; new defects seen; cost
 Rules: no new tools; no self-grading; previews before any new method; stop and report at the deadline
 ```
 
@@ -55,7 +57,7 @@ Rules: no new tools; no self-grading; previews before any new method; stop and r
 
 ```
 Stage <n> <name>, creature <key>, build <alias>
-You see: the outputs (images, meshes, viewer page) and this checklist. You do not see the builder's report.
+You see: the outputs (images, meshes, viewer page), the view board with every camera side by side, and this checklist. A part judged from fewer cameras than the board is not reviewed. You do not see the builder's report.
 Checklist: <the stage's rows from section 1, as numbered yes-or-no items>
 Return: pass, or a list of named defects, each with a camera, a 2D region and one sentence; no scores
 ```
@@ -66,7 +68,7 @@ Return: pass, or a list of named defects, each with a camera, a 2D region and on
 
 ## 5. Stall rule
 
-A defect surviving two builds is stalled. The next build needs an audit record naming the physical cause and checking every hold against it, ending in exactly one of: lift an inferred hold, change the method, rescope the part, or ask Nick one question with pictures. An audit that changes nothing unlocks nothing.
+A defect surviving two builds is stalled. The next build needs an audit record naming the physical cause and checking every hold against it, ending in exactly one of: lift an inferred hold, change the method, rescope the part, or ask Nick one question with pictures. An audit that changes nothing unlocks nothing. The audit must also answer two questions before anything else: (1) was the failing build judged on the full view board, or from one camera at a time; and (2) can the method produce the anatomy at all? Covering, scaling or warping existing geometry cannot create structure that is not there (Luceras paws, 2026-10-16 to 10-18: fur, uniform scaling and vertex warping each failed; an authored part built to an anatomy spec worked the first time). When the method cannot, change it at the first audit, and lift any hold that forces it.
 
 ## 6. What this part leaves to later parts
 
