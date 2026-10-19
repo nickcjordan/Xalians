@@ -39,7 +39,7 @@ Terms: a **builder** is the agent that produces a stage's outputs; a **reviewer*
 Stage <n> <name>, creature <key>, build <alias>
 Goal, in Nick's words: "<quote, date>" (or: orchestrator's goal, stated)
 Scope: <part or stage>; includes <list>; depends on <parts>
-Anatomy spec (any part with a shape): what the part is as a structure, read from the sheet in every view it appears (e.g. a paw: foot body, four digits, knuckle dome above a low flat foot top, toe curling to the ground, clefts between digits), with numbers as section profiles (lengthwise and crosswise) and ratios to its neighbors
+Anatomy spec (any part with a shape): what the part is as a structure, read from the sheet in every view it appears (e.g. a paw: foot body, four digits, knuckle dome above a low flat foot top, toe curling to the ground, clefts between digits), with numbers as section profiles (lengthwise and crosswise) and ratios to its neighbors; for a part with bones, the skeleton the skin covers (each bone's start, end and radius) so the build grows one skin from the bones outward instead of joining separately modeled surfaces
 Views: the build is judged on the view board, every standard camera together plus the section profiles; a change that reads right in one view and wrong in another is not done
 Defect targeted (if any): <alias>, <plain description>, <camera>, <region image>
 Holds:

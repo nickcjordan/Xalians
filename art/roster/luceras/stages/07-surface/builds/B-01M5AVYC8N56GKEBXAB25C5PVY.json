@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5AVYC8N56GKEBXAB25C5PVY",
+  "alias": "9cvs",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Paw pass 5: build the paw from its bones outward (metatarsals fanning from the ankle to the knuckles, phalanges to the claws) with one implicit skin, so the toes continue up through the foot as one cohesive form, keeping pass 4's measured proportions",
+  "scope": "paw builder method and parameters; previews only",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-19T19:59:15Z",
+  "briefSha256": "4349e74a13696d6546c175180c35187a185a643c3369d40823f22b2704501aa4"
+}

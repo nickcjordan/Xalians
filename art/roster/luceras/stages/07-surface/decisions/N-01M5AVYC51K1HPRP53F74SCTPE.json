@@ -1,0 +1,15 @@
+{
+  "id": "N-01M5AVYC51K1HPRP53F74SCTPE",
+  "alias": "whfr",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Audit after B-hxde: views and measures pass, but the part is built as toes stuck onto a featureless tube, so it reads as two things. Physical cause: the builder models surfaces (toe tubes, a swept foot body) instead of the skeleton they cover. Method change: build the paw from its bones outward. Four metatarsals fan from the wrist or hock to the knuckles, the phalanges continue each line to the claw, and the skin is one implicit field (smooth union of capsules around the bones plus a soft foot mass, meshed once with OpenVDB per the Akinza field-space lesson). Metatarsal ridges with shallow valleys between them run up the foot top and fade into the round ankle.",
+  "date": "2026-10-19",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-19T19:59:15Z"
+}
