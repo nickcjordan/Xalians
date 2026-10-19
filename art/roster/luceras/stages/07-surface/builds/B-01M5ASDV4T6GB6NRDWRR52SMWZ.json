@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5ASDV4T6GB6NRDWRR52SMWZ",
+  "alias": "hxde",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Paw pass 4: restore mass the thinning removed, measured against the sheet side view: hind paw length back to about 2.5x leg width, knuckles and toes fuller, a shallower dip so the foot body is not a thin slab, longer chunkier toes",
+  "scope": "authored paw part parameters; previews only",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-19T19:15:16Z",
+  "briefSha256": "b8676dfd1367567790ab14a320930e5649d386d9aa178cb3a8e768747578b859"
+}
