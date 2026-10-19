@@ -1,0 +1,15 @@
+{
+  "id": "N-01M58QZNKKT2XV0AFBZVPYT08J",
+  "alias": "wndy",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Audit after B-4cj4. The section-profile numbers passed (a 5 to 8 mm dip behind every hind knuckle), but the clay is a crushed pancake: toes crumpled and twisted, the paw about 20 mm tall. Warping the existing reconstruction vertices by code cannot sculpt toes; the topology-preservation hold is what forces that method. Method change: author the paw as a part. Build a parametric paw (pad and four digits, each with a knuckle dome and a phalanx curling to the ground, claw seated at the tip) as swept forms sized from the sheet's paw. Show it to Nick in clay from every view before integrating. Integration then replaces the paw region; the rig re-skins it by weight transfer and the groom script regrows on the new triangles. The topology hold is lifted for the paw region only, because it is the cause of the stall.",
+  "date": "2026-10-19",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-19T00:11:34Z"
+}

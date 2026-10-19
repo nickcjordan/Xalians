@@ -1,0 +1,19 @@
+{
+  "id": "B-01M58QZNS5WPHQ5TTHSTRW1ADZ",
+  "alias": "exrv",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Authored paw part (hind and fore) in clay, shown from every view beside the sheet and placed on the leg, as a shape target for Nick before integration",
+  "scope": "new paw meshes and claws, previews; no change to the approved sculpt",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-19T00:11:35Z",
+  "briefSha256": "f825a26891ce198c3d98ee80ace1d437db120f7c5c3541a2606cdaaec1d8165c"
+}
