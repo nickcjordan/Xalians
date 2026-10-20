@@ -1,0 +1,10 @@
+{
+  "note": "Step 19 ear poof color options (Nick 2026-10-20: make the poof darker gray so the round head does not look like it has a protrusion). Color only, through the coat shader's own strand attributes: fur_tone multiplies the strand color (linear = value^2.2 of the stated share of the head white), cupm mixes the ear stripe blue. The blend band fades each option back to the native ear coat.",
+  "default": "G-b",
+  "options": {
+    "white": {"value": 1.0, "cupm": 0.0, "label": "step 18 white (reference)"},
+    "G-a": {"value": 0.75, "cupm": 0.0, "label": "light gray, 75 percent of head white"},
+    "G-b": {"value": 0.55, "cupm": 0.0, "label": "medium gray, 55 percent"},
+    "G-c": {"value": 0.60, "cupm": 0.40, "label": "cool blue gray, 60 percent"}
+  }
+}
