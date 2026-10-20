@@ -1,0 +1,22 @@
+{
+ "name": "ear base v1",
+ "approval": null,
+ "note": "ear base v1 (2026-10-20, fur step 28; Nick: \"didnt i ask you to fix all\"), for earbase_v1_post.py after P-lids1 of recipe-integrated-v3. The broad pocket at the inner corner where the front of each ear folds into the head (deepest at x +-.153, y -.035, z .78 on assembled-3300: about .001 below its 15 mm local plane, .0022 below its 25 mm plane, no sharp crease), filled to 60 percent of its depth below the 25 mm local plane, fill only, as a diffused height that tapers to zero at 2.4 cm from the corner (no rim); mirrored on both ears. World units, +y back.",
+ "centers": [
+  [
+   -0.153,
+   -0.035,
+   0.78
+  ],
+  [
+   0.153,
+   -0.035,
+   0.78
+  ]
+ ],
+ "radius": 0.024,
+ "maxMove": 0.003,
+ "fitRadius": 0.025,
+ "diffusePasses": 80,
+ "fillFraction": 0.6
+}
