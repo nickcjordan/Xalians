@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5CTZJJR32JJA6SH60YBXG5Q",
+  "alias": "yqgg",
+  "stage": "08-rig",
+  "kind": "build",
+  "goal": "Integrate the approved paws (B-pzrq) into the sculpt and refit the rig to it: weld the four paw parts onto the body, transfer skin weights and the six corrective shape keys to the new topology, re-render the deformation sheet",
+  "scope": "sculpt paw region topology, sculpt skinning and correctives; game mesh untouched (parked)",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-20T14:20:55Z",
+  "briefSha256": "f02596b32feff4120449e633a167a1cf4f5a7941ccbdc8db1b148d8cc3fdf452"
+}

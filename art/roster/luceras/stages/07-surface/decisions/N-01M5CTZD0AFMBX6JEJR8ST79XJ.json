@@ -1,0 +1,18 @@
+{
+  "id": "N-01M5CTZD0AFMBX6JEJR8ST79XJ",
+  "alias": "t8c8",
+  "stage": "07-surface",
+  "who": "nick",
+  "words": "yes (2026-10-20, approving the paw shape from cleanup pass 8 on the review page)",
+  "date": "2026-10-20",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5CSS78Y6V4PGKVV5DF2FJX8",
+    "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+    "evidence": [
+      "adc1fb9d6b13728262cff8ec3b7d4b92f45b8525b8513974214718ad88af5440,2f41c8d959b914e06eeb464785e424f308359bcb583189fdfff3c5fdd8e21eaf,6b643d7589c55d0f9b8aacae3abfdee1e036d0054f9aa4f0497c4df66aed107e,21eea6b887dce2aa8e856630fe1858f364da8aebbb83cc366e9cfc561f23a650,15e680ad8dce901d5de765d9e3283bddc25e9094784b293223569338fa1882fa,ac0bf5e35cf28db0f9d919fb26a15ccd6a70ec880301f1d073e48702d9dd3b8f,d45d8065992f1b33359ce12e6451906fc100064b8379365a26b75d3e177529dd"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-20T14:20:49Z"
+}
