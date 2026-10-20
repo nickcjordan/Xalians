@@ -7,9 +7,10 @@ over 35 degrees and 15 degrees above the neighbor median) or reaches past
 1.4 times their median length. A stray is rotated down toward the skin, to the
 neighbor median elevation, and trimmed to 1.2 times the neighbor median length.
 Pads carry no strands (7c), and the fringe keeps its own direction and length
-because only outliers against it change.
+because only outliers against it change. Before that, the isolated groove
+spikes listed by plan_soles_27.py are culled (zero radius, as earlier culls).
 
-  blender -b --python build_fix_27.py -- <before dir> <out dir>
+  blender -b --python build_fix_27.py -- <before dir> <out dir> <27-sole-plan.npy>
 """
 import sys
 import json
@@ -20,7 +21,8 @@ from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
-before, out = map(Path, sys.argv[sys.argv.index('--') + 1:])
+before, out, plan_path = map(Path, sys.argv[sys.argv.index('--') + 1:])
+culls = np.load(plan_path)
 assert not (out / 'surface.blend').exists()
 out.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.open_mainfile(filepath=str(before / 'surface.blend'))
@@ -51,6 +53,12 @@ nrm = np.empty(len(starts) * 3, np.float32)
 cu.attributes['nrm'].data.foreach_get('vector', nrm)
 nrm = nrm.reshape(-1, 3)
 active = np.maximum.reduceat(rad, starts) > 0
+cull = np.zeros(len(starts), bool)
+cull[culls] = True
+cull &= active
+rad[np.repeat(cull, counts)] = 0
+cu.attributes['radius'].data.foreach_set('value', rad)
+active &= ~cull
 roots = P[starts]
 cand = np.where(active & (roots[:, 2] < -.91) & (nrm[:, 2] < -.25))[0]
 cand = np.array([i for i in cand if solef[stree.find(Vector(roots[i]))[1]] > .5])
@@ -115,10 +123,11 @@ for k, i in enumerate(cand):
     trimmed += long
 cu.points.foreach_set('position', P.ravel())
 keep = np.repeat(~changed, counts)
+changed |= cull
 assert np.array_equal(P[keep], orig[keep])
-print('SOLES27', dict(soleStrands=len(cand), laid=int(laid), trimmed=int(trimmed), keptOnCollision=held), flush=True)
+print('SOLES27', dict(culled=int(cull.sum()), soleStrands=len(cand), laid=int(laid), trimmed=int(trimmed), keptOnCollision=held), flush=True)
 info.update(parent=str(before))
-info['soles27'] = dict(soleStrands=len(cand), laid=int(laid), trimmed=int(trimmed), keptOnCollision=held)
+info['soles27'] = dict(culled=int(cull.sum()), soleStrands=len(cand), laid=int(laid), trimmed=int(trimmed), keptOnCollision=held)
 (out / 'surface-info.json').write_text(json.dumps(info, indent=2) + '\n')
 prior = dict(np.load(before / 'patch-evidence.npz'))
 prior['changed27'] = changed
