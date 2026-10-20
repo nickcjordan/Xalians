@@ -25,9 +25,24 @@ def apply(evidence, name):
     w = np.r_[evidence['band'], np.ones(len(tone) - NATIVE)]   # 1 on poof strands, band fade on natives
     factor = opt['value'] ** 2.2
     tone = tone * (1 - w * (1 - factor))
-    cupm = cupm * (1 - w) + w * opt['cupm'] if opt['cupm'] > 0 else cupm
-    for attr, value in (('fur_tone', tone), ('cupm', cupm)):
-        a = cu.attributes[attr]
-        assert a.domain == 'CURVE'
-        a.data.foreach_set('value', value.astype(np.float32))
-    print('POOF_COLOR', name, dict(value=opt['value'], linearTone=round(factor, 3), cupm=opt['cupm']), flush=True)
+    if opt['cupm'] > 0:
+        cupm = cupm * (1 - w) + w * opt['cupm']
+    a = cu.attributes['fur_tone']
+    assert a.domain == 'CURVE'
+    a.data.foreach_set('value', tone.astype(np.float32))
+    a = cu.attributes['cupm']
+    if a.domain == 'CURVE':
+        assert 'ombreRoot' not in opt, 'ombre needs per-point cupm (step 20 surface)'
+        a.data.foreach_set('value', cupm.astype(np.float32))
+    else:
+        starts = np.empty(len(cu.curves), np.int32)
+        cu.curves.foreach_get('first_point_index', starts)
+        counts = np.diff(np.r_[starts, len(cu.points)])
+        pts = np.repeat(cupm, counts).astype(np.float32)
+        if 'ombreRoot' in opt:
+            for i in range(NATIVE, len(starts)):
+                t = np.linspace(0, 1, counts[i])
+                pts[starts[i]:starts[i] + counts[i]] = opt['ombreRoot'] * (1 - t)
+        a.data.foreach_set('value', pts)
+    print('POOF_COLOR', name, dict(value=opt['value'], linearTone=round(factor, 3), cupm=opt['cupm'],
+                                   ombreRoot=opt.get('ombreRoot')), flush=True)
