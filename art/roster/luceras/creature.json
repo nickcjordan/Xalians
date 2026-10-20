@@ -125,15 +125,19 @@
       "openedAt": "2026-10-16T14:08:03Z"
     },
     "08-rig": {
+      "state": "closed",
+      "approval": "N-01M5D1AXTEVVFCH5GYNXCTMCBJ",
+      "evidence": [
+        "2fdecf8562aac8dfabcefa3686931730f3c100d800ed12b367c2d787a53c7ed8,e84d4f58a038d349c85181fddd63cf41448aeaecf774dce03d4764e0c5e3db5b"
+      ],
+      "openedAt": "2026-10-16T17:42:04Z",
+      "closedAt": "2026-10-20T16:12:35Z"
+    },
+    "09-animate": {
       "state": "open",
       "approval": null,
       "evidence": [],
-      "openedAt": "2026-10-16T17:42:04Z"
-    },
-    "09-animate": {
-      "state": "not-started",
-      "approval": null,
-      "evidence": []
+      "openedAt": "2026-10-20T16:11:59Z"
     },
     "10-export": {
       "state": "not-started",

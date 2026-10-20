@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5D1AYFT9ZC34Z32PCVX9TFT",
+  "alias": "78vx",
+  "stage": "09-animate",
+  "kind": "build",
+  "goal": "Slice clips: idle loop and sig.horns-first-descent (lunge archetype), side facing, baked on the refit rig, reviewed first as moving clay at 1x",
+  "scope": "clip code, bake, clay playblasts, events",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-20T16:11:59Z",
+  "briefSha256": "1225d3e7111dd7bd4975134e4f287525c4a5ead46be5ef267d95ceef86e1c19d"
+}

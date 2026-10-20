@@ -1,0 +1,17 @@
+{
+  "id": "N-01M5D1AXTEVVFCH5GYNXCTMCBJ",
+  "alias": "gs2e",
+  "stage": "08-rig",
+  "who": "nick",
+  "words": "looks good enough, proceed (2026-10-20, on the review page with the refit rig and the furred new paws)",
+  "date": "2026-10-20",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5CTZJJR32JJA6SH60YBXG5Q",
+    "evidence": [
+      "2fdecf8562aac8dfabcefa3686931730f3c100d800ed12b367c2d787a53c7ed8,e84d4f58a038d349c85181fddd63cf41448aeaecf774dce03d4764e0c5e3db5b"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-20T16:11:58Z"
+}
