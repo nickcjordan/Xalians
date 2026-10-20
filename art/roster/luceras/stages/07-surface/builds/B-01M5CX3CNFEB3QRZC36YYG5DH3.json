@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5CX3CNFEB3QRZC36YYG5DH3",
+  "alias": "j5p6",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Regrow the strand-fur groom on the integrated sculpt (B-yqgg pass 3): body groom as pass 5 and 6, paw fur fitted to the new knuckled paws, rendered beside the sheet and the old furred paws",
+  "scope": "groom reapply, paw fur parameters, renders",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-20T14:57:57Z",
+  "briefSha256": "0567a9cf948a7fe130216215cebb298a970449a64e53185e8207b8d576da5080"
+}

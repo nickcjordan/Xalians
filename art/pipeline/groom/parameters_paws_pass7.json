@@ -1,0 +1,67 @@
+{
+ "build_id": "B-j5p6",
+ "seed": 517331,
+ "children": 170000,
+ "points": 7,
+ "root_radius": 7.5e-05,
+ "max_root_height": 0.085,
+ "color_source_z": [
+  0.07,
+  0.1
+ ],
+ "color_blend_z": [
+  0.045,
+  0.085
+ ],
+ "sole_normal_z": -0.45,
+ "fore_toe_length": 0.04,
+ "hind_toe_length": 0.046,
+ "toe_top_z": 0.038,
+ "groove_width": 0.006,
+ "groove_skin_dark": 0.85,
+ "groove_density_cut": 0.8,
+ "groove_length_cut": 0.7,
+ "groove_hair_dark": 0.7,
+ "part_strength": 1.4,
+ "claw_length_cut": 0.6,
+ "toe_length": 0.004,
+ "paw_length": 0.0078,
+ "fringe_length": 0.014,
+ "back_fringe_extra": 0.004,
+ "lift": 0.3,
+ "knuckle_lift": 0.12,
+ "droop": 0.45,
+ "clumps": 6000,
+ "clump": 0.6,
+ "frizz": 0.0005,
+ "hair_color_scale": 0.34,
+ "hair_roughness": 0.6,
+ "samples_preview": 32,
+ "samples_final": 64,
+ "claw_clear": [
+  0.004,
+  0.01
+ ],
+ "dark_paw_z": [
+  0.04,
+  0.075
+ ],
+ "converge": 0.4,
+ "crest_light": 0.45,
+ "groove_reach": [
+  0.012,
+  0.02
+ ],
+ "tip_fade": [
+  0.55,
+  0.85
+ ],
+ "fringe_z": [
+  0.045,
+  0.075
+ ],
+ "tuft_fraction": 0.2,
+ "tuft_scale": 1.9,
+ "clump_tone": 0.22,
+ "tip_light": 1.35
+}
