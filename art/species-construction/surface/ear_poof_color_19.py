@@ -40,9 +40,13 @@ def apply(evidence, name):
         counts = np.diff(np.r_[starts, len(cu.points)])
         pts = np.repeat(cupm, counts).astype(np.float32)
         if 'ombreRoot' in opt:
+            mask = evidence['poofEarMask'] if 'poofEarMask' in evidence else None
             for i in range(NATIVE, len(starts)):
                 t = np.linspace(0, 1, counts[i])
-                pts[starts[i]:starts[i] + counts[i]] = opt['ombreRoot'] * (1 - t)
+                pts[starts[i]:starts[i] + counts[i]] = opt['ombreRoot'] * (1 - t) + opt.get('ombreTip', 0.0) * t
+                if mask is not None:
+                    k = starts[i] - starts[NATIVE]
+                    pts[starts[i]:starts[i] + counts[i]] *= mask[k:k + counts[i]]
         a.data.foreach_set('value', pts)
     print('POOF_COLOR', name, dict(value=opt['value'], linearTone=round(factor, 3), cupm=opt['cupm'],
-                                   ombreRoot=opt.get('ombreRoot')), flush=True)
+                                   ombreRoot=opt.get('ombreRoot'), ombreTip=opt.get('ombreTip')), flush=True)
