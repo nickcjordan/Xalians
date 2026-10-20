@@ -1,0 +1,14 @@
+{
+  "id": "D-01M5DF2KRCK6B9NX7CVTPAC0E1",
+  "alias": "tmqp",
+  "stage": "09-animate",
+  "description": "Odd crease ring around the neck behind the head, as if the head and neck were built as separate chunks and never blended (Nick, 2026-10-20, circled on the idle side frame)",
+  "camera": "full_side",
+  "region": "neck",
+  "origin": null,
+  "attempts": [
+    "B-01M5DF2QJ9H5DVZYNRKE1PXZZP"
+  ],
+  "status": "open",
+  "createdAt": "2026-10-20T20:12:06Z"
+}

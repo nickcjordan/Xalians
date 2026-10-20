@@ -1,0 +1,17 @@
+{
+  "id": "N-01M5DF2KKMQA567F836APFBZT9",
+  "alias": "span",
+  "stage": "09-animate",
+  "who": "nick",
+  "words": "I think all those animations look great (2026-10-20, on the motion page: idle and sig.horns-first-descent, pass 2)",
+  "date": "2026-10-20",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5D1AYFT9ZC34Z32PCVX9TFT",
+    "evidence": [
+      "40c8398b022b04b5b28245e0227538dd416442794ab49c21453791ae0c95bfcd"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-20T20:12:06Z"
+}
