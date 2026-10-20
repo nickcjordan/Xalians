@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5CSS78Y6V4PGKVV5DF2FJX8",
+  "alias": "pzrq",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Paw cleanup 2: fix the clefts (engraved V edges, fore toe 2 S crease, torn cleft walls) with rounded grooves in the field and a finer local remesh; the 2 percent band is lifted for the clefts only",
+  "scope": "cleft grooves and remesh; previews only",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-20T13:59:58Z",
+  "briefSha256": "fbc1f91b020a1abcfb3a42bf0c94f0886d1dba62d79fa04f51b9cf931dd8558a"
+}

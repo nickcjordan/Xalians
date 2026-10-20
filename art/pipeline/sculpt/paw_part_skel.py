@@ -89,6 +89,42 @@ class SkelPaw(PB.Paw):
                 s.vgrooves.append(dict(M=Mc[keep], H=H[keep], dep=dep[keep], n=n[keep], ta=ta[keep], tree=cKDTree(Mc[keep][:, :2])))
         return out
 
+    def axis_d(s, q, i, aw):
+        """Distance to digit i's bone chain with its radii scaled by (1 - aw), same lateral stretch as bone_d."""
+        B = s.bones[i]; D = s.digits[i]; ls = s.p['digits'].get('lat_scale', 1.0); qq = q
+        if ls != 1.0:
+            back = -((q - D['tip']) @ D['f']) / MM; k = (1 - 1 / ls) * (1 - sstep(25, 45, back))
+            qq = q - k[:, None] * (((q - D['tip']) @ D['l2'])[:, None] * D['l2'][None, :])
+        n = (B['njoint'] + 3) * 8   # phalanges and the start of the metatarsal: the clefts never reach further back
+        return tube(qq, B['C'][:n], B['R'][:n] * (1 - aw))
+
+    def groove_u(s, q, bd):
+        """B-pzrq: rounded U toe clefts on the bisector. For each toe pair the groove's lateral coordinate is half the
+        difference of the two digits' own skin distances, so its centre line is the surface equidistant from both toes and
+        it meets both symmetrically (the old V blade sat on the plane through the mean tip and rode up over fore toe 2).
+        Profile across the groove: a wedge of half_angle_deg from vertical, offset by floor_r, so the floor is a round
+        of radius floor_r whose bottom sits on the old floor table (depth held); the lips fade into the toes through the
+        smax blend radius k. Same floor table and back/front fades as mode v."""
+        g = s.p['groove']; S = s.S; d = None
+        R = g['floor_r'] * MM; a = np.radians(g['half_angle_deg']); sa, ca = np.sin(a), np.cos(a)
+        bu = np.array(g['floor_u'], float); o = np.argsort(bu)
+        for i in range(3):
+            A, B = s.digits[i], s.digits[i + 1]
+            fm = A['f'] + B['f']; fm /= np.linalg.norm(fm); pm = 0.5 * (A['tip'] + B['tip'])
+            um = (q - pm) @ fm
+            aw = g.get('axis_w', 0.0)   # 0: equidistant from the two toe skins; 1: equidistant from the two toe axes
+            if aw > 0: dm = 0.5 * (s.axis_d(q, i, aw) - s.axis_d(q, i + 1, aw))
+            else: dm = 0.5 * (bd[i] - bd[i + 1])
+            fl = np.interp(-um / (S * MM), bu[o], np.array(g['floor_z'], float)[o]) * S * MM + g.get('floor_dz', 0.0) * MM
+            x = np.abs(dm); y = q[:, 2] - fl - R
+            pr = x * sa + y * ca
+            dw = np.where(pr < 0, np.sqrt(x * x + y * y), x * ca - y * sa)
+            mask = 1 - sstep(g['back'] * S * MM - g['fade'] * S * MM, g['back'] * S * MM, -um)
+            mask = mask * (1 - sstep(g.get('front', 0) * S * MM, (g.get('front', 0) + g.get('front_fade', 4)) * S * MM, um))
+            dd = dw - R * mask + 8 * MM * (1 - mask)
+            d = dd if d is None else np.minimum(d, dd)
+        return d
+
     def valley_d(s, q):
         mg = s.p['meta'].get('valley')
         if not mg or not s.vgrooves: return None
@@ -142,13 +178,13 @@ class SkelPaw(PB.Paw):
         for i0 in range(0, len(q), 400000):
             x = q[i0:i0 + 400000]
             body = smin(s.leg_d(x), s.foot_d(x), p['k_leg_foot'] * MM)
-            bones = None
+            bones = None; bd = []
             for i in range(4):
-                dd = s.bone_d(x, i); bones = dd if bones is None else smin(bones, dd, m['k_bone_bone'] * MM)
+                dd = s.bone_d(x, i); bd.append(dd); bones = dd if bones is None else smin(bones, dd, m['k_bone_bone'] * MM)
             f = smin(body, bones, m['k_bone_body'] * MM)
             pd = s.pads_d(x)
             if pd is not None: f = smin(f, pd, p['main_pad'].get('k', 1.5) * MM)
-            gd = s.groove_d(x)
+            gd = s.groove_u(x, bd) if p.get('groove', {}).get('mode') == 'u' else s.groove_d(x)
             if gd is not None: f = smax(f, -gd, p['groove'].get('k', 1.0) * MM)
             vd = s.valley_d(x)
             if vd is not None: f = smax(f, -vd, m['valley'].get('k', 3.0) * MM)

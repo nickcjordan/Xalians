@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5CPTQCN4A5VJ3S56K22611K",
+  "alias": "t5dc",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Paw cleanup: smooth leftover artifacts on pass 6 without changing shape (engraved toe clefts, groove creases, the step where the leg meets the paw part, weld band, any lumps or ripples)",
+  "scope": "paw part surface cleanup; previews only",
+  "defect": "D-01M53MNMSM94RFC5QQWQKGKDQ9",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-20T13:08:22Z",
+  "briefSha256": "c43eaf93191f86b962eace8295ecf3fff56210e7bf960f31815d998e881f706e"
+}

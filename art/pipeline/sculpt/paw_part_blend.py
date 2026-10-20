@@ -14,6 +14,15 @@ NO_CURRENT = '--no-current' in args
 npz, OUT, TAG = args[0], args[1], args[2]; SAVE = '--save' in args
 os.makedirs(OUT + '/clay', exist_ok=True)
 D = dict(np.load(npz))
+# B-t5dc: optional surface cleanup (paw_part_clean.py) after the remesh and after the weld; off unless --clean CFG.json
+CLEAN = None; CLOG = {}
+if '--clean' in args:
+    import json as _json
+    sys.path.insert(0, '/mnt/c/dev/src/xalians-creature-pipeline/art/pipeline/sculpt'); import paw_part_clean as PC
+    CLEAN = _json.loads(open(args[args.index('--clean') + 1]).read())
+# B-pzrq: optional remesh voxel size (default 1.2 mm, as passes 1 to 7) and projection-limited shrinkwrap
+VOXEL = float(args[args.index('--voxel') + 1]) * 0.001 if '--voxel' in args else 0.0012
+SW_LIMIT = float(args[args.index('--sw-limit') + 1]) * 0.001 if '--sw-limit' in args else 0.0
 sc = bpy.context.scene
 SCULPT_PATH = bpy.data.filepath
 
@@ -29,6 +38,9 @@ def remesh_onto(ob, voxel):
     m = ob.modifiers.new('rm', 'REMESH'); m.mode = 'VOXEL'; m.voxel_size = voxel; m.use_smooth_shade = True
     bpy.context.view_layer.objects.active = ob; ob.select_set(True); bpy.ops.object.modifier_apply(modifier='rm')
     s = ob.modifiers.new('sw', 'SHRINKWRAP'); s.wrap_method = 'NEAREST_SURFACEPOINT'; s.target = ref
+    if SW_LIMIT:   # B-pzrq: project along the vertex normal, both ways, within a limit (no snapping across a cleft)
+        s.wrap_method = 'PROJECT'; s.use_project_x = s.use_project_y = s.use_project_z = False
+        s.use_negative_direction = True; s.use_positive_direction = True; s.project_limit = SW_LIMIT
     bpy.ops.object.modifier_apply(modifier='sw'); bpy.data.objects.remove(ref, do_unlink=True)
     # keep only the largest shell (voxel remesh can leave specks in tight clefts)
     bm = bmesh.new(); bm.from_mesh(ob.data); seen = set(); shells = []
@@ -53,7 +65,8 @@ for kind in ('hind', 'fore'):
     V = D[f'{kind}_V']; Q = D[f'{kind}_Q']
     for side, sg in (('l', 1), ('r', -1)):
         VV = V * [sg, 1, 1]; QQ = Q if sg == 1 else Q[:, ::-1]
-        ob = mesh_obj(f'paw_{kind}_{side}', VV, QQ, coll); remesh_onto(ob, 0.0012); new_objs.append(ob)
+        ob = mesh_obj(f'paw_{kind}_{side}', VV, QQ, coll); remesh_onto(ob, VOXEL); new_objs.append(ob)
+        if CLEAN: print('CLEAN', ob.name, PC.clean_part(ob, kind, sg, D, CLEAN, CLOG))
         src = bpy.data.objects[{'hind': 'hind_claw_l_2', 'fore': 'fore_claw_l_2'}[kind]]
         sv = np.array([src.matrix_world @ v.co for v in src.data.vertices]); faces = [list(p.vertices) for p in src.data.polygons]
         for i in range(1, 5):
@@ -227,6 +240,7 @@ if WELD:
         if '_claw_' in o.name: continue
         kind, side = o.name.split('_')[1], o.name.split('_')[2]
         ri = weld_part(o, kind, 1 if side == 'l' else -1, rings[(kind, side)]); parts.append(o)
+        if CLEAN: print('CLEAN weld', o.name, PC.clean_weld(o, CLEAN, CLOG))
         weld_info[o.name] = dict(ring_verts=len(ri), body_ring_verts=len(rings[(kind, side)]))
     merged, nm = weld_preview(body, parts)
     weld_info['preview_merged_ring_verts'] = merged; weld_info['preview_body_nonmanifold_edges'] = nm
@@ -240,6 +254,7 @@ for o in new_objs:
     ex[o.name + '_T'] = np.array([[f[0], f[i], f[i + 1]] for f in fl for i in range(1, len(f) - 1)])
 np.savez_compressed(f'{OUT}/work/{TAG}/mesh.npz', **ex)
 open(f'{OUT}/work/{TAG}/weld.json', 'w').write(json.dumps(weld_info, indent=1))
+if CLEAN: open(f'{OUT}/work/{TAG}/clean.json', 'w').write(json.dumps(CLOG, indent=1))
 
 if SAVE:
     import json
