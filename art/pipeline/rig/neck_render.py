@@ -98,6 +98,33 @@ if MODE == 'stills':
             sh.light = 'FLAT'; sh.color_type = 'VERTEX'; sh.show_cavity = False; sh.show_shadows = False
             sc.render.filepath = str(OUT / f'{TAG}_{pname}_{vname}_curv.png'); bpy.ops.render.render(write_still=True)
             print('STILL', pname, vname, flush=True)
+elif MODE == 'nickline':
+    # three-quarter crop framed on the seam line Nick circled (right side, idle 1.5 s): the pass 0 seam-line vertices
+    # (SEAM_IDX npy) posed, boxed with a 25 mm margin; rendered in the review look-dev (EEVEE) and under grazing light
+    import os
+    sel = np.load(os.environ['SEAM_IDX'])
+    pose('idle', 45); Vp = eval_V(); P = Vp[sel]
+    lo = Vector(P.min(0).tolist()) - Vector((0.025,) * 3); hi = Vector(P.max(0).tolist()) + Vector((0.025,) * 3)
+    for vname, az, el in (('threeq', 300.0, 10.0), ('side', 270.0, 4.0)):
+        cam = lookdev.place_camera('lookdev_nick', (lo, hi), az, el, 0.02); sc.camera = cam
+        sc.render.resolution_x = sc.render.resolution_y = 900; sc.render.resolution_percentage = 100
+        sc.render.engine = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in lookdev._engines() else 'BLENDER_EEVEE_NEXT'
+        try: sc.eevee.taa_render_samples = 32
+        except Exception: pass
+        sc.render.filepath = str(OUT / f'{TAG}_nickline_{vname}_review.png'); bpy.ops.render.render(write_still=True)
+        lights = [o for o in sc.objects if o.type == 'LIGHT']
+        ld = bpy.data.lights.get('graze_sun') or bpy.data.lights.new('graze_sun', 'SUN'); ld.energy = 4.0; ld.angle = math.radians(1.0)
+        sun = bpy.data.objects.get('graze_sun') or bpy.data.objects.new('graze_sun', ld)
+        if sun.name not in sc.collection.objects: sc.collection.objects.link(sun)
+        centre, axis = neck_frame(); cd = lookdev.camera_direction(az, el); ax = -axis if axis.z > 0 else axis
+        sun.rotation_euler = (ax * math.cos(math.radians(30)) - cd * math.sin(math.radians(30))).normalized().to_track_quat('-Z', 'Y').to_euler()
+        for l in lights: l.hide_render = l is not sun
+        sun.hide_render = False; sc.world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.08
+        sc.render.engine = 'CYCLES'; sc.cycles.samples = 32; sc.cycles.use_denoising = True
+        sc.render.filepath = str(OUT / f'{TAG}_nickline_{vname}_grz.png'); bpy.ops.render.render(write_still=True)
+        for l in lights: l.hide_render = False
+        sun.hide_render = True; sc.world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.45
+        print('NICK', vname, flush=True)
 elif MODE == 'video':
     sc.render.engine = 'BLENDER_EEVEE' if 'BLENDER_EEVEE' in lookdev._engines() else 'BLENDER_EEVEE_NEXT'
     try: sc.eevee.taa_render_samples = 16
