@@ -115,3 +115,4 @@ Step 14 fix partial: restored3094suppressed blue hairs and added68286triangle-ro
 - 2026-10-20 step 23: poof kept on the ear sheet (1920 head-rooted strands culled, 155 shortened softly); circled head region back to 16 halfway within .008/.017. Poof is smaller. Surface fur-steps/s12-23.
 - 2026-10-20 approval (Nick, chat): ear poof step 23 (commit b1680da6, surface fur-steps/s12-23): "looks good". White-root, blue-tip ombre poof made from the ear's own coat strands, kept on the ear sheet; head side plain. Current fur base is s12-23.
 - 2026-10-20 step 24: eyeliner hairs no longer poke through the ribbon (340 strands cut at its edge); bare sliver under the lower line filled with 1351 short pale hairs. Surface fur-steps/s12-24.
+- 2026-10-20 step 24: hairs over the eyeliner cut at its edge, lower-lid sliver filled with short edge hairs; gate clean. Surface fur-steps/s12-24.
