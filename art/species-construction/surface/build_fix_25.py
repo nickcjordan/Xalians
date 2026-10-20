@@ -20,7 +20,11 @@ from mathutils import Vector, Matrix
 from mathutils.bvhtree import BVHTree
 from mathutils.kdtree import KDTree
 
-before, out = map(Path, sys.argv[sys.argv.index('--') + 1:])
+args = sys.argv[sys.argv.index('--') + 1:]
+before, out = map(Path, args[:2])
+# build 2 (stronger): neighborhood, passes, spread ramp, max turn
+RAD, PASSES, LO, HI, CLIP = (float(a) for a in (args[2:] or ['.010', '3', '.04', '.12', '70']))
+PASSES = int(PASSES)
 assert not (out / 'surface.blend').exists()
 out.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.open_mainfile(filepath=str(before / 'surface.blend'))
@@ -67,10 +71,10 @@ kd = KDTree(len(cand))
 for k, i in enumerate(cand):
     kd.insert(Vector(roots[i]), k)
 kd.balance()
-nbrs = [np.array([j for _, j, _ in kd.find_range(Vector(roots[i]), .010)]) for i in cand]
+nbrs = [np.array([j for _, j, _ in kd.find_range(Vector(roots[i]), RAD)]) for i in cand]
 spread = np.array([1 - np.linalg.norm(d[nb].mean(0)) for nb in nbrs])
 sm = d.copy()
-for _ in range(3):
+for _ in range(PASSES):
     nxt = np.array([sm[nb].mean(0) for nb in nbrs])
     nxt -= n * np.sum(nxt * n, axis=1, keepdims=True)
     sm = nxt / np.maximum(np.linalg.norm(nxt, axis=1, keepdims=True), 1e-9)
@@ -81,9 +85,9 @@ def smooth(v):
     return v * v * (3 - 2 * v)
 
 
-w = smooth((spread - .04) / .12)
+w = smooth((spread - LO) / HI)
 ang = np.arctan2(np.sum(np.cross(d, sm) * n, axis=1), np.sum(d * sm, axis=1))
-ang = np.clip(ang, -np.radians(70), np.radians(70)) * w
+ang = np.clip(ang, -np.radians(CLIP), np.radians(CLIP)) * w
 
 
 def collides(path):
@@ -128,7 +132,7 @@ assert np.array_equal(P[np.repeat(~changed, counts)], orig[np.repeat(~changed, c
 print('PART_LINE', dict(turned=turned, keptOnCollision=held, meanTurnDeg=float(np.degrees(np.abs(ang[np.abs(ang) >= np.radians(3)])).mean()) if (np.abs(ang) >= np.radians(3)).any() else 0,
                         highSpread=int((spread > .1).sum())), flush=True)
 info.update(parent=str(before))
-info['earBackPart25'] = dict(strands=len(cand), turned=turned, keptOnCollision=held, neighborhood=.010, passes=3,
+info['earBackPart25'] = dict(strands=len(cand), turned=turned, keptOnCollision=held, neighborhood=RAD, passes=PASSES, spreadRamp=[LO, HI], maxTurnDeg=CLIP,
                              method='rotate about root normal toward the smoothed field where the neighborhood spread is high; length exact')
 (out / 'surface-info.json').write_text(json.dumps(info, indent=2) + '\n')
 prior = dict(np.load(before / 'patch-evidence.npz'))
