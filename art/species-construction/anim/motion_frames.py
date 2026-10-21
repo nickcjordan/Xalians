@@ -35,7 +35,9 @@ p = argparse.ArgumentParser()
 p.add_argument('surface', type=Path)
 p.add_argument('rig', type=Path)
 p.add_argument('out', type=Path)
-p.add_argument('--motion', choices=['ears', 'knee'], required=True)
+p.add_argument('--motion', choices=['ears', 'knee', 'crouch'], required=True)
+p.add_argument('--part', choices=['legs', 'rump'], default='legs')
+p.add_argument('--only', default=None, help='comma list of pose indices to render (quick checks); no loop copies')
 p.add_argument('--look', choices=['clay', 'fur'], default='clay')
 p.add_argument('--views', default=None)
 p.add_argument('--frames', type=int, default=24)
@@ -44,13 +46,15 @@ p.add_argument('--samples', type=int, default=16)
 p.add_argument('--diag', action='store_true')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 t0 = time.time()
-TARGET = {'ears': 'ears_flat_back', 'knee': 'night_stalk'}[a.motion]
+TARGET = {'ears': 'ears_flat_back', 'knee': 'night_stalk', 'crouch': 'night_stalk'}[a.motion]
 VIEWS = {'side': (90, 3), 'front3q': (35, 8), 'back3q': (145, 22), 'top': (0, 89.5)}
 views = (a.views or ('side,front3q,back3q,top' if a.motion == 'ears' else 'side,front3q')).split(',')
 R = a.rig
 rig = json.loads((R/'rig.json').read_text())
 J = json.loads((R/'joints.json').read_text())
-target = json.loads((R/'poses.json').read_text())[TARGET]['pose']
+target_rec = json.loads((R/'poses.json').read_text())[TARGET]
+target = target_rec['pose']
+CROUCH = target_rec.get('crouch') if a.motion == 'crouch' else None
 s, off = rig['transform']['scale'], np.array(rig['transform']['offset'])
 wt = np.load(R/'weights.npz')
 idx = wt['idx'].astype(int)
@@ -68,19 +72,18 @@ def share(bones):
     return dense[:, [NI[b] for b in bones]].sum(1)
 
 
-def partial(pose, f):
-    """Every bone turned the eased share f of its target rotation (slerp from rest)."""
-    out = {}
-    for b, e in pose.items():
-        q = rc.quat_from_matrix(rc.euler_matrix(*e))
-        ang = 2*math.acos(max(-1., min(1., q[0])))
-        if ang < 1e-9:
-            continue
-        ax = q[1:]/np.linalg.norm(q[1:])
-        h = f*ang/2
-        qs = np.r_[math.cos(h), ax*math.sin(h)]
-        out[b] = rc.euler_from_matrix(rc._qmat(qs))
-    return out
+partial = rc.slerp_pose        # every bone turned the eased share f of its target rotation (slerp from rest)
+
+
+def crouch_at(e):
+    """Planted-feet crouch (pass 5): body bones slerped by e, the hips moved by e of the crouch's root move, the
+    knees' bend direction turned from rest's toward the crouch's, the legs solved by IK so the feet stay put
+    (pose_board.crouch_at, from the recipe stored in poses.json)."""
+    c = CROUCH
+    poles = {sd: (1-e)*np.array(c['polesRest'][sd])+e*np.array(c['polesCrouch'][sd]) for sd in 'LR'}
+    poles = {sd: v/np.linalg.norm(v) for sd, v in poles.items()}
+    lift = e*np.array(c['lift'])
+    return rc.plant_legs(J, partial(c['body'], e), lift, c['feet'], poles, bones=rc.ANIM_BONES), lift
 
 
 bpy.ops.wm.open_mainfile(filepath=str(a.surface/'surface.blend'))
@@ -159,15 +162,21 @@ from_m = lambda X: X/s+off
 poses = []
 for f in range(a.frames+1):
     e = .5-.5*math.cos(math.pi*f/a.frames)
-    pz = partial(target, e)
-    Pm, _, vals = rc.posed_skin(to_m(skin_rest), idx, w, J, pz, 0., KEYS, DELTAS)
-    lift = -float(Pm[:, 2].min()) if a.motion == 'knee' else 0.
-    Pm[:, 2] += lift
+    if CROUCH:
+        pz, lift = crouch_at(e)
+        Pm, _, vals = rc.posed_skin(to_m(skin_rest), idx, w, J, pz, lift, KEYS, DELTAS)
+    else:
+        pz = partial(target, e)
+        Pm, _, vals = rc.posed_skin(to_m(skin_rest), idx, w, J, pz, 0., KEYS, DELTAS)
+        lift = -float(Pm[:, 2].min()) if a.motion == 'knee' else 0.
+        Pm[:, 2] += lift
     poses.append((pz, lift, from_m(Pm), vals))
 print('posed', len(poses), round(time.time()-t0), flush=True)
 # ---- one framing per view, over the whole motion
 if a.motion == 'ears':
     part = (share(['head']+[f'ear_{k}.{sd}' for k in range(1, rc.EAR_BONES+1) for sd in 'LR']) > .5) & (skin_rest[:, 2] > .35)
+elif a.part == 'rump':
+    part = (share(['pelvis', 'tail_root']+[f'tail_{t}{k}' for t in rc.TAILS for k in (1, 2)]+['thigh.L', 'thigh.R']) > .5)         & (skin_rest[:, 2] > float(np.percentile(skin_rest[:, 2], 30)))
 else:
     part = share([f'{b}.L' for b in ('thigh', 'shin', 'foot', 'hip')]) > .5
 lo = np.min([P[part].min(0) for _, _, P, _ in poses], 0)-.04
@@ -210,7 +219,7 @@ def frame_camera(view):
 def apply(i):
     pz, lift, Px, vals = poses[i]
     set_world_co(skin, Px)
-    T = rc.bone_transforms(J, pz, bones=rc.ANIM_BONES, root_translate=(0, 0, lift))
+    T = rc.bone_transforms(J, pz, bones=rc.ANIM_BONES, root_translate=tuple(rc.lift_vec(lift)))
     for o in bpy.data.objects:
         if o.type != 'MESH' or o is skin or o.name not in others:
             continue
@@ -228,7 +237,10 @@ log = {'motion': a.motion, 'look': a.look, 'target': TARGET, 'framesOut': a.fram
        'fps': 24, 'views': views, 'size': a.size, 'samples': a.samples, 'renderSeconds': {}}
 for v in views:
     (a.out/v).mkdir(parents=True, exist_ok=True)
+ONLY = [int(x) for x in a.only.split(',')] if a.only else None
 for i in range(len(poses)):
+    if ONLY is not None and i not in ONLY:
+        continue
     apply(i)
     for v in views:
         frame_camera(v)
@@ -239,7 +251,7 @@ for i in range(len(poses)):
     print('frame', i, round(time.time()-t0), flush=True)
 # the way back: frames frames+1 .. 2*frames-1 are copies of frames-1 .. 1
 import shutil
-for v in views:
+for v in (views if ONLY is None else []):
     for k in range(1, a.frames):
         shutil.copyfile(a.out/v/f'{a.frames-k:04d}.png', a.out/v/f'{a.frames+k:04d}.png')
 if a.diag and a.motion == 'ears' and a.look == 'clay':

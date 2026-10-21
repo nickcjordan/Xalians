@@ -189,7 +189,7 @@ def set_pose(pose, lift):
         pb.rotation_quaternion = (Bm.transposed()@Rw@Bm).to_quaternion()
         pb.location = (0, 0, 0)
     pel = rig.pose.bones['pelvis']
-    pel.location = arm.bones['pelvis'].matrix_local.to_3x3().transposed()@Vector((0, 0, lift))
+    pel.location = arm.bones['pelvis'].matrix_local.to_3x3().transposed()@Vector(tuple(rc.lift_vec(lift)))   # scalar lift or 3-vector root move
     bpy.context.view_layer.update()
 
 

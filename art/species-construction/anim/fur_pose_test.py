@@ -168,7 +168,7 @@ for name in a.poses.split(','):
     Pm, Rv, vals = rc.posed_skin(to_m(skin_rest), idx, w, J, pz['pose'], pz['lift'], KEYS, DELTAS)
     Px = from_m(Pm)
     set_world_co(skin, Px)
-    T = rc.bone_transforms(J, pz['pose'], bones=rc.ANIM_BONES, root_translate=(0, 0, pz['lift']))
+    T = rc.bone_transforms(J, pz['pose'], bones=rc.ANIM_BONES, root_translate=tuple(rc.lift_vec(pz['lift'])))
     for o in bpy.data.objects:
         if o.type != 'MESH' or o is skin:
             continue

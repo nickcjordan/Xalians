@@ -483,11 +483,13 @@ def _anim_bones():
         for k in range(1, EAR_BONES+1):
             out.append((f'ear_{k}.{s}', 'head' if k == 1 else f'ear_{k-1}.{s}', f'ear{k-1}.{s}', f'ear{k}.{s}'))
     out.append(('jaw', 'head', 'jaw_hinge', 'chin'))
+    # the tail root is a short sacral segment of the body (pelvis child): from the sacrum inside the rump to the
+    # fork between the three tail bases. Each tail's first bone pivots at its own base ring, where that tail
+    # leaves the body (pass 5, Nick F36: the tails grow out of the creature, not out of a separate clump)
     out.append(('tail_root', 'pelvis', 'tail_base', 'tail_fork'))
     for t in TAILS:
         for k in range(1, TAIL_BONES+1):
-            out.append((f'tail_{t}{k}', 'tail_root' if k == 1 else f'tail_{t}{k-1}',
-                        'tail_fork' if k == 1 else f'tail_{t}_j{k-1}', f'tail_{t}_j{k}'))
+            out.append((f'tail_{t}{k}', 'tail_root' if k == 1 else f'tail_{t}{k-1}', f'tail_{t}_j{k-1}', f'tail_{t}_j{k}'))
     return out
 
 
@@ -649,6 +651,7 @@ def derive_anim_joints(skin, edges, claws=None, mouth_z=.54):
         line = [r[1] for r in rings[:k]][::-1]     # base ring first
         pts, cuts = _arc_points(line, TAIL_SEGMENT_SHARE)
         bases.append(line[0])
+        j[f'tail_{t}_j0'] = list(map(float, line[0]))       # the base ring's centre: this tail's pivot on the body
         for i in range(1, TAIL_BONES):
             j[f'tail_{t}_j{i}'] = list(map(float, pts[i-1]))
         j[f'tail_{t}_j{TAIL_BONES}'] = list(map(float, skin[tip]))
@@ -724,14 +727,17 @@ def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clea
     umax = U.max(1)
     beta = np.exp((U-umax[:, None])/tail_soft)
     beta /= beta.sum(1, keepdims=True)
-    on_tail = smoothstep(umax, -.07, -.01)       # tail_root and the chains, against the body
+    # tail_root and the chains, against the body. Pass 5: the band the tail root holds is narrow (2.5 cm of body
+    # skin round each base, was 7 cm): the rump and the crotches between the tails stay with the pelvis, so the
+    # tails come out of the body instead of out of a separately turning clump
+    on_tail = smoothstep(umax, -.025, .005)
     W *= (1-on_tail)[:, None]
     chain_total = np.zeros(n)
     for ti, t in enumerate(TAILS):
         cuts = surf['tails'][t]['joints']        # arc position of each joint, 0 at the junction
         hw = .3*float(np.diff(cuts).min())
         u = U[:, ti]
-        prev = smoothstep(u, -.01, .05)          # below this tail_root keeps the junction and the crotch
+        prev = smoothstep(u, -.005, .045)        # below this tail_root keeps the narrow base band
         for k in range(1, TAIL_BONES+1):
             nxt = smoothstep(u, cuts[k]-hw, cuts[k]+hw) if k < TAIL_BONES else np.zeros(n)
             wk = np.clip(prev-nxt, 0, None)*beta[:, ti]*on_tail
@@ -865,8 +871,60 @@ def corrective_values(joints, pose, keys, bones=None):
     return {k['name']: driver_value(swing_deg(joints, pose, k['bone'], bones), k['rise'], k.get('fall')) for k in keys}
 
 
+def slerp_pose(pose, f):
+    """Every bone turned the share f of its pose rotation (quaternion slerp from rest about the same axis)."""
+    out = {}
+    for b, e in pose.items():
+        q = quat_from_matrix(euler_matrix(*e))
+        ang = 2*math.acos(max(-1., min(1., q[0])))
+        if ang < 1e-9:
+            continue
+        ax = q[1:]/np.linalg.norm(q[1:])
+        h = f*ang/2
+        out[b] = euler_from_matrix(_qmat(np.r_[math.cos(h), ax*math.sin(h)]))
+    return out
+
+
+def lift_vec(lift):
+    """A pose's root move: a scalar is a lift straight up (the re-grounding of the board poses), a 3-vector a
+    translation of the whole body (the planted-feet crouch lowers and moves the hips back over the feet)."""
+    return np.asarray(lift, float) if np.ndim(lift) else np.array([0., 0., float(lift)])
+
+
+def plant_legs(joints, pose, lift, feet, poles, bones=None):
+    """Two-bone IK that keeps each foot where it stands: thigh and shin turned so the ankle reaches feet[side]
+    (world, after the root move `lift`), the knee bending toward poles[side] (a world direction; only its part
+    across the hip-to-ankle line counts), and the foot keeping its rest world orientation, flat where it stood.
+    Returns the pose with thigh, shin and foot of both sides replaced."""
+    bones = bones or ANIM_BONES
+    pose = dict(pose)
+    for sd in ('L', 'R'):
+        for b in (f'thigh.{sd}', f'shin.{sd}', f'foot.{sd}'):
+            pose.pop(b, None)
+        T = bone_transforms(joints, pose, root_translate=tuple(lift_vec(lift)), bones=bones)
+        R, t = T[f'hip.{sd}']
+        H = R@np.array(joints[f'hip.{sd}'])+t
+        A = np.asarray(feet[sd], float)
+        l1 = float(np.linalg.norm(np.subtract(joints[f'knee.{sd}'], joints[f'hip.{sd}'])))
+        l2 = float(np.linalg.norm(np.subtract(joints[f'ankle.{sd}'], joints[f'knee.{sd}'])))
+        d = A-H
+        D = min(float(np.linalg.norm(d)), (l1+l2)*(1-1e-7))
+        u = d/np.linalg.norm(d)
+        pp = np.asarray(poles[sd], float)
+        pp = pp-u*(u@pp)
+        pp /= np.linalg.norm(pp)
+        ca = max(-1., min(1., (l1*l1+D*D-l2*l2)/(2*l1*D)))
+        K = H+l1*(ca*u+math.sqrt(1-ca*ca)*pp)
+        A2 = H+u*D
+        pose = pose_from_directions(joints, {f'thigh.{sd}': K-H, f'shin.{sd}': A2-K}, base=pose, bones=bones)
+        Rs = bone_transforms(joints, pose, bones=bones)[f'shin.{sd}'][0]
+        pose[f'foot.{sd}'] = euler_from_matrix(Rs.T)
+    return pose
+
+
 def posed_skin(points, idx, w, joints, pose, lift=0., keys=(), deltas=None, bones=None):
-    """Volume-preserving skin with the corrective keys: rest + sum(value * delta), then dual quaternions."""
+    """Volume-preserving skin with the corrective keys: rest + sum(value * delta), then dual quaternions.
+    lift: a scalar (straight up) or a 3-vector root move (lift_vec)."""
     bones = bones or ANIM_BONES
     x = points
     vals = corrective_values(joints, pose, keys, bones) if keys else {}
@@ -877,6 +935,6 @@ def posed_skin(points, idx, w, joints, pose, lift=0., keys=(), deltas=None, bone
             if v > 0:
                 ids, dl = deltas[k['name']]
                 x[ids] += v*dl
-    T = bone_transforms(joints, pose, root_translate=(0, 0, lift), bones=bones)
+    T = bone_transforms(joints, pose, root_translate=tuple(lift_vec(lift)), bones=bones)
     P, R = skin_points_dq(x, idx, w, T, bones)
     return P, R, vals

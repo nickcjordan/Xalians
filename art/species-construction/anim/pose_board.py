@@ -151,7 +151,58 @@ crouch = directions(crouch, {'thigh.L': (.16, -.76, -.63), 'shin.L': (.05, .64, 
                              'thigh.R': (-.16, -.76, -.63), 'shin.R': (-.05, .64, -.77), 'foot.R': (0, -.9, -.44),
                              'upperarm.L': (.12, -.55, -.83), 'forearm.L': (.04, -.80, -.60),
                              'upperarm.R': (-.12, -.55, -.83), 'forearm.R': (-.04, -.80, -.60)})
+# ---- pass 5 (Nick, F36): the crouch is the hips lowering over planted feet, and the tails grow out of the body.
+# The F36 crouch above (legs set by direction, then re-grounded, so the feet slid forward) sets the targets:
+# where its hips sat over its feet and how its knees pointed. The feet now stay where they stand at rest and a
+# two-bone IK (rig_core.plant_legs) bends the legs under the moved hips.
+_P, _, _ = rc.posed_skin(rest, idx, w, J, crouch, bones=B)
+_T = rc.bone_transforms(J, crouch, bones=B, root_translate=(0, 0, -float(_P[:, 2].min())))
+
+
+def _pj(T, bone, jn):
+    R_, t_ = T[bone]
+    return R_@np.array(J[jn])+t_
+
+
+_rest_T = rc.bone_transforms(J, {}, bones=B)
+_old_feet = np.mean([_pj(_T, f'shin.{sd}', f'ankle.{sd}') for sd in 'LR'], 0)
+_rest_feet = np.mean([np.array(J[f'ankle.{sd}']) for sd in 'LR'], 0)
+CROUCH_LIFT = (_pj(_T, 'pelvis', 'pelvis')-_old_feet)-(np.array(J['pelvis'])-_rest_feet)
+CROUCH_LIFT[0] = 0.
+FEET = {sd: list(map(float, J[f'ankle.{sd}'])) for sd in 'LR'}
+
+
+def _knee_dir(H, K, A):
+    u = unit(A-H)
+    v = (K-H)-u*((K-H)@u)
+    return unit(v)
+
+
+POLES_CROUCH = {sd: list(map(float, _knee_dir(_pj(_T, f'hip.{sd}', f'hip.{sd}'), _pj(_T, f'thigh.{sd}', f'knee.{sd}'),
+                                              _pj(_T, f'shin.{sd}', f'ankle.{sd}')))) for sd in 'LR'}
+POLES_REST = {sd: list(map(float, _knee_dir(*(np.array(J[f'{j}.{sd}']) for j in ('hip', 'knee', 'ankle'))))) for sd in 'LR'}
+# the tail root is now a short sacral segment that moves with the pelvis: it turns only a little (the base
+# droops with the hips), and each tail's first bone, pivoting where that tail leaves the body, takes the rest of
+# the F36 tail drop, so every tail keeps the F36 crouch's direction and curve
+TAIL_ROOT_CROUCH = [-12., 0., 4.]
+_Rold = rc.euler_matrix(*crouch['tail_root'])
+_Rnew = rc.euler_matrix(*TAIL_ROOT_CROUCH)
+body = {k: v for k, v in crouch.items() if rc.base_of(k) not in ('thigh', 'shin', 'foot')}
+body['tail_root'] = TAIL_ROOT_CROUCH
+for t in rc.TAILS:
+    body[f'tail_{t}1'] = rc.euler_from_matrix(_Rnew.T@_Rold@rc.euler_matrix(*crouch[f'tail_{t}1']))
+CROUCH_BODY = body
+crouch = rc.plant_legs(J, body, CROUCH_LIFT, FEET, POLES_CROUCH, bones=B)
 POSES['night_stalk'] = crouch
+LIFTS = {'night_stalk': CROUCH_LIFT}
+
+
+def crouch_at(e):
+    """The planted-feet crouch at eased share e (0 rest, 1 Night Stalk): every body bone slerped from rest by e,
+    the hips moved by e of the crouch's root move, the knees' bend direction turned from rest's toward the
+    crouch's, the legs solved so the feet stay put."""
+    poles = {sd: list(unit((1-e)*np.array(POLES_REST[sd])+e*np.array(POLES_CROUCH[sd]))) for sd in 'LR'}
+    return rc.plant_legs(J, rc.slerp_pose(CROUCH_BODY, e), e*CROUCH_LIFT, FEET, poles, bones=B), e*CROUCH_LIFT
 POSES['ears_flat_back'] = dict(EARS_BACK)
 POSES['tails_drawn_in'] = tails([-34, 0, 40], {'a': [[-16, 0, 14], [-6, 0, 14]], 'b': [[-6, 0, 16], [-4, 0, 14]],
                                                'c': [[8, 0, 16], [0, 0, 12]]})
@@ -192,6 +243,7 @@ GROUPS = [
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
     ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),
 ]
+NO_INSIDE = {'knee_step', 'knee_bend', 'hip_flex'}
 
 
 SPREAD = {'hip_flex': 2000, 'knee_step': 150, 'knee_bend': 150}   # knees: a concentrated bend, not one round arc (Nick, F34)
@@ -232,6 +284,25 @@ def posed_joint(T, jn):
     return R@np.array(J[jn])+t
 
 
+CHILD = {'knee': ('thigh', 'shin'), 'hip': ('hip', 'thigh')}    # joint -> (parent bone, child bone) by base name
+
+
+def inside_of_bend(P, T, jbase, sd):
+    """Per vertex, how far round toward the inside of the bend at a joint it sits (cosine about the hinge axis:
+    1 straight into the inside, 0 on the sides, -1 the outside), from the posed skin."""
+    pb, cb = CHILD[jbase]
+    Rp, tp = T[f'{pb}.{sd}']
+    Rc, tc = T[f'{cb}.{sd}']
+    k0 = Rc@np.array(J[f'{jbase}.{sd}'])+tc
+    u = rc.bone_axis(J, f'{cb}.{sd}', B)
+    ua, ub = Rp@(-u), Rc@u
+    hinge = unit(np.cross(ua, ub))
+    bis = unit(ua+ub)
+    rel = P-k0
+    relp = rel-np.outer(rel@hinge, hinge)
+    return (relp@bis)/np.maximum(np.linalg.norm(relp, axis=1), 1e-9)
+
+
 keys, deltas = [], {}
 for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
     pose = ALL[pose_name]
@@ -247,6 +318,13 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
         allowed = rc.smoothstep(share(mb), .4, .7)
         masks[sd] = (1-rc.smoothstep(np.linalg.norm(P-c, axis=1), r0, r1))*allowed
     m = np.maximum(masks['L'], masks['R'])
+    # pass 5: inside the bend (back of the knee, front of the groin) the relax keeps each segment's own turn: the
+    # rotation field is not spread there, so the skin is not swept round the joint in one concave arc (the
+    # cupped hollow Nick saw behind the knee); calf and hamstring keep their own outward shapes and meet in a crease
+    keep_turn = np.zeros(n)
+    if gname in NO_INSIDE:
+        for sd in ('L', 'R'):
+            keep_turn = np.maximum(keep_turn, rc.smoothstep(inside_of_bend(P, T, jbase, sd), -.05, .35)*masks[sd]/np.maximum(m, 1e-9))
     if gname == 'knee_cap':
         Nraw = vertex_normals(P)
         # an explicit knee, sculpted along the posed skin's normals in the knee's own frame (Nick, F34: a
@@ -285,8 +363,8 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
             ta = rel@ua                                        # up the thigh from the knee
             back = rc.smoothstep(-front, .3, .6)
             cords = np.exp(-((np.abs(lat)-.027)/.007)**2)*rc.smoothstep(ta, .015, .04)*(1-rc.smoothstep(ta, .09, .12))*back
-            bis = rel@unit(ua-ub)
-            fold = np.exp(-(bis/.013)**2)*np.exp(-(lat/.024)**2)*back
+            # (pass 5: the tight fold at the back of the knee is gone; it pressed the top of the calf into a
+            # cupped divot. The knee relax keys now keep each segment's own turn at the back of the bend instead)
             # the corner: the front of the bent knee meets where the thigh's front line and the shin's front
             # line cross, instead of one round arc between them (front vertices are pushed out along their
             # normals until they reach either line)
@@ -320,7 +398,7 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
             corner = np.clip(np.minimum(*pushes), 0, .010)
             corner = np.where(np.isfinite(corner), corner, 0)*rc.smoothstep(front, .15, .45)*(1-rc.smoothstep(np.abs(lat), .03, .05))
             rt, rs = lines[0][2], lines[1][2]
-            dsd = (corner+.011*patella-.003*grooves+.0022*plateau+.0035*cords-.005*fold)*region
+            dsd = (corner+.011*patella-.003*grooves+.0022*plateau+.0035*cords)*region
             # spread the push along the skin (about 2 cm) so it has no per-vertex spikes or pits
             for _ in range(80):
                 dsd = .5*dsd+.5*(A@dsd)
@@ -379,7 +457,7 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
     # the bend's rotation field, spread wider inside the mask: the corrected surface bends over a longer
     # arc instead of pleating where the skinning rotation turns fast
     Qv = quats(Rv)
-    lq = (.6*m[sel])[:, None]
+    lq = (.6*m[sel]*(1-keep_turn[sel]))[:, None]
     # the furred test (2026-10-21) showed only the crouch's groin crease through the fur, as a V at the front
     # of the hip at full size: that bend is spread over a longer arc than the others
     for _ in range(SPREAD.get(gname, a.spread)):
@@ -441,10 +519,14 @@ vol_rest = closed_volume(rest)
 tri_dom = idx[tris[:, 0], 0]
 out_poses, checks = {}, {}
 for name, pose in POSES.items():
-    P, Rv, vals = rc.posed_skin(rest, idx, w, J, pose, keys=keys, deltas=deltas)
-    lift = -float(P[:, 2].min())
-    P[:, 2] += lift
-    T = rc.bone_transforms(J, pose, bones=B, root_translate=(0, 0, lift))
+    if name in LIFTS:          # planted feet: the pose's own root move, no re-grounding
+        lift = list(map(float, LIFTS[name]))
+        P, Rv, vals = rc.posed_skin(rest, idx, w, J, pose, lift, keys=keys, deltas=deltas)
+    else:
+        P, Rv, vals = rc.posed_skin(rest, idx, w, J, pose, keys=keys, deltas=deltas)
+        lift = -float(P[:, 2].min())
+        P[:, 2] += lift
+    T = rc.bone_transforms(J, pose, bones=B, root_translate=tuple(rc.lift_vec(lift)))
     posed_j = {}
     for b, _, hj, tj in B:
         R, t = T[b]
@@ -477,7 +559,10 @@ for name, pose in POSES.items():
     dd, qi = cKDTree(sk).query(P[EAR], k=1, workers=-1)
     signed = np.einsum('ij,ij->i', P[EAR]-sk[qi], skn[qi])
     near = dd < .03
-    checks[name] = dict(finite=bool(np.isfinite(P).all()), farther_than_3m=int(np.sum(np.linalg.norm(P, axis=1) > 3)),
+    feet = {sd: dict(ankle_moved_mm=float(np.linalg.norm(np.array(posed_j[f'ankle.{sd}'])-np.array(J[f'ankle.{sd}']))*1000),
+                     toe_moved_mm=float(np.linalg.norm(np.array(posed_j[f'toe.{sd}'])-np.array(J[f'toe.{sd}']))*1000))
+            for sd in 'LR'}
+    checks[name] = dict(feet=feet, floor_min_m=float(P[:, 2].min()), finite=bool(np.isfinite(P).all()), farther_than_3m=int(np.sum(np.linalg.norm(P, axis=1) > 3)),
                         lift_m=lift, keys={k: round(v, 3) for k, v in vals.items() if v > 0},
                         edge_stretch_p99=float(np.quantile(L, .99)), edge_stretch_max=float(L.max()),
                         edge_shrink_p01=float(np.quantile(L, .01)), edge_shrink_min=float(L.min()),
@@ -509,6 +594,11 @@ for k in keys:
         dm = dr[jj]*np.array([-1, 1, 1])
         mir[k['name'][:-2]] = float(np.abs(dl[pos][ok]-dm[ok]).max())
 weights['corrective_mirror_max_m'] = mir
+out_poses['night_stalk']['crouch'] = dict(
+    rule='crouch_at(e): body bones slerped from rest by e, root moved by e*lift, knee bend direction from polesRest '
+         'toward polesCrouch, legs by rig_core.plant_legs to the feet',
+    body={k: list(map(float, v)) for k, v in CROUCH_BODY.items()}, lift=list(map(float, CROUCH_LIFT)), feet=FEET,
+    polesRest=POLES_REST, polesCrouch=POLES_CROUCH)
 (a.rig/'poses.json').write_text(json.dumps(out_poses, indent=1))
 (a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks, earSwing=dict(L=ear_L)), indent=1))
 print(json.dumps(weights))
@@ -516,4 +606,5 @@ for name, c in checks.items():
     worst = {r: (v['folded'], v['collapsed']) for r, v in c['regions'].items() if v['folded'] or v['collapsed']}
     tl = {k: round(v['min_m']*1000, 1) for k, v in c['tails'].items()}
     print(f"{name:15s} stretch99 {c['edge_stretch_p99']:.2f} max {c['edge_stretch_max']:.2f} vol {c['volume_change']*100:+.1f}% "
-          f"folded {c['folded_total']} coll {c['collapsed_total']} {worst} ear-in-skull {c['ear_inside_skull']} tails {tl}")
+          f"folded {c['folded_total']} coll {c['collapsed_total']} {worst} ear-in-skull {c['ear_inside_skull']} tails {tl} "
+          f"feet {[round(c['feet'][sd]['toe_moved_mm'], 1) for sd in 'LR']} floor {c['floor_min_m']*1000:.1f} mm")
