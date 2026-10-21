@@ -46,7 +46,7 @@ for i, name in enumerate(poses):
     d.text((x+10, y+head+cell+28), f"folded tris {c['folded_total']}  collapsed {c['collapsed_total']}  tails apart {near:.0f} mm", fill=(40, 40, 40), font=small)
 a.out.mkdir(parents=True, exist_ok=True)
 board.save(a.out/'rig-pose-board.png')
-VIEWS = ['shoulder', 'hip', 'neck', 'ear_root', 'tail_fork']
+VIEWS = ['shoulder', 'hip', 'knee', 'neck', 'ear_root', 'tail_fork']
 c2, lw = 400, 230
 sheet = Image.new('RGB', (lw+len(VIEWS)*c2, 50+len(poses)*c2), (245, 245, 245))
 d = ImageDraw.Draw(sheet)
@@ -56,10 +56,24 @@ for i, name in enumerate(poses):
     y = 50+i*c2
     d.text((10, y+10), LABEL.get(name, name), fill=(0, 0, 0), font=font)
     reg = checks[name]['regions']
-    rmap = {'shoulder': 'shoulder', 'hip': 'hip', 'neck': 'neck', 'ear_root': 'ear_root', 'tail_fork': 'tail_fork'}
+    rmap = {v: v for v in VIEWS}
     for k, v in enumerate(VIEWS):
         sheet.paste(Image.open(R/f'{name}_{v}.png').resize((c2, c2), Image.LANCZOS), (lw+k*c2, y))
         r = reg[rmap[v]]
         d.text((12, y+44+k*22), f"{v.replace('_', ' ')}: fold {r['folded']} coll {r['collapsed']}", fill=(60, 60, 60), font=small)
 sheet.save(a.out/'rig-closeups.png')
 print(a.out/'rig-pose-board.png', board.size, a.out/'rig-closeups.png', sheet.size)
+# ear fold: side and three-quarter back views of the head, rest beside the folded poses
+ear = [nm for nm in ('rest', 'ears_flat_back', 'night_stalk') if (R/f'{nm}_ears_backq.png').exists()]
+if ear:
+    c3 = 560
+    out = Image.new('RGB', (2*c3+20, 50+len(ear)*(c3+40)), (245, 245, 245))
+    d = ImageDraw.Draw(out)
+    d.text((12, 12), 'Ears: side view (left) and three-quarter back view (right)', fill=(0, 0, 0), font=font)
+    for i, nm in enumerate(ear):
+        y = 50+i*(c3+40)
+        d.text((12, y+6), LABEL.get(nm, nm), fill=(0, 0, 0), font=font)
+        for k, v in enumerate(('ears_side', 'ears_backq')):
+            out.paste(Image.open(R/f'{nm}_{v}.png').resize((c3, c3), Image.LANCZOS), (10+k*(c3+10), y+36))
+    out.save(a.out/'rig-ear-fold.png')
+    print(a.out/'rig-ear-fold.png', out.size)

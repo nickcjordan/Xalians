@@ -4,7 +4,7 @@
 
 Opens the fur of record, drops the fur curves and the eyeliner ribbons (fur-stage parts), bakes the
 re-origin and scale from rig.json into every mesh, builds the armature from joints.json (rig_core.ANIM_BONES),
-writes weights.npz into vertex groups (1/256 steps), binds claws to the hands and feet and the eyes, nose
+writes weights.npz into vertex groups (1/4096 steps), binds claws to the hands and feet and the eyes, nose
 and mouth to the head, then for each pose in poses.json: poses the armature, checks the evaluated skin
 against rig_core's numpy skinning, and renders a side view and five close-ups (shoulder, hip, neck, ear
 root, tail fork) in the look-dev clay scene. Writes renders/<pose>_<view>.png, blender-check.json and
@@ -43,7 +43,7 @@ poses = json.loads((R/'poses.json').read_text())
 s, off = rig_info['transform']['scale'], Vector(rig_info['transform']['offset'])
 wt = np.load(R/'weights.npz')
 idx, w = wt['idx'].astype(int), wt['w'].astype(np.float64)
-w = np.round(w*256)/256
+w = np.round(w*4096)/4096
 w /= w.sum(1, keepdims=True)
 
 bpy.ops.wm.open_mainfile(filepath=a.surface)
@@ -88,7 +88,7 @@ def bind(o):
     m = o.modifiers.new('Armature', 'ARMATURE')
     m.object = rig
     m.use_vertex_groups = True
-    m.use_deform_preserve_volume = False
+    m.use_deform_preserve_volume = True     # dual quaternion skinning, matched by rig_core.skin_points_dq
 
 
 for b, name in enumerate(rc.ANIM_NAMES):
@@ -99,9 +99,9 @@ for b, name in enumerate(rc.ANIM_NAMES):
         ws.append(w[hit, k])
     vs, ws = np.concatenate(vs), np.concatenate(ws)
     g = skin.vertex_groups.new(name=name)
-    level = np.round(ws*256).astype(int)
+    level = np.round(ws*4096).astype(int)
     for q in np.unique(level):
-        g.add(vs[level == q].tolist(), float(q)/256, 'REPLACE')
+        g.add(vs[level == q].tolist(), float(q)/4096, 'REPLACE')
 bind(skin)
 assign = {}
 for o in meshes:
@@ -109,15 +109,75 @@ for o in meshes:
         continue
     nm = o.name.lower()
     side = 'L' if '+1' in nm or nm.endswith('_1') else 'R'
+    if 'mouth' in nm:
+        # the mouth crease lies on the lips: it takes the weights of the skin under it, so it opens with the jaw
+        from mathutils.kdtree import KDTree
+        if 'skin_kd' not in globals():
+            skin_kd = KDTree(n)
+            for i, v in enumerate(skin.data.vertices):
+                skin_kd.insert(v.co, i)
+            skin_kd.balance()
+        groups = {}
+        for v in o.data.vertices:
+            near = skin_kd.find_n(v.co, 4)
+            ws = np.array([1/max(dist, 1e-5) for _, _, dist in near])
+            ws /= ws.sum()
+            acc = {}
+            for (co, i, dist), f in zip(near, ws):
+                for k in range(idx.shape[1]):
+                    if w[i, k] > 0:
+                        acc[idx[i, k]] = acc.get(idx[i, k], 0)+f*w[i, k]
+            for b, val in acc.items():
+                groups.setdefault(b, []).append((v.index, val))
+        for b, lst in groups.items():
+            g = o.vertex_groups.new(name=rc.ANIM_NAMES[b])
+            for i, val in lst:
+                g.add([i], float(val), 'REPLACE')
+        bind(o)
+        assign[o.name] = 'skin weights under it'
+        continue
     bone = f'hand.{side}' if 'fore claw' in nm else f'foot.{side}' if 'hind claw' in nm else 'head'
     g = o.vertex_groups.new(name=bone)
     g.add(list(range(len(o.data.vertices))), 1.0, 'REPLACE')
     bind(o)
     assign[o.name] = bone
-print('rig built', round(time.time()-t0), flush=True)
 rest = np.empty(n*3, np.float32)
 skin.data.vertices.foreach_get('co', rest)
 rest = rest.reshape(-1, 3).astype(np.float64)
+# ---- corrective shape keys, each driven by its bone's swing (rig_core.driver_value)
+cj = json.loads((R/'correctives.json').read_text())
+KEYS = cj['keys']
+cz = np.load(R/'correctives.npz')
+DELTAS = {k['name']: (cz[k['name']+'__ids'], cz[k['name']+'__delta'].astype(np.float64)) for k in KEYS}
+skin.shape_key_add(name='Basis', from_mix=False)
+for k in KEYS:
+    sk = skin.shape_key_add(name=k['name'], from_mix=False)
+    co = rest.copy()
+    ids, dl = DELTAS[k['name']]
+    co[ids] += dl
+    sk.data.foreach_set('co', co.astype(np.float32).ravel())
+    sk.slider_min, sk.slider_max = 0, 1
+    fc = sk.driver_add('value')
+    drv = fc.driver
+    drv.type = 'SCRIPTED'
+    var = drv.variables.new()
+    var.name = 'a'
+    var.type = 'TRANSFORMS'
+    t = var.targets[0]
+    t.id = rig
+    t.bone_target = k['bone']
+    t.transform_type = 'ROT_W'
+    t.rotation_mode = 'SWING_TWIST_Y'
+    t.transform_space = 'LOCAL_SPACE'
+    r0, r1 = (math.radians(x) for x in k['rise'])
+    expr = f'(a-{r0:.6f})/{r1-r0:.6f}'
+    if k.get('fall') is not None:
+        f1 = math.radians(k['fall'])
+        expr = f'min({expr}, ({f1:.6f}-a)/{f1-r1:.6f})'
+    drv.expression = f'max(0.0, min(1.0, {expr}))'
+    for mod in fc.modifiers:
+        fc.modifiers.remove(mod)
+print('rig built', round(time.time()-t0), flush=True)
 
 
 def set_pose(pose, lift):
@@ -159,16 +219,18 @@ for name in names:
     set_pose(pz['pose'], pz['lift'])
     P = evaluated(skin)
     lo, hi = np.minimum(lo, P.min(0)), np.maximum(hi, P.max(0))
-    T = rc.bone_transforms(J, pz['pose'], bones=rc.ANIM_BONES, root_translate=(0, 0, pz['lift']))
-    want = rc.skin_points(rest, idx, w, T, bones=rc.ANIM_BONES)
+    want, _, vals = rc.posed_skin(rest, idx, w, J, pz['pose'], pz['lift'], KEYS, DELTAS)
     err = np.linalg.norm(P-want, axis=1)
-    check['poses'][name] = dict(max_error_vs_numpy_m=float(err.max()), mean_error_m=float(err.mean()))
+    got = {k.name: round(k.value, 4) for k in skin.data.shape_keys.key_blocks[1:] if k.value > 0}
+    check['poses'][name] = dict(max_error_vs_numpy_m=float(err.max()), mean_error_m=float(err.mean()),
+                                keys_blender=got, keys_numpy={k: round(v, 4) for k, v in vals.items() if v > 0})
     print(name, 'numpy agreement', float(err.max()), flush=True)
 box = (Vector(lo-.03), Vector(hi+.03))
 side_box = (Vector((lo[0]-.03, lo[1]-.03, 0.)), Vector((hi[0]+.03, hi[1]+.03, hi[2]+.03)))
 CROPS = {  # view: (joint or joints averaged, azimuth, elevation, half size m)
     'shoulder': (['shoulder.L'], 55, 12, .11),
     'hip': (['hip.L'], 30, 2, .12),
+    'knee': (['knee.L'], 90, 2, .12),
     'neck': (['neck_base', 'head_base'], 65, 6, .10),
     'ear_root': (['ear0.L'], 145, 25, .11),
     'tail_fork': (['tail_fork'], 155, 18, .13),
@@ -182,6 +244,14 @@ for name in names:
         c = Vector(np.mean([pz['joints'][j] for j in js], 0))
         cam = lookdev.place_camera('board_crop', (c-Vector((r, r, r)), c+Vector((r, r, r))), az, el, 0)
         lookdev.render(cam, R/'renders'/f'{name}_{view}.png', size=420)
+    if name in ('ears_flat_back', 'night_stalk', 'rest'):
+        hc = Vector(pz['joints']['head_base'])
+        top = Vector(pz['joints']['head_top'])
+        c = (hc+top)/2
+        r = .36
+        for view, az, el in (('ears_side', 90, 4), ('ears_backq', 140, 22)):
+            cam = lookdev.place_camera('board_ear', (c-Vector((r, r, r)), c+Vector((r, r, r))), az, el, 0)
+            lookdev.render(cam, R/'renders'/f'{name}_{view}.png', size=700)
     print('rendered', name, round(time.time()-t0), flush=True)
 check['seconds'] = round(time.time()-t0)
 (R/'blender-check.json').write_text(json.dumps(check, indent=1))

@@ -472,7 +472,7 @@ def pose_from_directions(joints, targets, base=None, bones=None):
 
 TAILS = ('a', 'b', 'c')          # upper, middle, lower at rest
 TAIL_BONES = 5
-EAR_BONES = 3
+EAR_BONES = 4          # a fold chain: the blade curves over the back of the skull when the ears go flat
 TAIL_SEGMENT_SHARE = (1.25, 1.1, 1.0, .9, .75)   # tail bone lengths, root to tip, shorter toward the tip
 
 
@@ -747,7 +747,7 @@ def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clea
         u[~np.isfinite(u)] = -9
         cuts = e['joints']
         hw = .25*float(np.diff(cuts).min())
-        entry = smoothstep(u, -.08, .06)*guard
+        entry = smoothstep(u, -.14, .06)*guard
         prev = np.ones(n)
         for k in range(1, EAR_BONES+1):
             nxt = smoothstep(u, cuts[k]-hw, cuts[k]+hw) if k < EAR_BONES else np.zeros(n)
@@ -776,3 +776,101 @@ def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clea
     w = np.take_along_axis(W, idx, 1)
     w /= w.sum(1, keepdims=True)
     return idx.astype(np.int16), w.astype(np.float32)
+
+
+# ---------------------------------------------------------------- volume-preserving skinning and correctives
+
+def quat_from_matrix(R):
+    """(w, x, y, z) unit quaternion of a rotation matrix."""
+    t = np.trace(R)
+    if t > 0:
+        s = math.sqrt(t+1)*2
+        q = [s/4, (R[2, 1]-R[1, 2])/s, (R[0, 2]-R[2, 0])/s, (R[1, 0]-R[0, 1])/s]
+    elif R[0, 0] > R[1, 1] and R[0, 0] > R[2, 2]:
+        s = math.sqrt(1+R[0, 0]-R[1, 1]-R[2, 2])*2
+        q = [(R[2, 1]-R[1, 2])/s, s/4, (R[0, 1]+R[1, 0])/s, (R[0, 2]+R[2, 0])/s]
+    elif R[1, 1] > R[2, 2]:
+        s = math.sqrt(1+R[1, 1]-R[0, 0]-R[2, 2])*2
+        q = [(R[0, 2]-R[2, 0])/s, (R[0, 1]+R[1, 0])/s, s/4, (R[1, 2]+R[2, 1])/s]
+    else:
+        s = math.sqrt(1+R[2, 2]-R[0, 0]-R[1, 1])*2
+        q = [(R[1, 0]-R[0, 1])/s, (R[0, 2]+R[2, 0])/s, (R[1, 2]+R[2, 1])/s, s/4]
+    q = np.array(q)
+    return q/np.linalg.norm(q)
+
+
+def _qmul(a, b):
+    """Quaternion product, (..., 4) arrays, (w, x, y, z)."""
+    aw, ax, ay, az = np.moveaxis(a, -1, 0)
+    bw, bx, by, bz = np.moveaxis(b, -1, 0)
+    return np.stack([aw*bw-ax*bx-ay*by-az*bz, aw*bx+ax*bw+ay*bz-az*by,
+                     aw*by-ax*bz+ay*bw+az*bx, aw*bz+ax*by-ay*bx+az*bw], -1)
+
+
+def _qmat(q):
+    w, x, y, z = np.moveaxis(q, -1, 0)
+    return np.stack([np.stack([1-2*(y*y+z*z), 2*(x*y-z*w), 2*(x*z+y*w)], -1),
+                     np.stack([2*(x*y+z*w), 1-2*(x*x+z*z), 2*(y*z-x*w)], -1),
+                     np.stack([2*(x*z-y*w), 2*(y*z+x*w), 1-2*(x*x+y*y)], -1)], -2)
+
+
+def skin_points_dq(points, idx, w, transforms, bones=None):
+    """Dual quaternion skinning (Blender's Preserve Volume) of (n,3) points with the bone transforms of
+    bone_transforms. Returns (posed points, per-vertex rotation matrices (n,3,3)). Each vertex blends its
+    bones' dual quaternions by weight, sign-aligned to the running sum, then normalizes; volume is kept
+    across bends where linear blending collapses it."""
+    names = [b[0] for b in (bones or BONES)]
+    Q = np.stack([quat_from_matrix(transforms[b][0]) for b in names])
+    Tq = np.stack([np.r_[0, transforms[b][1]] for b in names])
+    D = .5*_qmul(Tq, Q)
+    real = np.zeros((len(points), 4))
+    dual = np.zeros((len(points), 4))
+    for k in range(idx.shape[1]):
+        q, d = Q[idx[:, k]], D[idx[:, k]]
+        sgn = np.where((real*q).sum(1) < 0, -1., 1.) if k else np.ones(len(points))
+        real += (w[:, k]*sgn)[:, None]*q
+        dual += (w[:, k]*sgn)[:, None]*d
+    nrm = np.linalg.norm(real, axis=1, keepdims=True)
+    real, dual = real/nrm, dual/nrm
+    R = _qmat(real)
+    conj = real*np.array([1, -1, -1, -1])
+    t = 2*_qmul(dual, conj)[:, 1:]
+    return np.einsum('nij,nj->ni', R, points)+t, R
+
+
+def swing_deg(joints, pose, bone, bones=None):
+    """How far a bone's axis turns away from its rest direction relative to its parent: the swing of its
+    local rotation about its own axis (Blender driver: transform ROT_W, rotation mode SWING_TWIST_Y, local
+    space). Twist about the bone does not count."""
+    u = bone_axis(joints, bone, bones)
+    R = euler_matrix(*pose.get(bone, (0, 0, 0)))
+    return math.degrees(math.acos(max(-1., min(1., float(u@R@u)))))
+
+
+def driver_value(angle, rise, fall=None):
+    """Corrective key value from a swing angle: 0 below rise[0], 1 at rise[1], back to 0 at fall (degrees)."""
+    v = (angle-rise[0])/(rise[1]-rise[0])
+    if fall is not None:
+        v = min(v, (fall-angle)/(fall-rise[1]))
+    return max(0., min(1., v))
+
+
+def corrective_values(joints, pose, keys, bones=None):
+    return {k['name']: driver_value(swing_deg(joints, pose, k['bone'], bones), k['rise'], k.get('fall')) for k in keys}
+
+
+def posed_skin(points, idx, w, joints, pose, lift=0., keys=(), deltas=None, bones=None):
+    """Volume-preserving skin with the corrective keys: rest + sum(value * delta), then dual quaternions."""
+    bones = bones or ANIM_BONES
+    x = points
+    vals = corrective_values(joints, pose, keys, bones) if keys else {}
+    if keys and deltas is not None:
+        x = points.copy()
+        for k in keys:
+            v = vals[k['name']]
+            if v > 0:
+                ids, dl = deltas[k['name']]
+                x[ids] += v*dl
+    T = bone_transforms(joints, pose, root_translate=(0, 0, lift), bones=bones)
+    P, R = skin_points_dq(x, idx, w, T, bones)
+    return P, R, vals

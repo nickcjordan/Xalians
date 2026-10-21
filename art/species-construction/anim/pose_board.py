@@ -1,20 +1,32 @@
-"""Akinza rig review poses and deformation checks (numpy half; Blender renders them with render_board.py).
+"""Akinza rig review poses, corrective shapes and deformation checks (numpy half; render_board.py renders).
 
   python art/species-construction/anim/pose_board.py --probe <probe dir> --rig <rig dir>
 
-Reads skin.npz (probe), joints.json, joints-source.json, weights.npz, rig.json (rig). Writes into the rig
-dir: poses.json (per pose: bone rotations, root lift, posed joint positions for the close-up cameras) and
-checks.json. The checks follow the Luceras rig checks (art/pipeline/rig/measure.py: finite and no flying
-vertices, influences, unweighted vertices, weight sums, bilateral weight symmetry, edge stretch, closed
-volume per pose) plus what this rig needs: folded and collapsed triangles per joint region (the crease and
-candy-wrapper signal), and clearance between the three tails and from the tails to the legs.
+Reads skin.npz (probe) and joints.json, weights.npz, rig.json (rig). Skinning is dual quaternion
+(Blender's Preserve Volume) plus corrective shape keys driven by joint swing angles. Writes into the rig
+dir: poses.json (per pose: bone rotations, root lift, key values, posed joints), correctives.npz and
+correctives.json (sparse rest-space deltas and their drivers), checks.json.
+
+Correctives are sculpted procedurally at a pose: inside a soft mask around the joint the posed skin is
+relaxed toward the rest surface's own shape, turned by each vertex's skinning rotation (each vertex moves
+to its neighbours' average plus its rotated rest offset from them, many rounds). That unfolds pleats and
+pushes the lost volume at the back of a knee, the groin, an armpit or an ear root back out, while the
+mask edge holds everything around it. The posed change is turned back into rest space through the same
+rotation, so the key reproduces it exactly at its driver's full value.
+
+The checks follow the Luceras rig checks (art/pipeline/rig/measure.py: finite, no flying vertices,
+influences, unweighted, weight sums, bilateral weight symmetry, edge stretch, closed volume per pose) plus
+folded and collapsed triangles per joint region, tail-to-tail and tail-to-leg clearance, and ear blade
+vertices inside the skull.
 """
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 
 import numpy as np
+import scipy.sparse as sp
 from scipy.spatial import cKDTree
 
 HERE = Path(__file__).resolve().parent
@@ -24,23 +36,40 @@ import rig_core as rc  # noqa: E402
 p = argparse.ArgumentParser()
 p.add_argument('--probe', type=Path, required=True)
 p.add_argument('--rig', type=Path, required=True)
+p.add_argument('--relax', type=int, default=3000)
+p.add_argument('--spread', type=int, default=900)
+p.add_argument('--ear-offset', type=float, default=.026)
 a = p.parse_args()
 
 B = rc.ANIM_BONES
 NAMES = rc.ANIM_NAMES
+NI = {b: i for i, b in enumerate(NAMES)}
 rig = json.loads((a.rig/'rig.json').read_text())
 J = json.loads((a.rig/'joints.json').read_text())
-JS = json.loads((a.rig/'joints-source.json').read_text())
 s, off = rig['transform']['scale'], np.array(rig['transform']['offset'])
 d = np.load(a.probe/'skin.npz')
-src = d['verts'].astype(np.float64)
-rest = s*(src-off)
+rest = s*(d['verts'].astype(np.float64)-off)
 tris, edges = d['tris'], d['edges']
+n = len(rest)
 wt = np.load(a.rig/'weights.npz')
-idx, w = wt['idx'].astype(int), wt['w'].astype(np.float64)
-# Blender stores the weights in vertex groups at 1/256 steps; pose and check with the same numbers
-w = np.round(w*256)/256
+idx = wt['idx'].astype(int)
+w = np.round(wt['w'].astype(np.float64)*4096)/4096      # Blender's vertex groups hold 1/4096 steps
 w /= w.sum(1, keepdims=True)
+dense = np.zeros((n, len(NAMES)))
+np.put_along_axis(dense, idx, w, 1)
+A = sp.coo_matrix((np.ones(2*len(edges)), (np.r_[edges[:, 0], edges[:, 1]], np.r_[edges[:, 1], edges[:, 0]])), shape=(n, n)).tocsr()
+A = sp.diags(1/np.maximum(np.asarray(A.sum(1)).ravel(), 1))@A
+LAP_REST = rest-A@rest
+
+
+def quats(R):
+    """(w, x, y, z) of each rotation matrix (rotations under 180 degrees, as skinning rotations are)."""
+    wq = np.sqrt(np.maximum(1+R[:, 0, 0]+R[:, 1, 1]+R[:, 2, 2], 1e-12))/2
+    return np.stack([wq, (R[:, 2, 1]-R[:, 1, 2])/(4*wq), (R[:, 0, 2]-R[:, 2, 0])/(4*wq), (R[:, 1, 0]-R[:, 0, 1])/(4*wq)], 1)
+
+
+def share(bones):
+    return dense[:, [NI[b] for b in bones]].sum(1)
 
 
 def mirror(pose):
@@ -61,7 +90,6 @@ def directions(base, targets):
 
 
 def tails(root, per):
-    """tail_root rotation plus per tail a list of rotations for bones 1..5 (shorter lists repeat the last)."""
     out = {'tail_root': root}
     for t, rots in per.items():
         for k in range(1, rc.TAIL_BONES+1):
@@ -69,9 +97,83 @@ def tails(root, per):
     return out
 
 
-EARS_BACK = mirror({'ear_1.L': [0, 20, 46], 'ear_2.L': [0, 12, 18], 'ear_3.L': [0, 6, 6]})
-POSES = {}
-POSES['rest'] = {}
+def vertex_normals(P):
+    fn = np.cross(P[tris[:, 1]]-P[tris[:, 0]], P[tris[:, 2]]-P[tris[:, 0]])
+    vn = np.zeros_like(P)
+    for k in range(3):
+        np.add.at(vn, tris[:, k], fn)
+    return vn/np.maximum(np.linalg.norm(vn, axis=1, keepdims=True), 1e-20)
+
+
+# ---------------------------------------------------------------- ear fold: the blade laid along the skull
+NRM = vertex_normals(rest)
+head_share = share(['head'])
+SKULL = np.where((head_share > .95) & (rest[:, 1] > J['head_base'][1]-.02))[0]   # back half of the head
+# what the folded blade lies on: the back half of the head, the nape and the top of the back
+BED = np.where((rest[:, 1] > J['head_base'][1]-.02) & (rest[:, 2] > J['clavicle'][2]-.02) & (share(['ear_1.L', 'ear_2.L',
+               'ear_3.L', 'ear_4.L', 'ear_1.R', 'ear_2.R', 'ear_3.R', 'ear_4.R']) < .02))[0]
+skull_tree = cKDTree(rest[SKULL])
+bed_tree = cKDTree(rest[BED])
+
+
+def ear_fold(side='L', offset=.026, down=.75, tilt=22., inner_x=.05):
+    """Rotations for ear_1..ear_N of one side so the blade folds down and lies along the back of the head:
+    a curve is marched from the ear root back and down over the offset surface of the head, nape and
+    upper back, following their curvature and kept on its own side of the midline (|x| >= inner_x);
+    each bone's axis follows the curve's chord and the blade's inner (concha) face turns outward, tilted
+    by `tilt` degrees about the bone so its inner edge lies down and its outer edge stands off."""
+    chain = [f'ear_{k}.{side}' for k in range(1, rc.EAR_BONES+1)]
+    lengths = [np.linalg.norm(np.array(J[f'ear{k}.{side}'])-np.array(J[f'ear{k-1}.{side}'])) for k in range(1, rc.EAR_BONES+1)]
+    sx = 1 if side == 'L' else -1
+    pt = np.array(J[f'ear0.{side}'], float)
+    dirn = unit((0, 1, -down))
+    pts, arc, total, h = [pt.copy()], [0.], sum(lengths), .003
+    normals = []
+    while arc[-1] < total:
+        _, q = bed_tree.query(pt)
+        nq = NRM[BED[q]]
+        dirn = unit(dirn-nq*(dirn@nq))
+        pt = pt+h*dirn
+        _, q = bed_tree.query(pt)
+        pt = rest[BED[q]]+NRM[BED[q]]*offset
+        if sx*pt[0] < inner_x:
+            pt[0] = sx*inner_x
+            dirn[0] = max(dirn[0]*sx, 0)*sx
+        normals.append(NRM[BED[q]])
+        arc.append(arc[-1]+np.linalg.norm(pt-pts[-1]))
+        pts.append(pt.copy())
+    pts, arc, normals = np.array(pts), np.array(arc), np.array(normals)
+    cum = np.r_[0, np.cumsum(lengths)]
+    targets = [np.array([np.interp(c, arc, pts[:, i]) for i in range(3)]) for c in cum]
+    pose, Rparent = {}, np.eye(3)
+    for k, b in enumerate(chain):
+        mine = dense[:, NI[b]] > .5
+        q = rest[mine]-rest[mine].mean(0)
+        nu = np.linalg.svd(q, full_matrices=False)[2][2]       # thinnest direction of this piece of blade
+        nu = nu if nu[1] < 0 else -nu                           # the concha (inner) face looks forward at rest
+        u = rc.bone_axis(J, b, B)
+        dk = unit(targets[k+1]-targets[k])
+        mid = (cum[k]+cum[k+1])/2
+        nk = unit(normals[min(np.searchsorted(arc, mid), len(normals)-1)])
+        nk = unit(nk-dk*(dk@nk))
+        side_v = np.cross(dk, nk)
+        tl = math.radians(tilt)*(1 if side_v[2] < 0 else -1)
+        nk = unit(nk*math.cos(tl)+side_v*math.sin(tl))
+
+        def frame(x, y):
+            y = unit(y-x*(x@y))
+            return np.stack([x, y, np.cross(x, y)], 1)
+        Rw = frame(dk, nk)@frame(u, nu).T
+        pose[b] = rc.euler_from_matrix(Rparent.T@Rw)
+        Rparent = Rw
+    return pose, targets
+
+
+ear_L, ear_targets = ear_fold('L', a.ear_offset)
+EARS_BACK = mirror(ear_L)
+
+# ---------------------------------------------------------------- poses
+POSES = {'rest': {}}
 crouch = {'pelvis': [24, 0, 0], 'spine': [6, 0, 0], 'chest': [8, 0, 0], 'neck': [-14, 0, 0], 'head': [-24, 0, 0]}
 crouch.update(EARS_BACK)
 crouch.update(tails([-72, 0, 22], {'a': [[-14, 0, 8], [-6, 0, 6]], 'b': [[-2, 0, 10], [-4, 0, 6]],
@@ -89,16 +191,111 @@ POSES['tails_fanned'] = tails([12, 0, -12], {'a': [[26, 0, -6], [8, 0, -4]], 'b'
 turn = {'neck': [0, 0, 18], 'head': [-12, 8, 32], 'jaw': [12, 0, 0]}
 turn.update(mirror({'ear_1.L': [0, -8, -18]}))
 POSES['head_turn'] = turn
+ARM_UP = {'upperarm.L': (.10, -.85, .52), 'forearm.L': (.05, -.95, .30), 'hand.L': (0, -.95, .30)}
 POSES['arm_reach'] = directions({'clavicle.L': [-6, -20, 0], 'clavicle.R': [0, 20, 0]},
-                                {'upperarm.L': (.10, -.85, .52), 'forearm.L': (.05, -.95, .30), 'hand.L': (0, -.95, .30),
-                                 'upperarm.R': (-.95, -.05, .30), 'forearm.R': (-.95, -.12, .26), 'hand.R': (-.97, -.12, .2)})
+                                {**ARM_UP, 'upperarm.R': (-.95, -.05, .30), 'forearm.R': (-.95, -.12, .26),
+                                 'hand.R': (-.97, -.12, .2)})
 POSES['leg_reach'] = directions({'pelvis': [-6, 0, 0]},
                                 {'thigh.L': (.08, -.95, -.30), 'shin.L': (.02, -.30, -.95), 'foot.L': (0, -.97, -.25),
                                  'thigh.R': (-.10, .45, -.89), 'shin.R': (-.05, .62, -.78), 'foot.R': (0, -.6, -.8)})
 twist = {'spine': [0, 8, 16], 'chest': [0, 8, 16], 'neck': [0, 0, 10]}
 twist.update(tails([0, 0, -24], {'a': [[0, 0, -6]], 'b': [[0, 0, -6]], 'c': [[0, 0, -6]]}))
 POSES['twist_bend'] = twist
+# sculpt-only poses (not on the board): both arms raised forward like the board's left arm, so the
+# shoulder-raise keys are mirror images; both legs in the leg reach's forward step
+SCULPT = {'arms_up': directions({'clavicle.L': [-6, -20, 0], 'clavicle.R': [-6, 20, 0]},
+                                {**ARM_UP, 'upperarm.R': (-.10, -.85, .52), 'forearm.R': (-.05, -.95, .30),
+                                 'hand.R': (0, -.95, .30)}),
+          'legs_step': directions({'pelvis': [-6, 0, 0]},
+                                  {'thigh.L': (.08, -.95, -.30), 'shin.L': (.02, -.30, -.95), 'foot.L': (0, -.97, -.25),
+                                   'thigh.R': (-.08, -.95, -.30), 'shin.R': (-.02, -.30, -.95), 'foot.R': (0, -.97, -.25)})}
+ALL = {**POSES, **SCULPT}
 
+# ---------------------------------------------------------------- correctives
+# group: (name, sculpt pose, driver bone base, mask joint base, inner/outer mask radius m, bones the mask
+# may touch (by weight), lowest rise start degrees)
+GROUPS = [
+    ('knee_step', 'legs_step', 'shin', 'knee', (.06, .14), ['thigh', 'shin'], 15),
+    ('knee_bend', 'night_stalk', 'shin', 'knee', (.06, .14), ['thigh', 'shin'], 15),
+    ('hip_flex', 'night_stalk', 'thigh', 'hip', (.07, .14), ['pelvis', 'hip', 'thigh', 'spine'], 30),
+    ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
+    ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
+    ('ear_fold', 'ears_flat_back', 'ear_1', 'ear0', (.05, .12), ['head', 'ear_1'], 15),
+]
+
+
+def side_bone(base, sd):
+    return f'{base}.{sd}'
+
+
+# plan every key's driver first: keys on one bone split its range, each rising from the previous key's
+# angle to its own sculpt angle and handing over (falling to 0) at the next key's angle
+plan = []
+for gname, pose_name, dbase, jbase, radii, mbones, rise0 in GROUPS:
+    for sd in ('L', 'R'):
+        bone = side_bone(dbase, sd)
+        ang = rc.swing_deg(J, ALL[pose_name], bone, B)
+        prior = [k for k in plan if k['bone'] == bone and k['rise'][1] < ang]
+        start = max([rise0]+[k['rise'][1] for k in prior])
+        plan.append(dict(name=f'{gname}.{sd}', group=gname, bone=bone, rise=[float(start), float(ang)], fall=None, pose=pose_name))
+for k in plan:
+    nxt = sorted([o['rise'][1] for o in plan if o['bone'] == k['bone'] and o['rise'][1] > k['rise'][1]])
+    if nxt:
+        k['fall'] = float(nxt[0])
+def posed_joint(T, jn):
+    b = next(b for b, _, h, t in B if h == jn or t == jn)
+    R, t = T[b]
+    return R@np.array(J[jn])+t
+
+
+keys, deltas = [], {}
+for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
+    pose = ALL[pose_name]
+    P, Rv, vals = rc.posed_skin(rest, idx, w, J, pose, keys=keys, deltas=deltas)
+    T = rc.bone_transforms(J, pose, bones=B)
+    masks = {}
+    for sd in ('L', 'R'):
+        jn = f'{jbase}.{sd}'
+        bone_of_joint = next(b for b, _, h, _t in B if h == jn)
+        Rj, tj = T[bone_of_joint]
+        c = Rj@np.array(J[jn])+tj
+        mb = [side_bone(b, sd) if f'{b}.{sd}' in NI else b for b in mbones]
+        allowed = rc.smoothstep(share(mb), .4, .7)
+        masks[sd] = (1-rc.smoothstep(np.linalg.norm(P-c, axis=1), r0, r1))*allowed
+    m = np.maximum(masks['L'], masks['R'])
+    sel = np.where(m > 1e-4)[0]
+    As = A[sel]
+    # the bend's rotation field, spread wider inside the mask: the corrected surface bends over a longer
+    # arc instead of pleating where the skinning rotation turns fast
+    Qv = quats(Rv)
+    lq = (.6*m[sel])[:, None]
+    for _ in range(a.spread):
+        Qv[sel] = (1-lq)*Qv[sel]+lq*(As@Qv)
+    Qv /= np.linalg.norm(Qv, axis=1, keepdims=True)
+    target_lap = np.einsum('nij,nj->ni', rc._qmat(Qv[sel]), LAP_REST[sel])
+    X = P.copy()
+    lam = (.85*m[sel])[:, None]
+    for it in range(a.relax):
+        X[sel] = (1-lam)*X[sel]+lam*(As@X+target_lap)
+    dP = X-P
+    dR = np.einsum('nji,nj->ni', Rv, dP)                     # back to rest space: R^T dP
+    tot = masks['L']+masks['R']+1e-12
+    for sd in ('L', 'R'):
+        key = next(k for k in plan if k['name'] == f'{gname}.{sd}')
+        v = rc.driver_value(rc.swing_deg(J, pose, key['bone'], B), key['rise'], key['fall'])
+        part = dR*(masks[sd]/tot)[:, None]/max(v, 1e-6)
+        ids = np.where(np.linalg.norm(part, axis=1) > 1e-6)[0]
+        deltas[key['name']] = (ids, part[ids])
+        keys.append(key)
+    print(f'{gname:15s} at {pose_name}: {len(sel)} vertices, max move {np.linalg.norm(dP, axis=1).max()*1000:.1f} mm, '
+          f'L rise {keys[-2]["rise"]} fall {keys[-2]["fall"]}', flush=True)
+np.savez_compressed(a.rig/'correctives.npz', **{f'{k}__ids': v[0] for k, v in deltas.items()},
+                    **{f'{k}__delta': v[1].astype(np.float32) for k, v in deltas.items()})
+(a.rig/'correctives.json').write_text(json.dumps({'skinning': 'dual quaternion (Blender Preserve Volume)',
+    'driver': 'swing of the bone about its own axis, degrees: Blender transform ROT_W, SWING_TWIST_Y, local space',
+    'keys': keys}, indent=1))
+
+# ---------------------------------------------------------------- checks
 REGIONS = {'shoulder': ['shoulder.L', 'shoulder.R'], 'elbow': ['elbow.L', 'elbow.R'], 'hip': ['hip.L', 'hip.R'],
            'knee': ['knee.L', 'knee.R'], 'neck': ['neck_base', 'head_base'], 'jaw': ['jaw_hinge'],
            'ear_root': ['ear0.L', 'ear0.R'], 'tail_fork': ['tail_fork']}
@@ -107,40 +304,17 @@ RADIUS = {'shoulder': .09, 'elbow': .06, 'hip': .10, 'knee': .07, 'neck': .08, '
 centroid = rest[tris].mean(1)
 region_of = {}
 for r, js in REGIONS.items():
-    # triangles within RADIUS of the skin over the joint: the joint's depth below the skin plus RADIUS
     dist = np.min([np.linalg.norm(centroid-np.array(J[j]), axis=1)-np.linalg.norm(centroid-np.array(J[j]), axis=1).min()
                    for j in js], axis=0)
     region_of[r] = dist < RADIUS[r]
-names_idx = {b: i for i, b in enumerate(NAMES)}
-tail_bones = [names_idx[b] for b in NAMES if b.startswith('tail_') and b != 'tail_root']
-dom = idx[:, 0]
-
-
-def tail_branch_mask():
-    out = {}
-    for t in rc.TAILS:
-        ids = [names_idx[f'tail_{t}{k}'] for k in range(2, rc.TAIL_BONES+1)]   # past the first bone: clear of the crotch
-        share = np.zeros(len(rest))
-        for k in range(idx.shape[1]):
-            share += np.where(np.isin(idx[:, k], ids), w[:, k], 0)
-        out[t] = share > .5
-    return out
-
-
-TAIL = tail_branch_mask()
-any_tail = np.zeros(len(rest))
-for k in range(idx.shape[1]):
-    any_tail += np.where(np.isin(idx[:, k], tail_bones+[names_idx['tail_root']]), w[:, k], 0)
-LEGS = np.zeros(len(rest))
-legs = [names_idx[b] for b in NAMES if base_of(b) in ('thigh', 'shin', 'foot')] if (base_of := rc.base_of) else []
-for k in range(idx.shape[1]):
-    LEGS += np.where(np.isin(idx[:, k], legs), w[:, k], 0)
-LEGS = (LEGS > .5) & (any_tail < .01)
+TAIL = {t: share([f'tail_{t}{k}' for k in range(2, rc.TAIL_BONES+1)]) > .5 for t in rc.TAILS}
+any_tail = share([b for b in NAMES if b.startswith('tail_')])
+LEGS = (share([b for b in NAMES if rc.base_of(b) in ('thigh', 'shin', 'foot')]) > .5) & (any_tail < .01)
+EAR = share([b for b in NAMES if b.startswith('ear_')]) > .9
 
 
 def normals(P):
-    n = np.cross(P[tris[:, 1]]-P[tris[:, 0]], P[tris[:, 2]]-P[tris[:, 0]])
-    return n
+    return np.cross(P[tris[:, 1]]-P[tris[:, 0]], P[tris[:, 2]]-P[tris[:, 0]])
 
 
 def closed_volume(P):
@@ -151,11 +325,10 @@ n_rest = normals(rest)
 area_rest = np.linalg.norm(n_rest, axis=1)
 L_rest = np.linalg.norm(rest[edges[:, 0]]-rest[edges[:, 1]], axis=1)
 vol_rest = closed_volume(rest)
+tri_dom = idx[tris[:, 0], 0]
 out_poses, checks = {}, {}
-tri_dom = dom[tris[:, 0]]
 for name, pose in POSES.items():
-    T = rc.bone_transforms(J, pose, bones=B)
-    P = rc.skin_points(rest, idx, w, T, bones=B)
+    P, Rv, vals = rc.posed_skin(rest, idx, w, J, pose, keys=keys, deltas=deltas)
     lift = -float(P[:, 2].min())
     P[:, 2] += lift
     T = rc.bone_transforms(J, pose, bones=B, root_translate=(0, 0, lift))
@@ -174,9 +347,7 @@ for name, pose in POSES.items():
     for r, m in region_of.items():
         reg[r] = dict(triangles=int(m.sum()), folded=int(np.sum(m & (cosang < 0))), tilted60=int(np.sum(m & (cosang < .5))),
                       collapsed=int(np.sum(m & (area < .25))), stretched=int(np.sum(m & (area > 3))),
-                      area_min=float(area[m].min()), area_p01=float(np.quantile(area[m], .001)),
-                      area_max=float(area[m].max()))
-    # tails: clearance between tails past the crotch, and from the tails to the legs
+                      area_min=float(area[m].min()), area_p01=float(np.quantile(area[m], .001)), area_max=float(area[m].max()))
     trees = {t: cKDTree(P[TAIL[t]]) for t in rc.TAILS}
     clear = {}
     for i, t in enumerate(rc.TAILS):
@@ -187,33 +358,49 @@ for name, pose in POSES.items():
     for t in rc.TAILS:
         dd, _ = leg_tree.query(P[TAIL[t]], k=1, workers=-1)
         clear[t+'-legs'] = dict(min_m=float(dd.min()), vertices_within_3mm=int(np.sum(dd < .003)))
+    # ear blade inside the skull: blade vertices behind the posed skull surface (signed by its normal)
+    sk = P[SKULL]
+    skn = vertex_normals(P)[SKULL]
+    dd, qi = cKDTree(sk).query(P[EAR], k=1, workers=-1)
+    signed = np.einsum('ij,ij->i', P[EAR]-sk[qi], skn[qi])
+    near = dd < .03
     checks[name] = dict(finite=bool(np.isfinite(P).all()), farther_than_3m=int(np.sum(np.linalg.norm(P, axis=1) > 3)),
-                        lift_m=lift, edge_stretch_p99=float(np.quantile(L, .99)), edge_stretch_max=float(L.max()),
+                        lift_m=lift, keys={k: round(v, 3) for k, v in vals.items() if v > 0},
+                        edge_stretch_p99=float(np.quantile(L, .99)), edge_stretch_max=float(L.max()),
                         edge_shrink_p01=float(np.quantile(L, .01)), edge_shrink_min=float(L.min()),
                         volume_change=closed_volume(P)/vol_rest-1, folded_total=int(np.sum(cosang < 0)),
-                        collapsed_total=int(np.sum(area < .25)), regions=reg, tails=clear)
-    out_poses[name] = dict(pose={k: list(map(float, v)) for k, v in pose.items()}, lift=lift, joints=posed_j)
-# weights: Luceras checks
+                        collapsed_total=int(np.sum(area < .25)), regions=reg, tails=clear,
+                        ear_inside_skull=int(np.sum(near & (signed < -.001))), ear_skull_gap_min_m=float(signed[near].min()) if near.any() else None)
+    out_poses[name] = dict(pose={k: list(map(float, v)) for k, v in pose.items()}, lift=lift, joints=posed_j,
+                           keys={k: float(v) for k, v in vals.items()})
 inf = (w > 1e-6).sum(1)
 pos = rest[:, 0] > 1e-5
-tree = cKDTree(rest)
 q = rest[pos].copy()
 q[:, 0] *= -1
-dd, jj = tree.query(q, k=1, workers=-1)
-swap = np.array([names_idx[n[:-1]+('R' if n.endswith('L') else 'L')] if n[-2:] in ('.L', '.R') else i
-                 for i, n in enumerate(NAMES)])
-dense = np.zeros((len(rest), len(NAMES)))
-np.put_along_axis(dense, idx, w, 1)
+dd, jj = cKDTree(rest).query(q, k=1, workers=-1)
+swap = np.array([NI[nm[:-1]+('R' if nm.endswith('L') else 'L')] if nm[-2:] in ('.L', '.R') else i for i, nm in enumerate(NAMES)])
 ok = (dd < .001) & (any_tail[pos] < .01) & (any_tail[jj] < .01)
 sym = np.abs(dense[pos][ok]-dense[jj[ok]][:, swap]).max(1)
 weights = dict(max_influences=int(inf.max()), unweighted=int(np.sum(inf == 0)), sum_min=float(w.sum(1).min()),
                sum_max=float(w.sum(1).max()), mirrored_pairs=int(ok.sum()), symmetry_max=float(sym.max()),
                symmetry_p99=float(np.quantile(sym, .99)), joints=len(NAMES))
+# correctives mirror each other: compare each .L key with its .R twin across x = 0
+mir = {}
+for k in keys:
+    if k['name'].endswith('.L'):
+        dl = np.zeros((n, 3))
+        dr = np.zeros((n, 3))
+        i0, v0 = deltas[k['name']]
+        i1, v1 = deltas[k['name'][:-1]+'R']
+        dl[i0], dr[i1] = v0, v1
+        dm = dr[jj]*np.array([-1, 1, 1])
+        mir[k['name'][:-2]] = float(np.abs(dl[pos][ok]-dm[ok]).max())
+weights['corrective_mirror_max_m'] = mir
 (a.rig/'poses.json').write_text(json.dumps(out_poses, indent=1))
-(a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks), indent=1))
+(a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks, earFold=dict(L=ear_L, offset=a.ear_offset)), indent=1))
 print(json.dumps(weights))
 for name, c in checks.items():
     worst = {r: (v['folded'], v['collapsed']) for r, v in c['regions'].items() if v['folded'] or v['collapsed']}
     tl = {k: round(v['min_m']*1000, 1) for k, v in c['tails'].items()}
-    print(f"{name:15s} stretch99 {c['edge_stretch_p99']:.2f} max {c['edge_stretch_max']:.2f} shrink {c['edge_shrink_min']:.2f} "
-          f"vol {c['volume_change']*100:+.1f}% folded {c['folded_total']} collapsed {c['collapsed_total']} regions {worst} tails mm {tl}")
+    print(f"{name:15s} stretch99 {c['edge_stretch_p99']:.2f} max {c['edge_stretch_max']:.2f} vol {c['volume_change']*100:+.1f}% "
+          f"folded {c['folded_total']} coll {c['collapsed_total']} {worst} ear-in-skull {c['ear_inside_skull']} tails {tl}")
