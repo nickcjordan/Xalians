@@ -1,0 +1,15 @@
+{
+  "id": "N-01M5G4XQ0CD4KDJ27QD4P176Q2",
+  "alias": "2jz7",
+  "stage": "09-animate",
+  "who": "orchestrator",
+  "words": "Deformation audit B-j6jh: 81 pose-introduced defects from the independent critic plus 11 in the rest sculpt; flags show thousands of collapsed, flipped and intersecting triangles at the elbows, chest floor, hips and stifles in most bending poses. Spot fixes cannot work. Root causes: skin weights inherited from the blockout proxy (44), no volume preservation (10), elbow, stifle and hock pivots (7), missing scapula and shoulder girdle so the upper arm slides over the ribs as a rigid tube, hard weight boundaries on the hind cannons (rings), correctives authored on the bad weights (7), unnatural review poses and clip contacts (13), sculpt patches (11). Method change: re-skin the sprite-route sculpt from the skeleton outward with a shoulder girdle, smooth geodesic weights, volume preservation and a corrective-smooth layer, then re-author correctives. The audit's flags and a fresh critic read are the pass gate.",
+  "date": "2026-10-21",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M5FSE8Q16S7RHG8SPEFJ36GH",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-21T21:12:23Z"
+}

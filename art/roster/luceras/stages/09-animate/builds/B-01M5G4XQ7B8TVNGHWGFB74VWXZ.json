@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5G4XQ7B8TVNGHWGFB74VWXZ",
+  "alias": "sntv",
+  "stage": "09-animate",
+  "kind": "build",
+  "goal": "Re-skin the sculpt: shoulder girdle, pivots, smooth weights, volume preservation, corrective smooth, re-authored correctives, plausible review poses; pass gate = the B-j6jh audit re-run with near-zero collapse, flip and intersection plus a fresh critic read",
+  "scope": "skeleton additions (sprite-only), sculpt skin weights, correctives, review poses, clip contact fixes, small sculpt patches",
+  "defect": "D-01M5FSE8Q16S7RHG8SPEFJ36GH",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-21T21:12:23Z",
+  "briefSha256": "c096162ac6c8205668d3c3de0d4e5d129550f4be40eee25803c561185b026c5e"
+}
