@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5DR587SABDVKMRQ7WVF044M",
+  "alias": "hxhq",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Groom pass 8: rebuild the tail plume to the sheet (built from its structure outward, judged on every view), and reattach the groom on the neck-fixed sculpt",
+  "scope": "plume guides and materials, groom reapply on luceras-neck pass2 sculpt, renders",
+  "defect": "D-01M53ADQZSJ9PZ5AENRR509JWC",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-20T22:50:49Z",
+  "briefSha256": "d628be4b2be529725b394f8c8b7461b44892cfa536e5ac97d93ddc7a6b99a15f"
+}
