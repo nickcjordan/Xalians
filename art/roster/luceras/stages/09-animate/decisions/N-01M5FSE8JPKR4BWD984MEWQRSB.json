@@ -1,0 +1,14 @@
+{
+  "id": "N-01M5FSE8JPKR4BWD984MEWQRSB",
+  "alias": "q4bd",
+  "stage": "09-animate",
+  "who": "nick",
+  "words": "there is a weird bone-looking protrusion on the belly in the crouch position just before jumping (screenshot in chat); also asked whether the open ring at the top of the fore paw in the pass 8 top view is a viewing artifact or a model gap",
+  "date": "2026-10-21",
+  "kind": "request",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-10-21T17:51:42Z"
+}

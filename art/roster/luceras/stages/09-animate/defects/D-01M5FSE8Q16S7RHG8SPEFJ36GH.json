@@ -1,0 +1,12 @@
+{
+  "id": "D-01M5FSE8Q16S7RHG8SPEFJ36GH",
+  "alias": "bzfr",
+  "stage": "09-animate",
+  "description": "Bone-like protrusion on the lower chest or belly behind the foreleg in the crouch before the leap",
+  "camera": "full_side",
+  "region": "chest",
+  "origin": null,
+  "attempts": [],
+  "status": "open",
+  "createdAt": "2026-10-21T17:51:42Z"
+}

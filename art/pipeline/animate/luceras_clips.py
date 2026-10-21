@@ -215,6 +215,11 @@ SIG_DEFAULTS = {
     "impact_neck_deg": 28.0,      # neck and shoulder compression at the hit
     "impact_bend_deg": 7.0,       # spine hunch at the hit
     "impact_squash": 1.0,         # body squash at the hit (1 = 12 percent shorter, 6 percent thicker per spine joint)
+    "fore_crouch_elbow_tuck": 0.6,  # B-bafy: 0..1 turns the planted forelegs' fold plane toward the sagittal plane in
+                                  # the crouch. With the FK-knee pole the planted elbow splayed 42 mm out in the deepest crouch, so the
+                                  # back of the upper arm stood 30 to 45 mm proud of the chest wall: the bony ridge Nick circled (D-bzfr).
+                                  # 0.6 halves the splay (elbow 0.086 -> 0.060 m out); 1.0 drives the elbow into the chest. Ramps in from
+                                  # frame 0 to the crouch and out with the fore plant at takeoff, so the rest of the clip is unchanged.
     "leg_reach_window_m": 0.30,   # pass 1-2 only (height window; it fired inside two frames as the body fell). Unused.
     "fore_reach_ms": 150.0,       # B-378v pass 3: forelegs swing from tucked to reaching over this time ...
     "hind_reach_ms": 200.0,       # ... and the hind legs from trailing to gathered under the body over this time,
@@ -432,12 +437,14 @@ def make_sig(params=None, rest_center_z=0.48):
             return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in HIND_GATHER)}
         fore_off = T["fore_off"]
         land = T["fore_land"]
+        tuck = P["fore_crouch_elbow_tuck"] * ease("smooth", t / T["crouch"])   # B-bafy: elbows stay in line, not splayed
         if t <= fore_off:
-            return {"plant": 1.0, "roll": 18.0 * ease("in", (t - T["crouch"]) / (fore_off - T["crouch"])) if t > T["crouch"] else 0.0, "fk": (0, 0, 0)}
+            return {"plant": 1.0, "roll": 18.0 * ease("in", (t - T["crouch"]) / (fore_off - T["crouch"])) if t > T["crouch"] else 0.0, "fk": (0, 0, 0), "tuck": tuck}
         if t < T["impact"]:
             u = ease("out", (t - fore_off) / 150.0)
             fk = tuple(a * u for a in FORE_TUCK)
-            return {"plant": max(0.0, 1 - (t - fore_off) / 60.0), "roll": 18.0, "fk": fk}
+            w = max(0.0, 1 - (t - fore_off) / 60.0)
+            return {"plant": w, "roll": 18.0, "fk": fk, "tuck": tuck * w}
         if t < land:
             u = reach_w(t, land)
             fk = tuple(a + (b - a) * u for a, b in zip(FORE_TUCK, FORE_REACH))

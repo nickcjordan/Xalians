@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5FSE8VD8QE49CXVS3FAPJ2W",
+  "alias": "bafy",
+  "stage": "09-animate",
+  "kind": "build",
+  "goal": "Fix the bone-like protrusion behind the foreleg in the crouch, and verify the fore paw join is closed in the integrated sculpt",
+  "scope": "elbow and chest weights and correctives, crouch keys if needed",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-21T17:51:42Z",
+  "briefSha256": "cbe6bfac617415bf18810c59b1a9ccef4fbf1296360e0cd1cfeb5710f4e6d80a"
+}

@@ -167,6 +167,10 @@ class Poser:
             pole = (K - H); side = (pole - n * pole.dot(n))
             if side.length < 1e-6: side = Vector((0, -1, 0)) if L['names'][0].startswith('leg_f') else Vector((0, -1, 0))
             side.normalize()
+            tuck = legs.get(leg, {}).get('tuck', 0.0)   # B-bafy: 0..1, turn the knee/elbow plane toward the sagittal plane
+            if tuck > 0:
+                sg = Vector((0.0, side.y, side.z)); sg = sg - n * sg.dot(n)
+                if sg.length > 1e-6: side = side.lerp(sg.normalized(), tuck).normalized()
             Kn = H + n * along + side * h
             solved[leg] = (H, Kn, H + n * dist, R3t)
         for step in (0, 1):

@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5FSE8ZAX24G8XEKYJPYXSXT",
+  "alias": "vbkd",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Plume white hair: make the white core the same tuft hair as the dark tufts, only a different color",
+  "scope": "plume white strands",
+  "defect": "D-01M53ADQZSJ9PZ5AENRR509JWC",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-21T17:51:43Z",
+  "briefSha256": "277930ffb21ff2afa8da68760de0a0e14d9ae09ee4e318521110bc61c5fb8a7a"
+}
