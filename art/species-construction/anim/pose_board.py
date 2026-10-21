@@ -113,7 +113,7 @@ skull_tree = cKDTree(rest[SKULL])
 EAR_SIDE = {sd: share([f'ear_{k}.{sd}' for k in range(1, rc.EAR_BONES+1)]) for sd in ('L', 'R')}
 
 
-def ear_swing(side='L', back=95., out=14.):
+def ear_swing(side='L', back=118., out=14.):
     """Ears pulled back the way a fennec's are (Nick, F34, with his photo): the whole ear swings back from
     its base as one straight, unbent cone, as if a muscle pulled the base; nothing in the blade bends. The
     ear points `back` degrees back from upright in side view and `out` degrees outward, its opening facing
@@ -196,6 +196,7 @@ GROUPS = [
 
 SPREAD = {'hip_flex': 2000, 'knee_step': 150, 'knee_bend': 150}   # knees: a concentrated bend, not one round arc (Nick, F34)
 INDEPENDENT = {'knee_cap'}          # rises over the whole bend, outside the step/bend handover
+RISE = {'knee_cap': (12., 50.)}     # the kneecap is fully in by a 50-degree bend (the leg reach), held to the crouch
 
 
 def side_bone(base, sd):
@@ -212,7 +213,10 @@ for gname, pose_name, dbase, jbase, radii, mbones, rise0 in GROUPS:
         prior = [] if gname in INDEPENDENT else [k for k in plan if k['bone'] == bone and k['rise'][1] < ang
                                                    and k['group'] not in INDEPENDENT]
         start = max([rise0]+[k['rise'][1] for k in prior])
-        plan.append(dict(name=f'{gname}.{sd}', group=gname, bone=bone, rise=[float(start), float(ang)], fall=None, pose=pose_name))
+        rise = [float(start), float(ang)]
+        if gname in RISE:                  # a key that reaches full value before its sculpt angle and holds
+            rise = list(RISE[gname])
+        plan.append(dict(name=f'{gname}.{sd}', group=gname, bone=bone, rise=rise, fall=None, pose=pose_name))
 for k in plan:
     if k['group'] in INDEPENDENT:
         continue

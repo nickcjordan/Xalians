@@ -606,7 +606,9 @@ def derive_anim_joints(skin, edges, claws=None, mouth_z=.54):
         # the hinge sits at the back of the root, not its middle: the root is a long oval, and turning it about
         # its middle swings the front of the root into the skull; about its back edge the blade folds back
         # like a door and the front of the root lifts off the head instead
-        hinge = np.array(line[0], float)+np.array([0., .45*float(rings[root_k][3][1]), 0.])
+        # and low on it (2026-10-21, ear tipped down to the photo's angle): turning down about a hinge at mid
+        # height swung the lower half of the root into the skull
+        hinge = np.array(line[0], float)+np.array([0., .45*float(rings[root_k][3][1]), -.35*float(rings[root_k][3][2])])
         j[f'ear0.{s}'] = list(map(float, hinge))
         for k in range(1, EAR_BONES):
             j[f'ear{k}.{s}'] = list(map(float, pts[k-1]))
