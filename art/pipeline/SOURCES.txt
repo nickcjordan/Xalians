@@ -1,0 +1,14 @@
+Copied unchanged from branch creature-pipeline (worktree C:\dev\src\xalians-creature-pipeline) at commit ae9c5e02
+("Tail in flight: sprite-only plume bones, phase tail keys"), read with `git show ae9c5e02:<path>`, not from that
+worktree's uncommitted files. Paths below are relative to art/pipeline/ in both branches.
+
+slot/slot.py                 blob 4c60cc98805bcdd82232f0490b644868ba98ef43  machine slot lock (blender, gpu classes); shares C:\dev\art-data\pipeline\locks
+roster/lookdev.py            blob a38534afa67ffe2cfcd2756d2a3ce02b5b9e1e48  look-dev scene, clay material, standard cameras (side_left, sprite)
+rig/build_rig.py             blob fa3eb0fd0f348832c324ba7747cbd475291cbd59  Luceras rig build: review poses, joint crops, weight diffusion, rigid ear blades, mirror symmetry
+rig/measure.py               blob 79665467cef1b79c4d89845c80d712fd3435d13e  Luceras rig checks: influences, unweighted, weight sums, symmetry, edge stretch, volume per pose, ear rigidity
+rig/controls.py              blob 5ea6ef8a42efaa53b0dafcf340aa125b5a9e4748  Blender-only IK and look controls, matrix baking
+rig/check_glb_skinning.py    blob 3fcfe1cacbbb636affca702286a78f51e3239622  independent CPU check of an exported glb's skinning
+
+These are Luceras-specific (bone names, output paths, game-mesh imports) and are kept as the reference the Akinza
+rig follows. The Akinza rig runs from art/species-construction/anim/ and reimplements the measure.py checks on
+its own skeleton (art/species-construction/anim/rig_checks.py); slot.py and lookdev.py are used as is.

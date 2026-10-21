@@ -258,9 +258,9 @@ def neck_shoulder_landmarks(skin, head_z, low_z, step=.005, gap=.01):
 
 # ---------------------------------------------------------------- skeleton
 
-def segments(joints):
+def segments(joints, bones=None):
     """bone -> (head, tail) as float arrays."""
-    return {b: (np.array(joints[h], float), np.array(joints[t], float)) for b, _, h, t in BONES}
+    return {b: (np.array(joints[h], float), np.array(joints[t], float)) for b, _, h, t in (bones or BONES)}
 
 
 def seg_dist(points, a, b):
@@ -337,30 +337,31 @@ def smooth_weights(points, W, cell, iters, neighbors=24):
 
 # ---------------------------------------------------------------- pose
 
-def bone_axis(joints, b):
-    a, t = segments(joints)[b]
+def bone_axis(joints, b, bones=None):
+    a, t = segments(joints, bones)[b]
     d = t-a
     return d/np.linalg.norm(d)
 
 
-def bone_transforms(joints, pose=None, scales=None, root_translate=(0, 0, 0)):
+def bone_transforms(joints, pose=None, scales=None, root_translate=(0, 0, 0), bones=None):
     """bone -> (R (3,3), t (3,)) skinning transform, x' = R x + t.
 
     A bone's own motion is a scale along its axis then a rotation, both about its
     head. Children receive only the rigid part of that motion: they rotate with
     the parent and their pivot moves to where the parent's skinning puts it, so a
     shortened forearm moves the hand without squashing it."""
+    bones = bones or BONES
     pose = pose or {}
     scales = scales or {}
-    segs = segments(joints)
+    segs = segments(joints, bones)
     out, rigid = {}, {}
-    for b, parent, _, _ in BONES:
+    for b, parent, _, _ in bones:
         p = segs[b][0]
         Rb = euler_matrix(*pose.get(b, (0, 0, 0)))
         lin = Rb
         s = scales.get(b, 1.0)
         if s != 1.0:
-            u = bone_axis(joints, b)
+            u = bone_axis(joints, b, bones)
             lin = Rb@(np.eye(3)+(s-1)*np.outer(u, u))
         if parent:
             Rp, tp = out[parent]
@@ -373,14 +374,14 @@ def bone_transforms(joints, pose=None, scales=None, root_translate=(0, 0, 0)):
         out[b] = (R, t)
         rigid[b] = Rc@Rb
     if any(root_translate):
-        for b in BONE_NAMES:
+        for b in out:
             Rb, tb = out[b]
             out[b] = (Rb, tb+np.array(root_translate))
     return out
 
 
-def skin_points(points, idx, w, transforms):
-    names = BONE_NAMES
+def skin_points(points, idx, w, transforms, bones=None):
+    names = [b[0] for b in (bones or BONES)]
     Rs = np.stack([transforms[b][0] for b in names])
     ts = np.stack([transforms[b][1] for b in names])
     out = np.zeros_like(points, dtype=np.float64)
@@ -447,15 +448,331 @@ def euler_from_matrix(R):
     return [math.degrees(rx), math.degrees(ry), math.degrees(rz)]
 
 
-def pose_from_directions(joints, targets):
+def pose_from_directions(joints, targets, base=None, bones=None):
     """Pose for a chain given the wanted world direction of each bone after posing.
-    targets: ordered dict bone -> direction. Parents come before children."""
-    pose = {}
-    T = {}
+    targets: ordered dict bone -> direction. Parents come before children. base: a pose the
+    targets are added to (bones not in targets keep their base rotation)."""
+    parents = {b[0]: b[1] for b in (bones or BONES)}
+    pose = dict(base or {})
     for b, d in targets.items():
-        parent = PARENT[b]
-        Rp = bone_transforms(joints, pose)[parent][0] if parent else np.eye(3)
-        u = bone_axis(joints, b)
+        parent = parents[b]
+        Rp = bone_transforms(joints, pose, bones=bones)[parent][0] if parent else np.eye(3)
+        u = bone_axis(joints, b, bones)
         Rb = align_rotation(u, Rp.T@np.asarray(d, float))
         pose[b] = euler_from_matrix(Rb)
     return pose
+
+
+# ---------------------------------------------------------------- Akinza animation skeleton (anim stage)
+# The construction-loop skeleton above (BONES) keeps its single tail bone so the loop's posed fits replay.
+# The animation skeleton adds a root at the ground, three-bone ear chains, a jaw, and one tail root that
+# forks into three five-bone tail chains (Nick 2026-10-13: one root forking into three). Ear and tail
+# joints and weights follow the surface: geodesic distance from each tip over the skin's edges, so a
+# tail never takes weight from a neighbouring tail or leg it merely sits close to in space.
+
+TAILS = ('a', 'b', 'c')          # upper, middle, lower at rest
+TAIL_BONES = 5
+EAR_BONES = 3
+TAIL_SEGMENT_SHARE = (1.25, 1.1, 1.0, .9, .75)   # tail bone lengths, root to tip, shorter toward the tip
+
+
+def _anim_bones():
+    out = [('root', None, 'root', 'root_tip'), ('pelvis', 'root', 'pelvis', 'waist')]
+    out += [b for b in BONES[1:] if b[0] != 'tail']
+    for s in ('L', 'R'):
+        for k in range(1, EAR_BONES+1):
+            out.append((f'ear_{k}.{s}', 'head' if k == 1 else f'ear_{k-1}.{s}', f'ear{k-1}.{s}', f'ear{k}.{s}'))
+    out.append(('jaw', 'head', 'jaw_hinge', 'chin'))
+    out.append(('tail_root', 'pelvis', 'tail_base', 'tail_fork'))
+    for t in TAILS:
+        for k in range(1, TAIL_BONES+1):
+            out.append((f'tail_{t}{k}', 'tail_root' if k == 1 else f'tail_{t}{k-1}',
+                        'tail_fork' if k == 1 else f'tail_{t}_j{k-1}', f'tail_{t}_j{k}'))
+    return out
+
+
+ANIM_BONES = _anim_bones()
+ANIM_NAMES = [b[0] for b in ANIM_BONES]
+ANIM_PARENT = {b[0]: b[1] for b in ANIM_BONES}
+# bones whose weights come from the distance falloff (the body); the rest come from surface fields
+ANIM_BODY = [b for b in ANIM_NAMES if base_of(b) in RADIUS and b not in ('head', 'tail')]
+
+
+def smoothstep(x, lo, hi):
+    t = np.clip((x-lo)/(hi-lo), 0, 1)
+    return t*t*(3-2*t)
+
+
+def edge_graph(points, edges):
+    import scipy.sparse as sp
+    L = np.linalg.norm(points[edges[:, 0]]-points[edges[:, 1]], axis=1)
+    n = len(points)
+    return sp.coo_matrix((np.r_[L, L], (np.r_[edges[:, 0], edges[:, 1]], np.r_[edges[:, 1], edges[:, 0]])),
+                         shape=(n, n)).tocsr()
+
+
+def geodesic(G, source, limit):
+    from scipy.sparse.csgraph import dijkstra
+    return dijkstra(G, indices=source, limit=limit, min_only=True)
+
+
+def _rings(G, points, D, mask, step=.01, upto=1.2):
+    """(level, centroid, max extent, extent per axis, vertex count) of each level band of D inside mask (its largest
+    connected piece), from the source outward."""
+    from scipy.sparse.csgraph import connected_components
+    out = []
+    for k in range(int(upto/step)):
+        s = k*step
+        m = np.where(mask & (D >= s) & (D < s+step))[0]
+        if len(m) < 3:
+            break
+        nc, lb = connected_components(G[m][:, m], directed=False)
+        big = np.bincount(lb).argmax()
+        q = points[m[lb == big]]
+        out.append((s+step/2, q.mean(0), float(np.ptp(q, 0).max()), np.ptp(q, 0), len(q)))
+    return out
+
+
+def _arc_points(centres, shares):
+    """Points along a polyline (root first) that split its arc length in the given shares, and their arc
+    positions."""
+    c = np.asarray(centres)
+    seg = np.linalg.norm(np.diff(c, axis=0), axis=1)
+    arc = np.r_[0, np.cumsum(seg)]
+    cuts = np.cumsum(shares)/np.sum(shares)*arc[-1]
+    pts = [np.array([np.interp(u, arc, c[:, i]) for i in range(3)]) for u in cuts]
+    return pts, cuts
+
+
+def akinza_arm(skin, j):
+    """Elbow, wrist and shoulder x for Akinza's hanging arm. derive_joints searched the arm only below
+    z .09 and found the wrist as the elbow. Here the arm is the part of each section beyond the widest gap
+    from the trunk; the elbow is the break of the best two-line fit of its centerline between the paw and
+    the armpit, the wrist the narrowest section above the paw, and the shoulder sits on the upper-arm
+    line at the shoulder height derive_joints found."""
+    zs, cs, wx = [], [], []
+    for z in np.arange(-.19, .215, .01):
+        p = skin[(np.abs(skin[:, 2]-z) < .006) & (skin[:, 0] < 0) & (skin[:, 1] < .125)]
+        xs = np.sort(p[:, 0])
+        g = np.diff(xs)
+        i = int(np.argmax(g))
+        if g[i] < .01:
+            continue
+        arm = p[p[:, 0] <= xs[i]]
+        zs.append(z)
+        cs.append(arm.mean(0)[:2])
+        wx.append(np.ptp(arm[:, 0]))
+    zs, cs, wx = np.array(zs), np.array(cs), np.array(wx)
+    ok = np.where((zs > -.05) & (zs < .16))[0]
+    k = two_segment_break(zs, cs, int(ok.min()), int(ok.max())+1)
+    elbow_z = float(zs[k])
+    band = np.where((zs > -.14) & (zs < -.03))[0]
+    wrist_z = float(zs[band[np.argmin(wx[band])]])
+    up = zs >= elbow_z
+    A = np.stack([zs[up], np.ones(up.sum())], 1)
+    cx = np.linalg.lstsq(A, cs[up][:, 0], rcond=None)[0]
+    cy = np.linalg.lstsq(A, cs[up][:, 1], rcond=None)[0]
+    sz = j['shoulder.R'][2]
+    out = dict(j)
+    out['elbow.R'] = [float(cx[0]*elbow_z+cx[1]), float(cy[0]*elbow_z+cy[1]), elbow_z]
+    i = int(np.argmin(np.abs(zs-wrist_z)))
+    out['wrist.R'] = [float(cs[i][0]), float(cs[i][1]), wrist_z]
+    out['shoulder.R'] = [float(cx[0]*sz+cx[1]), j['shoulder.R'][1], sz]
+    for nm in ('elbow', 'wrist', 'shoulder'):
+        x, y, z = out[nm+'.R']
+        out[nm+'.L'] = [-x, y, z]
+    out['_meta'] = dict(j['_meta'], elbowZ=elbow_z, wristZ=wrist_z, armRule='akinza_arm')
+    return out
+
+
+def derive_anim_joints(skin, edges, claws=None, mouth_z=.54):
+    """Joints of ANIM_BONES from the shaved skin (source units, before re-origin and scale). The surface
+    fields the weights need (tip vertices, junction levels, joint arc positions) go in _meta.surface."""
+    j = akinza_arm(skin, derive_joints(skin, claws))
+    G = edge_graph(skin, edges)
+    surf = {'ears': {}, 'tails': {}}
+    # ---- ears: geodesic rings from each tip; the junction is where the thin blade thickens into the skull
+    for s, sign in (('L', 1), ('R', -1)):
+        m = np.where((skin[:, 2] > .5) & (skin[:, 1] < .2))[0]
+        tip = int(m[np.argmax(sign*skin[m, 0])])
+        D = geodesic(G, tip, 1.0)
+        rings = _rings(G, skin, D, np.isfinite(D), upto=.7)
+        # the ring's vertex count holds steady along the outer blade and climbs where the skull starts
+        count = np.array([r[4] for r in rings])
+        root_k = next(k for k in range(25, len(rings)) if count[k] > 1.12*count[k-4])-1
+        D_root = float(rings[root_k][0])
+        line = [r[1] for r in rings[:root_k+1]][::-1]          # junction first
+        pts, cuts = _arc_points(line, [1]*EAR_BONES)
+        j[f'ear0.{s}'] = list(map(float, line[0]))
+        for k in range(1, EAR_BONES):
+            j[f'ear{k}.{s}'] = list(map(float, pts[k-1]))
+        j[f'ear{EAR_BONES}.{s}'] = list(map(float, skin[tip]))
+        cuts = cuts/cuts[-1]*D_root                     # arc positions in geodesic units, the weights' measure
+        surf['ears'][s] = dict(tip=tip, junction=D_root, joints=[0.]+[float(c) for c in cuts[:-1]]+[D_root])
+    # ---- jaw: hinge behind the cheek a little above the mouth line, chin under the mouth on the midline
+    mid = skin[np.abs(skin[:, 0]) < .02]
+    lip = mid[(mid[:, 2] > mouth_z-.05) & (mid[:, 2] < mouth_z-.005) & (mid[:, 1] < -.05)]
+    chin = lip[np.argmin(lip[:, 1])]
+    hz = mouth_z+.035
+    sec = mid[np.abs(mid[:, 2]-hz) < .005]
+    hy = float(sec[:, 1].min()+.5*np.ptp(sec[:, 1]))
+    j['jaw_hinge'] = [0., hy, hz]
+    j['chin'] = [0., float(chin[1])+.015, float(chin[2])]
+    surf['jaw'] = dict(mouthZ=mouth_z)
+    # ---- tails: one geodesic field per tip; each tail's junction is where its ring meets the body
+    from scipy.sparse.csgraph import connected_components
+    far = np.where(skin[:, 1] > .3)[0]
+    nc, lb = connected_components(G[far][:, far], directed=False)
+    tips = []
+    for c in range(nc):
+        mm = far[lb == c]
+        if len(mm) < 500:
+            continue
+        tips.append(int(mm[np.argmax(np.linalg.norm(skin[mm]-np.array([0, .1, -.2]), axis=1))]))
+    assert len(tips) == 3, len(tips)
+    tips.sort(key=lambda t: -skin[t, 2])        # a upper, b middle, c lower
+    Ds = [geodesic(G, t, 1.3) for t in tips]
+    Dmin = np.minimum.reduce(Ds)
+    bases = []
+    for t, tip, D in zip(TAILS, tips, Ds):
+        own = D <= Dmin+1e-9
+        rings = _rings(G, skin, D, own & np.isfinite(D), upto=1.2)
+        ext = np.array([r[2] for r in rings])
+        k = next(k for k in range(30, len(rings)) if ext[k] > 1.15*ext[k-3])   # the ring starts spreading onto the body
+        Dj = float(rings[k-1][0])
+        line = [r[1] for r in rings[:k]][::-1]     # base ring first
+        pts, cuts = _arc_points(line, TAIL_SEGMENT_SHARE)
+        bases.append(line[0])
+        for i in range(1, TAIL_BONES):
+            j[f'tail_{t}_j{i}'] = list(map(float, pts[i-1]))
+        j[f'tail_{t}_j{TAIL_BONES}'] = list(map(float, skin[tip]))
+        cuts = cuts/cuts[-1]*Dj
+        surf['tails'][t] = dict(tip=tip, junction=Dj, joints=[0.]+[float(c) for c in cuts[:-1]]+[Dj])
+    fork = np.mean(bases, 0)
+    j['tail_fork'] = list(map(float, fork))
+    j['tail_base'] = list(map(float, (fork+np.array(j['pelvis']))/2))
+    j['root'] = [0., float(j['pelvis'][1]), FLOOR_Z]
+    j['root_tip'] = [0., float(j['pelvis'][1])-.15, FLOOR_Z]
+    j['_meta'] = dict(j['_meta'], skeleton='ANIM_BONES', surface=surf)
+    return j
+
+
+def anim_transform(joints, height_m):
+    """Re-origin and scale: the ground point under the pelvis goes to the origin and the figure's fixed
+    height (top of the ear fan to the floor) becomes height_m. Returns (s, offset): x' = s*(x-offset)."""
+    return height_m/FIXED_HEIGHT, np.array([0., joints['pelvis'][1], FLOOR_Z])
+
+
+def transform_joints(joints, s, off):
+    return {k: (v if k.startswith('_') else list(map(float, s*(np.asarray(v, float)-off)))) for k, v in joints.items()}
+
+
+def diffuse_weights(W, edges, n, iters, lam=.6, mask=None):
+    """Average each weight vector with its mesh neighbours (along the skin's edges, so nothing crosses a
+    gap between an arm and the trunk or between two tails), iters rounds. Spreads a blend over about
+    edge length * sqrt(2 lam iters) and removes the zigzag of graph-distance fields."""
+    import scipy.sparse as sp
+    A = sp.coo_matrix((np.ones(2*len(edges), np.float32), (np.r_[edges[:, 0], edges[:, 1]], np.r_[edges[:, 1], edges[:, 0]])),
+                      shape=(n, n)).tocsr()
+    deg = np.asarray(A.sum(1)).ravel()
+    A = sp.diags((1/np.maximum(deg, 1)).astype(np.float32))@A
+    W = W.astype(np.float32)
+    step = lam if mask is None else (lam*mask).astype(np.float32)[:, None]
+    for _ in range(iters):
+        W = W+step*(A@W-W)
+    return W
+
+
+def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clear=.02, tail_soft=.012, diffuse=200, wide_rounds=600):
+    """Skin weights for ANIM_BONES (source units, before scale), as (idx, w) indexing ANIM_NAMES.
+
+    Body bones: the distance falloff of compute_weights (no k-d smoothing: it crossed the arm-trunk gap). Head: the z mask of
+    compute_weights, then within it the ear chains (geodesic from each ear tip, blended into the skull
+    across the junction, held off the eye sockets) and the jaw (under the mouth line, in front of the
+    hinge). Tails: each tail's vertices belong to the tail whose tip is geodesically nearest (soft across
+    the crotches between tails), split along the tail by smooth steps at the chain's joints; tail_root
+    holds the junction and the crotch, and fades into the body just outside it. Last, every weight is
+    diffused along the skin's edges (diffuse_weights)."""
+    surf = joints['_meta']['surface']
+    G = edge_graph(points, edges)
+    bi = {b: i for i, b in enumerate(ANIM_NAMES)}
+    n = len(points)
+    segs = segments(joints, ANIM_BONES)
+    S = np.full((n, len(ANIM_NAMES)), 1e6, np.float32)
+    for b in ANIM_BODY:
+        d, _ = seg_dist(points, *segs[b])
+        S[:, bi[b]] = (d/RADIUS[base_of(b)])**2
+        sd = side_of(b)
+        if sd == 'L':
+            S[points[:, 0] < -.01, bi[b]] += 50
+        elif sd == 'R':
+            S[points[:, 0] > .01, bi[b]] += 50
+    # near-rigid start (k 8, not compute_weights' 1.4, which gave the big pelvis and chest radii a share of
+    # every arm vertex); the blend across each joint comes from the diffusion along the skin at the end
+    W = np.exp(-8*(S-S.min(1, keepdims=True)))
+    W[W < .01] = 0
+    W /= W.sum(1, keepdims=True)
+    # ---- tails
+    U = np.stack([surf['tails'][t]['junction']-geodesic(G, surf['tails'][t]['tip'], 1.3) for t in TAILS], 1)
+    U[~np.isfinite(U)] = -9                      # + out along the tail from its junction
+    umax = U.max(1)
+    beta = np.exp((U-umax[:, None])/tail_soft)
+    beta /= beta.sum(1, keepdims=True)
+    on_tail = smoothstep(umax, -.07, -.01)       # tail_root and the chains, against the body
+    W *= (1-on_tail)[:, None]
+    chain_total = np.zeros(n)
+    for ti, t in enumerate(TAILS):
+        cuts = surf['tails'][t]['joints']        # arc position of each joint, 0 at the junction
+        hw = .3*float(np.diff(cuts).min())
+        u = U[:, ti]
+        prev = smoothstep(u, -.01, .05)          # below this tail_root keeps the junction and the crotch
+        for k in range(1, TAIL_BONES+1):
+            nxt = smoothstep(u, cuts[k]-hw, cuts[k]+hw) if k < TAIL_BONES else np.zeros(n)
+            wk = np.clip(prev-nxt, 0, None)*beta[:, ti]*on_tail
+            W[:, bi[f'tail_{t}{k}']] = wk
+            chain_total += wk
+            prev = nxt
+    W[:, bi['tail_root']] = np.clip(on_tail-chain_total, 0, None)
+    # ---- head, ears, jaw
+    hz = joints['head_base'][2]
+    h = smoothstep(points[:, 2], hz-.035, hz+.03)
+    H = np.zeros((n, len(ANIM_NAMES)), np.float32)
+    free = np.ones(n)
+    guard = np.ones(n)
+    for c in eye_centres:
+        guard *= smoothstep(np.linalg.norm(points-np.asarray(c), axis=1), eye_clear, eye_clear+.02)
+    for s in ('L', 'R'):
+        e = surf['ears'][s]
+        u = e['junction']-geodesic(G, e['tip'], 1.0)
+        u[~np.isfinite(u)] = -9
+        cuts = e['joints']
+        hw = .25*float(np.diff(cuts).min())
+        entry = smoothstep(u, -.08, .06)*guard
+        prev = np.ones(n)
+        for k in range(1, EAR_BONES+1):
+            nxt = smoothstep(u, cuts[k]-hw, cuts[k]+hw) if k < EAR_BONES else np.zeros(n)
+            H[:, bi[f'ear_{k}.{s}']] = np.clip(prev-nxt, 0, None)*entry
+            prev = nxt
+        free -= entry
+    mz = surf['jaw']['mouthZ']
+    hy = joints['jaw_hinge'][1]
+    jw = (1-smoothstep(points[:, 2], mz-.012, mz+.004))*smoothstep(-points[:, 1], -hy-.01, -hy+.05)\
+        * smoothstep(points[:, 2], hz+.005, hz+.04)*(1-smoothstep(np.abs(points[:, 0]), .07, .11))
+    jw = np.minimum(jw, np.clip(free, 0, 1))
+    H[:, bi['jaw']] = jw
+    free -= jw
+    H[:, bi['head']] = np.clip(free, 0, 1)
+    W = W*(1-h)[:, None]+H*h[:, None]
+    W = diffuse_weights(W, edges, n, diffuse)
+    # shoulders and hips bend furthest: widen their blend (about 7 cm more) with extra rounds there only
+    wide = np.zeros(n)
+    for jn in ('shoulder.L', 'shoulder.R', 'hip.L', 'hip.R'):
+        r = np.linalg.norm(points-np.asarray(joints[jn]), axis=1)
+        wide = np.maximum(wide, 1-smoothstep(r, .10, .17))
+    W = diffuse_weights(W, edges, n, wide_rounds, mask=wide)
+    W[W < 1e-4] = 0
+    W /= W.sum(1, keepdims=True)
+    idx = np.argsort(-W, 1)[:, :keep]
+    w = np.take_along_axis(W, idx, 1)
+    w /= w.sum(1, keepdims=True)
+    return idx.astype(np.int16), w.astype(np.float32)
