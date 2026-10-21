@@ -15,7 +15,7 @@ K = 10
 # ring nearest the rest tail_06 tip
 co = np.array([v.co[:] for v in sd.data.vertices]); t6 = np.array(rig.data.bones['tail_06'].tail_local)
 rings = co[:-1].reshape(-1, K, 3).mean(1); r0 = int(np.argmin(np.linalg.norm(rings - t6, axis=1)))
-res = {'ring': r0}
+res = {'ring': r0, 'parents': {b.name: (b.parent.name if b.parent else None) for b in rig.data.bones}}
 for name in ('sig.horns-first-descent', 'idle'):
     act = bpy.data.actions[name]; rig.animation_data.action = act
     if hasattr(rig.animation_data, 'action_slot') and rig.animation_data.action_slot is None and len(act.slots):

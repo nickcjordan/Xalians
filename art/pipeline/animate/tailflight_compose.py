@@ -4,7 +4,7 @@ python tailflight_compose.py strip  BEFORE_DIR AFTER_DIR OUT_PNG first last     
 python tailflight_compose.py posed  DIR OUT_PNG label[,label...]                 furred before (left) and after (right)
 Labels are text with a luminance band, so nothing rides on hue.
 """
-import sys
+import os, sys
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
@@ -40,7 +40,7 @@ def strip(bdir, adir, out, first, last, cols=5, tw=360, bname='pass 2', aname='t
     cell_h = lab + 2 * th + gap
     S = Image.new('RGB', (cols * (tw + pad) + pad, 56 + rows * (cell_h + pad)), (20, 20, 20))
     d = ImageDraw.Draw(S); f1 = font(16); f2 = font(20)
-    d.text((pad, 8), f'Signature frames {first} to {last}, tracking camera. Each pair: TOP = {bname} ({bdesc}), '
+    d.text((pad, 8), f'Signature frames {first} to {last}, {os.environ.get("TF_CAM", "tracking")} camera. Each pair: TOP = {bname} ({bdesc}), '
                      f'BOTTOM = {aname} ({adesc}).', fill=(235, 235, 235), font=f2)
     d.text((pad, 32), 'Light-clay plume is a review-only stand-in for the furred plume (same tube and weights).', fill=(190, 190, 190), font=f1)
     for i, f in enumerate(frames):

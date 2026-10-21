@@ -215,7 +215,12 @@ SIG_DEFAULTS = {
     "impact_neck_deg": 28.0,      # neck and shoulder compression at the hit
     "impact_bend_deg": 7.0,       # spine hunch at the hit
     "impact_squash": 1.0,         # body squash at the hit (1 = 12 percent shorter, 6 percent thicker per spine joint)
-    "leg_reach_window_m": 0.30,   # legs stay tucked until the body is this close to its landing height
+    "leg_reach_window_m": 0.30,   # pass 1-2 only (height window; it fired inside two frames as the body fell). Unused.
+    "fore_reach_ms": 150.0,       # B-378v pass 3: forelegs swing from tucked to reaching over this time ...
+    "hind_reach_ms": 200.0,       # ... and the hind legs from trailing to gathered under the body over this time,
+    "plant_blend_ms": 120.0,      # pass 3: hind feet blend onto their ground targets over this, smooth in and out, ending at foot_down
+    "fore_plant_blend_ms": 80.0,  # pass 3: the same for the fore feet (a longer blend pulls them down while the body is still high)
+    "reach_lead_ms": 60.0,        # ... each ending this long before its own foot_down (then the plant blend takes over)
     "recoil_m": 0.27,             # rebound back from the target
     "rebound_rise_m": 0.03,
     "land_pitch_deg": -9.0,
@@ -396,12 +401,15 @@ def make_sig(params=None, rest_center_z=0.48):
 
     z_rest_land = 0.015
 
-    def reach_w(t, land):
-        """0 while the body is high (legs stay tucked), 1 near the landing height; never before the hit-stop ends."""
+    def reach_w(t, land, hind=False):
+        """Pass 3: time-based. 0 (tucked or trailing) until reach_ms + reach_lead_ms before this leg's foot_down, then a
+        smooth swing to 1 (reaching or gathered) that ends reach_lead_ms before it; never before the hit-stop ends.
+        (Passes 1-2 used a body-height window, which the falling body crossed in about two frames: a pose pop.)"""
         if t < T["impact"]:
             return 0.0
-        zrel = path(min(t, land))["z"] - z_rest_land
-        return ease("smooth", (P["leg_reach_window_m"] - zrel) / (0.8 * P["leg_reach_window_m"]))
+        dur = P["hind_reach_ms"] if hind else P["fore_reach_ms"]
+        end = land - P["reach_lead_ms"]
+        return ease("smooth", (t - (end - dur)) / dur)
 
     # leg schedule: fk pose, plant weight, heel roll
     def leg_spec(t, leg):
@@ -416,9 +424,9 @@ def make_sig(params=None, rest_center_z=0.48):
                 fk = tuple(a * u for a in HIND_STREAM)
                 return {"plant": max(0.0, 1 - (t - T["takeoff"]) / 90.0), "roll": roll, "fk": fk}
             if t < land:
-                u = reach_w(t, land)
+                u = reach_w(t, land, hind=True)
                 fk = tuple(a + (b - a) * u for a, b in zip(HIND_STREAM, HIND_GATHER))
-                w = ease("in", (t - (land - 90)) / 90.0)
+                w = ease("smooth", (t - (land - P["plant_blend_ms"])) / P["plant_blend_ms"])   # pass 3: smooth, was "in" over 90 ms (snapped into the plant)
                 return {"plant": w, "roll": 0.0, "fk": fk}
             u = ease("smooth", (t - land) / 220.0)
             return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in HIND_GATHER)}
@@ -433,7 +441,7 @@ def make_sig(params=None, rest_center_z=0.48):
         if t < land:
             u = reach_w(t, land)
             fk = tuple(a + (b - a) * u for a, b in zip(FORE_TUCK, FORE_REACH))
-            w = ease("in", (t - (land - 80)) / 80.0)
+            w = ease("smooth", (t - (land - P["fore_plant_blend_ms"])) / P["fore_plant_blend_ms"])   # pass 3: smooth, was "in" over 80 ms
             return {"plant": w, "roll": 0.0, "fk": fk}
         u = ease("smooth", (t - land) / 220.0)
         return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in FORE_REACH)}
