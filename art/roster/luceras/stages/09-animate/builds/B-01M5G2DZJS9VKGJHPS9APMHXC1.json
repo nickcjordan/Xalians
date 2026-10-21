@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5G2DZJS9VKGJHPS9APMHXC1",
+  "alias": "j6jh",
+  "stage": "09-animate",
+  "kind": "preview",
+  "goal": "Deformation audit renders: every review pose and the deepest clip frames, large, every camera, grazing and curvature, for an orchestrator and independent-critic defect list",
+  "scope": "renders only",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-21T20:28:50Z",
+  "briefSha256": "d8fd98f6c7d3ed0e3f24c3904e0596bfafe68b35848bd4036331c29d2869c415"
+}
