@@ -36,14 +36,18 @@ def fit(im, h):
 
 def frame(folder, view, i):
     path = M/folder/view/f'{i:04d}.png'
-    return Image.open(path).convert('RGB').resize((C, C), Image.LANCZOS) if path.exists() else None
+    if not path.exists():
+        return None
+    im = Image.open(path).convert('RGB').resize((C, C), Image.LANCZOS)
+    im.info['rest'] = M/folder/view/'0000.png'      # the same framing's rest frame, for the toe guide
+    return im
 
 
 def toe_front_x(im):
     """Left-most column of the creature in the lower tenth of a side frame (the front of the toes; the
     creature faces left in the side view)."""
     g = np.asarray(im.convert('L'), float)
-    bg = np.median(g[:5, :5])
+    bg = np.median(g[:5, -5:])
     low = g[int(.88*g.shape[0]):]
     cols = np.where((np.abs(low-bg) > 12).any(0))[0]
     return int(cols.min()) if len(cols) else None
@@ -62,13 +66,11 @@ def row(title, refs, tiles, width, guide=False):
         d.text((x, 40+RH-18), r.stem, fill=(255, 255, 255), font=small)
         x += im.width+10
     y = 40+RH+10
-    gx = None
     for k, (label, im) in enumerate(tiles):
         if im is None:
             continue
-        if guide and gx is None:
-            gx = toe_front_x(im)
-        if guide and gx is not None:
+        gx = toe_front_x(Image.open(im.info['rest']).convert('RGB').resize((C, C))) if guide and 'clay' in str(im.info['rest']) else None
+        if gx is not None:
             ImageDraw.Draw(im).line([(gx, 0), (gx, C)], fill=BLUE, width=2)
         out.paste(im, (10+k*(C+10), y))
         d.text((10+k*(C+10), y+C+4), label, fill=(0, 0, 0), font=small)
@@ -96,7 +98,7 @@ rows = [
          ('fur crouch, front three-quarter', frame('frames-fur', 'front3q', D)),
          ('clay crouch, side', frame('frames-clay', 'side', D)),
          ('clay halfway, side', frame('frames-clay', 'side', D//2))], W),
-    row('Feet: planted; the hips lower over them (blue line: front of the toes at rest)',
+    row('Feet: planted; the hips lower over them (blue line on the clay frames: front of the toes at rest)',
         sorted(REF.glob('feet-*.jpg')),
         [('clay rest, side', frame('frames-clay', 'side', 0)),
          ('clay halfway, side', frame('frames-clay', 'side', D//2)),
