@@ -26,6 +26,8 @@ me = body.data
 E = np.empty(len(me.edges) * 2, int); me.edges.foreach_get('vertices', E); E = E.reshape(-1, 2)
 me.calc_loop_triangles(); F = np.empty(len(me.loop_triangles) * 3, int); me.loop_triangles.foreach_get('vertices', F); F = F.reshape(-1, 3)
 VIEWS = {'side': (90.0, 4.0), 'lowthreeq': (55.0, 6.0)}
+if os.environ.get('CHEST_VIEWS'):   # name:az:el,...
+    VIEWS = {v.split(':')[0]: (float(v.split(':')[1]), float(v.split(':')[2])) for v in os.environ['CHEST_VIEWS'].split(',')}
 
 
 def pose(act, f):
@@ -73,7 +75,7 @@ for pname, act, f in poses:
     pose(act, f); Vp = eval_V(); curv_attr(Vp)
     centre = Vector(Vp[CHEST_VERTEX].tolist())
     if os.environ.get('CHEST_CENTER') == 'elbow':
-        centre = rig.pose.bones['leg_fl_02'].head.copy() + Vector((0.0, 0.03, 0.03))
+        centre = rig.pose.bones['leg_fl_02'].head.copy() + Vector([float(x) for x in os.environ.get('CHEST_OFFSET', '0,0.03,0.03').split(',')])
     HALF = float(os.environ.get('CHEST_HALF', '0.085'))
     for vname, (az, el) in VIEWS.items():
         place(az, el, centre, HALF)

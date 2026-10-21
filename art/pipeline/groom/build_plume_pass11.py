@@ -1,4 +1,4 @@
-"""B-vbkd (groom pass 11, derived from build_plume_pass9.py): the plume white core becomes the same tufted hair as the dark tufts.
+"""B-vbkd (groom pass 11 and 12, derived from build_plume_pass9.py): the plume white core becomes the same tufted hair as the dark tufts.
 
 Pass 11 change: the 90,000 long straight white core strands are gone. The white band (same placement and width as pass 9:
 center turning from 180 deg on the shaft underside to +/-90 deg on the plume sides, half width 75 deg tapering to 14 deg at
@@ -306,6 +306,13 @@ def author_tufts(sp, vco, tris, bvh):
             width = np.clip(P['tuft_width'][2] * L, P['tuft_width'][0], P['tuft_width'][1])
             n = max(WT['min_children'], int(P['tuft_children'] * (L / P['length_max']) ** .6))
             tuft(S + radial * R * .85, d0, dtip, L, width, tid, u, ph, n, 0, True); tid += 1
+    # pass 12: tip point made of ordinary crest tufts (station width, child count and out-angle rule), generated last so
+    # every earlier tuft keeps its random draws; replaces the dropped tip tufts.
+    for L, out_deg, az in P.get('tip_point_tufts', []):
+        a = A - P.get('tip_point_back_m', .01); S, T, X, F, R = frame_at(sp, a); pr = math.radians(az); radial = math.cos(pr) * F + math.sin(pr) * X
+        o_ = math.radians(out_deg); d0 = unit(math.cos(o_) * T + math.sin(o_) * radial); outt = o_ * (1 - P['tip_bend']); dtip = unit(math.cos(outt) * T + math.sin(outt) * radial)
+        width = np.clip(P['tuft_width'][2] * L, P['tuft_width'][0], P['tuft_width'][1]); n = max(40, int(P['tuft_children'] * (L / P['length_max']) ** .6))
+        tuft(S + radial * R * .85, d0, dtip, L, width, tid, 0.999, az, n); tid += 1
     author_tufts.wroot = np.concatenate(wroot); author_tufts.white = np.concatenate(white)
     return np.concatenate(coords_all), np.array(tri_all), np.concatenate(tuft_id), np.concatenate(tone), records, a0
 
@@ -365,6 +372,14 @@ def build():
     bvh = BVHTree.FromPolygons(vco.tolist(), tris.tolist(), all_triangles=True); tree = bind_tree(proxy)
     coords, tri, tid, tone, records, a0 = author_tufts(sp, vco, tris, bvh)
     mat = plume_material('Plume tufts'); wm = author_tufts.white; wr = author_tufts.wroot
+    # pass 12: drop the tip tufts (smooth dark spear along the spine tangent). They are still generated, so the random
+    # stream and every other tuft stay identical to pass 11; their strands are removed before the curves are made.
+    dropped = []
+    if P.get('drop_tip_tufts'):
+        tip_ids = [r['tuft'] for r in records if r['u'] == 1.0 and not r['white']]
+        keep = ~np.isin(tid, tip_ids); dropped = [{'tuft': r['tuft'], 'length_m': r['length_m'], 'children': r['children']} for r in records if r['tuft'] in tip_ids]
+        coords, tri, tid, tone, wm, wr = coords[keep], tri[keep], tid[keep], tone[keep], wm[keep], wr[keep]
+        records = [r for r in records if r['tuft'] not in tip_ids]
     col = np.where(wm[:, None], np.array(P['white_linear'])[None], np.array(P['dark_linear'])[None])
     objs = {}
     for name, sel in (('Plume tufts dark', ~wm), ('Plume tufts white', wm)):
@@ -389,7 +404,7 @@ def build():
     after = signature(body)
     stats = {'build_id': P['build_id'], 'removed_pass5_plume_objects': removed, 'hidden_pass5_plume_children': hidden,
              'spine': {'samples': len(sp['S']), 'length_m': sp['length'], 'on_sculpt_m': sp['mesh_arc'], 'extension_m': sp['length'] - sp['mesh_arc'], 'mesh_end_point': sp['mesh_end_point'], 'tip': sp['S'][-1].round(4).tolist(), 'plume_start_arc_m': float(a0)},
-             'tufts': len(records), 'white_tufts': int(sum(r['white'] for r in records)), 'dark_strands': int(n), 'white_tuft_strands': int(m), 'white_core_strands': 0, 'points_per_strand': P['tuft_points'],
+             'dropped_tip_tufts': dropped, 'tufts': len(records), 'white_tufts': int(sum(r['white'] for r in records)), 'dark_strands': int(n), 'white_tuft_strands': int(m), 'white_core_strands': 0, 'points_per_strand': P['tuft_points'],
              'proxy': {'vertices': len(vco), 'triangles': len(tris), 'vertex_groups': [g.name for g in proxy.vertex_groups], 'armature': rig.name},
              'body_unchanged': before == after, 'seconds': time.perf_counter() - t0,
              'checks': {'nonfinite': int((~np.isfinite(coords)).sum()), 'left_dark': int((coords[~wm][:, 0, 0] > 0).sum()), 'right_dark': int((coords[~wm][:, 0, 0] < 0).sum()),
