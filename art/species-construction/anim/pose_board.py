@@ -109,67 +109,35 @@ def vertex_normals(P):
 NRM = vertex_normals(rest)
 head_share = share(['head'])
 SKULL = np.where((head_share > .95) & (rest[:, 1] > J['head_base'][1]-.02))[0]   # back half of the head
-# what the folded blade lies on: the back half of the head, the nape and the top of the back
-BED = np.where((rest[:, 1] > J['head_base'][1]-.02) & (rest[:, 2] > J['clavicle'][2]-.02) & (share(['ear_1.L', 'ear_2.L',
-               'ear_3.L', 'ear_4.L', 'ear_1.R', 'ear_2.R', 'ear_3.R', 'ear_4.R']) < .02))[0]
 skull_tree = cKDTree(rest[SKULL])
-bed_tree = cKDTree(rest[BED])
+EAR_SIDE = {sd: share([f'ear_{k}.{sd}' for k in range(1, rc.EAR_BONES+1)]) for sd in ('L', 'R')}
 
 
-def ear_fold(side='L', offset=.026, down=.75, tilt=22., inner_x=.05):
-    """Rotations for ear_1..ear_N of one side so the blade folds down and lies along the back of the head:
-    a curve is marched from the ear root back and down over the offset surface of the head, nape and
-    upper back, following their curvature and kept on its own side of the midline (|x| >= inner_x);
-    each bone's axis follows the curve's chord and the blade's inner (concha) face turns outward, tilted
-    by `tilt` degrees about the bone so its inner edge lies down and its outer edge stands off."""
-    chain = [f'ear_{k}.{side}' for k in range(1, rc.EAR_BONES+1)]
-    lengths = [np.linalg.norm(np.array(J[f'ear{k}.{side}'])-np.array(J[f'ear{k-1}.{side}'])) for k in range(1, rc.EAR_BONES+1)]
+def ear_hinge(side='L', drop=12., inward=6., bend=4.):
+    """Ears flattened the way a cat's or fox's do: each blade turns as one near-rigid piece about a hinge at
+    its root, back and `drop` degrees down so it lies along the head line in side view, `inward` degrees
+    toward the midline so it sits close over the skull, its inner (concha) face turned outward. The blade
+    bends only slightly (`bend` degrees per outer bone, toward the skull); it never wraps or rolls."""
     sx = 1 if side == 'L' else -1
-    pt = np.array(J[f'ear0.{side}'], float)
-    dirn = unit((0, 1, -down))
-    pts, arc, total, h = [pt.copy()], [0.], sum(lengths), .003
-    normals = []
-    while arc[-1] < total:
-        _, q = bed_tree.query(pt)
-        nq = NRM[BED[q]]
-        dirn = unit(dirn-nq*(dirn@nq))
-        pt = pt+h*dirn
-        _, q = bed_tree.query(pt)
-        pt = rest[BED[q]]+NRM[BED[q]]*offset
-        if sx*pt[0] < inner_x:
-            pt[0] = sx*inner_x
-            dirn[0] = max(dirn[0]*sx, 0)*sx
-        normals.append(NRM[BED[q]])
-        arc.append(arc[-1]+np.linalg.norm(pt-pts[-1]))
-        pts.append(pt.copy())
-    pts, arc, normals = np.array(pts), np.array(arc), np.array(normals)
-    cum = np.r_[0, np.cumsum(lengths)]
-    targets = [np.array([np.interp(c, arc, pts[:, i]) for i in range(3)]) for c in cum]
-    pose, Rparent = {}, np.eye(3)
-    for k, b in enumerate(chain):
-        mine = dense[:, NI[b]] > .5
-        q = rest[mine]-rest[mine].mean(0)
-        nu = np.linalg.svd(q, full_matrices=False)[2][2]       # thinnest direction of this piece of blade
-        nu = nu if nu[1] < 0 else -nu                           # the concha (inner) face looks forward at rest
-        u = rc.bone_axis(J, b, B)
-        dk = unit(targets[k+1]-targets[k])
-        mid = (cum[k]+cum[k+1])/2
-        nk = unit(normals[min(np.searchsorted(arc, mid), len(normals)-1)])
-        nk = unit(nk-dk*(dk@nk))
-        side_v = np.cross(dk, nk)
-        tl = math.radians(tilt)*(1 if side_v[2] < 0 else -1)
-        nk = unit(nk*math.cos(tl)+side_v*math.sin(tl))
+    blade = EAR_SIDE[side] > .5
+    q = rest[blade]-rest[blade].mean(0)
+    nu = np.linalg.svd(q, full_matrices=False)[2][2]
+    nu = nu if nu[1] < 0 else -nu                     # concha faces forward at rest
+    u = unit(np.array(J[f'ear{rc.EAR_BONES}.{side}'])-np.array(J[f'ear0.{side}']))
+    dr, iw = math.radians(drop), math.radians(inward)
+    d = unit((-sx*math.sin(iw), math.cos(iw)*math.cos(dr), -math.sin(dr)))
+    nT = np.array([sx, 0., 0.])
 
-        def frame(x, y):
-            y = unit(y-x*(x@y))
-            return np.stack([x, y, np.cross(x, y)], 1)
-        Rw = frame(dk, nk)@frame(u, nu).T
-        pose[b] = rc.euler_from_matrix(Rparent.T@Rw)
-        Rparent = Rw
-    return pose, targets
+    def frame(x, y):
+        y = unit(y-x*(x@y))
+        return np.stack([x, y, np.cross(x, y)], 1)
+    pose = {f'ear_1.{side}': rc.euler_from_matrix(frame(d, nT)@frame(u, nu).T)}
+    for k in range(2, rc.EAR_BONES+1):
+        pose[f'ear_{k}.{side}'] = [0., 0., sx*bend]
+    return pose
 
 
-ear_L, ear_targets = ear_fold('L', a.ear_offset)
+ear_L = ear_hinge('L')
 EARS_BACK = mirror(ear_L)
 
 # ---------------------------------------------------------------- poses
@@ -188,7 +156,7 @@ POSES['tails_drawn_in'] = tails([-34, 0, 40], {'a': [[-16, 0, 14], [-6, 0, 14]],
                                                'c': [[8, 0, 16], [0, 0, 12]]})
 POSES['tails_fanned'] = tails([12, 0, -12], {'a': [[26, 0, -6], [8, 0, -4]], 'b': [[0, -14, -22], [0, -4, -6]],
                                              'c': [[-26, 0, 14], [-6, 0, 4]]})
-turn = {'neck': [0, 0, 18], 'head': [-12, 8, 32], 'jaw': [12, 0, 0]}
+turn = {'neck': [0, 0, 18], 'head': [-12, 8, 32], 'jaw': [25, 0, 0]}
 turn.update(mirror({'ear_1.L': [0, -8, -18]}))
 POSES['head_turn'] = turn
 ARM_UP = {'upperarm.L': (.10, -.85, .52), 'forearm.L': (.05, -.95, .30), 'hand.L': (0, -.95, .30)}
@@ -217,10 +185,10 @@ ALL = {**POSES, **SCULPT}
 GROUPS = [
     ('knee_step', 'legs_step', 'shin', 'knee', (.06, .14), ['thigh', 'shin'], 15),
     ('knee_bend', 'night_stalk', 'shin', 'knee', (.06, .14), ['thigh', 'shin'], 15),
-    ('hip_flex', 'night_stalk', 'thigh', 'hip', (.07, .14), ['pelvis', 'hip', 'thigh', 'spine'], 30),
+    ('hip_flex', 'night_stalk', 'thigh', 'hip', (.08, .17), ['pelvis', 'hip', 'thigh', 'spine'], 30),
     ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
-    ('ear_fold', 'ears_flat_back', 'ear_1', 'ear0', (.05, .12), ['head', 'ear_1'], 15),
+    ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),
 ]
 
 
@@ -242,6 +210,9 @@ for k in plan:
     nxt = sorted([o['rise'][1] for o in plan if o['bone'] == k['bone'] and o['rise'][1] > k['rise'][1]])
     if nxt:
         k['fall'] = float(nxt[0])
+SPREAD = {'hip_flex': 2000}
+
+
 def posed_joint(T, jn):
     b = next(b for b, _, h, t in B if h == jn or t == jn)
     R, t = T[b]
@@ -263,13 +234,49 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
         allowed = rc.smoothstep(share(mb), .4, .7)
         masks[sd] = (1-rc.smoothstep(np.linalg.norm(P-c, axis=1), r0, r1))*allowed
     m = np.maximum(masks['L'], masks['R'])
+    if gname == 'ear_clear':
+        # no relax here: only the blade vertices that end up inside the skull move, out along the posed
+        # skull's normal to 3 mm above it; the push is spread a little over the blade so it has no edge
+        skp = P[SKULL]
+        skn = vertex_normals(P)[SKULL]
+        tree = cKDTree(skp)
+        blade = np.maximum(EAR_SIDE['L'], EAR_SIDE['R']) > .5
+        ids = np.where(blade)[0]
+        X = P.copy()
+        for _ in range(4):
+            dd, qi = tree.query(X[ids], k=1, workers=-1)
+            sgn = np.einsum('ij,ij->i', X[ids]-skp[qi], skn[qi])
+            bad = (dd < .04) & (sgn < .003)
+            push = np.zeros((n, 3))
+            push[ids[bad]] = ((.003-sgn[bad])[:, None])*skn[qi[bad]]
+            for _s in range(40):
+                push = np.where(blade[:, None], .5*push+.5*(A@push), 0)
+            X[ids] += push[ids]
+        dd, qi = tree.query(X[ids], k=1, workers=-1)
+        sgn = np.einsum('ij,ij->i', X[ids]-skp[qi], skn[qi])
+        bad = (dd < .04) & (sgn < .003)
+        X[ids[bad]] += ((.003-sgn[bad])[:, None])*skn[qi[bad]]
+        dP = X-P
+        dR = np.einsum('nji,nj->ni', Rv, dP)
+        for sd in ('L', 'R'):
+            key = next(k for k in plan if k['name'] == f'{gname}.{sd}')
+            v = rc.driver_value(rc.swing_deg(J, pose, key['bone'], B), key['rise'], key['fall'])
+            part = dR*(EAR_SIDE[sd] > .5)[:, None]/max(v, 1e-6)
+            kid = np.where(np.linalg.norm(part, axis=1) > 1e-6)[0]
+            deltas[key['name']] = (kid, part[kid])
+            keys.append(key)
+        print(f'ear_clear       at {pose_name}: {len(np.where(np.linalg.norm(dP, axis=1) > 1e-6)[0])} blade vertices moved, '
+              f'max {np.linalg.norm(dP, axis=1).max()*1000:.1f} mm', flush=True)
+        continue
     sel = np.where(m > 1e-4)[0]
     As = A[sel]
     # the bend's rotation field, spread wider inside the mask: the corrected surface bends over a longer
     # arc instead of pleating where the skinning rotation turns fast
     Qv = quats(Rv)
     lq = (.6*m[sel])[:, None]
-    for _ in range(a.spread):
+    # the furred test (2026-10-21) showed only the crouch's groin crease through the fur, as a V at the front
+    # of the hip at full size: that bend is spread over a longer arc than the others
+    for _ in range(SPREAD.get(gname, a.spread)):
         Qv[sel] = (1-lq)*Qv[sel]+lq*(As@Qv)
     Qv /= np.linalg.norm(Qv, axis=1, keepdims=True)
     target_lap = np.einsum('nij,nj->ni', rc._qmat(Qv[sel]), LAP_REST[sel])
@@ -397,7 +404,7 @@ for k in keys:
         mir[k['name'][:-2]] = float(np.abs(dl[pos][ok]-dm[ok]).max())
 weights['corrective_mirror_max_m'] = mir
 (a.rig/'poses.json').write_text(json.dumps(out_poses, indent=1))
-(a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks, earFold=dict(L=ear_L, offset=a.ear_offset)), indent=1))
+(a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks, earHinge=dict(L=ear_L)), indent=1))
 print(json.dumps(weights))
 for name, c in checks.items():
     worst = {r: (v['folded'], v['collapsed']) for r, v in c['regions'].items() if v['folded'] or v['collapsed']}

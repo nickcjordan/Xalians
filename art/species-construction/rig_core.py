@@ -472,7 +472,7 @@ def pose_from_directions(joints, targets, base=None, bones=None):
 
 TAILS = ('a', 'b', 'c')          # upper, middle, lower at rest
 TAIL_BONES = 5
-EAR_BONES = 4          # a fold chain: the blade curves over the back of the skull when the ears go flat
+EAR_BONES = 4          # the blade turns almost rigidly on ear_1; the outer bones allow a slight bend
 TAIL_SEGMENT_SHARE = (1.25, 1.1, 1.0, .9, .75)   # tail bone lengths, root to tip, shorter toward the tip
 
 
@@ -603,7 +603,11 @@ def derive_anim_joints(skin, edges, claws=None, mouth_z=.54):
         D_root = float(rings[root_k][0])
         line = [r[1] for r in rings[:root_k+1]][::-1]          # junction first
         pts, cuts = _arc_points(line, [1]*EAR_BONES)
-        j[f'ear0.{s}'] = list(map(float, line[0]))
+        # the hinge sits at the back of the root, not its middle: the root is a long oval, and turning it about
+        # its middle swings the front of the root into the skull; about its back edge the blade folds back
+        # like a door and the front of the root lifts off the head instead
+        hinge = np.array(line[0], float)+np.array([0., .45*float(rings[root_k][3][1]), 0.])
+        j[f'ear0.{s}'] = list(map(float, hinge))
         for k in range(1, EAR_BONES):
             j[f'ear{k}.{s}'] = list(map(float, pts[k-1]))
         j[f'ear{EAR_BONES}.{s}'] = list(map(float, skin[tip]))
@@ -747,7 +751,7 @@ def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clea
         u[~np.isfinite(u)] = -9
         cuts = e['joints']
         hw = .25*float(np.diff(cuts).min())
-        entry = smoothstep(u, -.14, .06)*guard
+        entry = smoothstep(u, -.03, .03)*guard     # short root blend: the blade turns, the skull barely bends
         prev = np.ones(n)
         for k in range(1, EAR_BONES+1):
             nxt = smoothstep(u, cuts[k]-hw, cuts[k]+hw) if k < EAR_BONES else np.zeros(n)
