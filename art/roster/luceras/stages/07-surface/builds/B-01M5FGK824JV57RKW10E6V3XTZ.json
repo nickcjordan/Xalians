@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5FGK824JV57RKW10E6V3XTZ",
+  "alias": "5wvn",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Tail coat pattern: dark top and white underside along the whole tail, continuous from the body's pattern at the rump into the plume's white core",
+  "scope": "tail shaft skin and fur color masks, tail fur length if needed",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-21T15:17:08Z",
+  "briefSha256": "bb0c79b4e5559c80dadbf6f7d8d3f0e54dc50ce9913a1553d9681537cf4d4ccc"
+}
