@@ -231,6 +231,7 @@ CROPS = {  # view: (joint or joints averaged, azimuth, elevation, half size m)
     'shoulder': (['shoulder.L'], 55, 12, .11),
     'hip': (['hip.L'], 30, 2, .12),
     'knee': (['knee.L'], 90, 2, .12),
+    'knee_front': (['knee.L'], 35, 4, .10),
     'neck': (['neck_base', 'head_base'], 65, 6, .10),
     'ear_root': (['ear0.L'], 145, 25, .11),
     'tail_fork': (['tail_fork'], 155, 18, .13),

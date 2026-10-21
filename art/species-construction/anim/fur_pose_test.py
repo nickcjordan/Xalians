@@ -10,7 +10,8 @@ dir), and each strand is rebuilt from its posed triangle. Strand order is never 
 index based). The coat pattern reads the curves' stored `rest` attribute, so it stays on the body.
 Eyes, nose, mouth and eyeliner ribbons follow the head bone, claws the hand and foot bones. Renders the
 fur stage's side camera (render_surface.VIEWS['side'] angles) framed to the pose, at full size and at
-sprite height. Writes <pose>_side.png, <pose>_sprite.png and index.json into the out dir.
+sprite height. Also renders the left knee close up from the side and the front three-quarter. Writes <pose>_side.png,
+<pose>_sprite.png, <pose>_knee_side.png, <pose>_knee_front.png and index.json into the out dir.
 """
 import argparse
 import json
@@ -32,7 +33,7 @@ p = argparse.ArgumentParser()
 p.add_argument('surface', type=Path)
 p.add_argument('rig', type=Path)
 p.add_argument('out', type=Path)
-p.add_argument('--poses', default='night_stalk,leg_reach')
+p.add_argument('--poses', default='rest,night_stalk,leg_reach')
 p.add_argument('--samples', type=int, default=32)
 p.add_argument('--sprite', type=int, default=192)
 p.add_argument('--palette', default='T7')
@@ -199,6 +200,15 @@ for name in a.poses.split(','):
         bpy.ops.render.render(write_still=True)
         records.append(dict(pose=name, view=label, seconds=round(time.time()-t1, 1),
                             resolution=[sc.render.resolution_x, sc.render.resolution_y], keys={k: v for k, v in vals.items() if v > 0}))
+        print('rendered', name, label, records[-1]['seconds'], flush=True)
+    # knee close-ups, furred: the left knee from the side and from the front three-quarter
+    kn = from_m(np.array(pz['joints']['knee.L']))
+    for label, azk in (('knee_side', 90), ('knee_front', 35)):
+        render.place(cam, lights, (azk, 4, Vector(tuple(kn)), .34, 700, 700))
+        sc.render.filepath = str(a.out/f'{name}_{label}.png')
+        t1 = time.time()
+        bpy.ops.render.render(write_still=True)
+        records.append(dict(pose=name, view=label, seconds=round(time.time()-t1, 1), resolution=[700, 700]))
         print('rendered', name, label, records[-1]['seconds'], flush=True)
     pos_attr.data.foreach_set('vector', ((fur_rest_world-fm[:3, 3])@np.linalg.inv(fm[:3, :3]).T).astype(np.float32).ravel())
 info.update(strands=len(roots), points=len(pts), images=records, seconds=round(time.time()-t0))

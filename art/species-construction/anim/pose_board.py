@@ -113,19 +113,20 @@ skull_tree = cKDTree(rest[SKULL])
 EAR_SIDE = {sd: share([f'ear_{k}.{sd}' for k in range(1, rc.EAR_BONES+1)]) for sd in ('L', 'R')}
 
 
-def ear_hinge(side='L', drop=12., inward=6., bend=4.):
-    """Ears flattened the way a cat's or fox's do: each blade turns as one near-rigid piece about a hinge at
-    its root, back and `drop` degrees down so it lies along the head line in side view, `inward` degrees
-    toward the midline so it sits close over the skull, its inner (concha) face turned outward. The blade
-    bends only slightly (`bend` degrees per outer bone, toward the skull); it never wraps or rolls."""
+def ear_swing(side='L', back=95., out=14.):
+    """Ears pulled back the way a fennec's are (Nick, F34, with his photo): the whole ear swings back from
+    its base as one straight, unbent cone, as if a muscle pulled the base; nothing in the blade bends. The
+    ear points `back` degrees back from upright in side view and `out` degrees outward, its opening facing
+    out. Only ear_1 turns; the outer ear bones stay at 0, so the blade's shape is its rest shape moved
+    rigidly, and the only skin that deforms is the short band where the base blends into the head."""
     sx = 1 if side == 'L' else -1
     blade = EAR_SIDE[side] > .5
     q = rest[blade]-rest[blade].mean(0)
     nu = np.linalg.svd(q, full_matrices=False)[2][2]
-    nu = nu if nu[1] < 0 else -nu                     # concha faces forward at rest
+    nu = nu if nu[1] < 0 else -nu                     # the opening faces forward at rest
     u = unit(np.array(J[f'ear{rc.EAR_BONES}.{side}'])-np.array(J[f'ear0.{side}']))
-    dr, iw = math.radians(drop), math.radians(inward)
-    d = unit((-sx*math.sin(iw), math.cos(iw)*math.cos(dr), -math.sin(dr)))
+    bk, ot = math.radians(back), math.radians(out)
+    d = unit((sx*math.sin(ot), math.cos(ot)*math.sin(bk), math.cos(ot)*math.cos(bk)))
     nT = np.array([sx, 0., 0.])
 
     def frame(x, y):
@@ -133,11 +134,11 @@ def ear_hinge(side='L', drop=12., inward=6., bend=4.):
         return np.stack([x, y, np.cross(x, y)], 1)
     pose = {f'ear_1.{side}': rc.euler_from_matrix(frame(d, nT)@frame(u, nu).T)}
     for k in range(2, rc.EAR_BONES+1):
-        pose[f'ear_{k}.{side}'] = [0., 0., sx*bend]
+        pose[f'ear_{k}.{side}'] = [0., 0., 0.]
     return pose
 
 
-ear_L = ear_hinge('L')
+ear_L = ear_swing('L')
 EARS_BACK = mirror(ear_L)
 
 # ---------------------------------------------------------------- poses
@@ -185,11 +186,16 @@ ALL = {**POSES, **SCULPT}
 GROUPS = [
     ('knee_step', 'legs_step', 'shin', 'knee', (.06, .14), ['thigh', 'shin'], 15),
     ('knee_bend', 'night_stalk', 'shin', 'knee', (.06, .14), ['thigh', 'shin'], 15),
+    ('knee_cap', 'night_stalk', 'shin', 'knee', (0, 0), ['thigh', 'shin'], 15),
     ('hip_flex', 'night_stalk', 'thigh', 'hip', (.08, .17), ['pelvis', 'hip', 'thigh', 'spine'], 30),
     ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
     ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),
 ]
+
+
+SPREAD = {'hip_flex': 2000, 'knee_step': 150, 'knee_bend': 150}   # knees: a concentrated bend, not one round arc (Nick, F34)
+INDEPENDENT = {'knee_cap'}          # rises over the whole bend, outside the step/bend handover
 
 
 def side_bone(base, sd):
@@ -203,14 +209,17 @@ for gname, pose_name, dbase, jbase, radii, mbones, rise0 in GROUPS:
     for sd in ('L', 'R'):
         bone = side_bone(dbase, sd)
         ang = rc.swing_deg(J, ALL[pose_name], bone, B)
-        prior = [k for k in plan if k['bone'] == bone and k['rise'][1] < ang]
+        prior = [] if gname in INDEPENDENT else [k for k in plan if k['bone'] == bone and k['rise'][1] < ang
+                                                   and k['group'] not in INDEPENDENT]
         start = max([rise0]+[k['rise'][1] for k in prior])
         plan.append(dict(name=f'{gname}.{sd}', group=gname, bone=bone, rise=[float(start), float(ang)], fall=None, pose=pose_name))
 for k in plan:
-    nxt = sorted([o['rise'][1] for o in plan if o['bone'] == k['bone'] and o['rise'][1] > k['rise'][1]])
+    if k['group'] in INDEPENDENT:
+        continue
+    nxt = sorted([o['rise'][1] for o in plan if o['bone'] == k['bone'] and o['rise'][1] > k['rise'][1]
+                  and o['group'] not in INDEPENDENT])
     if nxt:
         k['fall'] = float(nxt[0])
-SPREAD = {'hip_flex': 2000}
 
 
 def posed_joint(T, jn):
@@ -234,6 +243,99 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
         allowed = rc.smoothstep(share(mb), .4, .7)
         masks[sd] = (1-rc.smoothstep(np.linalg.norm(P-c, axis=1), r0, r1))*allowed
     m = np.maximum(masks['L'], masks['R'])
+    if gname == 'knee_cap':
+        Nraw = vertex_normals(P)
+        # an explicit knee, sculpted along the posed skin's normals in the knee's own frame (Nick, F34: a
+        # real kneecap, not a bendy tube): the patella bump at the front of the bend, the patellar tendon
+        # running flat down from it between two shallow grooves, the edge of the tibia plateau as a low ridge
+        # across the front below the joint, the two hamstring cords at the back of the thigh, and a tight
+        # fold at the back of the knee between them
+        # normals smoothed along the skin, so the push follows the knee's form, not each triangle
+        Nv = Nraw
+        for _ in range(30):
+            Nv = .5*Nv+.5*(A@Nv)
+        Nv /= np.linalg.norm(Nv, axis=1, keepdims=True)
+        disp = np.zeros(n)
+        part = {}
+        for sd in ('L', 'R'):
+            k0 = posed_joint(T, f'knee.{sd}')
+            ua = unit(posed_joint(T, f'hip.{sd}')-k0)
+            ub = unit(posed_joint(T, f'ankle.{sd}')-k0)
+            hng = unit(np.cross(ua, ub))
+            fr = -unit(ua+ub)                                  # toward the front of the bent knee
+            rel = P-k0
+            dist = np.linalg.norm(rel, axis=1)
+            region = rc.smoothstep(share([f'thigh.{sd}', f'shin.{sd}', f'foot.{sd}']), .5, .8)*(1-rc.smoothstep(dist, .11, .16))
+            lat = rel@hng
+            front = Nv@fr
+            cand = (region > .5) & (np.abs(lat) < .015)
+            pc = P[cand][np.argmax(rel[cand]@fr)]              # the front of the knee, on the midline
+            rp = P-pc
+            dl = rp@hng
+            do = np.linalg.norm(rp-np.outer(dl, hng), axis=1)
+            patella = np.exp(-(dl/.019)**2-(do/.022)**2)*rc.smoothstep(front, .1, .4)
+            tb = rp@ub                                         # down the shin from the kneecap
+            down = rc.smoothstep(tb, .012, .03)*(1-rc.smoothstep(tb, .07, .095))*rc.smoothstep(front, .2, .5)
+            grooves = np.exp(-((np.abs(dl)-.021)/.006)**2)*down
+            plateau = np.exp(-((tb-.032)/.006)**2)*(1-np.exp(-(dl/.014)**2))*rc.smoothstep(front, -.3, .1)
+            ta = rel@ua                                        # up the thigh from the knee
+            back = rc.smoothstep(-front, .3, .6)
+            cords = np.exp(-((np.abs(lat)-.027)/.007)**2)*rc.smoothstep(ta, .015, .04)*(1-rc.smoothstep(ta, .09, .12))*back
+            bis = rel@unit(ua-ub)
+            fold = np.exp(-(bis/.013)**2)*np.exp(-(lat/.024)**2)*back
+            # the corner: the front of the bent knee meets where the thigh's front line and the shin's front
+            # line cross, instead of one round arc between them (front vertices are pushed out along their
+            # normals until they reach either line)
+            na = unit(fr-ua*(fr@ua))
+            nb = unit(fr-ub*(fr@ub))
+            near = dist < .16
+
+            def front_line(axis, nrm_dir, bone):
+                """The segment's front profile just past the knee (front-most skin on the midline at each
+                distance along the bone, 3 to 10 cm out), fitted with a line: (offset0, slope)."""
+                ss, oo = [], []
+                pick = (share([bone]) > .9) & near & (np.abs(lat) < .015)
+                along, off_ = rel@axis, rel@nrm_dir
+                for s0 in np.arange(.03, .10, .005):
+                    m_ = pick & (np.abs(along-s0) < .003)
+                    if m_.sum() > 5:
+                        ss.append(s0)
+                        oo.append(off_[m_].max())
+                c1, c0 = np.polyfit(ss, oo, 1)
+                return c0, c1
+            lines = [(ua, na, *front_line(ua, na, f'thigh.{sd}')), (ub, nb, *front_line(ub, nb, f'shin.{sd}'))]
+            # the corner: front vertices pushed out along their normals until they reach either fitted line,
+            # so the front of the bent knee comes to the point where the thigh's and the shin's front lines meet
+            pushes = []
+            for axis, nd, c0, c1 in lines:
+                gap = (c0+c1*(rel@axis))-rel@nd                # > 0: inside this line, under the round arc
+                ln = unit(nd-c1*axis)
+                with np.errstate(divide='ignore', invalid='ignore'):
+                    t_ = gap*np.sqrt(1+c1*c1)/np.maximum(Nv@ln, .25)
+                pushes.append(np.where((Nv@ln) > .25, t_, np.inf))
+            corner = np.clip(np.minimum(*pushes), 0, .010)
+            corner = np.where(np.isfinite(corner), corner, 0)*rc.smoothstep(front, .15, .45)*(1-rc.smoothstep(np.abs(lat), .03, .05))
+            rt, rs = lines[0][2], lines[1][2]
+            dsd = (corner+.011*patella-.003*grooves+.0022*plateau+.0035*cords-.005*fold)*region
+            # spread the push along the skin (about 2 cm) so it has no per-vertex spikes or pits
+            for _ in range(80):
+                dsd = .5*dsd+.5*(A@dsd)
+            dsd *= rc.smoothstep(region, .01, .2)
+            part[sd] = dsd
+            disp += dsd
+        dP = Nv*disp[:, None]
+        dR = np.einsum('nji,nj->ni', Rv, dP)
+        for sd in ('L', 'R'):
+            key = next(k for k in plan if k['name'] == f'{gname}.{sd}')
+            v = rc.driver_value(rc.swing_deg(J, pose, key['bone'], B), key['rise'], key['fall'])
+            pd = np.einsum('nji,nj->ni', Rv, Nv*part[sd][:, None])/max(v, 1e-6)
+            kid = np.where(np.linalg.norm(pd, axis=1) > 1e-6)[0]
+            deltas[key['name']] = (kid, pd[kid])
+            keys.append(key)
+        print(f'knee_cap        at {pose_name}: {int((np.abs(disp) > 1e-5).sum())} vertices, max out {disp.max()*1000:.1f} mm, front radii '
+              f'{rt*1000:.0f}/{rs*1000:.0f} mm, '
+              f'in {-disp.min()*1000:.1f} mm', flush=True)
+        continue
     if gname == 'ear_clear':
         # no relax here: only the blade vertices that end up inside the skull move, out along the posed
         # skull's normal to 3 mm above it; the push is spread a little over the blade so it has no edge
@@ -249,7 +351,7 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
             bad = (dd < .04) & (sgn < .003)
             push = np.zeros((n, 3))
             push[ids[bad]] = ((.003-sgn[bad])[:, None])*skn[qi[bad]]
-            for _s in range(40):
+            for _s in range(10):      # a short spread: the push stays at the base, the blade stays rigid
                 push = np.where(blade[:, None], .5*push+.5*(A@push), 0)
             X[ids] += push[ids]
         dd, qi = tree.query(X[ids], k=1, workers=-1)
@@ -404,7 +506,7 @@ for k in keys:
         mir[k['name'][:-2]] = float(np.abs(dl[pos][ok]-dm[ok]).max())
 weights['corrective_mirror_max_m'] = mir
 (a.rig/'poses.json').write_text(json.dumps(out_poses, indent=1))
-(a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks, earHinge=dict(L=ear_L)), indent=1))
+(a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks, earSwing=dict(L=ear_L)), indent=1))
 print(json.dumps(weights))
 for name, c in checks.items():
     worst = {r: (v['folded'], v['collapsed']) for r, v in c['regions'].items() if v['folded'] or v['collapsed']}

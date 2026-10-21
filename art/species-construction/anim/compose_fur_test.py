@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 src, out = Path(sys.argv[1]), Path(sys.argv[2])
 idx = json.loads((src/'index.json').read_text())
-poses = list(dict.fromkeys(r['pose'] for r in idx['images']))
+poses = [p for p in dict.fromkeys(r['pose'] for r in idx['images']) if p != 'rest']
 try:
     font = ImageFont.truetype('arial.ttf', 22)
 except OSError:
