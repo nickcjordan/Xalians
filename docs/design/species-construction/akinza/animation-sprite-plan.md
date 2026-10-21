@@ -55,3 +55,8 @@ The fur stage is closed (Nick, F32). Fur of record: `untracked/species-construct
 |---|---|---|
 | How does "concealed" show? | The game draws one concealed effect for every creature; the sprite shows only the body motion | Motion only, no baked fade |
 | How tall is a sprite cell? | One cell height per game profile, shared by all species so sizes compare | 192 px like Luceras (Akinza's face is then about 30 px) |
+
+## Decisions (Nick, 2026-10-21, "sure" to the recommendations on F33)
+- Concealed: production, the game draws one shared concealed effect for every creature and the sprite carries only body motion; slice, motion only, nothing baked in.
+- Sprite cell height: production, one height per game shared by every species; slice, 192 px like Luceras.
+- Slice: idle (3 s loop) and Night Stalk (1.5 s), side facing.
