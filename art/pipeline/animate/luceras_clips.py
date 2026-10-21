@@ -11,7 +11,10 @@ Pose spec (all keys optional, missing values are rest):
   breath    0..1 of the approved breath_in chest expansion
   neck      (neck_01, neck_02) nose-up; head nose-up; neck_yaw / head_yaw (left positive); jaw open
   ears      {"l": (back, lift), "r": (back, lift)}
-  tail      list of 6 (lift, yaw) per joint, as absolute sagittal angle changes relative to the rest curve
+  tail      idle: list of (lift, yaw) per joint, relative rotations; signature ("tail_mode": "straighten"): list of
+            {s, lift, yaw} per joint, where s blends the joint's rest angle toward the in-line angle tail_target_deg
+            (body frame, 0 = straight back, positive up) and lift is added on top (B-378v: 9 joints, tail_07..tail_09
+            are the sprite-only plume bones; a rig with fewer tail bones ignores the extra entries)
   legs      {leg: {"fk": (a1, a2, a3), "plant": w, "roll": heel lift, "anchor": (df, dz)}}
 
 Shared primitives (roster layer section 3): eased key tracks, lag down a chain, a breathing cycle, anticipation
@@ -107,6 +110,10 @@ IDLE_DEFAULTS = {
     "tail_lag_ms": 95.0,
     "tail_lift_deg": 2.0,
     "head_alert_deg": 3.0,
+    # B-378v plume bones (tail_07..tail_09): a little sway lagging behind the tail; tail_01..06 unchanged
+    "plume_sway_deg": 2.5,          # yaw per plume joint (relative), so the tip moves about 7.5 deg
+    "plume_lift_deg": 1.2,          # sagittal per plume joint
+    "plume_lag_ms": 110.0,          # extra lag per plume joint after tail_06
 }
 
 
@@ -147,6 +154,9 @@ def make_idle(params=None):
             tv = lagged(tail_at, t, P["tail_lag_ms"] * (i + 1), T)
             amp = P["tail_sway_deg"] + P["tail_sway_growth_deg"] * i
             tail.append((P["tail_lift_deg"] * tv["lift"] * (0.5 + 0.2 * i), amp * tv["yaw"]))
+        for k in range(3):   # plume bones: the same sway, later still (wraps inside the loop, so the seam holds)
+            tv = lagged(tail_at, t, P["tail_lag_ms"] * 6 + P["plume_lag_ms"] * (k + 1), T)
+            tail.append((P["plume_lift_deg"] * tv["lift"], P["plume_sway_deg"] * tv["yaw"]))
         alert = P["ear_alert_deg"]
         return {
             "body": (0.0, P["body_bob_m"] * (b - 0.5), 0.3 * s, P["weight_shift_roll_deg"] * s, 0.0, P["weight_shift_m"] * s),
@@ -210,12 +220,36 @@ SIG_DEFAULTS = {
     "rebound_rise_m": 0.03,
     "land_pitch_deg": -9.0,
     "land_compress_m": 0.05,
-    "tail_lag_ms": 38.0,
-    "tail_inertia": 0.55,         # share of a body pitch change the tail resists, per joint lag
+    # tail (B-378v): phase keys, all body frame. s = how far each joint is straightened from its rest curl toward the
+    # in-line angle (0 rest curl and upright plume, 1 one straight line); lift = whole-line angle added (up positive)
+    "tail_joints": 9,             # tail_01..tail_06 plus the sprite-only plume bones tail_07..tail_09
+    "tail_target_deg": 0.0,       # the in-line angle: straight back in the body frame (between croup -21 and trunk +12)
+    "tail_lag_ms": 30.0,          # lift lag per joint down the chain (pass 2: 38 over 6 joints)
+    "tail_straighten_lag_ms": 14.0,  # straightening lag per joint (short, so the plume is straight by the apex)
+    "tail_inertia": 0.1,         # share of a body pitch change the tail resists, per joint lag
+    "tail_inertia_lag_cap": 6,    # inertia lag stops growing past this joint (the plume does not add more)
+    "tail_crouch_s": 0.25,        # crouch: the curl relaxes a little as the tail lowers and loads
+    "tail_crouch_lift_deg": -12.0,
+    "tail_crouch_swish_deg": 2.2, # crouch: small side swish, yaw per joint at the envelope peak
+    "tail_crouch_swish_ms": 300.0,  # swish period
+    "tail_launch_lift_deg": -14.0,
+    "tail_straighten_ms": 130.0,  # takeoff to the streaming lift (the launch sweep-down ends)
+    "tail_uncurl_end_ms": 200.0,  # pass 2: takeoff to fully straight; one smooth uncurl from the crouch to here
+    "tail_stream_lift_deg": 0.0,  # rise and apex: the line in flight
+    "tail_stream_arc_deg": 1.0,   # rise to hit: added per joint down the chain, a slight upward arc
+    "tail_dive_counter_deg": 2.0,  # dive: the straight tail swings up as a counterweight to the nose-down pitch
+    "tail_counter_ms": 110.0,     # pitch-over start to full counterweight
+    "tail_dive_arc_deg": 0.0,     # dive: the arc flattens so the line stays nearly straight
+    "tail_plume_tip_trim_deg": -8.0,  # when straight, tail_09 (and half on tail_08) tips down to cancel the plume's
+                                  # own forward curl between the joints, so the plume tip points back along the line
     "tail_whip_deg": 55.0,
     "tail_whip_period_ms": 180.0,
     "tail_whip_decay_ms": 160.0,
-    "tail_stream_droop_deg": -6.0,
+    "tail_whip_max_factor": 1.1,  # whip amplitude grows 0.12 per joint down the chain up to this factor
+    "tail_whip_up_scale": 0.35,   # pass 2: share kept of the whip's upward swings (downward swings in full)
+    "tail_land_s": 0.5,          # fore feet down: the tail has dropped and starts to curl back
+    "tail_land_lift_deg": -20.0,
+    "tail_settle_s": 0.2,         # hind feet down + 80 ms
     "ears_back_deg": 55.0,
 }
 
@@ -317,18 +351,41 @@ def make_sig(params=None, rest_center_z=0.48):
         (T["recover"], "smooth", {"n1": 0.5, "n2": 0.5, "h": 1.0, "ear": 4}),
         (T["end"], "smooth", {}),
     ])
-    # tail straightness: 0 rest curve, 1 straight in line behind the body
+    # tail by phase (B-378v). s: 0 rest curl, 1 one straight line at tail_target_deg; lift: whole line up; arc: per joint
+    straight = T["takeoff"] + P["tail_straighten_ms"]
+    counter = min(T["pitch0"] + P["tail_counter_ms"], T["hit"] - 20)
     tails = Track([
         (0, "linear", {}),
-        (T["crouch"], "smooth", {"s": 0.15, "lift": 8}),
-        (T["takeoff"], "smooth", {"s": 0.5, "lift": -10}),
-        (T["apex"], "smooth", {"s": 0.85, "lift": P["tail_stream_droop_deg"]}),
-        (T["dive"], "smooth", {"s": 1.0, "lift": 0}),
-        (T["hit"], "linear", {"s": 1.0, "lift": 0}),
-        (T["fore_land"], "smooth", {"s": 0.6, "lift": 14}),
-        (T["recover"], "smooth", {"s": 0.0, "lift": 3}),
+        (T["crouch"], "smooth", {"lift": P["tail_crouch_lift_deg"]}),
+        (T["takeoff"], "smooth", {"lift": P["tail_launch_lift_deg"]}),
+        (straight, "smooth", {"lift": P["tail_stream_lift_deg"], "arc": P["tail_stream_arc_deg"]}),
+        (T["pitch0"], "linear", {"lift": P["tail_stream_lift_deg"], "arc": P["tail_stream_arc_deg"]}),
+        (counter, "smooth", {"lift": P["tail_dive_counter_deg"], "arc": P["tail_dive_arc_deg"]}),
+        (T["hit"], "linear", {"lift": P["tail_dive_counter_deg"], "arc": P["tail_dive_arc_deg"]}),
+        (T["fore_land"], "smooth", {"lift": P["tail_land_lift_deg"]}),
+        (T["hind_land"] + 80, "smooth", {"lift": -2.0}),
+        (T["recover"], "smooth", {"lift": 0.0}),
         (T["end"], "smooth", {}),
     ])
+    # pass 2: the uncurl is its own track, one smooth ramp from the crouch to fully straight (no takeoff key), so the
+    # plume unrolls monotonically instead of jumping through the short crouch-to-takeoff segment
+    uncurl = Track([
+        (0, "linear", {}),
+        (T["crouch"], "smooth", {"s": P["tail_crouch_s"]}),
+        (T["takeoff"] + P["tail_uncurl_end_ms"], "smooth", {"s": 1.0}),
+        (T["hit"], "linear", {"s": 1.0}),
+        (T["fore_land"], "smooth", {"s": P["tail_land_s"]}),
+        (T["hind_land"] + 80, "smooth", {"s": P["tail_settle_s"]}),
+        (T["recover"], "smooth", {"s": 0.0}),
+        (T["end"], "smooth", {}),
+    ])
+    sw0, sw1 = T["crouch"] * 0.35, T["takeoff"] + 60   # crouch swish envelope
+
+    def swish(t):
+        if t <= sw0 or t >= sw1:
+            return 0.0
+        env = math.sin(math.pi * (t - sw0) / (sw1 - sw0)) ** 2
+        return P["tail_crouch_swish_deg"] * env * math.sin(2 * math.pi * (t - sw0) / P["tail_crouch_swish_ms"])
 
     def pitch_at(t):
         return pitch(t)["p"]
@@ -397,14 +454,19 @@ def make_sig(params=None, rest_center_z=0.48):
         up = upper(t)
         p = pitch_at(t)
         tail = []
-        for i in range(6):
+        for i in range(int(P["tail_joints"])):
             lag = P["tail_lag_ms"] * (i + 1)
             tv = lagged(tail_at, t, lag)
+            sv = lagged(uncurl, t, P["tail_straighten_lag_ms"] * (i + 1))["s"]
             # the tail keeps its old world angle for a moment when the body pitches (lag down the chain)
-            inertia = P["tail_inertia"] * (pitch_at(max(0.0, t - lag)) - p)
-            whip = damped(t, T["hit"] + 0.45 * lag, P["tail_whip_deg"] * (0.5 + 0.12 * i), P["tail_whip_period_ms"], P["tail_whip_decay_ms"])
-            landing = damped(t, T["fore_land"] + lag, -9.0 * (0.4 + 0.12 * i), 260.0, 180.0)
-            tail.append({"s": tv["s"], "lift": tv["lift"] + inertia + whip + landing, "yaw": 0.0})
+            ilag = P["tail_lag_ms"] * (min(i, int(P["tail_inertia_lag_cap"]) - 1) + 1)
+            inertia = P["tail_inertia"] * (pitch_at(max(0.0, t - ilag)) - p)
+            whip = damped(t, T["hit"] + 0.45 * lag, P["tail_whip_deg"] * min(0.5 + 0.12 * i, P["tail_whip_max_factor"]), P["tail_whip_period_ms"], P["tail_whip_decay_ms"])
+            if whip > 0:
+                whip *= P["tail_whip_up_scale"]   # pass 2: the upward swings are damped, the downward ones are not
+            landing = damped(t, T["fore_land"] + lag, -9.0 * (0.4 + 0.12 * min(i, 5)), 260.0, 180.0)
+            trim = P["tail_plume_tip_trim_deg"] * sv * {7: 0.5, 8: 1.0}.get(i, 0.0)
+            tail.append({"s": sv, "lift": tv["lift"] + tv.get("arc", 0.0) * i + inertia + whip + landing + trim, "yaw": swish(t - lag)})
         ears_back = up.get("ear", 0.0)
         return {
             "body": (pa["f"] - root_at(t), pa["z"], p, 0.0, 0.0, 0.0),
@@ -416,6 +478,7 @@ def make_sig(params=None, rest_center_z=0.48):
             "jaw": up.get("jaw", 0.0),
             "ears": {"l": (ears_back, -0.25 * ears_back), "r": (ears_back, -0.25 * ears_back)},
             "tail_mode": "straighten",
+            "tail_target_deg": P["tail_target_deg"],
             "tail": tail,
             "legs": {leg: leg_spec(t, leg) for leg in LEGS},
             "_world_body": (pa["f"], pa["z"]),

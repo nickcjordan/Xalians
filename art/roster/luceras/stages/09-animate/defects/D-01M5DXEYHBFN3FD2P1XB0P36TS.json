@@ -1,0 +1,12 @@
+{
+  "id": "D-01M5DXEYHBFN3FD2P1XB0P36TS",
+  "alias": "xqpy",
+  "stage": "09-animate",
+  "description": "Mid-leap the tail keeps its rest curl and the plume stands straight up like a periscope; in flight it should stream back along the body line",
+  "camera": "full_side",
+  "region": "tail",
+  "origin": null,
+  "attempts": [],
+  "status": "open",
+  "createdAt": "2026-10-21T00:23:30Z"
+}

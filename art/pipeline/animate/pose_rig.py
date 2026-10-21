@@ -23,7 +23,7 @@ sys.path.insert(0, str(HERE.parent / 'roster'))
 import luceras_clips as LC
 import lookdev
 
-RIG_BLEND = '/mnt/c/dev/art-data/pipeline/codex-stream/luceras-pawintegrate/pass3/rig.blend'
+RIG_BLEND = os.environ.get('ANIM_RIG', '/mnt/c/dev/art-data/pipeline/codex-stream/luceras-pawintegrate/pass3/rig.blend')  # B-378v: ANIM_RIG selects the rig
 ARGS = sys.argv[sys.argv.index('--') + 1:]
 OUT = Path(ARGS[0]); MODE = ARGS[1]
 WORK = OUT / 'work'; WORK.mkdir(parents=True, exist_ok=True)
@@ -71,10 +71,15 @@ class Poser:
                                   W0=b.tail_local.copy(), P0=c.tail_local.copy(), c_rot=c_rot, toe_local=c_rot.inverted() @ (c.tail_local - c.head_local))
         sp = bones['spine_01']; back = sp.head_local - sp.tail_local
         self.back_angle = math.degrees(math.atan2(back.z, back.y))
-        self.tail_rest = []
-        for i in range(1, 7):
+        # B-378v: every tail bone the rig has (tail_07..tail_09 are the sprite-only plume bones when present)
+        self.tail_names = []; self.tail_rest = []
+        i = 1
+        while f'tail_{i:02d}' in bones:
             t = bones[f'tail_{i:02d}']; d = t.tail_local - t.head_local
-            self.tail_rest.append(math.degrees(math.atan2(d.z, d.y)))
+            self.tail_names.append(t.name); self.tail_rest.append(math.degrees(math.atan2(d.z, d.y))); i += 1
+        # the trunk line (pelvis joint to withers), pointing back: the tail's in-line target when tail_axis == 'trunk'
+        tr = sp.head_local - bones['spine_05'].tail_local
+        self.trunk_angle = math.degrees(math.atan2(tr.z, tr.y))
 
     def reset(self):
         for p in self.pb:
@@ -109,17 +114,18 @@ class Poser:
             for nm, k in ((f'ear_{side_}_01', 1.0), (f'ear_{side_}_02', 0.3)):
                 self.rot(nm, YAW_L, sg * back * k); self.rot(nm, Vector((0, 1, 0)), -sg * lift * k)
         tail = s.get('tail', [])
+        tail = tail[:len(self.tail_names)]
         if s.get('tail_mode') == 'straighten':
             prev = 0.0
+            target = s.get('tail_target_deg', self.back_angle)   # B-378v: the clip may name the in-line angle (body frame, back = 0)
             for i, tv in enumerate(tail):
-                target = self.back_angle
                 A = self.tail_rest[i] + tv['s'] * (target - self.tail_rest[i]) + tv['lift']
                 D = A - self.tail_rest[i]
-                self.rot(f'tail_{i + 1:02d}', X, D - prev); prev = D
-                self.rot(f'tail_{i + 1:02d}', YAW_L, tv.get('yaw', 0.0))
+                self.rot(self.tail_names[i], X, D - prev); prev = D
+                self.rot(self.tail_names[i], YAW_L, tv.get('yaw', 0.0))
         else:
             for i, (lift, yw) in enumerate(tail):
-                self.rot(f'tail_{i + 1:02d}', X, lift); self.rot(f'tail_{i + 1:02d}', YAW_L, yw)
+                self.rot(self.tail_names[i], X, lift); self.rot(self.tail_names[i], YAW_L, yw)
         self.vl.update()
         w = s.get('pin', 0.0)
         if w > 0 and getattr(self, 'pin_local', None) is not None:
@@ -249,11 +255,17 @@ def measure(rig, poser, clips, specs_all):
     others = [o for o in sculpt_meshes() if o not in horns]
     # body vertices that belong to the head (excluded from the horn-to-body distance)
     gi = {g.index: g.name for g in body.vertex_groups}
-    headw = np.zeros(len(body.data.vertices))
+    headw = np.zeros(len(body.data.vertices)); tailw = np.zeros(len(body.data.vertices)); rootw = np.zeros(len(body.data.vertices))
     for v in body.data.vertices:
         for g in v.groups:
-            if gi.get(g.group, '') in ('head_01', 'jaw_01', 'ear_l_01', 'ear_l_02', 'ear_r_01', 'ear_r_02', 'neck_02'): headw[v.index] += g.weight
+            gn = gi.get(g.group, '')
+            if gn in ('head_01', 'jaw_01', 'ear_l_01', 'ear_l_02', 'ear_r_01', 'ear_r_02', 'neck_02'): headw[v.index] += g.weight
+            if gn.startswith('tail_') and gn != 'tail_01': tailw[v.index] += g.weight
+            if gn in ('tail_01', 'spine_01'): rootw[v.index] += g.weight
     notHead = headw < 0.5
+    # B-378v tail clearance: tail skin past tail_01 (and the plume stand-in) against everything that is not tail or pelvis
+    tail_idx = np.where(tailw > 0.6)[0][::3]; far_idx = np.where(tailw + rootw < 0.02)[0][::2]
+    standin = bpy.data.objects.get('plume_standin')
     # horn tips at rest: the 40 vertices farthest from each horn base
     rig.animation_data.action = None; poser.reset(); bpy.context.view_layer.update()
     tips = {}
@@ -303,6 +315,23 @@ def measure(rig, poser, clips, specs_all):
             pbn = rig.pose.bones
             back = pbn['spine_05'].tail - pbn['spine_01'].head; neck = pbn['head_01'].head - pbn['spine_05'].tail
             rec['back_neck_angle_deg'] = math.degrees(back.angle(neck))
+            # B-378v: tail and plume clearance to the body and legs, plume direction, tail bone directions
+            Tp = B[tail_idx]
+            if standin is not None: Tp = np.vstack([Tp, eval_coords(standin)[::2]])
+            Fp = B[far_idx]; lo_, hi_ = Tp.min(0) - 0.08, Tp.max(0) + 0.08
+            Fp = Fp[np.all((Fp > lo_) & (Fp < hi_), axis=1)]
+            dmin = 1e9
+            for c0 in range(0, len(Tp), 400):
+                if len(Fp): dmin = min(dmin, float(np.sqrt(((Tp[c0:c0 + 400, None, :] - Fp[None, :, :]) ** 2).sum(-1)).min()))
+            rec['tail_clearance_mm'] = 1000 * dmin
+            tn = [b.name for b in rig.data.bones if b.name.startswith('tail_')]
+            rec['tail_dirs'] = [list((pbn[n].tail - pbn[n].head).normalized()) for n in tn]
+            if 'tail_09' in pbn:
+                v = pbn['tail_09'].tail - pbn['tail_07'].head; v9 = pbn['tail_09'].tail - pbn['tail_09'].head
+                rec['plume_elev_deg'] = math.degrees(math.atan2(v.z, v.y))      # 0 straight back, 90 straight up, >90 leaning forward
+                rec['plume_tip_elev_deg'] = math.degrees(math.atan2(v9.z, v9.y))
+            v6 = pbn['tail_06'].tail - pbn['tail_01'].head
+            rec['tail_elev_deg'] = math.degrees(math.atan2(v6.z, v6.y))
             # correctives
             kb = body.data.shape_keys.key_blocks
             rec['correctives'] = {k.name: round(float(k.value), 4) for k in kb[1:]}
@@ -313,7 +342,7 @@ def measure(rig, poser, clips, specs_all):
                 cm = max(cm, float(np.abs(np.linalg.norm(P[e[:, 0]] - P[e[:, 1]], axis=1) - L0).max()))
             rec['claw_edge_change_um'] = 1e6 * cm
             # bounds in place
-            allP = np.vstack([B] + list(H.values()))
+            allP = np.vstack([B] + list(H.values()) + ([eval_coords(standin)] if standin is not None else []))   # B-378v: plume stand-in framed too
             rec['bounds'] = [allP.min(0).tolist(), allP.max(0).tolist()]
             rows.append(rec)
             print('MEASURE', name, f, flush=True)
@@ -433,6 +462,8 @@ def setup_render(engine, samples):
         if o.type == 'MESH':
             if o.get('body_kind') == 'sculpt': lookdev.apply_clay(o); o.hide_render = False
             elif o.get('body_kind') == 'game': o.hide_render = True
+            elif o.get('body_kind') == 'plume_standin':   # B-378v: review-only plume stand-in, lighter clay so it reads against the body and the dark ground
+                o.data.materials.clear(); o.data.materials.append(lookdev._material('lookdev_plume_standin', (0.82, 0.80, 0.74), 0.8)); o.hide_render = False
     sc.render.fps = FPS
     return sc
 

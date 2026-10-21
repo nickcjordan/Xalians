@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5DXEYNBT2EPDRR5H825SB67",
+  "alias": "378v",
+  "stage": "09-animate",
+  "kind": "build",
+  "goal": "Tail in flight: add plume bones so the tail and plume can straighten, and re-key the signature's tail by phase (streams straight back in flight, swings up to counter the nose-down dive, whips at the hit, curls back on landing)",
+  "scope": "rig tail chain extension (sprite-only bones), plume spine weights, signature tail keys, idle unchanged",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-21T00:23:30Z",
+  "briefSha256": "1fd854291bec4b436b4e5b6d9496f98c4d363236119d53b39d5adcaab3aa0163"
+}
