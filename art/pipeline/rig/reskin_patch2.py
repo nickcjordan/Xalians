@@ -47,7 +47,8 @@ REG = {
     'tail': ((wsum('tail_') >= 0.5) & (y > 0.34) & (y < 0.62), 10, 1.0),   # the thin tip is left alone
     'belly': ((np.abs(x) < 0.03) & (y > -0.02) & (y < 0.22) & (z < 0.42), 60, 1.0),
     'throat': ((np.abs(x) < 0.035) & (y > -0.25) & (y < -0.12) & (z > 0.34) & (z < 0.47), 60, 1.0),
-    'brisket': ((np.abs(x) < 0.07) & (y > -0.17) & (y < -0.02) & (z < 0.36) & (wsum('spine_05') >= 0.5), 30, 1.0),
+    'perineum': ((np.abs(x) < 0.02) & (y > 0.18) & (y < 0.33) & (z > 0.36) & (z < 0.47), 40, 1.0),   # pass 3: midline groove under the tail root and between the thighs (critic 31, present at rest)
+    'brisket': ((np.abs(x) < 0.07) & (y > -0.17) & (y < -0.02) & (z < 0.36) & ((wsum('spine_05') + wsum('neck_01')) >= 0.5), 30, 1.0),
 }
 cache = {}
 new = co.copy(); rep = {}
@@ -61,6 +62,8 @@ for nm, (m, its, k) in REG.items():
 # triangle quality: slivers (a near-zero rest area flips on the smallest motion: the single flagged triangle at the
 # right hip in rest, head_left_up and breath_in) are relaxed tangentially, which keeps the surface where it is
 T = d['T']
+import os
+SK_RELAX = int(os.environ.get('PATCH_RELAX', '30'))   # pass 4: more tangential relax steps for the last slivers
 
 
 def tri_q(X):
@@ -78,7 +81,7 @@ for _ in range(2):
 tri_n = np.cross(new[T[:, 1]] - new[T[:, 0]], new[T[:, 2]] - new[T[:, 0]]); vn = np.zeros_like(new)
 for k in range(3): np.add.at(vn, T[:, k], tri_n)
 vn /= np.maximum(np.linalg.norm(vn, axis=1), 1e-20)[:, None]
-for _ in range(30):
+for _ in range(SK_RELAX):
     dlt = nbm(new) - new; dlt -= (dlt * vn).sum(1)[:, None] * vn
     new[vm] += 0.5 * dlt[vm]
 ar, q = tri_q(new); rep['slivers_after'] = int(((q < 0.02) | (ar < 1e-9)).sum()); rep['sliver_relax_vertices'] = int(vm.sum())

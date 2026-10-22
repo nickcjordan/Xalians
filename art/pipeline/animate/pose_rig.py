@@ -141,9 +141,20 @@ class Poser:
             spec = legs.get(leg, {'plant': 1.0})
             fk = spec.get('fk', (0, 0, 0))
             for nm, ang in zip(L['names'], fk): self.rot(nm, X, ang)
-            ab = spec.get('abduct', 0.0)   # B-sntv: swing the limb out from the body wall (deg, positive = outward)
-            if ab: self.rot(L['names'][0], Vector((0, 1, 0)), (-ab if leg[1] == 'l' else ab))
         self.vl.update()
+        # B-sntv pass 3: 'abduct' swings the upper limb out from the body wall about the axis perpendicular to the
+        # (already flexed) upper limb and the body's side, so the elbow moves laterally whatever the flexion. (Pass 1-2
+        # rotated about the long body axis, which only twisted a limb that points back: it never cleared the ribs.)
+        moved = False
+        for leg, L in self.legs.items():
+            ab = legs.get(leg, {'plant': 1.0}).get('abduct', 0.0)
+            if not ab: continue
+            a = self.pb[L['names'][0]]; u = (a.tail - a.head).normalized()
+            lat = Vector((1.0 if leg[1] == 'l' else -1.0, 0.0, 0.0)); axis = u.cross(lat)
+            if axis.length < 1e-6: continue
+            R = Matrix.Rotation(math.radians(ab), 4, axis.normalized())
+            a.matrix = Matrix.Translation(a.head) @ R @ Matrix.Translation(-a.head) @ a.matrix; moved = True
+            self.vl.update()
         for leg, L in self.legs.items():
             spec = legs.get(leg, {'plant': 1.0})
             a, b, c = (self.pb[n] for n in L['names'])
@@ -169,6 +180,10 @@ class Poser:
             pole = (K - H); side = (pole - n * pole.dot(n))
             if side.length < 1e-6: side = Vector((0, -1, 0)) if L['names'][0].startswith('leg_f') else Vector((0, -1, 0))
             side.normalize()
+            splay = legs.get(leg, {}).get('splay', 0.0)   # B-sntv pass 3: 0..1, turn the knee/elbow plane out to the side
+            if splay > 0:
+                lt = Vector((1.0 if leg[1] == 'l' else -1.0, 0.0, 0.0)); lt = lt - n * lt.dot(n)
+                if lt.length > 1e-6: side = side.lerp(lt.normalized(), splay).normalized()
             tuck = legs.get(leg, {}).get('tuck', 0.0)   # B-bafy: 0..1, turn the knee/elbow plane toward the sagittal plane
             if tuck > 0:
                 sg = Vector((0.0, side.y, side.z)); sg = sg - n * sg.dot(n)

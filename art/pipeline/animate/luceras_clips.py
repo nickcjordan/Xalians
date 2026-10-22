@@ -225,6 +225,7 @@ SIG_DEFAULTS = {
                                   # held through the hit, so the curled head and horns do not pass into the forelegs (sig f29)
     "dive_fore_pose": FORE_DIVE,
     "dive_fore_lead_ms": 40.0,
+    "fore_tuck_pose": FORE_TUCK,  # B-sntv pass 4: the airborne tuck as a parameter (default unchanged)
     "fore_tuck_abduct_deg": 0.0,  # B-sntv: the tucked forelegs swing this far out from the chest wall (in with the tuck,
                                   # out with the reach), so the folded forearms ride beside the ribs instead of in them    # B-sntv: the sweep starts this long before the apex and ends at the dive start
     "leg_reach_window_m": 0.30,   # pass 1-2 only (height window; it fired inside two frames as the body fell). Unused.
@@ -301,7 +302,7 @@ def make_sig(params=None, rest_center_z=0.48):
     applies linearly between startMs and endMs (the review render applies the same).
     """
     P = dict(SIG_DEFAULTS, **(params or {}))
-    for k in ("dive_neck_deg", "dive_fore_pose"):
+    for k in ("dive_neck_deg", "dive_fore_pose", "fore_tuck_pose"):
         P[k] = tuple(P[k])
     T = sig_times(P)
     for k in ("takeoff", "hit", "fore_land", "hind_land"):
@@ -446,7 +447,7 @@ def make_sig(params=None, rest_center_z=0.48):
         land = T["fore_land"]
         s0 = T["apex"] - P["dive_fore_lead_ms"]
         sweep = P["dive_fore_sweep"] * ease("smooth", (t - s0) / max(1.0, T["dive"] - s0))
-        tuck_pose = tuple(a + (b - a) * sweep for a, b in zip(FORE_TUCK, P["dive_fore_pose"]))
+        tuck_pose = tuple(a + (b - a) * sweep for a, b in zip(P["fore_tuck_pose"], P["dive_fore_pose"]))
         tuck = P["fore_crouch_elbow_tuck"] * ease("smooth", t / T["crouch"])   # B-bafy: elbows stay in line, not splayed
         if t <= fore_off:
             return {"plant": 1.0, "roll": 18.0 * ease("in", (t - T["crouch"]) / (fore_off - T["crouch"])) if t > T["crouch"] else 0.0, "fk": (0, 0, 0), "tuck": tuck}

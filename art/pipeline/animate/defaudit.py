@@ -41,6 +41,7 @@ CROP_POSES = set(os.environ.get('AUD_CROP_POSES', 'crouch,sig_f08').split(','))
 SHEET = ['rest', 'crouch', 'leap', 'landing', 'head_left_up', 'tail_side_up', 'foreleg_step', 'breath_in']
 if os.environ.get('AUD_SHEET'): SHEET = os.environ['AUD_SHEET'].split(',')   # B-sntv pass 2: review.poses order when it carries extra poses
 SIG = {'sig_f08': 8, 'sig_f11': 11, 'sig_f22': 22, 'sig_f29': 29, 'sig_f38': 38}
+if os.environ.get('AUD_SIG'): SIG = {f'sig_f{int(f):02d}': int(f) for f in os.environ['AUD_SIG'].split(',')}   # B-sntv pass 4: extra signature frames
 if SET == 'sheet':
     POSES = [(n, 'review.poses', 1 + i * 10) for i, n in enumerate(SHEET)]
 else:

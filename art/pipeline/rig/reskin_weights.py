@@ -40,7 +40,7 @@ def proxies():
         if nm in SK.get('no_proxy', []): continue
         h, t = np.array(bones[nm][0], float), np.array(bones[nm][1], float)
         out.append((nm, h, t))
-        if nm.startswith('spine_'):
+        if nm.startswith('spine_') or nm in SK.get('slab_extra', []):   # pass 4: the neck bones get ventral slabs too
             for f in SK['slab_fracs']:
                 hh, tt = h.copy(), t.copy()
                 hh[2] -= f * (h[2] - underline(h[1])); tt[2] -= f * (t[2] - underline(t[1]))
@@ -92,7 +92,8 @@ for k in range(cand.shape[1]):
     m = free & vis[:, k] & (dist[:, k] <= d * 1.02) & (cand[:, k] >= 0)
     P[m, px_bone[cand[m, k]]] = 1.0
 P[free] /= P[free].sum(1, keepdims=True)
-Hh = c / d ** 2   # unseen (paws, toes: the straight bone line leaves the foot) attach with full heat to the nearest proxy
+mult = np.array([SK.get('heat_mult', {}).get(nm, 1.0) for nm in SOLVE])   # pass 4: per-bone attachment strength
+Hh = c * mult[px_bone[seg]] / d ** 2   # unseen (paws, toes: the straight bone line leaves the foot) attach with full heat to the nearest proxy
 Hh[fixed] = 0
 # cotangent Laplacian
 v0, v1, v2 = co[T[:, 0]], co[T[:, 1]], co[T[:, 2]]
