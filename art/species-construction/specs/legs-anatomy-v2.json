@@ -1,0 +1,20 @@
+{
+ "note": "legs anatomy v2 (rig pass 6 fix). Amplitudes in rig metres along the smoothed skin normal (+ out). Broad overlapping forms: calf and quadriceps are the masses, the lower shin narrows into the ankle bones, the rest are low landmarks.",
+ "amplitudes": {
+  "calf": 0.010,
+  "lowerShin": -0.004,
+  "malleoli": 0.0035,
+  "tibiaMax": 0.012,
+  "patella": 0.0035,
+  "tuberosity": 0.0015,
+  "hamstrings": 0.003,
+  "kneePit": -0.0015,
+  "quadriceps": 0.006,
+  "vastusMedialis": 0.003,
+  "outerThighGroove": -0.0015
+ },
+ "tibiaAnchor": 0.28,
+ "patellaAbove": 0.006,
+ "normalRounds": 40,
+ "smoothRounds": 60
+}

@@ -1,0 +1,30 @@
+{
+ "note": "tail root slim v1 (rig pass 6 fix, step E). Rig metres. openRadius removes the tails and the root knob from the body field; fillet is the blend radius where each tail meets the rump and its neighbours.",
+ "voxel": 0.002,
+ "box": 0.15,
+ "openRadius": 0.045,
+ "fillet": 0.008,
+ "radiusFrom": 0.06,
+ "radiusTo": 0.1,
+ "intoBody": 0.05,
+ "reach": [
+  0.08,
+  0.13
+ ],
+ "maxMove": 0.05,
+ "normalRounds": 30,
+ "smoothRounds": 120,
+ "fieldSigma": 2.0,
+ "legFade": [
+  0.0,
+  0.6
+ ],
+ "rumpRing": [
+  0.07,
+  0.14
+ ],
+ "webReach": [
+  0.04,
+  0.07
+ ]
+}

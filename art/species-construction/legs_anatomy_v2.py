@@ -1,31 +1,31 @@
-"""Akinza legs anatomy v1: the hind legs given the structure a bending leg shows (rig pass 6, stage D; diagnosis
-2026-10-21 section 5, Nick: "The legs still look like weird, boneless noodles").
+"""Akinza legs anatomy v2: the hind legs given the structure a bending leg shows, as smooth flowing forms (rig pass
+6 fix; Nick: "The legs still look like weird, boneless noodles"; v1 was judged a set of separate pieces: a notch
+above the kneecap, the calf an abrupt knob high on the shin, the Achilles a second tube beside the shin, no ankle).
 
-The sculpt's legs were two smooth tubes: the back of the lower leg one straight line from heel to knee, the front
-leaning back the whole way (the lower leg narrowed on its front), no kneecap, no hamstring cords, the thigh a
-smooth cone. This step adds, as a displacement of the skin along its smoothed normals, the forms the references
-show (anim/ref/pass6: Gray 430, 434, 438, 439; Anatomy of the Cat fig. 90; hairless cat and kangaroo hind legs):
+The sculpt's legs were two smooth tubes (diagnosis 2026-10-21 section 5). This step displaces the skin along its
+smoothed normals with broad, overlapping forms from the references (anim/ref/pass6: Gray 430, 434, 438, 439;
+Anatomy of the Cat fig. 90; hairless cat and kangaroo hind legs):
 
-- calf: the gastrocnemius mass behind the upper third of the shin, the medial head a little fuller and lower;
-- Achilles: below the calf the back of the leg narrows into a cord, with a shallow hollow either side, down to
-  the heel;
-- tibia front: the front of the shin straightened toward a line parallel to the shin bone (it receded 4 cm);
-- kneecap: a rounded patella over the front of the knee, the patellar tendon running flat below it between two
-  shallow hollows to a low tibial tuberosity;
-- hamstrings: two cords at the back of the lower thigh (semitendinosus inside, biceps femoris outside) with the
-  knee pit hollow between them;
-- quadriceps: the front thigh mass, fullest in its lower middle, and the vastus medialis teardrop above the inner
-  knee;
-- groin crease: a shallow groove where the thigh meets the trunk at the front.
+- calf: one smooth swell behind the upper shin, widest a third of the way down, a little fuller on the inner
+  side, tapering long and evenly into the Achilles;
+- Achilles and lower shin: below the calf the back and the sides of the shin narrow gradually toward the ankle,
+  so the Achilles is the back edge of one tapering leg, not a separate cord;
+- ankle: the two ankle bones (malleoli) as low rounded bumps either side just above the paw, the outer one a
+  little lower, so the leg narrows above them and widens at the joint;
+- tibia front: the front of the shin straightened toward a line parallel to the shin bone;
+- knee: a low rounded kneecap that the quadriceps run straight down into (no notch above it), a small tibial
+  tuberosity below;
+- thigh: the quadriceps front mass fullest low on the thigh with the vastus medialis teardrop running into the
+  inner knee, a shallow groove along the outer thigh between the quadriceps and the hamstrings, and the two
+  hamstring cords at the back of the lower thigh.
+The groin crease groove of v1 is gone (it drew a line where the crease of the joint already falls).
 
 Same topology and vertex order: only positions change, so skin weights and fur bindings carry over. Displacement
 is zero outside the legs (the skin the thigh, shin and foot bones own, away from the tails and arms). All
-measures are rig metres (the rig's re-origin and scale); the output is source units like the input.
+measures are rig metres; the output is source units like the input.
 
-  python art/species-construction/legs_anatomy_v1.py --skin <skin.npz with src, tri, edges> --rig <rig dir>
-      --spec art/species-construction/specs/legs-anatomy-v1.json --out <out.npz> [--record <json>]
-
-Writes the new source-unit positions (src, tri, edges, and the per-vertex displacement in metres) and a record.
+  python art/species-construction/legs_anatomy_v2.py --skin <skin.npz with src, tri, edges> --rig <rig dir>
+      --spec art/species-construction/specs/legs-anatomy-v2.json --out <out.npz> [--record <json>]
 """
 import argparse
 import hashlib
@@ -131,16 +131,19 @@ def main():
         on_shin, on_thigh = legm*below, legm*(1-below)
         back2 = rc.smoothstep(-cf2, .05, .6)
         front2 = rc.smoothstep(cf2, .25, .75)
-        # calf: the gastrocnemius behind the upper third of the shin, two heads either side of the back midline
-        # (the medial one fuller and lower, the lateral one higher), each tapering long into the Achilles
-        med = gauss(ang2, -.5, .6)*band(a2, .05, .27, .30, .70)
-        lat = .8*gauss(ang2, .5, .55)*band(a2, .04, .21, .25, .60)
-        calf = np.maximum(med, lat)*rc.smoothstep(-cf2, -.3, .3)
-        # Achilles: the back narrows into a cord, a shallow hollow either side of it, to the heel
-        ach = band(a2, .55, .70, .84, .96)
-        ach_core = gauss(ang2, 0, .45)
-        ach_side = gauss(np.abs(ang2), 1.05, .4)
-        achilles = ach*(A_['achillesCore']*ach_core+A_['achillesHollow']*ach_side)
+        # calf: one smooth swell behind the upper shin (widest a third of the way down, a little fuller inside),
+        # tapering long and evenly into the Achilles
+        prof = np.sin(np.pi*np.clip((a2+.04)/(.84+.04), 0, 1))**2.2
+        prof = prof*np.exp(-((a2-.34)/.40)**2)
+        calf = prof*np.exp(-((ang2+.25)/1.0)**2)*rc.smoothstep(-cf2, -.5, .2)
+        # lower shin: the back and the sides narrow gradually toward the ankle (the Achilles is the back edge of
+        # the one tapering leg), the front left to the tibia line
+        lower = rc.smoothstep(a2, .50, .78)*(1-rc.smoothstep(a2, .90, 1.0))
+        narrow = lower*rc.smoothstep(-cf2, -.6, .2)
+        # ankle bones: rounded bumps either side just above the paw, the outer one a little lower
+        az_ = (P-Ak)@(-u2)                       # height above the ankle along the shin
+        sidec = np.abs(co2)
+        malleoli = rc.smoothstep(sidec, .55, .9)*np.exp(-((az_-np.where(co2 > 0, .012, .020))/.013)**2)            * rc.smoothstep(a2, .8, .9)
         # tibia front: toward a straight line parallel to the shin bone through the front at a2 = tibiaAnchor. The
         # gap is measured on the front midline per height along the shin and applied round the front by angle, so
         # the push is one smooth form and not a ridge where the sides lie behind the line
@@ -155,33 +158,28 @@ def main():
         gap_a = np.clip(f_star-prof, 0, A_['tibiaMax'])
         gap = np.interp(a2, bins, gap_a)
         tibia = gap*rc.smoothstep(cf2, .0, .7)*band(a2, spec['tibiaAnchor']-.05, spec['tibiaAnchor']+.05, .86, .97)
-        # kneecap and patellar tendon (front of the knee), tibial tuberosity
+        # kneecap: a low rounded patella the quadriceps run straight into; a small tibial tuberosity below
         kz = (P-K)@(-unit(u1+u2))                       # height above the knee plane
         side_off = (P-K)@o1
         frontk = rc.smoothstep((P-K)@f1, .0, .03)*rc.smoothstep(cf1*(1-below)+cf2*below, .45, .85)
-        patella = gauss(kz, spec['patellaAbove'], .022)*gauss(side_off, 0, .021)*frontk
-        tendon_hollows = gauss(np.abs(side_off), .022, .007)*band(-kz, -.005, .015, .07, .10)*frontk
-        tuberosity = gauss(-kz, .085, .015)*gauss(side_off, 0, .014)*frontk
-        # hamstring cords at the back of the lower thigh into the knee pit, the hollow between them
+        patella = gauss(kz, spec['patellaAbove'], .028)*gauss(side_off, 0, .026)*frontk
+        tuberosity = gauss(-kz, .075, .02)*gauss(side_off, 0, .016)*frontk
+        # hamstring cords at the back of the lower thigh into the knee pit
         back1 = rc.smoothstep(-cf1, .1, .6)
-        cords = gauss(np.abs(ang1), .85, .22)*band(a1, .62, .78, .98, 1.06)*back1
-        pit = gauss(ang1, 0, .45)*band(a1, .80, .90, .96, 1.02)*back1
-        # quadriceps (front thigh, fullest in its lower middle) and vastus medialis teardrop above the inner knee
-        front1 = rc.smoothstep(cf1, .0, .6)
-        quads = band(a1, .18, .5, .72, .9)*front1
-        vmo = gauss(a1, .84, .06)*rc.smoothstep(-co1, .1, .6)*rc.smoothstep(cf1, -.2, .4)
-        # groin crease: a shallow groove at the front where the thigh meets the trunk (rc.leg_shares' crease line)
-        crotch = J['_meta']['legs']['crotchZ']
-        tx = rc.smoothstep(sx*P[:, 0], .035, abs(H[0])+.045)
-        zf = crotch+(H[2]+.005-crotch)*tx
-        groin = gauss(P[:, 2]-(zf-.012), 0, .006)*rc.smoothstep(-(P[:, 1]-H[1]), .0, .04)*side*(1-rc.smoothstep(tails, 0, .03))\
-            * (1-rc.smoothstep(arms, 0, .03))*rc.smoothstep(sx*P[:, 0], .03, .06)
+        cords = gauss(np.abs(ang1), .85, .3)*band(a1, .55, .75, .95, 1.06)*back1
+        pit = gauss(ang1, 0, .5)*band(a1, .80, .90, .96, 1.02)*back1
+        # quadriceps (front thigh, fullest low on the thigh, running down into the kneecap) and the vastus medialis
+        # teardrop into the inner knee; a shallow groove along the outer thigh between quadriceps and hamstrings
+        front1 = rc.smoothstep(cf1, -.1, .6)
+        quads = np.sin(np.pi*np.clip((a1-.12)/(1.02-.12), 0, 1))**1.2*np.exp(-((a1-.66)/.34)**2)*front1
+        vmo = gauss(a1, .86, .08)*rc.smoothstep(-co1, .1, .6)*rc.smoothstep(cf1, -.3, .4)
+        itband = gauss(co1, .97, .12)*np.exp(-((cf1+.05)/.35)**2)*band(a1, .25, .45, .80, .95)
         terms = dict(
-            calf=A_['calf']*calf*on_shin, achilles=achilles*on_shin, tibia=tibia*on_shin,
-            patella=A_['patella']*patella*legm, tendonHollows=A_['tendonHollows']*tendon_hollows*legm,
-            tuberosity=A_['tuberosity']*tuberosity*on_shin, hamstrings=A_['hamstrings']*cords*on_thigh,
-            kneePit=A_['kneePit']*pit*on_thigh*(1-below), quadriceps=A_['quadriceps']*quads*on_thigh,
-            vastusMedialis=A_['vastusMedialis']*vmo*on_thigh, groinCrease=A_['groinCrease']*groin)
+            calf=A_['calf']*calf*on_shin, lowerShin=A_['lowerShin']*narrow*on_shin, malleoli=A_['malleoli']*malleoli*on_shin,
+            tibia=tibia*on_shin, patella=A_['patella']*patella*legm, tuberosity=A_['tuberosity']*tuberosity*on_shin,
+            hamstrings=A_['hamstrings']*cords*on_thigh, kneePit=A_['kneePit']*pit*on_thigh*(1-below),
+            quadriceps=A_['quadriceps']*quads*on_thigh, vastusMedialis=A_['vastusMedialis']*vmo*on_thigh,
+            outerThighGroove=A_['outerThighGroove']*itband*on_thigh)
         for k, v in terms.items():
             parts[k] = parts.get(k, np.zeros(n))+v
             disp += v
@@ -198,7 +196,7 @@ def main():
     np.savez_compressed(a.out, src=new_src.astype(np.float32), m=newP.astype(np.float32), tri=tri, edges=edges,
                         disp=disp.astype(np.float32))
     moved = np.abs(disp) > 1e-5
-    rec = dict(step='legs anatomy v1', script='art/species-construction/legs_anatomy_v1.py', spec=spec,
+    rec = dict(step='legs anatomy v2', script='art/species-construction/legs_anatomy_v2.py', spec=spec,
                skinSha256=hashlib.sha256(src.astype(np.float32).tobytes()).hexdigest(), vertices=n,
                movedVertices=int(moved.sum()), maxOutM=float(disp.max()), maxInM=float(-disp.min()),
                movedOutsideLegs=int((moved & ~legs_any).sum()),
