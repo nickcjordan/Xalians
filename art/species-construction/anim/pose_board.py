@@ -173,23 +173,22 @@ FEET = {sd: list(map(float, J[f'ankle.{sd}'])) for sd in 'LR'}
 # pass 6: each knee is a hinge in a fixed plane facing the foot's forward direction, for the whole motion (the
 # rest pole came from the sculpt's inward knee kink and folded the knees sideways toward the midline)
 POLES = {sd: list(map(float, rc.leg_forward(J, sd))) for sd in 'LR'}
-# pass 6: the tail is the sacrum's continuation. tail_root moves with the pelvis (a few degrees), and the crouch's
-# tail drop is spread over each tail's first three bones (about 25/20/15 degrees), so the base curves out of the
-# rump instead of hinging at the root; F36's spread between the tails rides on bones 1 and 2, and its lateral swing
-# and tip curl stay on the outer bones
-TAIL_ROOT_CROUCH = [-6., 0., 6.]
+# pass 6: the tail is the sacrum's continuation. tail_root moves with the pelvis (a few degrees), and each tail's
+# share of the crouch drop (F36's total for that tail) is spread along its whole length, most of it on bones 2 to 4
+# (fix pass: 25 degrees and more at bone 1 curled the top tail into a knob where it meets the rump), so each tail
+# curves out of the rump instead of hinging at it
+TAIL_ROOT_CROUCH = [-20., 0., 6.]      # fix pass: the first caudal joints flex down too (at -6 the top tail arched up and over)
 F36_SPREAD = {'a': -14., 'b': -2., 'c': 12.}
 F36_OUTER = {'a': [-6., 0., 6.], 'b': [-4., 0., 6.], 'c': [-2., 0., 6.]}
 TAIL_DROP = (25., 20., 15.)
+TAIL_SHARE = (.20, .24, .22, .18, .16)          # share of each tail's drop per bone, root to tip
 body = {k: v for k, v in crouch.items() if rc.base_of(k) not in ('thigh', 'shin', 'foot') and not k.startswith('tail')}
 body['tail_root'] = TAIL_ROOT_CROUCH
 for t in rc.TAILS:
     sp = F36_SPREAD[t]
-    body[f'tail_{t}1'] = [-TAIL_DROP[0]+.5*sp, 0., 8.]
-    body[f'tail_{t}2'] = [-TAIL_DROP[1]+.25*sp, 0., 6.]
-    body[f'tail_{t}3'] = [-TAIL_DROP[2], 0., 6.]
-    for k in (4, 5):
-        body[f'tail_{t}{k}'] = F36_OUTER[t]
+    total = sum(TAIL_DROP)-.75*sp-2*F36_OUTER[t][0]+TAIL_ROOT_CROUCH[0]+6.   # what the tail root takes beyond -6 comes off the tail
+    for k in range(1, rc.TAIL_BONES+1):
+        body[f'tail_{t}{k}'] = [-total*TAIL_SHARE[k-1], 0., 8. if k == 1 else 6.]
 CROUCH_BODY = body
 crouch = rc.plant_legs(J, body, CROUCH_LIFT, FEET, POLES, bones=B)
 POSES['night_stalk'] = crouch
@@ -231,6 +230,7 @@ SCULPT = {'arms_up': directions({'clavicle.L': [-6, -20, 0], 'clavicle.R': [-6, 
 # pass 6: the crouch halfway, where the fold keys get their first sculpt
 CROUCH_MID_E = .55
 SCULPT['crouch_mid'] = crouch_at(CROUCH_MID_E)[0]
+SCULPT['crouch_low'] = crouch_at(.3)[0]       # fix pass: the groin crease already folds a third of the way down
 ALL = {**POSES, **SCULPT}
 
 # ---------------------------------------------------------------- correctives
@@ -242,10 +242,11 @@ GROUPS = [
     # joints and weights, the crouch kept one thing: on the inside of the bend (front of the hip, back of the knee)
     # the two sides of the joint pass through each other and leave a hard seam. The fold keys smooth only that:
     # a band 3 to 8 cm round the narrow weight blend, sculpted along the crouch's own path (halfway and deepest)
+    ('hip_fold_low', 'crouch_low', 'thigh', 'hip', (.03, .08), ['pelvis', 'hip', 'thigh', 'spine', 'glute'], 5),
     ('hip_fold_mid', 'crouch_mid', 'thigh', 'hip', (.03, .08), ['pelvis', 'hip', 'thigh', 'spine', 'glute'], 20),
     ('hip_fold', 'night_stalk', 'thigh', 'hip', (.03, .08), ['pelvis', 'hip', 'thigh', 'spine', 'glute'], 20),
-    ('knee_fold_mid', 'crouch_mid', 'shin', 'knee', (.03, .08), ['thigh', 'shin', 'foot'], 20),
-    ('knee_fold', 'night_stalk', 'shin', 'knee', (.03, .08), ['thigh', 'shin', 'foot'], 20),
+    ('knee_fold_mid', 'crouch_mid', 'shin', 'knee', (.03, .10), ['thigh', 'shin', 'foot'], 20),
+    ('knee_fold', 'night_stalk', 'shin', 'knee', (.03, .10), ['thigh', 'shin', 'foot'], 20),
     ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
     ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),
@@ -253,12 +254,13 @@ GROUPS = [
 NO_INSIDE = {'knee_step', 'knee_bend', 'hip_flex'}
 # fold keys: (bones on the parent side, bones on the child side) by base name; the mask is the band round the skin
 # where both sides hold weight, within 20 cm of the joint
-FOLD = {'hip_fold_mid': (['pelvis', 'spine', 'glute'], ['thigh']), 'hip_fold': (['pelvis', 'spine', 'glute'], ['thigh']),
+FOLD = {'hip_fold_low': (['pelvis', 'spine', 'glute'], ['thigh']), 'hip_fold_mid': (['pelvis', 'spine', 'glute'], ['thigh']), 'hip_fold': (['pelvis', 'spine', 'glute'], ['thigh']),
         'knee_fold_mid': (['thigh'], ['shin', 'foot']), 'knee_fold': (['thigh'], ['shin', 'foot'])}
-FOLD_RELAX = 1500
+FOLD_RELAX = 2500
+FOLD_SMOOTH = 40
 
 
-SPREAD = {'hip_flex': 2000, 'knee_step': 150, 'knee_bend': 150, 'hip_fold_mid': 300, 'hip_fold': 300,
+SPREAD = {'hip_flex': 2000, 'knee_step': 150, 'knee_bend': 150, 'hip_fold_low': 300, 'hip_fold_mid': 300, 'hip_fold': 300,
           'knee_fold_mid': 300, 'knee_fold': 300}   # knees: a concentrated bend, not one round arc (Nick, F34)
 INDEPENDENT = {'knee_cap'}          # rises over the whole bend, outside the step/bend handover
 RISE = {'knee_cap': (12., 50.)}     # the kneecap is fully in by a 50-degree bend (the leg reach), held to the crouch
@@ -492,6 +494,12 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
         X[sel] = (1-lam)*X[sel]+lam*(As@X+target_lap)
     dP = X-P
     dR = np.einsum('nji,nj->ni', Rv, dP)                     # back to rest space: R^T dP
+    if gname in FOLD:
+        # fix pass: the relax left faint ripples (the rest skin's facets turned by a noisy rotation field); the
+        # key is smoothed along the skin inside its own mask, so it carries the fold's shape and not the facets
+        inm = (m > 1e-4).astype(float)[:, None]
+        for _ in range(FOLD_SMOOTH):
+            dR = inm*(.5*dR+.5*(A@dR))
     tot = masks['L']+masks['R']+1e-12
     for sd in ('L', 'R'):
         key = next(k for k in plan if k['name'] == f'{gname}.{sd}')

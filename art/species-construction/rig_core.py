@@ -503,6 +503,7 @@ def _anim_bones():
 
 
 TAIL_BASE_ABOVE_HIP = .045     # rig metres
+TAIL_JOINT_BLEND = .5          # share of the shortest tail bone each tail joint's weight blend spans
 GLUTE_SHARE = .5          # a glute helper turns this share of its thigh's rotation relative to the pelvis
 
 
@@ -770,7 +771,9 @@ def diffuse_weights(W, edges, n, iters, lam=.6, mask=None):
 # pass 6 leg weights, rig metres
 CREASE_BLEND = .020       # half width of the pelvis-to-thigh blend across the groin crease and the gluteal fold
 KNEE_BLEND = .0125        # half width of the thigh-to-shin blend across the knee (a 2.5 cm blend)
-ANKLE_BLEND = .012        # half width of the shin-to-foot blend across the ankle
+KNEE_BLEND_INSIDE = .030  # half width at the back of the knee, the inside of the bend
+CREASE_BLEND_INSIDE = .040   # half width at the front of the hip, the inside of the bend
+ANKLE_BLEND = .020        # half width of the shin-to-foot blend across the ankle (fix pass: .012 left a hard crease at the paw)
 ANKLE_TILT = 27.          # degrees: the ankle plane's normal leans back from vertical (the crease runs down to the heel)
 LEG_SMOOTH = 12           # diffusion rounds over the leg region after the analytic split (about 8 mm)
 
@@ -791,7 +794,13 @@ def leg_shares(P, joints_m, sd, crotch):
     na = np.array([0., math.sin(math.radians(ANKLE_TILT)), math.cos(math.radians(ANKLE_TILT))])
     F = 1-smoothstep((P-A)@na, -ANKLE_BLEND, ANKLE_BLEND)
     nk = -(u1+u2)/np.linalg.norm(u1+u2)
-    S = 1-smoothstep((P-K)@nk, -KNEE_BLEND, KNEE_BLEND)
+    # fix pass: the blend is wider on the inside of each bend (back of the knee, front of the hip), where the two
+    # sides press together, so the fold rolls instead of the two surfaces crossing in a seam; the outside (kneecap,
+    # buttock) keeps the narrow blend
+    fwd = np.array([0., -1., 0.])
+    kb = smoothstep(-(P-K)@(fwd-u1*(u1@fwd)), -.01, .03)
+    hk = KNEE_BLEND+(KNEE_BLEND_INSIDE-KNEE_BLEND)*kb
+    S = 1-smoothstep((P-K)@nk, -hk, hk)
     ax = sx*P[:, 0]
     hx = abs(H[0])
     tx = smoothstep(ax, .035, hx+.045)
@@ -799,7 +808,8 @@ def leg_shares(P, joints_m, sd, crotch):
     z_front = crotch+(H[2]+.005-crotch)*tx
     z_back = crotch+.012+(H[2]-.01-crotch-.012)*smoothstep(ax, hx-.01, hx+.06)
     zb = z_front*(1-fb)+z_back*fb
-    T = 1-smoothstep(P[:, 2]-zb, -CREASE_BLEND, CREASE_BLEND)
+    hc = CREASE_BLEND+(CREASE_BLEND_INSIDE-CREASE_BLEND)*(1-fb)
+    T = 1-smoothstep(P[:, 2]-zb, -hc, hc)
     glute = fb*smoothstep(P[:, 2]-zb, -.01, .03)*(1-smoothstep(P[:, 2], H[2]+.04, H[2]+.11))*smoothstep(ax, .02, .06)
     wf = F
     ws = (1-F)*S
@@ -897,7 +907,7 @@ def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clea
     chain_total = np.zeros(n)
     for ti, t in enumerate(TAILS):
         cuts = surf['tails'][t]['joints']        # arc position of each joint, 0 at the junction
-        hw = .3*float(np.diff(cuts).min())
+        hw = TAIL_JOINT_BLEND*float(np.diff(cuts).min())   # fix pass: .3 bent each tail in a short kink at its joints
         u = U[:, ti]
         prev = smoothstep(u, -.005, .045)        # below this tail_root keeps the narrow base band
         for k in range(1, TAIL_BONES+1):
