@@ -189,6 +189,27 @@ for t in rc.TAILS:
     total = sum(TAIL_DROP)-.75*sp-2*F36_OUTER[t][0]+TAIL_ROOT_CROUCH[0]+6.   # what the tail root takes beyond -6 comes off the tail
     for k in range(1, rc.TAIL_BONES+1):
         body[f'tail_{t}{k}'] = [-total*TAIL_SHARE[k-1], 0., 8. if k == 1 else 6.]
+# pass 7: the top tail (a) rose 19 degrees off the rump in the crouch (the pelvis tips the rump up 24 degrees) and
+# then bent 40 degrees down at its second joint: from behind a fat knob above the other tails (critic, pass 6 fix).
+# Its bones are now solved so the crouched tail is one even arc drooping from the rump (bone elevations
+# TAIL_ARC, degrees, root to tip: 10 to 13 degrees a joint, was up to 40). The other two tails already curve evenly.
+TAIL_ARC = {'a': (-10., -20., -32., -45., -56.)}
+
+
+def tail_elevations(pose, t):
+    T = rc.bone_transforms(J, pose, bones=B, root_translate=tuple(CROUCH_LIFT))
+    pts = [T[f'tail_{t}{max(k, 1)}'][0]@np.array(J[f'tail_{t}_j{k}'])+T[f'tail_{t}{max(k, 1)}'][1] for k in range(rc.TAIL_BONES+1)]
+    return np.array([math.degrees(math.asin((pts[k+1]-pts[k])[2]/np.linalg.norm(pts[k+1]-pts[k]))) for k in range(rc.TAIL_BONES)])
+
+
+for t, arc in TAIL_ARC.items():
+    for _ in range(10):
+        inc = np.diff(np.r_[0., tail_elevations(body, t)-np.array(arc)])
+        for k in range(rc.TAIL_BONES):
+            r = list(body[f'tail_{t}{k+1}'])
+            r[0] -= float(inc[k])
+            body[f'tail_{t}{k+1}'] = r
+    print('tail', t, 'crouch elevations', tail_elevations(body, t).round(1).tolist(), flush=True)
 CROUCH_BODY = body
 crouch = rc.plant_legs(J, body, CROUCH_LIFT, FEET, POLES, bones=B)
 POSES['night_stalk'] = crouch
@@ -242,22 +263,69 @@ GROUPS = [
     # joints and weights, the crouch kept one thing: on the inside of the bend (front of the hip, back of the knee)
     # the two sides of the joint pass through each other and leave a hard seam. The fold keys smooth only that:
     # a band 3 to 8 cm round the narrow weight blend, sculpted along the crouch's own path (halfway and deepest)
-    ('hip_fold_low', 'crouch_low', 'thigh', 'hip', (.03, .08), ['pelvis', 'hip', 'thigh', 'spine', 'glute'], 5),
-    ('hip_fold_mid', 'crouch_mid', 'thigh', 'hip', (.03, .08), ['pelvis', 'hip', 'thigh', 'spine', 'glute'], 20),
-    ('hip_fold', 'night_stalk', 'thigh', 'hip', (.03, .08), ['pelvis', 'hip', 'thigh', 'spine', 'glute'], 20),
-    ('knee_fold_mid', 'crouch_mid', 'shin', 'knee', (.03, .10), ['thigh', 'shin', 'foot'], 20),
-    ('knee_fold', 'night_stalk', 'shin', 'knee', (.03, .10), ['thigh', 'shin', 'foot'], 20),
+    # pass 7: the relax fold keys of pass 6 are replaced by smoothing keys (delta mush). The relax turned the rest
+    # skin's facets by a spread rotation field and left fine ripples (wavy streaks above the knees, rings mid-thigh,
+    # streaks on the rump, a band edge at the groin: measured 3 to 8 mm of fine-scale noise inside the hip keys).
+    # A mush key is the posed skin smoothed along the skin plus the rest skin's own detail turned by each vertex's
+    # skinning rotation: where the skin moves rigidly it changes nothing, at a joint it rounds the pinch of the
+    # blend into a soft fold and keeps the rest surface's detail exactly, so it adds no ripples. One per joint
+    # per sculpt pose along the crouch (a third, halfway, deepest); masks are smooth (no hard cut).
+    ('hip_mush_low', 'crouch_low', 'thigh', 'hip', (0, 0), ['pelvis'], 5),
+    ('hip_mush_mid', 'crouch_mid', 'thigh', 'hip', (0, 0), ['pelvis'], 20),
+    ('hip_mush', 'night_stalk', 'thigh', 'hip', (0, 0), ['pelvis'], 20),
+    ('knee_mush_low', 'crouch_low', 'shin', 'knee', (0, 0), ['thigh'], 5),
+    ('knee_mush_mid', 'crouch_mid', 'shin', 'knee', (0, 0), ['thigh'], 20),
+    ('knee_mush', 'night_stalk', 'shin', 'knee', (0, 0), ['thigh'], 20),
+    ('ankle_mush_low', 'crouch_low', 'foot', 'ankle', (0, 0), ['foot'], 3),
+    ('ankle_mush_mid', 'crouch_mid', 'foot', 'ankle', (0, 0), ['foot'], 8),
+    ('ankle_mush', 'night_stalk', 'foot', 'ankle', (0, 0), ['foot'], 8),
     ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
     ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),
 ]
 NO_INSIDE = {'knee_step', 'knee_bend', 'hip_flex'}
-# fold keys: (bones on the parent side, bones on the child side) by base name; the mask is the band round the skin
-# where both sides hold weight, within 20 cm of the joint
-FOLD = {'hip_fold_low': (['pelvis', 'spine', 'glute'], ['thigh']), 'hip_fold_mid': (['pelvis', 'spine', 'glute'], ['thigh']), 'hip_fold': (['pelvis', 'spine', 'glute'], ['thigh']),
-        'knee_fold_mid': (['thigh'], ['shin', 'foot']), 'knee_fold': (['thigh'], ['shin', 'foot'])}
+FOLD = {}
 FOLD_RELAX = 2500
 FOLD_SMOOTH = 40
+# mush keys: (the joint's bone groups by base name), the mask (distance along the skin from
+# the band where both sides hold weight: full inside r0, none past r1), the smoothing rounds (about 2 cm) and the
+# relax iterations on the smoothed layer (0: smoothing only)
+# pass 7: the hip groups include the glute helper on its own, so the band where the buttock blends into the pelvis
+# (streaks on the back of the rump in the crouch) is smoothed too
+_HIP = ([['pelvis', 'spine'], ['glute'], ['thigh']], (.04, .12), 60, 6000)
+# the knee is smoothed only, wider (about 3 cm): a relax there deepened the pit and rippled the lower thigh
+_KNEE = ([['thigh'], ['shin', 'foot']], (.04, .09), 120, 0)
+_ANKLE = ([['shin'], ['foot']], (.025, .06), 40, 0)
+MUSH = {'hip_mush_low': _HIP, 'hip_mush_mid': _HIP, 'hip_mush': _HIP,
+        'knee_mush_low': _KNEE, 'knee_mush_mid': _KNEE, 'knee_mush': _KNEE,
+        'ankle_mush_low': _ANKLE, 'ankle_mush_mid': _ANKLE, 'ankle_mush': _ANKLE}
+_SMOOTH_REST = {}
+RELAX_SMOOTH = 0        # rounds that smooth what the relax moved: 0, smoothing it (150) left a lump on the outer buttock
+                        # and a band at the groin; the wavy streaks it was meant for came from the knee relax, now gone
+MUSH_FINE = {'hip': 4, 'knee': 4, 'ankle': 0}   # finest detail scale the mush keys leave out (about 4 mm); the paw keeps all its detail
+
+
+def smooth_skin(V, rounds):
+    for _ in range(rounds):
+        V = .5*V+.5*(A@V)
+    return V
+
+
+def mush_mask(groups, r0, r1):
+    """Per side: 1 within r0 of the blend band (the skin where no one of the joint's bone groups holds more than
+    .97 of the weight), 0 past r1 (smooth), split between the sides by a smooth 4 cm ramp across the midline (no
+    hard cut)."""
+    xl = rc.smoothstep(rest[:, 0], -.02, .02)
+    out = {}
+    for sd in ('L', 'R'):
+        nb = lambda bs: [f'{b}.{sd}' if f'{b}.{sd}' in NI else b for b in bs]
+        sh_ = np.array([share(nb(g)) for g in groups])
+        tot = sh_.sum(0)
+        held = sh_.max(0)/np.maximum(tot, 1e-9)
+        inside = tot > .9
+        dband, _ = cKDTree(rest[inside & (held < .97)]).query(rest, k=1, workers=-1)
+        out[sd] = (1-rc.smoothstep(dband, r0, r1))*(xl if sd == 'L' else 1-xl)
+    return out
 
 
 SPREAD = {'hip_flex': 2000, 'knee_step': 150, 'knee_bend': 150, 'hip_fold_low': 300, 'hip_fold_mid': 300, 'hip_fold': 300,
@@ -323,6 +391,50 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
     pose = ALL[pose_name]
     P, Rv, vals = rc.posed_skin(rest, idx, w, J, pose, keys=keys, deltas=deltas)
     T = rc.bone_transforms(J, pose, bones=B)
+    if gname in MUSH:
+        groups, (q0, q1), rounds, relax = MUSH[gname]
+        fine = MUSH_FINE[jbase]
+        if (rounds, fine) not in _SMOOTH_REST:
+            # the rest detail put back excludes the finest scale (MUSH_FINE rounds: the assembly remesh's facets, which
+            # read as hatched streaks where the crouch stretches the skin, on the buttock and above the knee)
+            _SMOOTH_REST[(rounds, fine)] = smooth_skin(rest, fine)-smooth_skin(rest, rounds)
+        mm = mush_mask(groups, q0, q1)
+        base = smooth_skin(P, rounds)
+        if relax:
+            # the inside of a deep bend (front of the hip, back of the knee) passes through itself: the smooth layer
+            # is relaxed toward the rest smooth layer's own shape turned by a spread rotation field, as the pass 6
+            # fold keys relaxed the whole skin, which unfolds it; the relax runs on the smoothed skin, which has no
+            # facets, so it leaves no ripples, and the rest detail is put back afterwards
+            m = np.maximum(mm['L'], mm['R'])
+            sel = np.where(m > 1e-4)[0]
+            As = A[sel]
+            lap = smooth_skin(rest, rounds)
+            lap = lap-A@lap
+            Qv = quats(Rv)
+            lq = (.6*m[sel])[:, None]
+            for _ in range(300):
+                Qv[sel] = (1-lq)*Qv[sel]+lq*(As@Qv)
+            Qv /= np.linalg.norm(Qv, axis=1, keepdims=True)
+            tl = np.einsum('nij,nj->ni', rc._qmat(Qv[sel]), lap[sel])
+            lam = (.85*m[sel])[:, None]
+            b0 = base.copy()
+            for _ in range(relax):
+                base[sel] = (1-lam)*base[sel]+lam*(As@base+tl)
+            # RELAX_SMOOTH > 0 keeps only the broad part of what the relax moved
+            base = b0+smooth_skin(base-b0, RELAX_SMOOTH)
+        target = base+np.einsum('nij,nj->ni', Rv, _SMOOTH_REST[(rounds, fine)])
+        dR = np.einsum('nji,nj->ni', Rv, target-P)
+        for sd in ('L', 'R'):
+            key = next(k for k in plan if k['name'] == f'{gname}.{sd}')
+            v = rc.driver_value(rc.swing_deg(J, pose, key['bone'], B), key['rise'], key['fall'])
+            part = dR*mm[sd][:, None]/max(v, 1e-6)
+            ids = np.where(np.linalg.norm(part, axis=1) > 1e-6)[0]
+            deltas[key['name']] = (ids, part[ids])
+            keys.append(key)
+        mv = np.linalg.norm((target-P)*np.maximum(mm['L'], mm['R'])[:, None], axis=1)
+        print(f'{gname:15s} at {pose_name}: {int((mv > 1e-5).sum())} vertices, max move {mv.max()*1000:.1f} mm, '
+              f'L rise {keys[-2]["rise"]} fall {keys[-2]["fall"]}', flush=True)
+        continue
     masks = {}
     for sd in ('L', 'R'):
         jn = f'{jbase}.{sd}'
