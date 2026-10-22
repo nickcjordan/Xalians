@@ -133,6 +133,24 @@ class InferenceTests(unittest.TestCase):
                 infer.spill(self.command, evidence)
 
 
+    def test_supervisor_failure_before_blender_becomes_local_fallback(self):
+        evidence = self.root / 'evidence'
+        evidence.mkdir()
+        (evidence / 'result.json').write_text(json.dumps({'returncode': 1, 'error': 'docker daemon unreachable'}))
+        (evidence / 'blender.log').write_text('')
+        with patch.object(infer, 'infer', return_value=self.job()),              patch.object(mini_blender, 'mini', side_effect=RuntimeError('mini Blender failed')):
+            with self.assertRaisesRegex(infer.Unsafe, 'unavailable before Blender ran'):
+                infer.spill(self.command, evidence)
+
+    def test_blender_failure_on_mini_still_fails(self):
+        evidence = self.root / 'evidence'
+        evidence.mkdir()
+        (evidence / 'result.json').write_text(json.dumps({'returncode': 1}))
+        (evidence / 'blender.log').write_text('Error: scene broke')
+        with patch.object(infer, 'infer', return_value=self.job()),              patch.object(mini_blender, 'mini', side_effect=RuntimeError('mini Blender failed')):
+            with self.assertRaises(RuntimeError):
+                infer.spill(self.command, evidence)
+
 class BlendGuardTests(unittest.TestCase):
     def test_sequence_and_udim_assets_require_manifest(self):
         for source in ('SEQUENCE', 'TILED'):
