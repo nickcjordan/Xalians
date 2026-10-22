@@ -1,0 +1,29 @@
+{
+ "note": "legs anatomy v3 (rig pass 7). Amplitudes in rig metres along the smoothed skin normal (+ out). Muscle masses large enough to read in the crouch; the grooves and hollows part them; landmarks at the knee and ankle.",
+ "amplitudes": {
+  "calf": 0.011,
+  "achillesSides": -0.004,
+  "lowerShin": -0.002,
+  "malleoli": 0.005,
+  "heel": 0.003,
+  "tibiaMax": 0.012,
+  "tibialCrest": 0.0015,
+  "patella": 0.004,
+  "tuberosity": 0.002,
+  "quadriceps": 0.01,
+  "vastusLateralis": 0.005,
+  "outerThighGroove": -0.0025,
+  "hamstrings": 0.006,
+  "hamstringCords": 0.003,
+  "kneePit": -0.001,
+  "vastusMedialis": 0.0
+ },
+ "tibiaAnchor": 0.28,
+ "patellaAbove": 0.006,
+ "malleolusInner": 0.03,
+ "malleolusOuter": 0.02,
+ "heelAbove": -0.012,
+ "soleKeepZ": 0.03,
+ "normalRounds": 40,
+ "smoothRounds": 40
+}
