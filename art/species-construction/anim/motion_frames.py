@@ -44,7 +44,7 @@ p.add_argument('--frames', type=int, default=24)
 p.add_argument('--size', type=int, default=720)
 p.add_argument('--samples', type=int, default=16)
 p.add_argument('--diag', action='store_true')
-p.add_argument('--box', default=None, help='fixed framing box lo,hi (6 numbers, source units), e.g. an earlier clip's, so before and after frames line up')
+p.add_argument('--box', default=None, help='fixed framing box lo,hi (6 numbers, source units), the same framing as an earlier clip, so before and after frames line up')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 t0 = time.time()
 TARGET = {'ears': 'ears_flat_back', 'knee': 'night_stalk', 'crouch': 'night_stalk'}[a.motion]
