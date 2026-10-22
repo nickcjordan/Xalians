@@ -166,3 +166,10 @@ Free space immediately around cleanup rose from **52,540,493,824 to 98,696,671,2
 ## Limits
 
 CPU-only capacity is a throughput addition when the PC queue is occupied, not a promise that the mini renders faster. Jobs over 5.5 GiB fail rather than borrowing CI's memory. Matching Blender binaries do not guarantee identical pixels across CPU instruction sets or denoiser implementations. Embedded absolute paths, unresolved dependencies, programs other than Blender and GPU jobs require caller adaptation or local fallback. No always-on launch service or additional CI runner was registered. After a mini reboot, the existing Colima startup must finish before jobs can run; CI status must be readable for compute to proceed.
+
+## Stopped compute VM (fixed 2026-10-22)
+
+The compute VM is created with auto-activation off, so after the mini restarts it stays stopped. The first real Akinza spill (2026-10-22) then failed in under a second at the supervisor's orphan check ("docker daemon unreachable") and the slot returned that as a failed job. Two fixes:
+
+- `remote.py` starts the stopped VM itself (`colima start default --activate=false`, at nice 15) before admitting a job, and raises a clear error only if it will not start.
+- `infer.spill` treats any supervisor failure before Blender ran (an `error` in `result.json` with an empty `blender.log`) as the mini being unavailable: it raises `Unsafe`, so `slot.py` waits for the local slot instead of failing the caller's job. A Blender failure on the mini still fails the job.
