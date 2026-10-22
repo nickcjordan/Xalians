@@ -41,14 +41,19 @@ class RemoteTests(unittest.TestCase):
 
     def test_ci_status_fails_closed(self):
         for code, busy in [(0, True), (1, False), (2, True), (255, True)]:
-            with patch.object(remote.subprocess, 'run', side_effect=[Mock(returncode=0), Mock(returncode=code, stderr='')]):
+            with patch.object(remote.subprocess, 'run', side_effect=[Mock(returncode=0, stdout='Running'), Mock(returncode=0), Mock(returncode=code, stderr='')]):
                 self.assertEqual(remote.ci_busy(), busy)
         with patch.object(remote.subprocess, 'run', side_effect=subprocess.TimeoutExpired('lima', 15)):
             self.assertTrue(remote.ci_busy())
         with patch.object(remote.subprocess, 'run', return_value=Mock(returncode=1)):
             self.assertTrue(remote.ci_busy())
-        with patch.object(remote.subprocess, 'run', side_effect=[Mock(returncode=0), Mock(returncode=1, stderr='lima error')]):
+        with patch.object(remote.subprocess, 'run', side_effect=[Mock(returncode=0, stdout='Running'), Mock(returncode=0), Mock(returncode=1, stderr='lima error')]):
             self.assertTrue(remote.ci_busy())
+
+    def test_stopped_or_broken_ci_vm_does_not_park_compute(self):
+        for status in ('Broken', 'Stopped'):
+            with patch.object(remote.subprocess, 'run', return_value=Mock(returncode=0, stdout=status)):
+                self.assertFalse(remote.ci_busy())
 
     def test_orphan_container_blocks_new_work(self):
         with patch.object(remote, 'docker', return_value=Mock(stdout='orphan-id\n')):
