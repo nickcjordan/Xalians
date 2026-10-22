@@ -33,8 +33,26 @@ def lower_vm_priority():
                        stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 
 
+def ci_vm_running(env):
+    """True unless limactl positively reports the CI VM as not Running (Stopped or Broken)."""
+    try:
+        r = subprocess.run([LIMA, 'list', '--format', '{{.Status}}', 'ci-runner'], env=env,
+                           capture_output=True, text=True, timeout=15)
+    except (OSError, subprocess.TimeoutExpired):
+        return True
+    status = r.stdout.strip()
+    return r.returncode != 0 or not status or status == 'Running'
+
+
 def ci_busy():
     env = dict(os.environ, LIMA_HOME=str(Path.home() / '.ci-runner/lima'))
+    if not ci_vm_running(env):
+        # No CI VM is running, so there is no CI job to yield to. Waiting here
+        # would hold the job for up to 24 hours (2026-10-22: a Broken CI VM
+        # parked a spilled render silently for 40 minutes). Say so loudly.
+        print('CI VM is not running; compute proceeds. Check the surfaced-art runner watchdog.',
+              file=sys.stderr, flush=True)
+        return False
     try:
         listener = subprocess.run([LIMA, 'shell', 'ci-runner', '--', 'pgrep', '-x', 'Runner.Listener'],
                                   env=env, capture_output=True, text=True, timeout=15)
