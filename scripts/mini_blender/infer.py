@@ -406,6 +406,13 @@ def spill(command, evidence):
     except RuntimeError:
         result = evidence / 'result.json'
         log = evidence / 'blender.log'
+        # A supervisor failure before Blender ran (VM down, orphan container,
+        # lock timeout) is the mini being unavailable, not the job failing:
+        # fall back to waiting for the local slot instead of failing the job.
+        if result.exists():
+            stats = json.loads(result.read_text())
+            if stats.get('error') and not (log.exists() and log.read_text(errors='replace').strip()):
+                raise Unsafe('mini unavailable before Blender ran: ' + str(stats['error'])[:300])
         if (result.exists() and json.loads(result.read_text()).get('inferenceUnsafe')) or (
                 log.exists() and any(marker in log.read_text(errors='replace') for marker in
                                      ('FileNotFoundError', 'ModuleNotFoundError', 'INFERENCE_UNSAFE:'))):

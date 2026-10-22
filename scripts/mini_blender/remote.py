@@ -60,6 +60,19 @@ def stop_container(name):
         raise RuntimeError('cannot confirm container stopped; retaining workspace: ' + result.stderr)
 
 
+COLIMA = str(Path.home() / '.mini-runner/bin/colima')
+
+
+def ensure_vm():
+    """Start the compute VM if it is stopped (auto-activation is off, so it stays down after a reboot)."""
+    if docker('info', capture_output=True, text=True).returncode == 0:
+        return
+    start = subprocess.run(['nice', '-n', '15', COLIMA, 'start', 'default', '--activate=false'],
+                           capture_output=True, text=True, timeout=300)
+    if start.returncode or docker('info', capture_output=True, text=True).returncode:
+        raise RuntimeError('compute VM is stopped and did not start: ' + (start.stderr or start.stdout)[-400:])
+
+
 def reject_orphans():
     result = docker('ps', '-aq', '--filter', 'name=^/mini-blender-', capture_output=True, text=True, check=True)
     if result.stdout.strip():
@@ -215,6 +228,7 @@ def run(job_id):
                     if time.monotonic() > deadline:
                         raise TimeoutError('remote compute lock timed out')
                     time.sleep(2)
+            ensure_vm()
             reject_orphans()
             safe_extract(job / 'inputs.tar', job)
             (job / 'inputs.tar').unlink()
