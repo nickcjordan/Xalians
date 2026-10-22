@@ -228,6 +228,9 @@ SCULPT = {'arms_up': directions({'clavicle.L': [-6, -20, 0], 'clavicle.R': [-6, 
           'legs_step': directions({'pelvis': [-6, 0, 0]},
                                   {'thigh.L': (.08, -.95, -.30), 'shin.L': (.02, -.30, -.95), 'foot.L': (0, -.97, -.25),
                                    'thigh.R': (-.08, -.95, -.30), 'shin.R': (-.02, -.30, -.95), 'foot.R': (0, -.97, -.25)})}
+# pass 6: the crouch halfway, where the fold keys get their first sculpt
+CROUCH_MID_E = .55
+SCULPT['crouch_mid'] = crouch_at(CROUCH_MID_E)[0]
 ALL = {**POSES, **SCULPT}
 
 # ---------------------------------------------------------------- correctives
@@ -235,15 +238,28 @@ ALL = {**POSES, **SCULPT}
 # may touch (by weight), lowest rise start degrees)
 GROUPS = [
     # pass 6: every hip and knee corrective of passes 3 to 5 (knee_step, knee_bend, knee_cap, hip_flex) is deleted:
-    # the keys only moved the symptoms of the weights and joints (diagnosis 2026-10-21); the legs are judged bare
+    # the keys only moved the symptoms of the weights and joints (diagnosis 2026-10-21). Judged bare on the new
+    # joints and weights, the crouch kept one thing: on the inside of the bend (front of the hip, back of the knee)
+    # the two sides of the joint pass through each other and leave a hard seam. The fold keys smooth only that:
+    # a band 3 to 8 cm round the narrow weight blend, sculpted along the crouch's own path (halfway and deepest)
+    ('hip_fold_mid', 'crouch_mid', 'thigh', 'hip', (.03, .08), ['pelvis', 'hip', 'thigh', 'spine', 'glute'], 20),
+    ('hip_fold', 'night_stalk', 'thigh', 'hip', (.03, .08), ['pelvis', 'hip', 'thigh', 'spine', 'glute'], 20),
+    ('knee_fold_mid', 'crouch_mid', 'shin', 'knee', (.03, .08), ['thigh', 'shin', 'foot'], 20),
+    ('knee_fold', 'night_stalk', 'shin', 'knee', (.03, .08), ['thigh', 'shin', 'foot'], 20),
     ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
     ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),
 ]
 NO_INSIDE = {'knee_step', 'knee_bend', 'hip_flex'}
+# fold keys: (bones on the parent side, bones on the child side) by base name; the mask is the band round the skin
+# where both sides hold weight, within 20 cm of the joint
+FOLD = {'hip_fold_mid': (['pelvis', 'spine', 'glute'], ['thigh']), 'hip_fold': (['pelvis', 'spine', 'glute'], ['thigh']),
+        'knee_fold_mid': (['thigh'], ['shin', 'foot']), 'knee_fold': (['thigh'], ['shin', 'foot'])}
+FOLD_RELAX = 1500
 
 
-SPREAD = {'hip_flex': 2000, 'knee_step': 150, 'knee_bend': 150}   # knees: a concentrated bend, not one round arc (Nick, F34)
+SPREAD = {'hip_flex': 2000, 'knee_step': 150, 'knee_bend': 150, 'hip_fold_mid': 300, 'hip_fold': 300,
+          'knee_fold_mid': 300, 'knee_fold': 300}   # knees: a concentrated bend, not one round arc (Nick, F34)
 INDEPENDENT = {'knee_cap'}          # rises over the whole bend, outside the step/bend handover
 RISE = {'knee_cap': (12., 50.)}     # the kneecap is fully in by a 50-degree bend (the leg reach), held to the crouch
 
@@ -314,6 +330,15 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
         mb = [side_bone(b, sd) if f'{b}.{sd}' in NI else b for b in mbones]
         allowed = rc.smoothstep(share(mb), .4, .7)
         masks[sd] = (1-rc.smoothstep(np.linalg.norm(P-c, axis=1), r0, r1))*allowed
+    if gname in FOLD:
+        for sd in ('L', 'R'):
+            nb = lambda bs: [f'{b}.{sd}' if f'{b}.{sd}' in NI else b for b in bs]
+            jn = f'{jbase}.{sd}'
+            c = posed_joint(T, jn)
+            mix = np.minimum(share(nb(FOLD[gname][0])), share(nb(FOLD[gname][1])))
+            dband, _ = cKDTree(P[mix > .05]).query(P, k=1, workers=-1)
+            sx = 1. if sd == 'L' else -1.
+            masks[sd] = (1-rc.smoothstep(dband, r0, r1))*(np.linalg.norm(P-c, axis=1) < .2)*(sx*P[:, 0] > -.005)
     m = np.maximum(masks['L'], masks['R'])
     # pass 5: inside the bend (back of the knee, front of the groin) the relax keeps each segment's own turn: the
     # rotation field is not spread there, so the skin is not swept round the joint in one concave arc (the
@@ -463,7 +488,7 @@ for gname, pose_name, dbase, jbase, (r0, r1), mbones, rise0 in GROUPS:
     target_lap = np.einsum('nij,nj->ni', rc._qmat(Qv[sel]), LAP_REST[sel])
     X = P.copy()
     lam = (.85*m[sel])[:, None]
-    for it in range(a.relax):
+    for it in range(FOLD_RELAX if gname in FOLD else a.relax):
         X[sel] = (1-lam)*X[sel]+lam*(As@X+target_lap)
     dP = X-P
     dR = np.einsum('nji,nj->ni', Rv, dP)                     # back to rest space: R^T dP

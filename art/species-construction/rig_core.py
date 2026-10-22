@@ -771,6 +771,7 @@ def diffuse_weights(W, edges, n, iters, lam=.6, mask=None):
 CREASE_BLEND = .020       # half width of the pelvis-to-thigh blend across the groin crease and the gluteal fold
 KNEE_BLEND = .0125        # half width of the thigh-to-shin blend across the knee (a 2.5 cm blend)
 ANKLE_BLEND = .012        # half width of the shin-to-foot blend across the ankle
+ANKLE_TILT = 27.          # degrees: the ankle plane's normal leans back from vertical (the crease runs down to the heel)
 LEG_SMOOTH = 12           # diffusion rounds over the leg region after the analytic split (about 8 mm)
 
 
@@ -784,7 +785,11 @@ def leg_shares(P, joints_m, sd, crotch):
     sx = 1. if sd == 'L' else -1.
     H, K, A = (np.asarray(joints_m[f'{j}.{sd}'], float) for j in ('hip', 'knee', 'ankle'))
     u1, u2 = (K-H)/np.linalg.norm(K-H), (A-K)/np.linalg.norm(A-K)
-    F = 1-smoothstep((P-A)@(-u2), -ANKLE_BLEND, ANKLE_BLEND)
+    # the ankle crease is oblique: high at the front where the paw roof meets the shin, low at the heel behind, so
+    # the plane through the ankle leans back (ANKLE_TILT from level, normal up and back); square to the shin it
+    # cut through the toes in front, which then went with the shin
+    na = np.array([0., math.sin(math.radians(ANKLE_TILT)), math.cos(math.radians(ANKLE_TILT))])
+    F = 1-smoothstep((P-A)@na, -ANKLE_BLEND, ANKLE_BLEND)
     nk = -(u1+u2)/np.linalg.norm(u1+u2)
     S = 1-smoothstep((P-K)@nk, -KNEE_BLEND, KNEE_BLEND)
     ax = sx*P[:, 0]
