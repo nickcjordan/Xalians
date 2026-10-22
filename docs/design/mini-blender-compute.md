@@ -173,3 +173,4 @@ The compute VM is created with auto-activation off, so after the mini restarts i
 
 - `remote.py` starts the stopped VM itself (`colima start default --activate=false`, at nice 15) before admitting a job, and raises a clear error only if it will not start.
 - `infer.spill` treats any supervisor failure before Blender ran (an `error` in `result.json` with an empty `blender.log`) as the mini being unavailable: it raises `Unsafe`, so `slot.py` waits for the local slot instead of failing the caller's job. A Blender failure on the mini still fails the job.
+- `remote.py` `ci_busy()` no longer parks a job when the CI VM itself is Stopped or Broken: there is no CI job to yield to, so compute proceeds and prints a warning to check the surfaced-art runner watchdog. A Running VM with no listener still yields (the runner may be restarting). Before this, a Broken CI VM held a spilled Akinza render silently for 40 minutes (2026-10-22).
