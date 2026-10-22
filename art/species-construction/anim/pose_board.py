@@ -234,8 +234,8 @@ ALL = {**POSES, **SCULPT}
 # group: (name, sculpt pose, driver bone base, mask joint base, inner/outer mask radius m, bones the mask
 # may touch (by weight), lowest rise start degrees)
 GROUPS = [
-    # pass 6: every hip and knee corrective (knee_step, knee_bend, knee_cap, hip_flex) is deleted; the legs are judged
-    # bare on the new joints and weights first (diagnosis: the keys only moved the weights' and joints' symptoms)
+    # pass 6: every hip and knee corrective of passes 3 to 5 (knee_step, knee_bend, knee_cap, hip_flex) is deleted:
+    # the keys only moved the symptoms of the weights and joints (diagnosis 2026-10-21); the legs are judged bare
     ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
     ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),

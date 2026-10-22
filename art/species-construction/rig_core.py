@@ -767,7 +767,89 @@ def diffuse_weights(W, edges, n, iters, lam=.6, mask=None):
     return W
 
 
-def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clear=.02, tail_soft=.012, diffuse=200, wide_rounds=600):
+# pass 6 leg weights, rig metres
+CREASE_BLEND = .020       # half width of the pelvis-to-thigh blend across the groin crease and the gluteal fold
+KNEE_BLEND = .0125        # half width of the thigh-to-shin blend across the knee (a 2.5 cm blend)
+ANKLE_BLEND = .012        # half width of the shin-to-foot blend across the ankle
+LEG_SMOOTH = 12           # diffusion rounds over the leg region after the analytic split (about 8 mm)
+
+
+def leg_shares(P, joints_m, sd, crotch):
+    """Analytic shares (foot, shin, thigh, glute, pelvis) of one side's leg region, rig metres. The foot owns the paw
+    below the ankle plane, the shin everything below the knee plane (each plane square to the leg through its
+    joint, blends KNEE_BLEND and ANKLE_BLEND), the thigh everything below the pelvis-to-thigh boundary: the groin
+    crease at the front (from the crotch at the inner thigh up and out to the front of the hip joint) and the
+    gluteal fold at the back (level with the crotch under the buttock, rising to the hip joint on the outer side).
+    Above that boundary the buttock is the glute helper's (half the thigh's turn) and the rest the pelvis's."""
+    sx = 1. if sd == 'L' else -1.
+    H, K, A = (np.asarray(joints_m[f'{j}.{sd}'], float) for j in ('hip', 'knee', 'ankle'))
+    u1, u2 = (K-H)/np.linalg.norm(K-H), (A-K)/np.linalg.norm(A-K)
+    F = 1-smoothstep((P-A)@(-u2), -ANKLE_BLEND, ANKLE_BLEND)
+    nk = -(u1+u2)/np.linalg.norm(u1+u2)
+    S = 1-smoothstep((P-K)@nk, -KNEE_BLEND, KNEE_BLEND)
+    ax = sx*P[:, 0]
+    hx = abs(H[0])
+    tx = smoothstep(ax, .035, hx+.045)
+    fb = smoothstep(P[:, 1]-H[1], -.03, .03)                 # 0 at the front, 1 at the back
+    z_front = crotch+(H[2]+.005-crotch)*tx
+    z_back = crotch+.012+(H[2]-.01-crotch-.012)*smoothstep(ax, hx-.01, hx+.06)
+    zb = z_front*(1-fb)+z_back*fb
+    T = 1-smoothstep(P[:, 2]-zb, -CREASE_BLEND, CREASE_BLEND)
+    glute = fb*smoothstep(P[:, 2]-zb, -.01, .03)*(1-smoothstep(P[:, 2], H[2]+.04, H[2]+.11))*smoothstep(ax, .02, .06)
+    wf = F
+    ws = (1-F)*S
+    wt = (1-F)*(1-S)*T
+    rest = (1-F)*(1-S)*(1-T)
+    wg = rest*glute
+    return wf, ws, wt, wg, rest-wg
+
+
+def anatomical_leg_weights(points, edges, joints, W, s, off):
+    """Pass 6 (diagnosis 2026-10-21, sections 2, 4, 5, 6): the hip, knee and ankle blends rebuilt narrow and
+    centred on the joints, with the pelvis-to-thigh boundary on the groin crease and the gluteal fold (leg_shares).
+    Inside the leg region (the vertices the pelvis, hip, thigh, shin and foot bones held, below the top of the
+    pelvis, away from the arms) that group's weight is split again by the analytic shares, so the pelvis cannot
+    reach into the leg; other bones' weights (spine, tails) are kept. The glute helpers take the buttock, but not
+    the skin round the tail bases. A few diffusion rounds over the region smooth the split."""
+    off = np.asarray(off, float)
+    bi = {b: i for i, b in enumerate(ANIM_NAMES)}
+    n = len(points)
+    P = s*(points-off)
+    jm = {k: s*(np.asarray(v, float)-off) for k, v in joints.items() if not k.startswith('_')}
+    crotch = s*(joints['_meta']['crotchZ']-off[2])
+    group = ['pelvis', 'hip.L', 'hip.R', 'thigh.L', 'thigh.R', 'shin.L', 'shin.R', 'foot.L', 'foot.R', 'glute.L', 'glute.R']
+    gi = [bi[b] for b in group]
+    arm = W[:, [bi[f'{b}.{sd}'] for b in ('clavicle', 'upperarm', 'forearm', 'hand') for sd in 'LR']].sum(1)
+    tails = W[:, [i for b, i in bi.items() if b.startswith('tail_')]].sum(1)
+    M = W[:, gi].sum(1)
+    top = max(jm['hip.L'][2], jm['pelvis'][2])
+    region = (1-smoothstep(P[:, 2], top+.09, top+.13))*(1-smoothstep(arm, .01, .05))
+    # the guard is mirrored (the tail bases sit left of the midline) so both buttocks get the same glute
+    mir = np.array([-1., 1., 1.])
+    near_tail = np.min([np.linalg.norm(P-jm[f'tail_{t}_j0']*m, axis=1) for t in TAILS for m in (1., mir)], 0)
+    tail_guard = smoothstep(near_tail, .04, .12)*(1-smoothstep(tails, 0., .05))
+    new = np.zeros((n, len(group)))
+    for sd, sx in (('L', 1.), ('R', -1.)):
+        on = sx*P[:, 0] >= 0 if sd == 'L' else sx*P[:, 0] > 0
+        wf, ws, wt, wg, wp = leg_shares(P, jm, sd, crotch)
+        wg = wg*tail_guard
+        wp = 1-wf-ws-wt-wg
+        for b, v in ((f'foot.{sd}', wf), (f'shin.{sd}', ws), (f'thigh.{sd}', wt), (f'glute.{sd}', wg), ('pelvis', wp)):
+            new[on, group.index(b)] += v[on]
+    W = W.copy()
+    split = new*M[:, None]
+    W[:, gi] = region[:, None]*split+(1-region)[:, None]*W[:, gi]
+    # outside the region the leg bones have nothing left to hold: their weight goes to the pelvis
+    for b in ('hip.L', 'hip.R'):
+        W[:, bi['pelvis']] += W[:, bi[b]]
+        W[:, bi[b]] = 0
+    W /= W.sum(1, keepdims=True)
+    W = diffuse_weights(W, edges, n, LEG_SMOOTH, mask=region*(1-smoothstep(arm, .0, .02)))
+    return W
+
+
+def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clear=.02, tail_soft=.012, diffuse=200, wide_rounds=600,
+                         height_m=1.475):
     """Skin weights for ANIM_BONES (source units, before scale), as (idx, w) indexing ANIM_NAMES.
 
     Body bones: the distance falloff of compute_weights (no k-d smoothing: it crossed the arm-trunk gap). Head: the z mask of
@@ -851,12 +933,14 @@ def compute_anim_weights(points, edges, joints, keep=4, eye_centres=(), eye_clea
     H[:, bi['head']] = np.clip(free, 0, 1)
     W = W*(1-h)[:, None]+H*h[:, None]
     W = diffuse_weights(W, edges, n, diffuse)
-    # shoulders and hips bend furthest: widen their blend (about 7 cm more) with extra rounds there only
+    # shoulders bend furthest: widen their blend (about 7 cm more) with extra rounds there only. Pass 6: not the
+    # hips any more; their 600 rounds within 17 cm let the pelvis own the top half of each thigh (the snapped femur)
     wide = np.zeros(n)
-    for jn in ('shoulder.L', 'shoulder.R', 'hip.L', 'hip.R'):
+    for jn in ('shoulder.L', 'shoulder.R'):
         r = np.linalg.norm(points-np.asarray(joints[jn]), axis=1)
         wide = np.maximum(wide, 1-smoothstep(r, .10, .17))
     W = diffuse_weights(W, edges, n, wide_rounds, mask=wide)
+    W = anatomical_leg_weights(points, edges, joints, W, *anim_transform(joints, height_m))
     W[W < 1e-4] = 0
     W /= W.sum(1, keepdims=True)
     idx = np.argsort(-W, 1)[:, :keep]
