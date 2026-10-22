@@ -11,7 +11,7 @@ BUILD = os.environ.get('AUD_BUILD', 'B-j6jh')   # B-sntv: the re-skin audit labe
 
 OUT = Path(sys.argv[1])
 CAMS = ['left', 'right', 'front', 'back', 'top', 'underside', 'low34_front_left', 'low34_rear_left']
-POSES = ['rest', 'crouch', 'leap', 'landing', 'head_left_up', 'tail_side_up', 'foreleg_step', 'breath_in',
+POSES = ['rest', 'crouch', 'crouch_deep', 'leap', 'landing', 'landing_old', 'head_left_up', 'tail_side_up', 'foreleg_step', 'breath_in',
          'sig_f08', 'sig_f11', 'sig_f22', 'sig_f29', 'sig_f38']
 SIGNOTE = {'sig_f08': 'deepest crouch', 'sig_f11': 'takeoff', 'sig_f22': 'apex', 'sig_f29': 'hit', 'sig_f38': 'landing'}
 
@@ -48,7 +48,7 @@ for pose in POSES:
         t = f'Luceras {BUILD}  {pose}' + (f' ({SIGNOTE[pose]}, sig.horns-first-descent frame {pose[-2:]})' if pose in SIGNOTE else ' (review.poses)') + '  render A, look-dev clay'
         sheet(ps, CAMS, t, OUT / 'contact' / f'{pose}_A_contact.png')
 # crop sheets (A, B, C side by side per region) for the crop poses
-for pose in ('crouch', 'sig_f08'):
+for pose in ('crouch', 'crouch_deep', 'sig_f08'):
     d = OUT / 'crops' / pose
     if not d.exists(): continue
     regions = sorted({p.stem.rsplit('_', 1)[0] for p in d.glob('*_A.png')})

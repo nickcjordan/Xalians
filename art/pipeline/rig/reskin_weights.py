@@ -119,6 +119,15 @@ print('SOLVE factorizing', AFF.shape, AFF.nnz, flush=True)
 lu = splu(AFF, permc_spec='COLAMD')
 Wf = lu.solve(rhs)
 Wn = np.zeros((n, B)); Wn[Fi] = Wf; Wn[Ki] = Wfix
+# pass 2: a light weight smoothing over the surface removes single-vertex spikes (a vertex that sits very close to a
+# proxy gets a large H and can follow its own attachment against its neighbours: the elbow pits of pass 1)
+NS = SK.get('post_smooth', 0)
+if NS:
+    Eg = body['E']; dg = np.bincount(Eg.ravel(), minlength=n).astype(float)
+    for _ in range(NS):
+        t = np.zeros_like(Wn); np.add.at(t, Eg[:, 0], Wn[Eg[:, 1]]); np.add.at(t, Eg[:, 1], Wn[Eg[:, 0]])
+        Wn[free] = 0.5 * Wn[free] + 0.5 * (t[free] / dg[free, None])
+    print('POST_SMOOTH', NS, flush=True)
 # joint bands: along each limb chain the parent and child share weight only inside a band around the joint plane
 # (normal = mean of the two bone directions); beyond it the segment is rigid. Heat alone leaks the cannon into the
 # paw and the forearm into the wrist (forepaw verts down to 0.75 leg_f*_03).

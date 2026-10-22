@@ -140,9 +140,29 @@ def extra(rots):
     bpy.context.view_layer.update()
 
 
+OLDP = json.load(open(CFG['oldposes'])) if CFG.get('oldposes') else {}
+
+
 def pose(name):
     P = CFG['poses'].get(name, {})
     poser.pin_local = None
+    if P.get('channels'):   # pass 2: an old review pose copied exactly (pass 5 channels), optionally with legs re-solved
+        poser.reset()
+        for bn, ch in OLDP[P['channels']].items():
+            if bn not in rig.pose.bones: continue
+            pb = rig.pose.bones[bn]; pb.rotation_mode = 'QUATERNION'
+            pb.location = ch['loc']; pb.rotation_quaternion = ch['rot']; pb.scale = ch['scale']
+        bpy.context.view_layer.update()
+        if P.get('fix_legs'):
+            legs = {k: {kk: (tuple(vv) if isinstance(vv, list) else vv) for kk, vv in v.items()} for k, v in P['fix_legs'].items()}
+            for lg in list(legs):   # the legs being re-solved start from rest, so the old (impossible) knee plane is dropped
+                for i in (1, 2, 3): rig.pose.bones[f'leg_{lg}_{i:02d}'].rotation_quaternion = (1, 0, 0, 0)
+            bpy.context.view_layer.update()
+            for lg in ('fl', 'fr', 'hl', 'hr'):
+                legs.setdefault(lg, {'plant': 0.0})
+            poser.solve_legs(legs)
+        bpy.context.view_layer.update()
+        return
     spec = dict(P.get('spec', {}))
     if 'body' in spec: spec['body'] = tuple(spec['body'])
     if 'neck' in spec: spec['neck'] = tuple(spec['neck'])
@@ -159,7 +179,7 @@ old = bpy.data.actions.get('review.poses')
 if old: bpy.data.actions.remove(old)
 act = bpy.data.actions.new('review.poses'); act.use_fake_user = True
 rig.animation_data.action = act
-POSES = ['rest', 'crouch', 'leap', 'landing', 'head_left_up', 'tail_side_up', 'foreleg_step', 'breath_in']
+POSES = CFG.get('pose_order', ['rest', 'crouch', 'leap', 'landing', 'head_left_up', 'tail_side_up', 'foreleg_step', 'breath_in'])
 store = []
 for i, nm in enumerate(POSES):
     pose(nm)
