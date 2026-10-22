@@ -6,6 +6,8 @@ Reads OUT/work/flags_sheet.json and OUT/work/flags_sig.json written by defaudit.
 import json, sys
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
+import os
+BUILD = os.environ.get('AUD_BUILD', 'B-j6jh')   # B-sntv: the re-skin audit labels its own build
 
 OUT = Path(sys.argv[1])
 CAMS = ['left', 'right', 'front', 'back', 'top', 'underside', 'low34_front_left', 'low34_rear_left']
@@ -43,7 +45,7 @@ for f in ('flags_sheet.json', 'flags_sig.json'):
 for pose in POSES:
     ps = [OUT / 'poses' / pose / f'{c}_A.png' for c in CAMS]
     if all(p.exists() for p in ps):
-        t = f'Luceras B-j6jh  {pose}' + (f' ({SIGNOTE[pose]}, sig.horns-first-descent frame {pose[-2:]})' if pose in SIGNOTE else ' (review.poses)') + '  render A, look-dev clay'
+        t = f'Luceras {BUILD}  {pose}' + (f' ({SIGNOTE[pose]}, sig.horns-first-descent frame {pose[-2:]})' if pose in SIGNOTE else ' (review.poses)') + '  render A, look-dev clay'
         sheet(ps, CAMS, t, OUT / 'contact' / f'{pose}_A_contact.png')
 # crop sheets (A, B, C side by side per region) for the crop poses
 for pose in ('crouch', 'sig_f08'):
@@ -52,7 +54,7 @@ for pose in ('crouch', 'sig_f08'):
     regions = sorted({p.stem.rsplit('_', 1)[0] for p in d.glob('*_A.png')})
     for kind in 'ABC':
         ps = [d / f'{r}_{kind}.png' for r in regions]
-        sheet(ps, regions, f'Luceras B-j6jh  {pose} close crops, render {kind}', OUT / 'contact' / f'{pose}_crops_{kind}_contact.png', cols=5, cell=560)
+        sheet(ps, regions, f'Luceras {BUILD}  {pose} close crops, render {kind}', OUT / 'contact' / f'{pose}_crops_{kind}_contact.png', cols=5, cell=560)
 
 # flags.json
 DEF = {
@@ -81,7 +83,7 @@ for pose in POSES:
 poses_out = {}
 for k, v in flags.items():
     v = dict(v); v.pop('render_s', None); poses_out[k] = v
-(OUT / 'flags.json').write_text(json.dumps(dict(build='B-j6jh', definitions=DEF, summary=summary, poses=poses_out), indent=1))
+(OUT / 'flags.json').write_text(json.dumps(dict(build=BUILD, definitions=DEF, summary=summary, poses=poses_out), indent=1))
 
 # timing
 tot = {k: sum(v.get('render_s', {}).values()) for k, v in flags.items()}
@@ -89,7 +91,7 @@ tot = {k: sum(v.get('render_s', {}).values()) for k, v in flags.items()}
                                                                 per_pose_wall_s={k: v.get('pose_s') for k, v in flags.items()}), indent=1))
 
 # index.md
-L = ['# Luceras deformation audit, B-j6jh pass 1', '',
+L = [f'# Luceras deformation audit, {BUILD}', '',
      'Render only: the pass 5 rig (`luceras-tailflight/pass5/rig.blend`, action `review.poses`) and its clips '
      '(`pass5/work/clips.blend`, action `sig.horns-first-descent`) were opened read-only; nothing was saved.', '',
      'Sculpt only (luceras_blockout with eyes, horns, claws, whiskers), clay; no fur, no game mesh, no plume stand-in.', '',

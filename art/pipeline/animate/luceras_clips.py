@@ -181,6 +181,7 @@ HIND_STREAM = (94.5, -54.4, 51.6)    # blockout pose_leap: hind legs extended ba
 FORE_TUCK = (62.0, -112.0, 78.0)     # forelegs folded back under the chest (tighter than the blockout leap pose)
 HIND_GATHER = (-43.0, -5.7, -22.9)   # blockout pose_landing: hind legs swung forward under the body
 FORE_REACH = (-28.0, 22.0, -12.0)    # forelegs reaching down and forward to land
+FORE_DIVE = (75.0, -35.0, 25.0)       # B-sntv: forelegs swept back along the chest for the dive, clear of the head and horns
 
 SIG_DEFAULTS = {
     # timing (ms)
@@ -220,6 +221,12 @@ SIG_DEFAULTS = {
                                   # back of the upper arm stood 30 to 45 mm proud of the chest wall: the bony ridge Nick circled (D-bzfr).
                                   # 0.6 halves the splay (elbow 0.086 -> 0.060 m out); 1.0 drives the elbow into the chest. Ramps in from
                                   # frame 0 to the crouch and out with the fore plant at takeoff, so the rest of the clip is unchanged.
+    "dive_fore_sweep": 0.0,       # B-sntv: 0..1 blend of the tucked forelegs toward FORE_DIVE from just before the apex to the dive,
+                                  # held through the hit, so the curled head and horns do not pass into the forelegs (sig f29)
+    "dive_fore_pose": FORE_DIVE,
+    "dive_fore_lead_ms": 40.0,
+    "fore_tuck_abduct_deg": 0.0,  # B-sntv: the tucked forelegs swing this far out from the chest wall (in with the tuck,
+                                  # out with the reach), so the folded forearms ride beside the ribs instead of in them    # B-sntv: the sweep starts this long before the apex and ends at the dive start
     "leg_reach_window_m": 0.30,   # pass 1-2 only (height window; it fired inside two frames as the body fell). Unused.
     "fore_reach_ms": 150.0,       # B-378v pass 3: forelegs swing from tucked to reaching over this time ...
     "hind_reach_ms": 200.0,       # ... and the hind legs from trailing to gathered under the body over this time,
@@ -294,7 +301,7 @@ def make_sig(params=None, rest_center_z=0.48):
     applies linearly between startMs and endMs (the review render applies the same).
     """
     P = dict(SIG_DEFAULTS, **(params or {}))
-    for k in ("dive_neck_deg",):
+    for k in ("dive_neck_deg", "dive_fore_pose"):
         P[k] = tuple(P[k])
     T = sig_times(P)
     for k in ("takeoff", "hit", "fore_land", "hind_land"):
@@ -437,19 +444,22 @@ def make_sig(params=None, rest_center_z=0.48):
             return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in HIND_GATHER)}
         fore_off = T["fore_off"]
         land = T["fore_land"]
+        s0 = T["apex"] - P["dive_fore_lead_ms"]
+        sweep = P["dive_fore_sweep"] * ease("smooth", (t - s0) / max(1.0, T["dive"] - s0))
+        tuck_pose = tuple(a + (b - a) * sweep for a, b in zip(FORE_TUCK, P["dive_fore_pose"]))
         tuck = P["fore_crouch_elbow_tuck"] * ease("smooth", t / T["crouch"])   # B-bafy: elbows stay in line, not splayed
         if t <= fore_off:
             return {"plant": 1.0, "roll": 18.0 * ease("in", (t - T["crouch"]) / (fore_off - T["crouch"])) if t > T["crouch"] else 0.0, "fk": (0, 0, 0), "tuck": tuck}
         if t < T["impact"]:
             u = ease("out", (t - fore_off) / 150.0)
-            fk = tuple(a * u for a in FORE_TUCK)
+            fk = tuple(a * u for a in tuck_pose)
             w = max(0.0, 1 - (t - fore_off) / 60.0)
-            return {"plant": w, "roll": 18.0, "fk": fk, "tuck": tuck * w}
+            return {"plant": w, "roll": 18.0, "fk": fk, "tuck": tuck * w, "abduct": P["fore_tuck_abduct_deg"] * u}
         if t < land:
             u = reach_w(t, land)
-            fk = tuple(a + (b - a) * u for a, b in zip(FORE_TUCK, FORE_REACH))
+            fk = tuple(a + (b - a) * u for a, b in zip(tuck_pose, FORE_REACH))
             w = ease("smooth", (t - (land - P["fore_plant_blend_ms"])) / P["fore_plant_blend_ms"])   # pass 3: smooth, was "in" over 80 ms
-            return {"plant": w, "roll": 0.0, "fk": fk}
+            return {"plant": w, "roll": 0.0, "fk": fk, "abduct": P["fore_tuck_abduct_deg"] * (1 - u)}
         u = ease("smooth", (t - land) / 220.0)
         return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in FORE_REACH)}
 

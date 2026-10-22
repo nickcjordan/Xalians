@@ -141,6 +141,8 @@ class Poser:
             spec = legs.get(leg, {'plant': 1.0})
             fk = spec.get('fk', (0, 0, 0))
             for nm, ang in zip(L['names'], fk): self.rot(nm, X, ang)
+            ab = spec.get('abduct', 0.0)   # B-sntv: swing the limb out from the body wall (deg, positive = outward)
+            if ab: self.rot(L['names'][0], Vector((0, 1, 0)), (-ab if leg[1] == 'l' else ab))
         self.vl.update()
         for leg, L in self.legs.items():
             spec = legs.get(leg, {'plant': 1.0})
@@ -337,8 +339,8 @@ def measure(rig, poser, clips, specs_all):
             v6 = pbn['tail_06'].tail - pbn['tail_01'].head
             rec['tail_elev_deg'] = math.degrees(math.atan2(v6.z, v6.y))
             # correctives
-            kb = body.data.shape_keys.key_blocks
-            rec['correctives'] = {k.name: round(float(k.value), 4) for k in kb[1:]}
+            kb = body.data.shape_keys.key_blocks if body.data.shape_keys else []   # B-sntv: the re-skin may carry no keys
+            rec['correctives'] = {k.name: round(float(k.value), 4) for k in list(kb)[1:]}
             # claws rigid
             cm = 0.0
             for c in claws:
