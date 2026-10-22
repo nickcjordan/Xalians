@@ -357,7 +357,10 @@ def bone_transforms(joints, pose=None, scales=None, root_translate=(0, 0, 0), bo
     out, rigid = {}, {}
     for b, parent, _, _ in bones:
         p = segs[b][0]
-        Rb = euler_matrix(*pose.get(b, (0, 0, 0)))
+        if b.startswith('glute.') and b not in pose and f'thigh.{b[-1]}' in rigid:
+            Rb = helper_rotation(rigid[parent].T@rigid[f'thigh.{b[-1]}'], GLUTE_SHARE)
+        else:
+            Rb = euler_matrix(*pose.get(b, (0, 0, 0)))
         lin = Rb
         s = scales.get(b, 1.0)
         if s != 1.0:
@@ -490,7 +493,17 @@ def _anim_bones():
     for t in TAILS:
         for k in range(1, TAIL_BONES+1):
             out.append((f'tail_{t}{k}', 'tail_root' if k == 1 else f'tail_{t}{k-1}', f'tail_{t}_j{k-1}', f'tail_{t}_j{k}'))
+    # pass 6: glute helpers (pelvis children at the hip joint, pointing back into the buttock). Not posed by hand:
+    # bone_transforms turns each one by half its thigh's rotation relative to the pelvis, so the buttock stretches
+    # over the flexing femur instead of staying with the pelvis (standard for hips that flex a lot). Appended last
+    # so older rigs' weight indices stay valid.
+    for s in ('L', 'R'):
+        out.append((f'glute.{s}', 'pelvis', f'hip.{s}', f'glute_tip.{s}'))
     return out
+
+
+TAIL_BASE_ABOVE_HIP = .045     # rig metres
+GLUTE_SHARE = .5          # a glute helper turns this share of its thigh's rotation relative to the pelvis
 
 
 ANIM_BONES = _anim_bones()
@@ -587,10 +600,68 @@ def akinza_arm(skin, j):
     return out
 
 
-def derive_anim_joints(skin, edges, claws=None, mouth_z=.54):
+HIP_ABOVE_CROTCH = .060    # rig metres: a hip joint sits about 6 cm above the crotch at this leg length (diagnosis 1)
+KNEE_PIT_TOL = .002        # rig metres: the knee pit band is where the back edge is within this of its minimum
+
+
+def akinza_legs(skin, j, s, off):
+    """Pass 6: hip, knee and glute joints re-derived from anatomy on the sculpt (diagnosis 2026-10-21, section 1).
+    Work in rig metres (x' = s*(x-off)). The knee goes to the sculpt's knee: the height is the bottom of the knee
+    pit band (the narrowest stretch at the back of the leg, between z .30 and .45), at mid-depth of the leg there,
+    and on the straight hip-to-ankle line in front view (the sculpt's leg kinks 2.7 cm inward there, and the old
+    knee, the break of a two-line fit to the centreline, sat 4 to 5 cm low in the middle of a sideways jog). The
+    hip is raised to HIP_ABOVE_CROTCH over the crotch; the ankle stays (it sits on the ankle crease). Each glute
+    helper runs from the hip joint back into the buttock. Measures go in _meta.legs."""
+    off = np.asarray(off, float)
+    P = s*(skin-off)
+    crotch = s*(j['_meta']['crotchZ']-off[2])
+    leg = (P[:, 0] < -.015) & (P[:, 0] > -.30) & (P[:, 1] < s*(.125-off[1]))
+    zs = np.arange(.28, .455, .005)
+    front, back = [], []
+    for z in zs:
+        q = P[leg & (np.abs(P[:, 2]-z) < .003)]
+        front.append(float(q[:, 1].min()))
+        back.append(float(q[:, 1].max()))
+    front, back = np.array(front), np.array(back)
+    inband = (zs >= .30) & (back <= back[(zs >= .30)].min()+KNEE_PIT_TOL)
+    knee_z = float(zs[inband].min())
+    i = int(np.argmin(np.abs(zs-knee_z)))
+    knee_y = (front[i]+back[i])/2
+    hip = s*(np.asarray(j['hip.R'], float)-off)
+    hip[2] = crotch+HIP_ABOVE_CROTCH
+    ankle = s*(np.asarray(j['ankle.R'], float)-off)
+    t = (hip[2]-knee_z)/(hip[2]-ankle[2])
+    knee = np.array([hip[0]+t*(ankle[0]-hip[0]), knee_y, knee_z])
+    old_knee = s*(np.asarray(j['knee.R'], float)-off)
+    # the ankle crease: the front edge's largest step between the paw roof and the shin, for the record
+    az = np.arange(.03, .14, .005)
+    af = []
+    for z in az:
+        q = P[leg & (np.abs(P[:, 2]-z) < .003)]
+        af.append(float(q[:, 1].min()))
+    crease = float(az[int(np.argmax(np.diff(af)))+1])
+    glute_tip = hip+np.array([0., .085, -.025])
+    out = dict(j)
+    to_src = lambda m: list(map(float, np.asarray(m)/s+off))
+    out['hip.R'], out['knee.R'], out['glute_tip.R'] = to_src(hip), to_src(knee), to_src(glute_tip)
+    for nm in ('hip', 'knee', 'glute_tip'):
+        x, y, z = out[nm+'.R']
+        out[nm+'.L'] = [-x, y, z]
+    out['_meta'] = dict(j['_meta'], kneeZ=float(knee[2]/s+off[2]), legs=dict(
+        rule='akinza_legs (pass 6)', units='rig metres', crotchZ=crotch, hip=hip.tolist(), knee=knee.tolist(),
+        oldKnee=old_knee.tolist(), kneePitBand=[float(zs[inband].min()), float(zs[inband].max())],
+        kneeDepth=[float(front[i]), float(back[i])], ankle=ankle.tolist(), ankleCreaseFrontZ=crease,
+        thigh=float(np.linalg.norm(knee-hip)), shin=float(np.linalg.norm(ankle-knee))))
+    return out
+
+
+def derive_anim_joints(skin, edges, claws=None, mouth_z=.54, height_m=1.475):
     """Joints of ANIM_BONES from the shaved skin (source units, before re-origin and scale). The surface
-    fields the weights need (tip vertices, junction levels, joint arc positions) go in _meta.surface."""
+    fields the weights need (tip vertices, junction levels, joint arc positions) go in _meta.surface.
+    height_m: the figure's height in metres (anim_transform), for the legs' anatomical measures."""
     j = akinza_arm(skin, derive_joints(skin, claws))
+    s_m, off_m = anim_transform(j, height_m)
+    j = akinza_legs(skin, j, s_m, off_m)
     G = edge_graph(skin, edges)
     surf = {'ears': {}, 'tails': {}}
     # ---- ears: geodesic rings from each tip; the junction is where the thin blade thickens into the skull
@@ -659,7 +730,11 @@ def derive_anim_joints(skin, edges, claws=None, mouth_z=.54):
         surf['tails'][t] = dict(tip=tip, junction=Dj, joints=[0.]+[float(c) for c in cuts[:-1]]+[Dj])
     fork = np.mean(bases, 0)
     j['tail_fork'] = list(map(float, fork))
-    j['tail_base'] = list(map(float, (fork+np.array(j['pelvis']))/2))
+    # pass 6: the tail base is the sacrum's continuation, a pelvis child inside the rump at the top of the pelvis,
+    # behind and above the hip joints (TAIL_BASE_ABOVE_HIP over the pelvis joint, which sits at the old hip height,
+    # 55% of the way back from the pelvis joint to the fork)
+    pel = np.array(j['pelvis'], float)
+    j['tail_base'] = [float(fork[0]/2), float(pel[1]+.55*(fork[1]-pel[1])), float(pel[2]+TAIL_BASE_ABOVE_HIP/s_m)]
     j['root'] = [0., float(j['pelvis'][1]), FLOOR_Z]
     j['root_tip'] = [0., float(j['pelvis'][1])-.15, FLOOR_Z]
     j['_meta'] = dict(j['_meta'], skeleton='ANIM_BONES', surface=surf)
@@ -885,6 +960,70 @@ def slerp_pose(pose, f):
     return out
 
 
+def helper_rotation(R, f):
+    """The rotation turning the share f of R's angle about R's own axis."""
+    q = quat_from_matrix(R)
+    if q[0] < 0:
+        q = -q
+    ang = 2*math.acos(max(-1., min(1., q[0])))
+    if ang < 1e-9:
+        return np.eye(3)
+    ax = q[1:]/np.linalg.norm(q[1:])
+    h = f*ang/2
+    return _qmat(np.r_[math.cos(h), ax*math.sin(h)])
+
+
+def helper_pose(joints, pose, bones=None):
+    """The pose with every helper bone's rotation written out explicitly (what bone_transforms computes for a
+    helper missing from the pose), for consumers that set bone rotations directly, such as the Blender armature."""
+    bones = bones or ANIM_BONES
+    names = [b[0] for b in bones]
+    out = dict(pose)
+    if not any(n.startswith('glute.') for n in names):
+        return out
+    T = bone_transforms(joints, {k: v for k, v in pose.items() if not k.startswith('glute.')}, bones=bones)
+    for sd in ('L', 'R'):
+        out[f'glute.{sd}'] = euler_from_matrix(helper_rotation(T['pelvis'][0].T@T[f'thigh.{sd}'][0], GLUTE_SHARE))
+    return out
+
+
+def leg_forward(joints, sd):
+    """The foot's forward direction at rest (ankle to toe, level): the direction each knee's hinge plane faces."""
+    d = np.subtract(joints[f'toe.{sd}'], joints[f'ankle.{sd}']).astype(float)
+    d[2] = 0
+    return d/np.linalg.norm(d)
+
+
+def _frame(x, y):
+    x = np.asarray(x, float)/np.linalg.norm(x)
+    y = np.asarray(y, float)-x*(x@np.asarray(y, float))
+    y /= np.linalg.norm(y)
+    return np.stack([x, y, np.cross(x, y)], 1)
+
+
+def hinged_leg(joints, pose, sd, d1, d2, pole, bones=None):
+    """Thigh and shin of one leg set to the world directions d1 and d2 with the knee a hinge (pass 6): the
+    thigh's twist is solved so its kneecap (the rest forward direction, square to the thigh) faces `pole`, and
+    the shin turns from the thigh only about the hinge axis, so the leg folds in one plane. pole must lie in the
+    plane of d1 and d2 (the IK's bend direction, or d1-d2). The foot keeps its rest world orientation.
+    Returns the pose with thigh, shin and foot of that side replaced."""
+    bones = bones or ANIM_BONES
+    pose = dict(pose)
+    for b in (f'thigh.{sd}', f'shin.{sd}', f'foot.{sd}'):
+        pose.pop(b, None)
+    Rp = bone_transforms(joints, pose, bones=bones)[f'hip.{sd}'][0]
+    fwd = leg_forward(joints, sd)
+    u1 = bone_axis(joints, f'thigh.{sd}', bones)
+    u2 = bone_axis(joints, f'shin.{sd}', bones)
+    pole = np.asarray(pole, float)
+    Rt = _frame(d1, pole)@_frame(u1, fwd).T
+    Rs = _frame(d2, pole)@_frame(u2, fwd).T
+    pose[f'thigh.{sd}'] = euler_from_matrix(Rp.T@Rt)
+    pose[f'shin.{sd}'] = euler_from_matrix(Rt.T@Rs)
+    pose[f'foot.{sd}'] = euler_from_matrix(Rs.T)
+    return pose
+
+
 def lift_vec(lift):
     """A pose's root move: a scalar is a lift straight up (the re-grounding of the board poses), a 3-vector a
     translation of the whole body (the planted-feet crouch lowers and moves the hips back over the feet)."""
@@ -895,7 +1034,10 @@ def plant_legs(joints, pose, lift, feet, poles, bones=None):
     """Two-bone IK that keeps each foot where it stands: thigh and shin turned so the ankle reaches feet[side]
     (world, after the root move `lift`), the knee bending toward poles[side] (a world direction; only its part
     across the hip-to-ankle line counts), and the foot keeping its rest world orientation, flat where it stood.
-    Returns the pose with thigh, shin and foot of both sides replaced."""
+    Pass 6: each knee is a hinge in a fixed plane, the plane through the hip and the ankle that faces poles[side]
+    (the foot's forward direction, the same for the whole motion; never the sculpt's rest kink), and the thigh's
+    twist is solved so the kneecap faces the pole (hinged_leg). Returns the pose with thigh, shin and foot of both
+    sides replaced."""
     bones = bones or ANIM_BONES
     pose = dict(pose)
     for sd in ('L', 'R'):
@@ -916,9 +1058,7 @@ def plant_legs(joints, pose, lift, feet, poles, bones=None):
         ca = max(-1., min(1., (l1*l1+D*D-l2*l2)/(2*l1*D)))
         K = H+l1*(ca*u+math.sqrt(1-ca*ca)*pp)
         A2 = H+u*D
-        pose = pose_from_directions(joints, {f'thigh.{sd}': K-H, f'shin.{sd}': A2-K}, base=pose, bones=bones)
-        Rs = bone_transforms(joints, pose, bones=bones)[f'shin.{sd}'][0]
-        pose[f'foot.{sd}'] = euler_from_matrix(Rs.T)
+        pose = hinged_leg(joints, pose, sd, K-H, A2-K, pp, bones=bones)
     return pose
 
 

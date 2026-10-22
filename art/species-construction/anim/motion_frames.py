@@ -44,6 +44,7 @@ p.add_argument('--frames', type=int, default=24)
 p.add_argument('--size', type=int, default=720)
 p.add_argument('--samples', type=int, default=16)
 p.add_argument('--diag', action='store_true')
+p.add_argument('--box', default=None, help='fixed framing box lo,hi (6 numbers, source units), e.g. an earlier clip's, so before and after frames line up')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 t0 = time.time()
 TARGET = {'ears': 'ears_flat_back', 'knee': 'night_stalk', 'crouch': 'night_stalk'}[a.motion]
@@ -80,8 +81,11 @@ def crouch_at(e):
     knees' bend direction turned from rest's toward the crouch's, the legs solved by IK so the feet stay put
     (pose_board.crouch_at, from the recipe stored in poses.json)."""
     c = CROUCH
-    poles = {sd: (1-e)*np.array(c['polesRest'][sd])+e*np.array(c['polesCrouch'][sd]) for sd in 'LR'}
-    poles = {sd: v/np.linalg.norm(v) for sd, v in poles.items()}
+    if 'poles' in c:          # pass 6: fixed hinge planes facing the feet's forward direction
+        poles = c['poles']
+    else:
+        poles = {sd: (1-e)*np.array(c['polesRest'][sd])+e*np.array(c['polesCrouch'][sd]) for sd in 'LR'}
+        poles = {sd: v/np.linalg.norm(v) for sd, v in poles.items()}
     lift = e*np.array(c['lift'])
     return rc.plant_legs(J, partial(c['body'], e), lift, c['feet'], poles, bones=rc.ANIM_BONES), lift
 
@@ -181,6 +185,9 @@ else:
     part = share([f'{b}.L' for b in ('thigh', 'shin', 'foot', 'hip')]) > .5
 lo = np.min([P[part].min(0) for _, _, P, _ in poses], 0)-.04
 hi = np.max([P[part].max(0) for _, _, P, _ in poses], 0)+.04
+if a.box:
+    bx = np.array([float(v) for v in a.box.split(',')])
+    lo, hi = bx[:3], bx[3:]
 box = (Vector(lo), Vector(hi))
 center = (lo+hi)/2
 span = float((hi-lo).max())
@@ -233,7 +240,7 @@ def apply(i):
     bpy.context.view_layer.update()
 
 
-log = {'motion': a.motion, 'look': a.look, 'target': TARGET, 'framesOut': a.frames, 'loopFrames': 2*a.frames,
+log = {'box': [list(map(float, lo)), list(map(float, hi))], 'motion': a.motion, 'look': a.look, 'target': TARGET, 'framesOut': a.frames, 'loopFrames': 2*a.frames,
        'fps': 24, 'views': views, 'size': a.size, 'samples': a.samples, 'renderSeconds': {}}
 for v in views:
     (a.out/v).mkdir(parents=True, exist_ok=True)

@@ -86,7 +86,18 @@ def unit(v):
 
 
 def directions(base, targets):
-    return rc.pose_from_directions(J, {k: unit(v) for k, v in targets.items()}, base=base, bones=B)
+    """Pose from bone directions. Pass 6: a leg given by thigh and shin directions is set with rc.hinged_leg (the
+    knee a hinge, the kneecap facing the bend), then its foot direction, if any, is applied."""
+    targets = {k: unit(v) for k, v in targets.items()}
+    pose = dict(base)
+    for sd in 'LR':
+        th, sh = targets.pop(f'thigh.{sd}', None), targets.pop(f'shin.{sd}', None)
+        if th is None:
+            continue
+        bend = th-sh
+        pole = bend if np.linalg.norm(np.cross(th, sh)) > .05 else rc.leg_forward(J, sd)
+        pose = rc.hinged_leg(J, pose, sd, th, sh, pole, bones=B)
+    return rc.pose_from_directions(J, targets, base=pose, bones=B)
 
 
 def tails(root, per):
@@ -155,54 +166,42 @@ crouch = directions(crouch, {'thigh.L': (.16, -.76, -.63), 'shin.L': (.05, .64, 
 # The F36 crouch above (legs set by direction, then re-grounded, so the feet slid forward) sets the targets:
 # where its hips sat over its feet and how its knees pointed. The feet now stay where they stand at rest and a
 # two-bone IK (rig_core.plant_legs) bends the legs under the moved hips.
-_P, _, _ = rc.posed_skin(rest, idx, w, J, crouch, bones=B)
-_T = rc.bone_transforms(J, crouch, bones=B, root_translate=(0, 0, -float(_P[:, 2].min())))
-
-
-def _pj(T, bone, jn):
-    R_, t_ = T[bone]
-    return R_@np.array(J[jn])+t_
-
-
-_rest_T = rc.bone_transforms(J, {}, bones=B)
-_old_feet = np.mean([_pj(_T, f'shin.{sd}', f'ankle.{sd}') for sd in 'LR'], 0)
-_rest_feet = np.mean([np.array(J[f'ankle.{sd}']) for sd in 'LR'], 0)
-CROUCH_LIFT = (_pj(_T, 'pelvis', 'pelvis')-_old_feet)-(np.array(J['pelvis'])-_rest_feet)
-CROUCH_LIFT[0] = 0.
+# pass 6: the hips' move over the feet is held at pass 5's (Nick judged that crouch's depth on F36); it no longer
+# comes from re-grounding the F36 direction crouch, whose result changes with the leg bone lengths
+CROUCH_LIFT = np.array([0., .11536, -.14102])
 FEET = {sd: list(map(float, J[f'ankle.{sd}'])) for sd in 'LR'}
-
-
-def _knee_dir(H, K, A):
-    u = unit(A-H)
-    v = (K-H)-u*((K-H)@u)
-    return unit(v)
-
-
-POLES_CROUCH = {sd: list(map(float, _knee_dir(_pj(_T, f'hip.{sd}', f'hip.{sd}'), _pj(_T, f'thigh.{sd}', f'knee.{sd}'),
-                                              _pj(_T, f'shin.{sd}', f'ankle.{sd}')))) for sd in 'LR'}
-POLES_REST = {sd: list(map(float, _knee_dir(*(np.array(J[f'{j}.{sd}']) for j in ('hip', 'knee', 'ankle'))))) for sd in 'LR'}
-# the tail root is now a short sacral segment that moves with the pelvis: it turns only a little (the base
-# droops with the hips), and each tail's first bone, pivoting where that tail leaves the body, takes the rest of
-# the F36 tail drop, so every tail keeps the F36 crouch's direction and curve
-TAIL_ROOT_CROUCH = [-12., 0., 4.]
-_Rold = rc.euler_matrix(*crouch['tail_root'])
-_Rnew = rc.euler_matrix(*TAIL_ROOT_CROUCH)
-body = {k: v for k, v in crouch.items() if rc.base_of(k) not in ('thigh', 'shin', 'foot')}
+# pass 6: each knee is a hinge in a fixed plane facing the foot's forward direction, for the whole motion (the
+# rest pole came from the sculpt's inward knee kink and folded the knees sideways toward the midline)
+POLES = {sd: list(map(float, rc.leg_forward(J, sd))) for sd in 'LR'}
+# pass 6: the tail is the sacrum's continuation. tail_root moves with the pelvis (a few degrees), and the crouch's
+# tail drop is spread over each tail's first three bones (about 25/20/15 degrees), so the base curves out of the
+# rump instead of hinging at the root; F36's spread between the tails rides on bones 1 and 2, and its lateral swing
+# and tip curl stay on the outer bones
+TAIL_ROOT_CROUCH = [-6., 0., 6.]
+F36_SPREAD = {'a': -14., 'b': -2., 'c': 12.}
+F36_OUTER = {'a': [-6., 0., 6.], 'b': [-4., 0., 6.], 'c': [-2., 0., 6.]}
+TAIL_DROP = (25., 20., 15.)
+body = {k: v for k, v in crouch.items() if rc.base_of(k) not in ('thigh', 'shin', 'foot') and not k.startswith('tail')}
 body['tail_root'] = TAIL_ROOT_CROUCH
 for t in rc.TAILS:
-    body[f'tail_{t}1'] = rc.euler_from_matrix(_Rnew.T@_Rold@rc.euler_matrix(*crouch[f'tail_{t}1']))
+    sp = F36_SPREAD[t]
+    body[f'tail_{t}1'] = [-TAIL_DROP[0]+.5*sp, 0., 8.]
+    body[f'tail_{t}2'] = [-TAIL_DROP[1]+.25*sp, 0., 6.]
+    body[f'tail_{t}3'] = [-TAIL_DROP[2], 0., 6.]
+    for k in (4, 5):
+        body[f'tail_{t}{k}'] = F36_OUTER[t]
 CROUCH_BODY = body
-crouch = rc.plant_legs(J, body, CROUCH_LIFT, FEET, POLES_CROUCH, bones=B)
+crouch = rc.plant_legs(J, body, CROUCH_LIFT, FEET, POLES, bones=B)
 POSES['night_stalk'] = crouch
 LIFTS = {'night_stalk': CROUCH_LIFT}
 
 
 def crouch_at(e):
     """The planted-feet crouch at eased share e (0 rest, 1 Night Stalk): every body bone slerped from rest by e,
-    the hips moved by e of the crouch's root move, the knees' bend direction turned from rest's toward the
-    crouch's, the legs solved so the feet stay put."""
-    poles = {sd: list(unit((1-e)*np.array(POLES_REST[sd])+e*np.array(POLES_CROUCH[sd]))) for sd in 'LR'}
-    return rc.plant_legs(J, rc.slerp_pose(CROUCH_BODY, e), e*CROUCH_LIFT, FEET, poles, bones=B), e*CROUCH_LIFT
+    the hips moved by e of the crouch's root move, the legs solved with the fixed hinge planes so the feet stay put."""
+    return rc.plant_legs(J, rc.slerp_pose(CROUCH_BODY, e), e*CROUCH_LIFT, FEET, POLES, bones=B), e*CROUCH_LIFT
+
+
 POSES['ears_flat_back'] = dict(EARS_BACK)
 POSES['tails_drawn_in'] = tails([-34, 0, 40], {'a': [[-16, 0, 14], [-6, 0, 14]], 'b': [[-6, 0, 16], [-4, 0, 14]],
                                                'c': [[8, 0, 16], [0, 0, 12]]})
@@ -235,10 +234,8 @@ ALL = {**POSES, **SCULPT}
 # group: (name, sculpt pose, driver bone base, mask joint base, inner/outer mask radius m, bones the mask
 # may touch (by weight), lowest rise start degrees)
 GROUPS = [
-    ('knee_step', 'legs_step', 'shin', 'knee', (.06, .14), ['thigh', 'shin'], 15),
-    ('knee_bend', 'night_stalk', 'shin', 'knee', (.06, .14), ['thigh', 'shin'], 15),
-    ('knee_cap', 'night_stalk', 'shin', 'knee', (0, 0), ['thigh', 'shin'], 15),
-    ('hip_flex', 'night_stalk', 'thigh', 'hip', (.08, .17), ['pelvis', 'hip', 'thigh', 'spine'], 30),
+    # pass 6: every hip and knee corrective (knee_step, knee_bend, knee_cap, hip_flex) is deleted; the legs are judged
+    # bare on the new joints and weights first (diagnosis: the keys only moved the weights' and joints' symptoms)
     ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
     ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),
@@ -595,10 +592,10 @@ for k in keys:
         mir[k['name'][:-2]] = float(np.abs(dl[pos][ok]-dm[ok]).max())
 weights['corrective_mirror_max_m'] = mir
 out_poses['night_stalk']['crouch'] = dict(
-    rule='crouch_at(e): body bones slerped from rest by e, root moved by e*lift, knee bend direction from polesRest '
-         'toward polesCrouch, legs by rig_core.plant_legs to the feet',
+    rule='crouch_at(e): body bones slerped from rest by e, root moved by e*lift, legs by rig_core.plant_legs to the '
+         'feet with each knee hinged in the fixed plane facing poles[side] (the foot forward direction)',
     body={k: list(map(float, v)) for k, v in CROUCH_BODY.items()}, lift=list(map(float, CROUCH_LIFT)), feet=FEET,
-    polesRest=POLES_REST, polesCrouch=POLES_CROUCH)
+    poles=POLES)
 (a.rig/'poses.json').write_text(json.dumps(out_poses, indent=1))
 (a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks, earSwing=dict(L=ear_L)), indent=1))
 print(json.dumps(weights))

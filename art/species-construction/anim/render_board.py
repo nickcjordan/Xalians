@@ -181,6 +181,7 @@ print('rig built', round(time.time()-t0), flush=True)
 
 
 def set_pose(pose, lift):
+    pose = rc.helper_pose(J, pose)        # pass 6: the glute helpers' rotations (half the thigh's), set explicitly
     for name in rc.ANIM_NAMES:
         pb = rig.pose.bones[name]
         pb.rotation_mode = 'QUATERNION'
