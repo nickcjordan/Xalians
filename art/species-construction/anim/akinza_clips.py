@@ -20,15 +20,15 @@ the base along the approved swept-back direction, 40 degrees, and return), and t
 own phase and a lag down its chain, up and down as well as sideways. Every periodic term has a whole number of cycles
 in the loop, so the seam is exact.
 
-Night Stalk (45 frames, pass 2 timing from the blind critic): from idle frame 0, an anticipation over frames 1 to 4
-(an inhale and a slight lean back, the tails still swaying at the idle rate), the sink over frames 6 to 15 into the
-approved night_stalk pose (rig-p8b poses.json, held exactly: every body bone and the root move go from rest to their
-night_stalk value by an eased share per bone group; the torso pitch starts with the knee bend and leads it, the
-head's level-keeping turn lags a frame, the ears sweep from frame 4 and land at 11, the tails trail and arrive
-together, the idle layer eases to a stop), settled at frame 16 (`conceal`), a 21-frame hold (one slow breath across
-it and a twitch of the top tail's tip off the breath peak; frames 16, 36 and 37 are exactly night_stalk), then the
-recovery from frame 37 (`recover`): the knees lead, the lean holds to frame 39 and the spine straightens last with
-the ears, the idle layer easing back in on the clock that lands on idle frame 0 at frame 44.
+Night Stalk (45 frames, pass 3 timing from the second blind critic): from idle frame 0, an anticipation over frames
+0 to 3 (the chest rises on an inhale and the head tips up, the tails still swaying at the idle rate), the sink over
+frames 4 to 17 into the approved night_stalk pose (rig-p8b poses.json, held exactly: hips down and back, spine lean,
+head and knees on one eased share, which is the approved crouch clip's own path, easing into the bottom; the ears
+sweep over frames 6 to 14, the tails trail and arrive together, the idle layer eases to a stop), settled at frame 18
+(`conceal`), a 14-frame hold (one slow breath across it and a twitch of the top tail's tip off the breath peak;
+frames 18 and 31 are exactly night_stalk), then the recovery from frame 32 (`recover`): a slow start, the lean coming
+off with the knees, the ears 2 frames and the tails about 2 frames behind with a small overshoot, the idle layer
+easing back in on the clock that lands on idle frame 89 at frame 44, so the idle loop's frame 0 follows directly.
 """
 import json
 import math
