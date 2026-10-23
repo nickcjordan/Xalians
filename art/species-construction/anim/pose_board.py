@@ -211,15 +211,21 @@ for t, arc in TAIL_ARC.items():
             body[f'tail_{t}{k+1}'] = r
     print('tail', t, 'crouch elevations', tail_elevations(body, t).round(1).tolist(), flush=True)
 # pass 8 (Nick: "only the top tail moves with the squat and the other two just kind of hang limply... they should
-# either all move or all hang"). The top tail's crouch is close to its rest elevations pressed toward straight down
-# by one factor (k = .68: 90 + elevation scaled by k at every bone, within 6 degrees). The lower two tails now get
-# that same motion, each from its own rest angles, so the three keep their spacing (the fan closes evenly) and none
-# crosses: the drop ramps in over the first three bones (TAIL_RAMP shares of the fan factor's drop) and adds a
-# little toward the tip so the curve carries on to it. Their azimuths stay the pass 7 crouch's. Bones are aimed by
-# direction (minimal swing from rest), so the clip's slerp from rest moves each tail along one smooth path.
-# Reference: cat crouch and crouched walk, kangaroo crouch from behind (anim/ref/pass8): the base goes with the
-# pelvis and the whole tail lowers, the bend spread along it, no hinge at one joint.
-TAIL_RAMP = (.80, .95, 1., 1.05, 1.10)
+# either all move or all hang"). Reference: cat crouch and crouched walk, kangaroo crouch from behind
+# (anim/ref/pass8): the base goes with the pelvis and the whole tail lowers, the bend spread along it, no hinge at
+# one joint. Pass 8 fix (critic: the lower two tails only tilted as one stiff piece; from behind the three plumes
+# fused into one): each lower tail now changes shape like the top tail, which goes from its rest hump to an even
+# drooping arc (10 to 13 degrees a joint). TAIL_ARC_LOW is each lower tail's crouch as such an arc, bone
+# elevations in degrees root to tip: the middle tail parallel to the top one and 7 degrees under it (its rest bend
+# of 28 degrees deepens to 45), the lower tail at least 10 degrees under the middle one at every bone so the three
+# keep their order (its near-straight rest line, 2 degrees of bend, becomes a 32 degree arc). The lower tail's root
+# drops only 4 degrees, so its arc hangs from where it is and its tip stays 9 cm off the floor.
+# TAIL_FAN (degrees, root to tip, ramped): a sideways fan as they drop, on top of the pass 7 crouch azimuths. The
+# lower tail swings out from under the top one (seen from behind three-quarter it sat straight behind it); the
+# middle tail barely moves. Bones are aimed by direction (minimal swing from rest), so the clip's slerp from rest
+# moves each tail along one smooth path.
+TAIL_ARC_LOW = {'b': (-17., -28., -40., -52., -62.), 'c': (-40., -50., -55., -63., -72.)}
+TAIL_FAN = {'b': (-5., -10.), 'c': (-40., -10.)}
 # follow-through: the middle tail starts 1 frame and the lower tail 2 frames after the top tail (of the clip's 24
 # out-swing frames) and all arrive together, so they read as three live tails, not one rigid fan
 TAIL_LAG = {'tail_b': 1/24, 'tail_c': 2/24}
@@ -237,17 +243,16 @@ def tail_azimuths(pose, t):
 # rump and thigh skin; with the old tails the keys, and so all non-tail skin, are exactly pass 7's
 CROUCH_BODY_P7 = {k: list(v) for k, v in body.items()}
 _rest_el = {t: tail_elevations({}, t) for t in rc.TAILS}       # the lift does not change directions
-FAN_K = (90+tail_elevations(body, 'a')[0])/(90+_rest_el['a'][0])
 for t in ('b', 'c'):
-    el = np.radians(_rest_el[t]-(1-FAN_K)*(90+_rest_el[t])*np.array(TAIL_RAMP))
-    az = np.radians(tail_azimuths(body, t))
+    el = np.radians(np.array(TAIL_ARC_LOW[t]))
+    az = np.radians(tail_azimuths(body, t)+np.linspace(*TAIL_FAN[t], rc.TAIL_BONES))
     tg = {f'tail_{t}{k+1}': np.array([math.sin(az[k])*math.cos(el[k]), math.cos(az[k])*math.cos(el[k]), math.sin(el[k])])
           for k in range(rc.TAIL_BONES)}
     aimed = rc.pose_from_directions(J, tg, base={k: v for k, v in body.items() if not k.startswith(f'tail_{t}')}, bones=B)
     for k in range(1, rc.TAIL_BONES+1):
         body[f'tail_{t}{k}'] = list(map(float, aimed[f'tail_{t}{k}']))
-    print('tail', t, 'rest elevations', _rest_el[t].round(1).tolist(), 'crouch', tail_elevations(body, t).round(1).tolist(), flush=True)
-print('fan factor', round(float(FAN_K), 3), flush=True)
+    print('tail', t, 'rest elevations', _rest_el[t].round(1).tolist(), 'crouch', tail_elevations(body, t).round(1).tolist(),
+          'azimuths', tail_azimuths(body, t).round(0).tolist(), flush=True)
 CROUCH_BODY = body
 crouch = rc.plant_legs(J, body, CROUCH_LIFT, FEET, POLES, bones=B)
 POSES['night_stalk'] = crouch
