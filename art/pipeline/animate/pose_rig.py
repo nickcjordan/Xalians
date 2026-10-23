@@ -561,7 +561,8 @@ def render(clip_name, cam_name, size, mode='travel', step=1, engine='CYCLES', sa
 def do_encode():
     sc = bpy.context.scene
     for d in sorted((OUT / 'frames').iterdir()):
-        if not d.is_dir() or not d.name.endswith('_960_travel') and not d.name.endswith('_960_inplace'): continue
+        import re as _re   # B-sntv pass 9: any frame size (idle fur is 640 px), not only 960
+        if not d.is_dir() or not _re.search(r'_\d+_(travel|inplace)$', d.name): continue
         files = sorted(d.glob('*.png'))
         if not files: continue
         bpy.ops.wm.read_factory_settings(use_empty=True); sc = bpy.context.scene
@@ -584,7 +585,7 @@ def do_encode():
         sc.render.ffmpeg.constant_rate_factor = 'HIGH'; sc.render.ffmpeg.ffmpeg_preset = 'GOOD'
         sc.render.ffmpeg.gopsize = 15
         sc.view_settings.view_transform = 'Standard'
-        name = d.name.replace('_960_travel', '').replace('_960_inplace', '')
+        name = _re.sub(r'_960_(travel|inplace)$', '', d.name); name = _re.sub(r'_(\d+)_(travel|inplace)$', r'_\1', name)
         dst = OUT / 'video' / f'{name}.mp4'; dst.parent.mkdir(exist_ok=True)
         sc.render.filepath = str(dst)
         sc.render.use_file_extension = False
