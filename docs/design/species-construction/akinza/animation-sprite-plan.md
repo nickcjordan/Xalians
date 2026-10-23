@@ -60,3 +60,8 @@ The fur stage is closed (Nick, F32). Fur of record: `untracked/species-construct
 - Concealed: production, the game draws one shared concealed effect for every creature and the sprite carries only body motion; slice, motion only, nothing baked in.
 - Sprite cell height: production, one height per game shared by every species; slice, 192 px like Luceras.
 - Slice: idle (3 s loop) and Night Stalk (1.5 s), side facing.
+
+## Rig stage log
+- 2026-10-21: ears as a rigid whole-ear swing from the base approved (F36/F37).
+- 2026-10-22: crouch approved (Nick, F38: "Yes, that is much better... this is light years better"), rig-p7r; why the earlier passes failed is in crouch-retrospective.md.
+- 2026-10-23: all three tails move with the crouch approved (Nick, F39: "looks good, proceed"), rig-p8b. Rig stage done; rig of record anim/rig-p8b on surface fur-steps/s12-29c-legs3b. Next: step 3, the idle and Night Stalk clips (brief anim/clips-pass1-brief.md).
