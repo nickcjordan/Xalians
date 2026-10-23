@@ -87,7 +87,7 @@ def crouch_at(e):
         poles = {sd: (1-e)*np.array(c['polesRest'][sd])+e*np.array(c['polesCrouch'][sd]) for sd in 'LR'}
         poles = {sd: v/np.linalg.norm(v) for sd, v in poles.items()}
     lift = e*np.array(c['lift'])
-    return rc.plant_legs(J, partial(c['body'], e), lift, c['feet'], poles, bones=rc.ANIM_BONES), lift
+    return rc.plant_legs(J, rc.lagged_slerp_pose(c['body'], e, c.get('tailLag')), lift, c['feet'], poles, bones=rc.ANIM_BONES), lift
 
 
 bpy.ops.wm.open_mainfile(filepath=str(a.surface/'surface.blend'))

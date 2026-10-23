@@ -1059,6 +1059,21 @@ def slerp_pose(pose, f):
     return out
 
 
+def lagged_slerp_pose(pose, f, lags=None):
+    """slerp_pose with follow-through (pass 8): bones whose name starts with a key of lags (e.g. 'tail_b') start
+    later by that share of the move and still arrive with the rest. f is the eased share (.5-.5cos(pi u)) at
+    motion time u; a lagged bone takes the eased share at time (u-lag)/(1-lag), so f=0 and f=1 are unchanged."""
+    if not lags:
+        return slerp_pose(pose, f)
+    u = math.acos(max(-1., min(1., 1-2*f)))/math.pi
+    own = {k: v for k, v in pose.items() if not any(k.startswith(p) for p in lags)}
+    out = slerp_pose(own, f)
+    for p, lag in lags.items():
+        ul = min(1., max(0., (u-lag)/(1-lag)))
+        out.update(slerp_pose({k: v for k, v in pose.items() if k.startswith(p)}, .5-.5*math.cos(math.pi*ul)))
+    return out
+
+
 def helper_rotation(R, f):
     """The rotation turning the share f of R's angle about R's own axis."""
     q = quat_from_matrix(R)

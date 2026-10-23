@@ -210,6 +210,44 @@ for t, arc in TAIL_ARC.items():
             r[0] -= float(inc[k])
             body[f'tail_{t}{k+1}'] = r
     print('tail', t, 'crouch elevations', tail_elevations(body, t).round(1).tolist(), flush=True)
+# pass 8 (Nick: "only the top tail moves with the squat and the other two just kind of hang limply... they should
+# either all move or all hang"). The top tail's crouch is close to its rest elevations pressed toward straight down
+# by one factor (k = .68: 90 + elevation scaled by k at every bone, within 6 degrees). The lower two tails now get
+# that same motion, each from its own rest angles, so the three keep their spacing (the fan closes evenly) and none
+# crosses: the drop ramps in over the first three bones (TAIL_RAMP shares of the fan factor's drop) and adds a
+# little toward the tip so the curve carries on to it. Their azimuths stay the pass 7 crouch's. Bones are aimed by
+# direction (minimal swing from rest), so the clip's slerp from rest moves each tail along one smooth path.
+# Reference: cat crouch and crouched walk, kangaroo crouch from behind (anim/ref/pass8): the base goes with the
+# pelvis and the whole tail lowers, the bend spread along it, no hinge at one joint.
+TAIL_RAMP = (.80, .95, 1., 1.05, 1.10)
+# follow-through: the middle tail starts 1 frame and the lower tail 2 frames after the top tail (of the clip's 24
+# out-swing frames) and all arrive together, so they read as three live tails, not one rigid fan
+TAIL_LAG = {'tail_b': 1/24, 'tail_c': 2/24}
+
+
+def tail_azimuths(pose, t):
+    T = rc.bone_transforms(J, pose, bones=B, root_translate=tuple(CROUCH_LIFT))
+    pts = [T[f'tail_{t}{max(k, 1)}'][0]@np.array(J[f'tail_{t}_j{k}'])+T[f'tail_{t}{max(k, 1)}'][1] for k in range(rc.TAIL_BONES+1)]
+    d = np.diff(np.array(pts), axis=0)
+    return np.degrees(np.arctan2(d[:, 0], d[:, 1]))
+
+
+# the corrective keys are sculpted with the pass 7 tails (CROUCH_BODY_P7): the hip keys smooth the posed skin round
+# the rump, and sculpting them with the new tails let the tail roots' new angle seep up to 3 mm into the approved
+# rump and thigh skin; with the old tails the keys, and so all non-tail skin, are exactly pass 7's
+CROUCH_BODY_P7 = {k: list(v) for k, v in body.items()}
+_rest_el = {t: tail_elevations({}, t) for t in rc.TAILS}       # the lift does not change directions
+FAN_K = (90+tail_elevations(body, 'a')[0])/(90+_rest_el['a'][0])
+for t in ('b', 'c'):
+    el = np.radians(_rest_el[t]-(1-FAN_K)*(90+_rest_el[t])*np.array(TAIL_RAMP))
+    az = np.radians(tail_azimuths(body, t))
+    tg = {f'tail_{t}{k+1}': np.array([math.sin(az[k])*math.cos(el[k]), math.cos(az[k])*math.cos(el[k]), math.sin(el[k])])
+          for k in range(rc.TAIL_BONES)}
+    aimed = rc.pose_from_directions(J, tg, base={k: v for k, v in body.items() if not k.startswith(f'tail_{t}')}, bones=B)
+    for k in range(1, rc.TAIL_BONES+1):
+        body[f'tail_{t}{k}'] = list(map(float, aimed[f'tail_{t}{k}']))
+    print('tail', t, 'rest elevations', _rest_el[t].round(1).tolist(), 'crouch', tail_elevations(body, t).round(1).tolist(), flush=True)
+print('fan factor', round(float(FAN_K), 3), flush=True)
 CROUCH_BODY = body
 crouch = rc.plant_legs(J, body, CROUCH_LIFT, FEET, POLES, bones=B)
 POSES['night_stalk'] = crouch
@@ -219,7 +257,7 @@ LIFTS = {'night_stalk': CROUCH_LIFT}
 def crouch_at(e):
     """The planted-feet crouch at eased share e (0 rest, 1 Night Stalk): every body bone slerped from rest by e,
     the hips moved by e of the crouch's root move, the legs solved with the fixed hinge planes so the feet stay put."""
-    return rc.plant_legs(J, rc.slerp_pose(CROUCH_BODY, e), e*CROUCH_LIFT, FEET, POLES, bones=B), e*CROUCH_LIFT
+    return rc.plant_legs(J, rc.lagged_slerp_pose(CROUCH_BODY, e, TAIL_LAG), e*CROUCH_LIFT, FEET, POLES, bones=B), e*CROUCH_LIFT
 
 
 POSES['ears_flat_back'] = dict(EARS_BACK)
@@ -250,8 +288,11 @@ SCULPT = {'arms_up': directions({'clavicle.L': [-6, -20, 0], 'clavicle.R': [-6, 
                                    'thigh.R': (-.08, -.95, -.30), 'shin.R': (-.02, -.30, -.95), 'foot.R': (0, -.97, -.25)})}
 # pass 6: the crouch halfway, where the fold keys get their first sculpt
 CROUCH_MID_E = .55
-SCULPT['crouch_mid'] = crouch_at(CROUCH_MID_E)[0]
-SCULPT['crouch_low'] = crouch_at(.3)[0]       # fix pass: the groin crease already folds a third of the way down
+# pass 8: sculpt poses keep the pass 7 tails (see CROUCH_BODY_P7)
+_sculpt_at = lambda e: rc.plant_legs(J, rc.slerp_pose(CROUCH_BODY_P7, e), e*CROUCH_LIFT, FEET, POLES, bones=B)
+SCULPT['crouch_mid'] = _sculpt_at(CROUCH_MID_E)
+SCULPT['crouch_low'] = _sculpt_at(.3)       # fix pass: the groin crease already folds a third of the way down
+SCULPT['night_stalk_sculpt'] = _sculpt_at(1.)
 ALL = {**POSES, **SCULPT}
 
 # ---------------------------------------------------------------- correctives
@@ -272,14 +313,14 @@ GROUPS = [
     # per sculpt pose along the crouch (a third, halfway, deepest); masks are smooth (no hard cut).
     ('hip_mush_low', 'crouch_low', 'thigh', 'hip', (0, 0), ['pelvis'], 5),
     ('hip_mush_mid', 'crouch_mid', 'thigh', 'hip', (0, 0), ['pelvis'], 20),
-    ('hip_mush', 'night_stalk', 'thigh', 'hip', (0, 0), ['pelvis'], 20),
+    ('hip_mush', 'night_stalk_sculpt', 'thigh', 'hip', (0, 0), ['pelvis'], 20),
     ('knee_mush_low', 'crouch_low', 'shin', 'knee', (0, 0), ['thigh'], 5),
     ('knee_mush_mid', 'crouch_mid', 'shin', 'knee', (0, 0), ['thigh'], 20),
-    ('knee_mush', 'night_stalk', 'shin', 'knee', (0, 0), ['thigh'], 20),
+    ('knee_mush', 'night_stalk_sculpt', 'shin', 'knee', (0, 0), ['thigh'], 20),
     ('ankle_mush_low', 'crouch_low', 'foot', 'ankle', (0, 0), ['foot'], 3),
     ('ankle_mush_mid', 'crouch_mid', 'foot', 'ankle', (0, 0), ['foot'], 8),
-    ('ankle_mush', 'night_stalk', 'foot', 'ankle', (0, 0), ['foot'], 8),
-    ('armpit_fwd', 'night_stalk', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
+    ('ankle_mush', 'night_stalk_sculpt', 'foot', 'ankle', (0, 0), ['foot'], 8),
+    ('armpit_fwd', 'night_stalk_sculpt', 'upperarm', 'shoulder', (.05, .10), ['chest', 'clavicle', 'upperarm', 'spine'], 8),
     ('shoulder_raise', 'arms_up', 'upperarm', 'shoulder', (.06, .12), ['chest', 'clavicle', 'upperarm', 'spine', 'neck'], 45),
     ('ear_clear', 'ears_flat_back', 'ear_1', 'ear0', (0, 0), ['ear_1'], 15),
 ]
@@ -737,10 +778,10 @@ for k in keys:
         mir[k['name'][:-2]] = float(np.abs(dl[pos][ok]-dm[ok]).max())
 weights['corrective_mirror_max_m'] = mir
 out_poses['night_stalk']['crouch'] = dict(
-    rule='crouch_at(e): body bones slerped from rest by e, root moved by e*lift, legs by rig_core.plant_legs to the '
+    rule='crouch_at(e): body bones slerped from rest by e (rig_core.lagged_slerp_pose: bones starting with a tailLag key start later by that share of the move), root moved by e*lift, legs by rig_core.plant_legs to the '
          'feet with each knee hinged in the fixed plane facing poles[side] (the foot forward direction)',
     body={k: list(map(float, v)) for k, v in CROUCH_BODY.items()}, lift=list(map(float, CROUCH_LIFT)), feet=FEET,
-    poles=POLES)
+    poles=POLES, tailLag=TAIL_LAG)
 (a.rig/'poses.json').write_text(json.dumps(out_poses, indent=1))
 (a.rig/'checks.json').write_text(json.dumps(dict(weights=weights, poses=checks, earSwing=dict(L=ear_L)), indent=1))
 print(json.dumps(weights))
