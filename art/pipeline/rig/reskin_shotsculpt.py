@@ -33,7 +33,8 @@ A = sys.argv[sys.argv.index('--') + 1:]
 RIG_IN, PARP, CFGP, OUTB, REPP = A[:5]
 CFG = json.load(open(CFGP))
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent / 'animate'))
+sys.path.insert(0, str(HERE.parent / 'animate')); sys.path.insert(0, str(HERE))
+import reskin_vis as RV
 _argv = sys.argv; sys.argv = ['x', '--', str(Path(OUTB).parent / 'posetmp'), 'none']
 import pose_rig as PR
 import luceras_clips as LC
@@ -268,9 +269,13 @@ def resolve(P, D0, tag):
     N0 = vnormals(P + D0); d = np.zeros(NV); log = []; bodyyield = np.zeros(NV, bool)
     X = pairs_all(P + D0)
     if not X: return D0.copy(), [0], 0.0
-    seed = np.zeros(NV, bool); seed[F[np.array(sorted({t for p in X for t in p}))].ravel()] = True
+    if CFG.get('gate_target', True):
+        m_ = RV.measure(P + D0, X, F, TDOM, gn); T = list(m_['visible_pairs']) + list(m_['deep_pairs'])
+    else: T = list(X)
+    if not T: return D0.copy(), [len(X), 'gate ok'], 0.0
+    seed = np.zeros(NV, bool); seed[F[np.array(sorted({t for p in T for t in p}))].ravel()] = True
     area = grow(seed, CFG.get('area_rings', 16))
-    best = (len(X), d.copy()); log.append(len(X))
+    best = (len(T), d.copy()); log.append(f'{len(X)}/{len(T)}')
     if CFG.get('channel_reach_mm', 0) > 0:
         # one-shot channel: body skin with a forelimb (forearm or cannon capsule) lying within reach below it is carved
         # past the limb, then the depth field is smoothed wide so the brisket narrows instead of grooving
@@ -294,12 +299,16 @@ def resolve(P, D0, tag):
         Q = P + D0 - d[:, None] * N0
         if it:
             area |= grow(d > 1e-5, 3)
-            X = pairs_sub(Q, tris_of(area)); log.append(len(X))
-            if len(X) < best[0]: best = (len(X), d.copy())
-            if not X: break
-            if it == 1: log.append(bone_pairs(X)[:3])
+            X = pairs_sub(Q, tris_of(area))
+            if CFG.get('gate_target', True):
+                m_ = RV.measure(Q, X, F, TDOM, gn); T = list(m_['visible_pairs']) + list(m_['deep_pairs'])
+            else: T = list(X)
+            log.append(f'{len(X)}/{len(T)}')
+            if len(T) < best[0]: best = (len(T), d.copy())
+            if not T: break
+            if it == 1: log.append(bone_pairs(T)[:3])
         jobs = {}
-        for a, b in X:
+        for a, b in T:
             ja, jb = TDOM[a], TDOM[b]
             if HEADM[F[a]].all() and HEADM[F[b]].all(): continue
             if LIMBV[ja] == LIMBV[jb] or RANK[ja] == RANK[jb]:
@@ -347,8 +356,12 @@ def resolve(P, D0, tag):
         u = np.where(cmask, need, u * np.where(free, w, 1.0))
         d = d + u
     else:
-        X = pairs_sub(P + D0 - d[:, None] * N0, tris_of(area)); log.append(len(X))
-        if len(X) < best[0]: best = (len(X), d.copy())
+        Q = P + D0 - d[:, None] * N0; X = pairs_sub(Q, tris_of(area))
+        if CFG.get('gate_target', True):
+            m_ = RV.measure(Q, X, F, TDOM, gn); T = list(m_['visible_pairs']) + list(m_['deep_pairs'])
+        else: T = list(X)
+        log.append(f'{len(X)}/{len(T)}')
+        if len(T) < best[0]: best = (len(T), d.copy())
     depth = [float(best[1].max())]
     best = (best[0], D0 - best[1][:, None] * N0)
     D = best[1]
@@ -389,8 +402,10 @@ for shot in SHOTS:
     if CFG.get('dry'): D[:50] = 0.001
     Dsh[shot] = D
     rep['shots'][f'{shot[0]}:{shot[1]}'] = dict(pairs_before=X0, first_pass=log, first_depth_mm=round(dep * 1000, 1))
-    print('SHOT', shot, 'pairs', X0, 'log', log, 'depth mm', round(dep * 1000, 1), round(time.time() - t0), 'flipped', FLIPLOG[:12], flush=True); FLIPLOG.clear()
-    if X0: print('   bones before', bone_pairs(pairs_all(P)), 'after', bone_pairs(pairs_all(P + D)), flush=True)
+    if X0:
+        m0 = RV.measure(P, pairs_all(P), F, TDOM, gn); rep['shots'][f'{shot[0]}:{shot[1]}']['gate0'] = (m0['visible'], m0['hidden_over_5mm'])
+    print('SHOT', shot, 'pairs', X0, 'gate', rep['shots'][f'{shot[0]}:{shot[1]}'].get('gate0'), 'log', log, 'depth mm', round(dep * 1000, 1), round(time.time() - t0), 'flipped', FLIPLOG[:12], flush=True); FLIPLOG.clear()
+
 
 # temporal blend across neighbouring signature frames, then re-resolve from the blend
 sig = [s for s in SHOTS if s[0] == 'sig']
@@ -407,7 +422,8 @@ if CFG.get('temporal', True) and not CFG.get('dry'):
 # final measurement per shot: pairs left, max offset, surface step between neighbouring frames
 for s in SHOTS:
     P = Pbase[s]; D = Dsh[s]; X = pairs_all(P + D); n = np.linalg.norm(D, axis=1)
-    r = rep['shots'][f'{s[0]}:{s[1]}']; r.update(pairs_after=len(X), max_offset_mm=round(float(n.max()) * 1000, 1), moved_vertices=int((n > 1e-4).sum()))
+    m_ = RV.measure(P + D, X, F, TDOM, gn)
+    r = rep['shots'][f'{s[0]}:{s[1]}']; r.update(pairs_after=len(X), visible_after=m_['visible'], hidden_over_5mm_after=m_['hidden_over_5mm'], hidden_buried_max_mm=m_['hidden_buried_max_mm'], max_offset_mm=round(float(n.max()) * 1000, 1), moved_vertices=int((n > 1e-4).sum()))
 for i in range(1, len(sig) - 1):
     a, b, c = (Dsh[sig[i - 1]], Dsh[sig[i]], Dsh[sig[i + 1]])
     acc = np.linalg.norm(a - 2 * b + c, axis=1); rep['shots'][f'sig:{sig[i][1]}']['sculpt_accel_mm'] = round(float(acc.max()) * 1000, 2)
@@ -479,6 +495,8 @@ for s in SHOTS:
     else:
         set_shot(s); pb.location = (1.0, 0, 0); sc.frame_set(s[1]); vl.update(); V = ev(); pb.location = (0, 0, 0)
     check[f'{s[0]}:{s[1]}'] = dict(pairs=len(pairs_all(V)), driver_index=round(emp.evaluated_get(bpy.context.evaluated_depsgraph_get()).location[0], 2), err_mm=round(float(np.abs(V - (Pbase[s] + Dsh[s])).max()) * 1000, 3))
+    if check[f'{s[0]}:{s[1]}']['pairs']:
+        m_ = RV.measure(V, pairs_all(V), F, TDOM, gn); check[f'{s[0]}:{s[1]}'].update(visible=m_['visible'], hidden_over_5mm=m_['hidden_over_5mm'], buried_max_mm=m_['hidden_buried_max_mm'])
     print('LIVE', s, check[f'{s[0]}:{s[1]}'], flush=True)
 rep['live_check'] = check
 set_shot(('sig', 0)); poser.reset(); rig.animation_data.action = None; sc.frame_set(1); vl.update()
