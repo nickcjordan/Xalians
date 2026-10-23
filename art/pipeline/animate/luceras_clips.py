@@ -225,7 +225,9 @@ SIG_DEFAULTS = {
                                   # held through the hit, so the curled head and horns do not pass into the forelegs (sig f29)
     "dive_fore_pose": FORE_DIVE,
     "dive_fore_lead_ms": 40.0,
-    "fore_tuck_pose": FORE_TUCK,  # B-sntv pass 4: the airborne tuck as a parameter (default unchanged)
+    "fore_tuck_pose": FORE_TUCK,
+    "fore_land_tuck": 0.0,        # B-sntv pass 5: after the fore feet land, turn the elbow plane toward the body (IK pole)
+    "hind_gather_pose": HIND_GATHER,  # B-sntv pass 5: the landing reach of the hind legs as a parameter (default unchanged)
     "fore_tuck_abduct_deg": 0.0,  # B-sntv: the tucked forelegs swing this far out from the chest wall (in with the tuck,
                                   # out with the reach), so the folded forearms ride beside the ribs instead of in them    # B-sntv: the sweep starts this long before the apex and ends at the dive start
     "leg_reach_window_m": 0.30,   # pass 1-2 only (height window; it fired inside two frames as the body fell). Unused.
@@ -302,7 +304,7 @@ def make_sig(params=None, rest_center_z=0.48):
     applies linearly between startMs and endMs (the review render applies the same).
     """
     P = dict(SIG_DEFAULTS, **(params or {}))
-    for k in ("dive_neck_deg", "dive_fore_pose", "fore_tuck_pose"):
+    for k in ("dive_neck_deg", "dive_fore_pose", "fore_tuck_pose", "hind_gather_pose"):
         P[k] = tuple(P[k])
     T = sig_times(P)
     for k in ("takeoff", "hit", "fore_land", "hind_land"):
@@ -438,11 +440,11 @@ def make_sig(params=None, rest_center_z=0.48):
                 return {"plant": max(0.0, 1 - (t - T["takeoff"]) / 90.0), "roll": roll, "fk": fk}
             if t < land:
                 u = reach_w(t, land, hind=True)
-                fk = tuple(a + (b - a) * u for a, b in zip(HIND_STREAM, HIND_GATHER))
+                fk = tuple(a + (b - a) * u for a, b in zip(HIND_STREAM, P["hind_gather_pose"]))
                 w = ease("smooth", (t - (land - P["plant_blend_ms"])) / P["plant_blend_ms"])   # pass 3: smooth, was "in" over 90 ms (snapped into the plant)
                 return {"plant": w, "roll": 0.0, "fk": fk}
             u = ease("smooth", (t - land) / 220.0)
-            return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in HIND_GATHER)}
+            return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in P["hind_gather_pose"])}
         fore_off = T["fore_off"]
         land = T["fore_land"]
         s0 = T["apex"] - P["dive_fore_lead_ms"]
@@ -462,7 +464,7 @@ def make_sig(params=None, rest_center_z=0.48):
             w = ease("smooth", (t - (land - P["fore_plant_blend_ms"])) / P["fore_plant_blend_ms"])   # pass 3: smooth, was "in" over 80 ms
             return {"plant": w, "roll": 0.0, "fk": fk, "abduct": P["fore_tuck_abduct_deg"] * (1 - u)}
         u = ease("smooth", (t - land) / 220.0)
-        return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in FORE_REACH)}
+        return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in FORE_REACH), "tuck": P["fore_land_tuck"] * (1 - ease("smooth", (t - land - 220.0) / 300.0))}
 
     def tail_at(t):
         return tails(t)
