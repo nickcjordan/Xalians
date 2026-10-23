@@ -30,6 +30,8 @@ from scipy.spatial import cKDTree
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import rig_core as rc  # noqa: E402
+sys.path.insert(0, str(HERE))
+import akinza_clips as ac  # noqa: E402
 
 p = argparse.ArgumentParser()
 p.add_argument('rig', type=Path)
@@ -100,8 +102,12 @@ area_rest = np.linalg.norm(n_rest, axis=1)
 tri_dom = idx[tris[:, 0], 0]
 
 
-def posed(pose, lift):
-    P, _, vals = rc.posed_skin(rest, idx, w, J, pose, lift, KEYS, DELTAS)
+SHAPES = ac.load_shapes(a.bake)
+
+
+def posed(pose, lift, fr=None):
+    base = ac.apply_shapes(rest, fr, SHAPES) if fr is not None else rest
+    P, _, vals = rc.posed_skin(base, idx, w, J, pose, lift, KEYS, DELTAS)
     return P, vals
 
 
@@ -172,7 +178,7 @@ for clip in a.clips.split(','):
     rows, Ps, acc_all = [], {}, []
     prev, prev_prev = None, None
     for fr in frames:
-        P, vals = posed(fr['pose'], fr['lift'])
+        P, vals = posed(fr['pose'], fr['lift'], fr)
         row = dict(frame=fr['frame'], keys={k: round(v, 3) for k, v in vals.items() if v > 0}, **frame_checks(P, fr['pose'], fr['lift'], prev))
         if prev is not None:
             row['max_vertex_step_mm'] = round(float(np.linalg.norm(P-prev, axis=1).max())*1000, 2)
@@ -181,6 +187,7 @@ for clip in a.clips.split(','):
             row['vs_night_stalk_max_mm'] = round(float(dv.max())*1000, 4)
             row['vs_night_stalk_outside_hold_layers_max_mm'] = round(float(dv[~(TOP_TIP | CHEST_ZONE)].max())*1000, 4)
             row['info'] = fr['info']
+            row['shapes'] = fr.get('shapes', {})
         if clip == 'idle' and prev_prev is not None and fr['frame'] <= 90:
             # velocity change at the previous frame (frames 1..89), the loop's own frame-to-frame smoothness
             acc_all.append(float(np.linalg.norm((P-prev)-(prev-prev_prev), axis=1).max()*1000))
@@ -214,7 +221,8 @@ for clip in a.clips.split(','):
     if clip == 'stalk':
         full = [r for r in rows if all(v == 1 for v in r['info']['shares'].values()) and r['info']['idle'] == 0]
         summary['fullCrouchFrames'] = [r['frame'] for r in full]
-        exact = [r for r in full if r['info']['holdBreath'] == 0 and r['info']['twitch'] == 0 and r['info']['anticipation'] == 0]
+        exact = [r for r in full if r['info']['holdBreath'] == 0 and r['info']['twitch'] == 0 and r['info']['anticipation'] == 0
+                 and not r.get('shapes', {}).get('breath')]
         summary['night_stalk_exact_frames'] = {r['frame']: r['vs_night_stalk_max_mm'] for r in exact}
         summary['hold_vs_night_stalk_max_mm'] = max(r['vs_night_stalk_max_mm'] for r in full)
         summary['hold_vs_night_stalk_outside_hold_layers_max_mm'] = max(r['vs_night_stalk_outside_hold_layers_max_mm'] for r in full)

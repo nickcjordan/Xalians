@@ -39,6 +39,7 @@ sys.path.insert(0, str(HERE.parent/'surface'))
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[1]/'pipeline/roster'))
 import rig_core as rc  # noqa: E402
+import akinza_clips as ac  # noqa: E402
 
 p = argparse.ArgumentParser()
 p.add_argument('surface', type=Path)
@@ -158,6 +159,7 @@ if a.look == 'fur':
 to_m = lambda X: s*(X-off)
 from_m = lambda X: X/s+off
 REST_M = to_m(skin_rest)
+SHAPES = ac.load_shapes(a.bake)          # pass 2: the breath key, driven by each frame's shapes['breath']
 
 
 def strand_lengths(pts):
@@ -234,7 +236,7 @@ def inside_strands(Px, pts):
 def apply(fr, clip):
     global rest_len
     pose, lift = fr['pose'], fr['lift']
-    Pm, _, vals = rc.posed_skin(REST_M, idx, w, J, pose, lift, KEYS, DELTAS)
+    Pm, _, vals = rc.posed_skin(ac.apply_shapes(REST_M, fr, SHAPES), idx, w, J, pose, lift, KEYS, DELTAS)
     Px = from_m(Pm)
     set_world_co(skin, Px)
     T = rc.bone_transforms(J, pose, bones=rc.ANIM_BONES, root_translate=tuple(rc.lift_vec(lift)))

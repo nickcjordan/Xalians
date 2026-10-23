@@ -12,21 +12,23 @@ and <out>/clips-spec.json (frame counts, events, parameters).
 Rig space: metres, +Z up, the creature faces -Y, its left is +X. A positive X rotation pitches a bone nose-down
 (its front goes down; on a tail bone, which points back, it lifts the tail), Y rolls it, Z turns it. The near side to the side camera (azimuth 90, from +X) is .L.
 
-Idle (90 frames, frame 90 = frame 0): two breaths (chest and spine lift, shoulders rise a little, the neck and
-head counter-turn so the head stays level), a small weight shift (the hips circle a few millimetres over the
-planted feet and dip as the weight moves across, so the knees soften), one flick of the near ear (ear_1.L only,
-a rigid swing back from the base along the approved swept-back direction and return), and the three tails
-swaying, each with its own phase and a lag down its chain, up and down as well as sideways. Every periodic term
-has a whole number of cycles in the loop, so the seam is exact.
+Idle (90 frames, frame 90 = frame 0): two breaths (the breath shape key of breath_key.py swells the ribcage out
+and up, the clavicles lift the shoulders with the arms hanging as before, the chest pitches up a little and the head
+rides with it), a weight shift forward and back (the hips and torso sway over the planted feet as one column, dipping
+at the forward peak where the far knee softens), one flick of the near ear (ear_1.L only, a rigid swing back from
+the base along the approved swept-back direction, 40 degrees, and return), and the three tails swaying, each with its
+own phase and a lag down its chain, up and down as well as sideways. Every periodic term has a whole number of cycles
+in the loop, so the seam is exact.
 
-Night Stalk (45 frames): from idle frame 0, a small anticipation (the chest fills and the head lifts a little),
-the sink into the approved night_stalk pose (rig-p8b poses.json, held exactly: every body bone and the root move
-go from rest to the night_stalk value by an eased share, as the approved crouch clip did; bone groups are
-staggered: the ears lead, body and legs, then head and neck in step so the head stays level, the tails trail and
-arrive together), settle and hold (only a slow breath and a twitch of the top tail's tip, both zero on the
-`conceal` and `recover` frames so those frames are exactly night_stalk), then the recovery back to idle frame 0
-(body first, head and ears after, tails last). Idle frame 0's small offsets fade out during the sink and back in
-during the recovery, so the last frame equals idle frame 0 and the game can return to the idle loop.
+Night Stalk (45 frames, pass 2 timing from the blind critic): from idle frame 0, an anticipation over frames 1 to 4
+(an inhale and a slight lean back, the tails still swaying at the idle rate), the sink over frames 6 to 15 into the
+approved night_stalk pose (rig-p8b poses.json, held exactly: every body bone and the root move go from rest to their
+night_stalk value by an eased share per bone group; the torso pitch starts with the knee bend and leads it, the
+head's level-keeping turn lags a frame, the ears sweep from frame 4 and land at 11, the tails trail and arrive
+together, the idle layer eases to a stop), settled at frame 16 (`conceal`), a 21-frame hold (one slow breath across
+it and a twitch of the top tail's tip off the breath peak; frames 16, 36 and 37 are exactly night_stalk), then the
+recovery from frame 37 (`recover`): the knees lead, the lean holds to frame 39 and the spine straightens last with
+the ears, the idle layer easing back in on the clock that lands on idle frame 0 at frame 44.
 """
 import json
 import math
@@ -44,22 +46,21 @@ import clip_primitives as cp  # noqa: E402
 B = rc.ANIM_BONES
 
 # ---------------------------------------------------------------- idle parameters (degrees, metres, frames)
+# pass 2 (blind critic on clips pass 1): the breath and the weight shift did not read from the side (sizes now set
+# in pixels at the 720 side framing, about 2.3 mm a pixel), the ear flick was too slow and small.
 IDLE = dict(
     frames=90,
     breath_period_f=45,          # two breaths in the 3 s loop
     breath_inhale_share=.42,
-    breath_chest_deg=-2.0,       # chest pitches up (sternum rises, upper chest goes back)
-    breath_spine_deg=-.6,
-    breath_clavicle_deg=1.2,     # shoulders rise a little on the inhale
-    breath_neck_deg=1.7,         # neck and head counter-turn so the head stays level
-    breath_head_deg=.6,
-    shift_x_m=.006,              # hips circle over the planted feet: 6 mm side to side ...
-    shift_y_m=.004,              # ... 4 mm fore and aft, a quarter cycle later ...
-    shift_dip_m=(.0015, .0025),  # ... and dip 1.5 mm plus 2.5 mm as the weight moves over a foot, so the knees soften
-    shift_pitch_deg=.6,          # the pelvis tips a little with the fore-aft shift; spine and chest take it back
-    flick_start_f=52,            # near ear flick (ear_1.L only): out in 3 frames, back over 5 with a small overshoot
-    flick_share=.30,             # share of the approved swept-back ear_1 rotation (night_stalk) at the flick's peak
-    tail_period_f=90,            # one slow sway per loop ...
+    breath_scale=1.0,            # one breath is BREATH: chest and shoulders rise 6 to 8 px at 720, the head rides 3 to 4 px
+    shift_y_m=.010,              # pass 2: the hips and torso sway forward and back 10 mm each way (about 9 px peak to
+                                 #   peak at 720) over one 90-frame cycle, the body moving as one column ...
+    shift_x_m=.003,              # ... with a little side to side, a quarter cycle later ...
+    shift_dip_m=(.002, .004),    # ... dipping up to 2 mm, plus 4 mm at the forward peak so no leg ever straightens fully
+    shift_soft_deg=1.6,          # the pelvis rolls so the far (right) hip drops at the forward peak: the far knee softens
+    flick_start_f=52,            # near ear flick (ear_1.L only): out in 2 frames, back over 4 to a 1-frame overshoot
+    flick_share=.444,            # share of the approved swept-back ear_1 rotation (90 degrees): 40 degrees back
+    tail_period_f=90,            # tails unchanged from pass 1: one slow sway per loop ...
     tail_harmonic=.22,           # ... plus a little of the second harmonic so the path is not a pure sine
     tail_lag_f=2.6,              # lag per bone down each chain (the tip trails the root by about 13 frames)
     tail_phase={'a': 0., 'b': .22, 'c': .47},     # cycles: each tail its own phase
@@ -68,25 +69,49 @@ IDLE = dict(
     tail_yaw_lead=.25,           # cycles: the sideways sway leads the up-and-down one, so each tip draws an ellipse
     tail_bias_deg={'c': .4},     # lower tail carried a little higher (per bone), so its sway stays as far from the legs as at rest
 )
+# one full breath (b = 1), shared by the idle and the Night Stalk hold: the chest pitches up (the sternum rises, the
+# upper chest goes back), the clavicles lift the shoulders, the spine takes a little, the neck and head turn back
+# part of the chest's pitch so the head rides with the breath instead of nodding
+BREATH = {'chest': [-1.2, 0., 0.], 'spine': [-.3, 0., 0.], 'clavicle.L': [0., -5.5, 0.], 'clavicle.R': [0., 5.5, 0.],
+          'upperarm.L': [0., 5.5, 0.], 'upperarm.R': [0., -5.5, 0.],     # the arms hang as before: lifted, not swung out
+          'neck': [.6, 0., 0.], 'head': [.2, 0., 0.]}
+# with this, plus the breath shape key (breath_key.py: the ribcage out and up, the upper belly out), see measure.json
 
 # ---------------------------------------------------------------- Night Stalk parameters (frames of 45)
+# pass 2 timing (critic): anticipation 0-5, sink 6-15 (settled at 16, `conceal`), hold 16-36, recovery 37-44 (`recover`
+# at 37), ending on idle frame 0. Each bone group follows its own key track of its share of the approved crouch:
+# (frame, ease into this key, share). The torso pitch starts with the knee bend and leads it (critic: the torso stayed
+# upright while the knees bent and read as a squat), the head's level-keeping turn lags a frame so the head travels
+# forward and down, the ears start at frame 4 and land at 10 with a small settle, and on the way up the knees lead
+# while the lean holds to frame 39 and the spine straightens last, with the ears.
 STALK = dict(
     frames=45,
-    anticipation=(0, 3, 7),      # anticipation layer: rises frames 0 to 3, gone by frame 7
-    anticip_chest_deg=-1.6,      # the chest fills ...
-    anticip_head_deg=-3.0,       # ... and the head lifts a little (nose up)
-    # sink windows (start, end frame) per bone group; all groups reach the night_stalk value by `conceal`
-    sink={'ears': (3, 12), 'body': (4, 16), 'head': (4, 16), 'arms': (5, 16), 'tail_a': (5, 16), 'tail_b': (6, 16),
-          'tail_c': (7, 16)},
-    sink_ease='smooth',
-    idle_fade=(3, 14),           # idle frame 0's offsets fade out over these frames ...
-    # recovery windows: back to rest by the last frame (44)
-    recover={'body': (32, 42), 'arms': (32, 43), 'head': (33, 43), 'ears': (34, 44), 'tail_a': (34, 44),
-             'tail_b': (34, 44), 'tail_c': (34, 44)},
-    idle_return=(33, 44),        # ... and back in over these
-    hold_breath_deg=-.7,        # one slow breath in the hold, chest only, zero at conceal and recover
-    hold_breath_spine_deg=-.3,
-    twitch=(23, 25, 31),         # the top tail's tip: up over frames 23 to 25, back down by 31
+    tracks={
+        'drop':   [(6, 'linear', 0.), (16, 'smooth', 1.), (37, 'linear', 1.), (43, 'smooth', 0.)],   # root move down (so the knees bend)
+        'back':   [(6, 'linear', 0.), (13, 'smooth', 1.), (39, 'linear', 1.), (44, 'smooth', 0.)],   # root move back, with the lean it balances
+        'pitch':  [(6, 'linear', 0.), (13, 'smooth', 1.), (39, 'linear', 1.), (44, 'smooth', 0.)],   # pelvis, spine, chest, tail root
+        'head':   [(7, 'linear', 0.), (15, 'smooth', 1.), (39, 'linear', 1.), (44, 'smooth', 0.)],   # neck and head (their level-keeping turn)
+        'arms':   [(7, 'linear', 0.), (16, 'smooth', 1.), (38, 'linear', 1.), (44, 'smooth', 0.)],
+        'ears':   [(4, 'linear', 0.), (9, 'smooth', .93), (11, 'out', 1.), (39, 'linear', 1.), (44, 'smooth', 0.)],   # no overshoot past the approved swing (it folds the ear root): the last 7 percent settles over frames 9 to 11
+        'tail_a': [(7, 'linear', 0.), (16, 'smooth', 1.), (38, 'linear', 1.), (44, 'smooth', 0.)],
+        'tail_b': [(8, 'linear', 0.), (16, 'smooth', 1.), (38, 'linear', 1.), (44, 'smooth', 0.)],
+        'tail_c': [(9, 'linear', 0.), (16, 'smooth', 1.), (38, 'linear', 1.), (44, 'smooth', 0.)],
+    },
+    # the live idle layer (tails swaying at the idle rate, breath, weight shift) runs on through the anticipation and
+    # eases to a stop over the sink; on the way up it eases back in on the clock that lands on idle frame 0 at frame 44
+    idle_w=[(6, 'linear', 1.), (15, 'smooth', 0.), (37, 'linear', 0.), (44, 'smooth', 1.)],
+    # anticipation, frames 1-4: an inhale and a slight lean back (chest and shoulders up, head up), gone by frame 8
+    anticipation=[(1, 'linear', 0.), (4, 'smooth', 1.), (8, 'smooth', 0.)],
+    anticip={'pelvis': [-.4, 0., 0.], 'chest': [-1.2, 0., 0.], 'head': [-3.0, 0., 0.]},   # plus .7 of a breath (below)
+    anticip_breath=.7,           # the anticipation's inhale: this share of a full breath (the breath key and rotations)
+    hold=(16, 36),               # one slow breath across the hold (zero on frames 16 and 36, so 16 to 37 start and end on night_stalk)
+    # the hold's breath, its own rotations: the crouched chest pitches up further and the clavicles lift half as far
+    # with no arm counter-turn (the forward arms ride the shoulders), so the shoulder skin folds no more than the
+    # approved crouch's; the ribcage key at 1.5 of a breath (2.1 folded the crouched chest's sides) (the crouched chest shows less of it from the side), no belly
+    hold_layer={'chest': [-2.4, 0., 0.], 'spine': [-.7, 0., 0.], 'clavicle.L': [0., -2.4, 0.], 'clavicle.R': [0., 2.4, 0.],
+                'neck': [2.0, 0., 0.], 'head': [.8, 0., 0.]},
+    hold_breath_key=1.5,
+    twitch=[(26, 'linear', 0.), (28, 'out', 1.), (33, 'smooth', 0.)],      # the top tail's tip: out over 26-28, settled by 33
     twitch_deg={'tail_a4': 5.0, 'tail_a5': 9.0},        # on a tail bone (pointing back) +X lifts it: the tip flicks up
 )
 GROUP_OF = {}
@@ -105,7 +130,7 @@ def group_of(bone):
         return 'head'
     if rc.base_of(bone) in ('upperarm', 'forearm', 'hand', 'clavicle'):
         return 'arms'
-    return 'body'          # pelvis, spine, chest, tail_root (the sacrum goes with the pelvis), and the root move
+    return 'pitch'         # pelvis, spine, chest, tail_root (the sacrum goes with the pelvis); the root move is 'drop'
 
 
 # ---------------------------------------------------------------- rotation helpers
@@ -125,13 +150,20 @@ def share_of(e, f):
     return out.get('x', [0., 0., 0.])
 
 
+# bones whose layer offset is applied in the parent's frame (pre-multiplied): the breath's arm counter-turn undoes the
+# clavicle's lift in the parent's frame, so the arm keeps its world direction in any base pose (the crouch's arms
+# reach forward; a post-multiplied counter-turn swung them)
+PRE = {'upperarm.L', 'upperarm.R'}
+
+
 def add_layer(pose, layer, k=1.):
     out = {b: list(v) for b, v in pose.items()}
     for b, e in layer.items():
         if k == 0:
             continue
         off = share_of(e, k) if k != 1 else e
-        out[b] = compose(out.get(b, [0., 0., 0.]), off)
+        base = out.get(b, [0., 0., 0.])
+        out[b] = rc.euler_from_matrix(rot(off)@rot(base)) if b in PRE else compose(base, off)
     return out
 
 
@@ -166,19 +198,19 @@ def idle_layers(rig, f):
     def put(bone, e):
         lay[bone] = compose(lay.get(bone, [0., 0., 0.]), e)
     # breath
-    put('chest', [P['breath_chest_deg']*b, 0., 0.])
-    put('spine', [P['breath_spine_deg']*b, 0., 0.])
-    put('neck', [P['breath_neck_deg']*b, 0., 0.])
-    put('head', [P['breath_head_deg']*b, 0., 0.])
-    put('clavicle.L', [0., -P['breath_clavicle_deg']*b, 0.])
-    put('clavicle.R', [0., P['breath_clavicle_deg']*b, 0.])
-    # weight shift: the hips circle over the feet and dip as they pass over each foot
+    for bone, e in BREATH.items():
+        put(bone, [v*b*P['breath_scale'] for v in e])
+    # weight shift (pass 2): the hips and torso sway forward and back over the planted feet as one column, a little
+    # side to side a quarter cycle later; the body dips more at the forward peak and the pelvis rolls so the far hip
+    # drops there, softening the far knee
     w = 2*math.pi*t
-    sx, sy = math.sin(w), math.sin(w+math.pi/2)
-    lift = np.array([P['shift_x_m']*sx, P['shift_y_m']*sy, -(P['shift_dip_m'][0]+P['shift_dip_m'][1]*sx*sx)])
-    put('pelvis', [P['shift_pitch_deg']*sy, 0., 0.])
-    put('spine', [-.6*P['shift_pitch_deg']*sy, 0., 0.])
-    put('chest', [-.4*P['shift_pitch_deg']*sy, 0., 0.])
+    sy, sx = math.sin(w), math.sin(w+math.pi/2)
+    fwd = max(0., sy)                                # forward is -Y; the forward peak is a quarter of the way into the loop
+    lift = np.array([P['shift_x_m']*sx, -P['shift_y_m']*sy,
+                     -(P['shift_dip_m'][0]*(1-math.cos(w))/2+P['shift_dip_m'][1]*fwd*fwd)])
+    put('pelvis', [0., -P['shift_soft_deg']*fwd*fwd, 0.])
+    put('spine', [0., .6*P['shift_soft_deg']*fwd*fwd, 0.])
+    put('chest', [0., .4*P['shift_soft_deg']*fwd*fwd, 0.])
     # near ear flick: ear_1.L swings back along the approved swept-back direction and returns
     s = flick_share(f % n)
     if s:
@@ -194,85 +226,123 @@ def idle_layers(rig, f):
 
 
 def flick_share(f):
-    """Ear flick timeline (frames), share of the flick: out in 3 frames (the measured fold speed, research note),
-    back over 4 with a small overshoot forward, settled by frame 8 of the flick (the return slower than the fold)."""
+    """Ear flick timeline (frames), share of the flick (pass 2, critic): out in 2 frames, back over 4 to a 1-frame
+    overshoot forward, settled on the 7th frame (the return slower than the out-stroke, as in the research note)."""
     f0 = IDLE['flick_start_f']
-    tr = cp.Track([(f0, 'linear', {}), (f0+3, 'out', {'a': 1.}), (f0+7, 'smooth', {'a': -.06}), (f0+8, 'smooth', {'a': 0.})])
-    return tr(f)['a'] if f0 <= f <= f0+8 else 0.
+    tr = cp.Track([(f0, 'linear', {}), (f0+2, 'out', {'a': 1.}), (f0+6, 'smooth', {'a': -.07}), (f0+7, 'smooth', {'a': 0.})])
+    return tr(f)['a'] if f0 <= f <= f0+7 else 0.
 
 
 def idle_frame(rig, f):
     lay, lift, info = idle_layers(rig, f)
     pose = rig.solve(lay, lift)
-    return dict(frame=f, pose=pose, lift=lift.tolist(), info=info)
+    v = round(info['breath']*IDLE['breath_scale'], 5)
+    return dict(frame=f, pose=pose, lift=lift.tolist(), shapes=dict(breath=v, breath_belly=v), info=info)
 
 
 # ---------------------------------------------------------------- Night Stalk
 
+def track(keys, f):
+    """Key track [(frame, ease into this key, value)] at frame f (value held before the first and after the last key)."""
+    if f <= keys[0][0]:
+        return keys[0][2]
+    for (f0, _, v0), (f1, kind, v1) in zip(keys, keys[1:]):
+        if f0 <= f <= f1:
+            return v0+(v1-v0)*cp.ease(kind, (f-f0)/(f1-f0)) if f1 > f0 else v1
+    return keys[-1][2]
+
+
 def stalk_shares(f):
     P = STALK
-    out = {}
-    for g, (s0, s1) in P['sink'].items():
-        r0, r1 = P['recover'][g]
-        e = cp.window(f, s0, s1, P['sink_ease'])
-        if f >= r0:
-            e = 1-cp.window(f, r0, r1, 'smooth')
-        out[g] = e
-    idle_w = 1-cp.window(f, *P['idle_fade'])
-    if f >= P['idle_return'][0]:
-        idle_w = cp.window(f, *P['idle_return'])
-    return out, idle_w
+    return {g: track(k, f) for g, k in P['tracks'].items()}, track(P['idle_w'], f)
 
 
 def stalk_events():
-    P = STALK
-    conceal = max(s1 for _, s1 in P['sink'].values())
-    recover = min(r0 for r0, _ in P['recover'].values())
-    return dict(conceal=conceal, recover=recover)
+    """conceal: the first frame every group is at its full crouch share with the idle layer gone; recover: the last
+    such frame, the frame the recovery starts from."""
+    full = [f for f in range(STALK['frames'])
+            if all(abs(v-1) < 1e-12 for v in stalk_shares(f)[0].values()) and stalk_shares(f)[1] == 0]
+    return dict(conceal=full[0], recover=full[-1])
 
 
-def stalk_frame(rig, f, idle0):
+def breath_layer(scale=1.):
+    return {bone: [v*scale for v in e] for bone, e in BREATH.items()}
+
+
+def stalk_frame(rig, f):
     P = STALK
     sh, idle_w = stalk_shares(f)
-    ev = stalk_events()
-    # base: the approved crouch path, each bone at its group's eased share
+    # base: the approved crouch path, each bone at its group's share of its night_stalk rotation
     base = {}
     for b, e in rig.body.items():
         val = share_of(e, sh[group_of(b)])
         if any(abs(v) > 1e-12 for v in val):
             base[b] = val
-    lift = sh['body']*rig.lift
-    # idle frame 0's offsets (rotations and root move), fading out and back in
-    lay0, lift0, _ = idle0
-    pose = add_layer(base, lay0, idle_w)
-    lift = lift+idle_w*np.asarray(lift0)
-    # anticipation
-    a0, a1, a2 = P['anticipation']
-    an = cp.window(f, a0, a1) if f <= a1 else 1-cp.window(f, a1, a2)
+    # the crouch's root move split (clips pass 2 measure): the hips go back with the lean that they counterbalance and
+    # down with the knees; moving both on the knees' clock carried the head 18 px back at the end of the sink
+    lift = np.array([sh['drop']*rig.lift[0], sh['back']*rig.lift[1], sh['drop']*rig.lift[2]])
+    # the live idle layer: on the idle's own clock from idle frame 0 going in, and coming out on the clock that lands
+    # on idle frame 0 at the last frame
+    n = P['frames']
+    phase = (f if f < n//2 else f-(n-1)) % IDLE['frames']
+    lay, lift_i, info_i = idle_layers(rig, phase)
+    pose = add_layer(base, lay, idle_w)
+    lift = lift+idle_w*np.asarray(lift_i)
+    an = track(P['anticipation'], f)
     if an > 0:
-        pose = add_layer(pose, {'chest': [P['anticip_chest_deg'], 0., 0.], 'head': [P['anticip_head_deg'], 0., 0.]}, an)
-    # hold: a slow breath and the top tail's tip twitch, both zero at conceal and recover
-    hb = 0.
-    if ev['conceal'] <= f <= ev['recover']:
-        u = (f-ev['conceal'])/(ev['recover']-ev['conceal'])
-        hb = .5-.5*math.cos(2*math.pi*u)
-        pose = add_layer(pose, {'chest': [P['hold_breath_deg'], 0., 0.], 'spine': [P['hold_breath_spine_deg'], 0., 0.]}, hb)
-    t0, t1, t2 = P['twitch']
-    tw = cp.window(f, t0, t1, 'out') if f <= t1 else 1-cp.window(f, t1, t2, 'smooth')
-    if t0 < f < t2 and tw > 0:
+        pose = add_layer(pose, P['anticip'], an)
+        pose = add_layer(pose, breath_layer(P['anticip_breath']), an)
+    h0, h1 = P['hold']
+    hb = cp.breath(f-h0, h1-h0, IDLE['breath_inhale_share']) if h0 <= f <= h1 else 0.
+    if hb > 0:
+        pose = add_layer(pose, P['hold_layer'], hb)
+    tw = track(P['twitch'], f)
+    if tw > 0:
         pose = add_layer(pose, {k: [v, 0., 0.] for k, v in P['twitch_deg'].items()}, tw)
     full = rig.solve(pose, lift)
-    return dict(frame=f, pose=full, lift=lift.tolist(),
-                info=dict(shares={g: round(v, 4) for g, v in sh.items()}, idle=round(idle_w, 4), anticipation=round(an, 4),
-                          holdBreath=round(hb, 4), twitch=round(tw if t0 < f < t2 else 0., 4)))
+    ib = idle_w*info_i['breath']*IDLE['breath_scale']+an*P['anticip_breath']
+    shapes = dict(breath=round(ib+hb*P['hold_breath_key'], 5), breath_belly=round(ib, 5))   # the hold: no belly swell (it
+    return dict(frame=f, pose=full, lift=lift.tolist(), shapes=shapes,                        # presses into the crouch's groin fold)
+                info=dict(shares={g: round(v, 4) for g, v in sh.items()}, idle=round(idle_w, 4), idlePhase=phase,
+                          anticipation=round(an, 4), holdBreath=round(hb, 4), twitch=round(tw, 4)))
+
+
+def load_shapes(bake_dir):
+    """The clip's shape keys (breath_key.py), {name: (ids, rest-space delta in rig metres)}; empty if none."""
+    out = {}
+    f = Path(bake_dir)/'breath_key.npz'
+    if f.exists():
+        z = np.load(f)
+        out['breath'] = (z['ids'].astype(np.int64), z['delta'].astype(np.float64))
+        if 'belly_ids' in z.files:
+            out['breath_belly'] = (z['belly_ids'].astype(np.int64), z['belly_delta'].astype(np.float64))
+    return out
+
+
+def apply_shapes(points_m, frame, shapes, sel=None):
+    """Rest skin (rig metres) plus each shape key at the frame's value, before the rig's correctives and skinning.
+    sel: an optional sorted vertex subset that points_m holds."""
+    vals = frame.get('shapes', {})
+    if not shapes or not any(vals.get(k, 0) for k in shapes):
+        return points_m
+    x = points_m.copy()
+    for k, (ids, dl) in shapes.items():
+        v = vals.get(k, 0.)
+        if not v:
+            continue
+        if sel is None:
+            x[ids] += v*dl
+        else:
+            m = np.isin(ids, sel)
+            x[np.searchsorted(sel, ids[m])] += v*dl[m]
+    return x
 
 
 def bake(rig_dir, out):
     rig = Rig(rig_dir)
     out = Path(out)
     idle = [idle_frame(rig, f) for f in range(IDLE['frames']+1)]          # frame 90 is the seam copy of frame 0
-    idle0 = idle_layers(rig, 0)
-    stalk = [stalk_frame(rig, f, idle0) for f in range(STALK['frames'])]
+    stalk = [stalk_frame(rig, f) for f in range(STALK['frames'])]
     ev = stalk_events()
     for name, frames in (('idle', idle), ('stalk', stalk)):
         (out/name).mkdir(parents=True, exist_ok=True)
