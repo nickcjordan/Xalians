@@ -1,0 +1,18 @@
+{
+  "id": "N-01M5MNAG9K48WFMPEQDQYA3RVR",
+  "alias": "kbdr",
+  "stage": "09-animate",
+  "who": "orchestrator",
+  "words": "Stall audit after re-skin pass 7. Shot sculpts (pass 6) and a brisket narrowing corrective (pass 7) both fail: the upper forearm sits inside the chest envelope with trunk skin on both sides of it, so the lateral chest skin must travel with the limb. Root cause is the armpit skin ownership, consistent with ungulate anatomy where the upper arm is enclosed in trunk skin. Method for pass 8: reweight the lateral chest and armpit skin to leg_f*_01 (and scapula) so it rides over the upper arm, plus a carpus-fold corrective; poses stay as in pass 5. Gate: visible crossings 0 from the 8 audit cameras and the sprite camera, hidden buried depth <= 5 mm.",
+  "date": "2026-10-23",
+  "kind": "audit",
+  "binds": {
+    "build": "B-01M5G4XQ7B8TVNGHWGFB74VWXZ",
+    "defect": "D-01M5FSE8Q16S7RHG8SPEFJ36GH",
+    "evidence": [
+      "C:/dev/art-data/pipeline/codex-stream/luceras-reskin/pass7/report.json"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-23T15:15:57Z"
+}

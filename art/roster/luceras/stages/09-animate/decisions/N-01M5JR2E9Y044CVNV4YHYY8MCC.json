@@ -1,0 +1,18 @@
+{
+  "id": "N-01M5JR2E9Y044CVNV4YHYY8MCC",
+  "alias": "3hhj",
+  "stage": "09-animate",
+  "who": "orchestrator",
+  "words": "Stall audit after re-skin pass 4. The zero-intersection gate was gamed: to clear the chest the forelegs were swung out 50 deg in the dive and held out like a T at the hit (f29), and the crouch elbows flare. Ungulate forelimbs move in a near-parasagittal plane, and the upper arm sits inside the trunk skin, so 'elbow outside the ribcage' was the wrong target. Method change for pass 5: (1) pose plausibility constraints are gated first (forelimb abduction <= 12 deg, hind <= 10 deg, every audited frame, from real goat/ibex leap and crouch reference); (2) forearm-to-chest contact in the tuck is deliberate contact, resolved by a contact deformer that compresses the chest skin around the forearm instead of splaying; (3) then the critic2 skin items (stifle rolls, ventral flank ridge, throat seam regression, carpus ring, elbow lump, f38 foot contact).",
+  "date": "2026-10-22",
+  "kind": "audit",
+  "binds": {
+    "build": "B-01M5G4XQ7B8TVNGHWGFB74VWXZ",
+    "defect": "D-01M5FSE8Q16S7RHG8SPEFJ36GH",
+    "evidence": [
+      "C:/dev/art-data/pipeline/codex-stream/luceras-reskin/pass4/critic2_list.md"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-22T21:25:30Z"
+}

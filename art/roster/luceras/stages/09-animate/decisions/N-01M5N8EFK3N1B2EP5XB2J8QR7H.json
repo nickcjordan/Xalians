@@ -1,0 +1,18 @@
+{
+  "id": "N-01M5N8EFK3N1B2EP5XB2J8QR7H",
+  "alias": "z278",
+  "stage": "09-animate",
+  "who": "nick",
+  "words": "sure (answer to: 1 is the crouch fixed in fur; 2 accept the new foreleg fold in the jump)",
+  "date": "2026-10-23",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5G4XQ7B8TVNGHWGFB74VWXZ",
+    "defect": "D-01M5FSE8Q16S7RHG8SPEFJ36GH",
+    "evidence": [
+      "https://claude.ai/artifact/YUmgYBZvCMivUZv3L1umat"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-23T20:50:10Z"
+}
