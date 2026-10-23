@@ -7,9 +7,10 @@ plain world colour (sampled in the top-left corner) by more than 6 levels. Per f
 bottom, front (smallest x, the creature faces left) and back (largest x), the top of the figure in the front third
 of its width (head and ears), and the area. Onion skins (two or more frames' silhouette outlines on one image,
 earliest blue, latest amber, the in-between ones stepping in luminance; frame numbers in the legend):
-  idle breath empty against full (0, 19), the weight shift's forward and back peaks (22, 67), the ear flick (52 to 59),
-  the loop seam (89, 0, 1); Night Stalk anticipation (0, 4), descent (6 to 16), the hold breath (16, 24, 36), the
-  tail-tip twitch (26, 28, 33), the rise (37 to 44), and frame 17 against 31.
+  idle breath empty against full (0, 19), the weight shift's forward and back peaks (22, 67), the ear flick (52 to 60),
+  the loop seam (89, 0, 1); Night Stalk (pass 3 timing) anticipation (0, 3), descent (4 to 18), the sink's end
+  (14 to 18), the hold breath (18, 24, 31), the tail-tip twitch (25, 27, 30), the rise (31 to 44) and its start
+  (31 to 35), and frame 19 against 30. Also the changed pixels from each frame to the next (channel sum above 30).
 Writes <out>/silhouettes.json and <out>/onion-*.png (side and sprite; the sprite onions scaled up 3x nearest).
 """
 import json
@@ -39,17 +40,24 @@ def extents(m):
                 head_top_front_third=int(ys[front].min()))
 
 
-res = {}
+res, diff = {}, {}
 for clip in ('idle', 'stalk'):
     for view in ('side', 'sprite'):
         d = frames/clip/view
         if not d.exists():
             continue
-        res[f'{clip}/{view}'] = {int(p.stem): extents(mask(p)) for p in sorted(d.glob('[0-9][0-9][0-9][0-9].png'))}
+        fs = sorted(d.glob('[0-9][0-9][0-9][0-9].png'))
+        res[f'{clip}/{view}'] = {int(p.stem): extents(mask(p)) for p in fs}
+        # changed pixels from each frame to the next (any channel sum above 30, the critic's measure); idle wraps 89 -> 0
+        ims = [np.asarray(Image.open(p).convert('RGB')).astype(np.int16) for p in fs]
+        if clip == 'idle':
+            ims.append(ims[0])
+        diff[f'{clip}/{view}'] = [int((np.abs(ims[i+1]-ims[i]).sum(2) > 30).sum()) for i in range(len(ims)-1)]
 
-ONIONS = {'idle': {'breath-0-19': [0, 19], 'shift-22-67': [22, 67], 'flick-52-59': list(range(52, 60)), 'seam-89-0-1': [89, 0, 1]},
-          'stalk': {'anticip-0-4': [0, 4], 'descent-6-16': list(range(6, 17, 2)), 'hold-breath-16-24-36': [16, 24, 36],
-                    'twitch-26-28-33': [26, 28, 33], 'rise-37-44': list(range(37, 45)), 'f17-vs-f31': [17, 31]}}
+ONIONS = {'idle': {'breath-0-19': [0, 19], 'shift-22-67': [22, 67], 'flick-52-60': list(range(52, 61)), 'seam-89-0-1': [89, 0, 1]},
+          'stalk': {'anticip-0-3': [0, 3], 'descent-4-18': list(range(4, 19, 2)), 'sink-end-14-18': list(range(14, 19)),
+                    'hold-breath-18-24-31': [18, 24, 31], 'twitch-25-27-30': [25, 27, 30], 'rise-31-44': list(range(31, 45, 2)),
+                    'rise-start-31-35': list(range(31, 36)), 'f19-vs-f30': [19, 30]}}
 BLUE, AMBER = np.array([70, 140, 255]), np.array([255, 176, 40])
 
 
@@ -95,12 +103,21 @@ def span(clip, view, key, fs):
 
 summ = {}
 for view in ('side', 'sprite'):
-    if f'idle/{view}' not in res:
+    if f'idle/{view}' not in res or f'stalk/{view}' not in res:
         continue
     summ[view] = dict(
         idle_top_range=span('idle', view, 'top', range(90)), idle_front_range=span('idle', view, 'front', range(90)),
         idle_head_top_front_third_range=span('idle', view, 'head_top_front_third', range(90)),
         stalk_top_per_frame={f: res[f'stalk/{view}'][f]['top'] for f in sorted(res[f'stalk/{view}'])},
         stalk_front_per_frame={f: res[f'stalk/{view}'][f]['front'] for f in sorted(res[f'stalk/{view}'])})
+for k, v in diff.items():
+    med = float(np.median(v))
+    summ.setdefault('frameChangePx', {})[k] = dict(median=med, max=max(v), argmax=int(np.argmax(v)), perStep=v,
+                                                    maxOverMedian=round(max(v)/med, 2) if med else None)
+    if k.startswith('idle'):
+        fl = v[51:60]
+        summ['frameChangePx'][k]['flick_51_60'] = fl
+        summ['frameChangePx'][k]['flickMaxOverMedian'] = round(max(fl)/med, 2) if med else None
 (out/'silhouettes-summary.json').write_text(json.dumps(summ, indent=1))
-print('SILHOUETTES_DONE', json.dumps({v: {k: x for k, x in s.items() if 'range' in k} for v, s in summ.items()}))
+print('SILHOUETTES_DONE', json.dumps({v: {k: x for k, x in s.items() if 'range' in k} for v, s in summ.items() if v != 'frameChangePx'}),
+      json.dumps({k: {x: y for x, y in v.items() if x != 'perStep'} for k, v in summ.get('frameChangePx', {}).items()}))

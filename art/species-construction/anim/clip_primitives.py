@@ -31,6 +31,12 @@ def ease(kind, u):
         s = 1.70158
         v = u - 1
         return 1 + v * v * ((s + 1) * v + s)
+    if kind == "settle":  # a gentle start and a long easing into the end (clips pass 3: the crouch eases into the bottom)
+        g = 1 - (1 - u) ** 1.8
+        return g * g * (3 - 2 * g)
+    if kind == "slowstart":  # a long slow start and a long eased end (pass 3: the rise from the crouch, ending at idle speed)
+        g = u ** 1.4
+        return g * g * g * (g * (6 * g - 15) + 10)
     return u * u * (3 - 2 * u)  # smooth
 
 

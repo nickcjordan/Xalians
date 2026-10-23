@@ -36,7 +36,11 @@ p.add_argument('--sprite-box', required=True)
 p.add_argument('--size', type=int, default=720)
 p.add_argument('--sprite', type=int, default=192)
 p.add_argument('--out', type=Path, default=None)
+p.add_argument('--anticip-peak', type=int, default=3)
+p.add_argument('--hold-breath', default='18,24', help='hold breath empty and full frames')
 a = p.parse_args()
+AF = a.anticip_peak
+HB = [int(v) for v in a.hold_breath.split(',')]
 
 B = rc.ANIM_BONES
 NAMES = rc.ANIM_NAMES
@@ -178,7 +182,7 @@ for cam in CAMS:
 # move removed by subtracting the pelvis joint's change over the same frames
 for cam in CAMS:
     S = summ[cam]
-    for clip, f0, f1 in (('idle', 0, 19), ('idle', 45, 64), ('stalk', 16, 24)):
+    for clip, f0, f1 in (('idle', 0, 19), ('idle', 45, 64), ('stalk', HB[0], HB[1])):
         for k in ('shoulder', 'trapezius', 'sternum', 'head', 'crown'):
             dy = -(series(clip, cam, k, 1)[f1]-series(clip, cam, k, 1)[f0])
             dp = -(series(clip, cam, 'pelvis', 1)[f1]-series(clip, cam, 'pelvis', 1)[f0])
@@ -186,14 +190,27 @@ for cam in CAMS:
         dh = np.array(out[clip][f1][cam]['head'])-np.array(out[clip][f0][cam]['head'])
         dpp = np.array(out[clip][f1][cam]['pelvis'])-np.array(out[clip][f0][cam]['pelvis'])
         S[f'{clip}_breath_{f0}_{f1}_head_ride_px'] = round(float(np.linalg.norm(dh-dpp)), 2)
-    # Night Stalk anticipation: frame 0 to frame 4
+    # Night Stalk anticipation: frame 0 to its peak (AF)
     for k in ('shoulder', 'trapezius', 'sternum', 'crown', 'nose', 'head'):
-        S[f'stalk_anticip_0_4_{k}_rise_px'] = round(float(-(series('stalk', cam, k, 1)[4]-series('stalk', cam, k, 1)[0])), 2)
-        S[f'stalk_anticip_0_4_{k}_back_px'] = round(float(series('stalk', cam, k, 0)[4]-series('stalk', cam, k, 0)[0]), 2)
+        S[f'stalk_anticip_0_{AF}_{k}_rise_px'] = round(float(-(series('stalk', cam, k, 1)[AF]-series('stalk', cam, k, 1)[0])), 2)
+        S[f'stalk_anticip_0_{AF}_{k}_back_px'] = round(float(series('stalk', cam, k, 0)[AF]-series('stalk', cam, k, 0)[0]), 2)
     # descent: nose path, frames 6 to 16 (x forward = negative image x)
-    S['stalk_nose_path_6_16'] = [[round(float(series('stalk', cam, 'nose', 0)[f]), 1), round(float(series('stalk', cam, 'nose', 1)[f]), 1)]
-                                for f in range(6, 17)]
-crouch = out['stalk'][16]['torso_pitch_deg']
+    S['stalk_nose_path'] = {f: [round(float(series('stalk', cam, 'nose', 0)[f]), 1), round(float(series('stalk', cam, 'nose', 1)[f]), 1)]
+                            for f in range(len(out['stalk']))}
+# tails on the rise against the idle pose the stalk lands on (each frame's own idle clock): the lag and the overshoot
+stalk_frames = json.loads((a.bake/'stalk'/'poses.json').read_text())
+for cam in CAMS:
+    rows = {}
+    for r, fr in zip(out['stalk'], stalk_frames):
+        ip = fr['info'].get('idlePhase')
+        if ip is None or r['frame'] < 30:
+            continue
+        rows[r['frame']] = {t: [round(r[cam][f'tail_{t}_tip'][k]-out['idle'][ip][cam][f'tail_{t}_tip'][k], 2) for k in (0, 1)] for t in 'abc'}
+    summ[cam]['stalk_tail_tip_minus_idle_px'] = rows
+    for k in ('crown', 'pelvis', 'sternum', 'nose'):
+        y = series('stalk', cam, k, 1)
+        summ[cam][f'stalk_{k}_y_step_px'] = {f: round(float(y[f]-y[f-1]), 2) for f in range(1, len(y))}
+crouch = out['stalk'][HB[0]]['torso_pitch_deg']
 rest_p = out['stalk'][0]['torso_pitch_deg']
 summ['torso_pitch_deg_per_frame'] = {r['frame']: r['torso_pitch_deg'] for r in out['stalk']}
 summ['torso_pitch_share_of_crouch'] = {r['frame']: round((r['torso_pitch_deg']-rest_p)/(crouch-rest_p), 3) for r in out['stalk']}

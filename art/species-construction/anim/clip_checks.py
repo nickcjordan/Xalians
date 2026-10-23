@@ -218,6 +218,7 @@ for clip in a.clips.split(','):
         summary['seam_speed_in_out_mm_per_frame'] = [round(float(np.linalg.norm(v_in, axis=1).max()*1000), 3),
                                                      round(float(np.linalg.norm(v_out, axis=1).max()*1000), 3)]
         rest0['idle0'] = Ps[0]
+        rest0['idle89'] = Ps[89]
     if clip == 'stalk':
         full = [r for r in rows if all(v == 1 for v in r['info']['shares'].values()) and r['info']['idle'] == 0]
         summary['fullCrouchFrames'] = [r['frame'] for r in full]
@@ -229,6 +230,9 @@ for clip in a.clips.split(','):
         if 'idle0' in rest0:
             last = Ps[len(frames)-1]
             summary['last_frame_vs_idle0_max_mm'] = round(float(np.linalg.norm(last-rest0['idle0'], axis=1).max())*1000, 4)
+            # pass 3: the last frame is idle frame 89, so stalk then idle plays 89 -> 0 with no repeated image
+            summary['last_frame_vs_idle89_max_mm'] = round(float(np.linalg.norm(last-rest0['idle89'], axis=1).max())*1000, 4)
+            summary['join_step_last_to_idle0_max_mm'] = round(float(np.linalg.norm(rest0['idle0']-last, axis=1).max())*1000, 4)
             summary['first_frame_vs_idle0_max_mm'] = round(float(np.linalg.norm(Ps[0]-rest0['idle0'], axis=1).max())*1000, 4)
         # in-between folds against the approved crouch clip's per-region maximum
         mx = report['approvedCrouchFolds']['maxPerRegion']
