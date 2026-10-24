@@ -11,7 +11,7 @@ Renders, for crouch_deep (review.poses, in place) and sig frames 12 14 16 18 20 
   side cell camera (pose_rig 'sidecell': az 270, 1.5 m ortho following the body, 960x640): fur and clay
   low three-quarter front (az 315, el -12, fitted to the body) for crouch_deep and f16: fur and clay
 """
-import bpy, sys, json, os
+import bpy, sys, json, os, math
 import numpy as np
 from pathlib import Path
 from mathutils import Vector
@@ -70,6 +70,63 @@ if gproxy is not None:
     gproxy.hide_render = True
     if old_proxy is not None: old_proxy.hide_render = True
 proxy = gproxy or old_proxy
+# pass 10b (D-2mcv): the pass 12 groom rebuilt the plume spine proxy and weighted its extension rigidly to tail_06
+# (with a tail_05 share), so the plume follows tail_06 and its own rest curl instead of the posed plume bones
+# tail_07..tail_09. FC_PLUME_CHAIN=1 reweights the extension along tail_06..tail_09 the way tailflight_rig.py did for
+# the pass 9 tube (linear between bone midpoints along the arc; the sculpt part keeps its weights). Bone midpoints are
+# found on the pass 12 spine by nearest point, so the rest look (rest pose = no deformation) is unchanged.
+PLUME_CHAIN = os.environ.get('FC_PLUME_CHAIN', '0') == '1'
+_sp = np.load(str(Path(GROOM).parent / 'plume_spine.npz')); SP_S, SP_A = _sp['S'], _sp['a']
+_pb = json.loads((Path(GROOM).parent / 'plume_build.json').read_text())['spine']
+K_RING = 10
+
+
+def ring_arc():
+    return np.r_[np.repeat(SP_A, K_RING), SP_A[-1]]
+
+
+def arc_of_point(p):
+    return float(SP_A[int(np.argmin(np.linalg.norm(SP_S - np.array(p), axis=1)))])
+
+
+if gproxy is not None and PLUME_CHAIN and all(f'tail_0{i}' in rig.data.bones for i in (6, 7, 8, 9)):
+    M = np.array(gproxy.matrix_world.inverted() @ rig.matrix_world)
+    def loc(v): return (M[:3, :3] @ np.array(v) + M[:3, 3]).tolist()
+    bones_ = rig.data.bones; names = ('tail_06', 'tail_07', 'tail_08', 'tail_09')
+    mids = [arc_of_point(loc((np.array(bones_[n].head_local) + np.array(bones_[n].tail_local)) / 2)) for n in names]
+    va = ring_arc(); gi = {g.index: g.name for g in gproxy.vertex_groups}
+    W0 = [{gi[g.group]: g.weight for g in v.groups if g.weight > 0} for v in gproxy.data.vertices]
+    mesh_arc = _pb['on_sculpt_m']; W = []
+    for w, x in zip(W0, va):
+        if x <= mesh_arc: W.append(dict(w)); continue
+        if x <= mids[0]: W.append({'tail_06': 1.0}); continue
+        if x >= mids[-1]: W.append({names[-1]: 1.0}); continue
+        k = int(np.searchsorted(mids, x)) - 1; u = (x - mids[k]) / (mids[k + 1] - mids[k]); W.append({names[k]: 1.0 - u, names[k + 1]: u})
+    for g in list(gproxy.vertex_groups): gproxy.vertex_groups.remove(g)
+    vg = {}
+    for i, w in enumerate(W):
+        for k_, x in w.items():
+            if x <= 1e-6: continue
+            if k_ not in vg: vg[k_] = gproxy.vertex_groups.new(name=k_)
+            vg[k_].add([i], float(x), 'REPLACE')
+    print('PLUMECHAIN mids', [round(m, 3) for m in mids], 'sculpt arc', round(mesh_arc, 3), 'tip arc', round(float(SP_A[-1]), 3), flush=True)
+
+
+def plume_axis_angle():
+    """Angle (deg) between the plume's central axis and the posed tail_07..tail_09 chain (tail_07 head to tail_09 tail).
+    Axis: centre of the proxy ring at the tail_06 tip (where the plume bones begin) to the centre of the last ring
+    (the strand bundle's root line, which every plume strand is bound to); also the whole plume from its first strand
+    ring (plume start arc). World space, evaluated."""
+    dg = bpy.context.evaluated_depsgraph_get(); pe = proxy.evaluated_get(dg); W_ = np.array(pe.matrix_world)
+    pv = arr(pe.data.vertices, 'co') @ W_[:3, :3].T + W_[:3, 3]
+    nr = (len(pv) - 1) // K_RING; rc = pv[:nr * K_RING].reshape(nr, K_RING, 3).mean(1)
+    Rw = rig.matrix_world; pbn = rig.pose.bones
+    h7 = np.array(Rw @ pbn['tail_07'].head); t9 = np.array(Rw @ pbn['tail_09'].tail); ch = t9 - h7
+    Mi = np.array(proxy.matrix_world.inverted() @ rig.matrix_world)
+    t6 = arc_of_point((Mi[:3, :3] @ np.array(rig.data.bones['tail_06'].tail_local) + Mi[:3, 3]).tolist())
+    i6 = int(np.argmin(np.abs(SP_A[:nr] - t6))); i0 = int(np.argmin(np.abs(SP_A[:nr] - _pb['plume_start_arc_m'])))
+    def a(u, v): return round(math.degrees(math.acos(max(-1, min(1, float(u @ v / (np.linalg.norm(u) * np.linalg.norm(v))))))), 1)
+    return dict(extension=a(rc[-1] - rc[i6], ch), whole=a(rc[-1] - rc[i0], ch), tip=[round(float(x), 5) for x in rc[-1]], mid=[round(float(x), 5) for x in rc[(i6 + nr) // 2]])
 assert len(gbody.data.polygons) == len(body.data.polygons) and len(gbody.data.vertices) == len(body.data.vertices), 'body topology differs'
 for o in curves:
     s.collection.objects.link(o); o.parent = None; o.matrix_world = mw
@@ -234,6 +291,21 @@ def clip_render(spec):
         s.render.filepath = str(out / f'{f:04d}.png'); bpy.ops.render.render(write_still=True); print('CLIP', clip, cam_name, f, flush=True)
     json.dump(dict(camera=dict(az=az, el=el, ortho_scale=cam.data.ortho_scale), plume_root_error_mm=perr, frames=[f0, f1]), open(out / 'camera.json', 'w'), indent=1)
     print('CLIP done', clip, cam_name, flush=True)
+
+
+if os.environ.get('FC_MEASURE'):
+    out = {}
+    for clip, n in (('sig.horns-first-descent', 60), ('idle', 89)):
+        rig.animation_data.action = bpy.data.actions[clip]; ac = rig.animation_data.action
+        if hasattr(rig.animation_data, 'action_slot') and rig.animation_data.action_slot is None and len(ac.slots): rig.animation_data.action_slot = ac.slots[0]
+        rig.location = (0, 0, 0); out[clip] = {}
+        for f in range(0, n + 1):
+            s.frame_set(f); bpy.context.view_layer.update(); r = plume_axis_angle(); r['root_err_mm'] = max([v for k_, v in plume_root_error().items() if k_ != 'Plume spine curve'] or [0]); out[clip][f] = r
+            print('AXIS', clip, f, r, flush=True)
+    rig.animation_data.action = None; g_ = None
+    for pbn in rig.pose.bones: pbn.rotation_quaternion = (1, 0, 0, 0); pbn.location = (0, 0, 0); pbn.scale = (1, 1, 1)
+    bpy.context.view_layer.update(); out['rest'] = plume_axis_angle(); print('AXIS rest', out['rest'], flush=True)
+    OUT.mkdir(parents=True, exist_ok=True); json.dump(out, open(OUT / f'axis_{LABEL}.json', 'w'), indent=1); print('MEASURE done', flush=True); sys.exit(0)
 
 
 if os.environ.get('FC_CLIP'):
