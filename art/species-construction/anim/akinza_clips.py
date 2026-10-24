@@ -58,12 +58,21 @@ IDLE = dict(
     shift_x_m=.003,              # ... with a little side to side, a quarter cycle later ...
     shift_dip_m=(.002, .004),    # ... dipping up to 2 mm, plus 4 mm at the forward peak so no leg ever straightens fully
     shift_soft_deg=1.6,          # the pelvis rolls so the far (right) hip drops at the forward peak: the far knee softens
-    flick_start_f=52,            # near ear flick (ear_1.L only): out in 2 frames, held 1, back over 3 to a 5-degree overshoot
-    flick_share=.5,              # share of the approved swept-back ear_1 rotation (90 degrees): 45 degrees back
+    flick_start_f=52,            # near ear flick (ear_1.L only): out in 2 frames, held 1, back over 4 to a small overshoot
+    # pass 4 (third critic): the flick swung along the approved swept-back direction, which also turns the ear out toward
+    # the side camera, so 45 degrees of rotation showed as about 82 degrees in the side view. It is now a rotation of
+    # ear_1 straight back (about the head's side-to-side axis) by flick_back_deg, plus a slight outward swivel of the
+    # blade about its own base-to-tip line, aimed at 25 to 35 degrees visible from the side
+    flick_back_deg=30.,
+    flick_swivel_deg=10.,
     tail_period_f=90,            # tails unchanged from pass 1: one slow sway per loop ...
     tail_harmonic=.22,           # ... plus a little of the second harmonic so the path is not a pure sine
     tail_lag_f=2.6,              # lag per bone down each chain (the tip trails the root by about 13 frames)
     tail_phase={'a': 0., 'b': 1/3, 'c': 2/3},     # cycles: a third of a cycle apart (pass 3: in fur, .22 apart merged two plumes)
+    # pass 4: the two lower tails swing up and down in opposite directions (the lower tail's up-and-down wave half a cycle
+    # from the middle tail's; its sideways wave keeps its own phase), with more up-and-down swing, so they part
+    tail_lift_extra={'c': 1/6},
+    tail_lift_scale={'b': 2.6, 'c': 2.6},
     tail_lift_deg={'a': (1.1, 1.4, 1.8, 2.2, 2.6), 'b': (1.0, 1.3, 1.6, 2.0, 2.4), 'c': (.8, 1.0, 1.3, 1.6, 2.0)},
     tail_yaw_deg={'a': (1.4, 1.8, 2.3, 2.8, 3.2), 'b': (1.3, 1.7, 2.1, 2.6, 3.0), 'c': (.9, 1.1, 1.4, 1.7, 2.0)},
     tail_yaw_lead=.25,           # cycles: the sideways sway leads the up-and-down one, so each tip draws an ellipse
@@ -92,34 +101,37 @@ STALK = dict(
     # knees share one track, so the torso leans with the knees going down and straightens with them coming up (the
     # approved crouch clip's own path: every bone at one eased share); the ears move with the drop and follow the
     # rise 2 to 3 frames late; the tails trail the rise by about 3 frames and overshoot a little before the idle sway.
+    # pass 4 (third critic): the ears and tails snapped up at the end. The rise now starts at 28 (the hold gives up 3
+    # frames) and takes 16 frames; the ears and tails start back at 35 with the body, over 8 to 9 frames, the ears a
+    # little behind the head and settling softly. The anticipation peaks at frame 4 and the sink runs 5-17 (settled at 18).
     tracks={
-        'drop':   [(4, 'linear', 0.), (18, 'settle', 1.), (31, 'linear', 1.), (44, 'slowstart', 0.)],
-        'back':   [(4, 'linear', 0.), (18, 'settle', 1.), (31, 'linear', 1.), (44, 'slowstart', 0.)],
-        'pitch':  [(4, 'linear', 0.), (18, 'settle', 1.), (31, 'linear', 1.), (44, 'slowstart', 0.)],
-        'head':   [(4, 'linear', 0.), (18, 'settle', 1.), (31, 'linear', 1.), (44, 'slowstart', 0.)],
-        'arms':   [(5, 'linear', 0.), (18, 'settle', 1.), (31, 'linear', 1.), (44, 'slowstart', 0.)],
-        'ears':   [(6, 'linear', 0.), (14, 'smooth', 1.), (38, 'linear', 1.), (44, 'smooth', 0.)],
-        'tail_a': [(5, 'linear', 0.), (18, 'settle', 1.), (39, 'linear', 1.), (43, 'smooth', -.025), (44, 'smooth', 0.)],
-        'tail_b': [(6, 'linear', 0.), (18, 'settle', 1.), (39, 'linear', 1.), (43, 'smooth', -.025), (44, 'smooth', 0.)],
-        'tail_c': [(7, 'linear', 0.), (18, 'settle', 1.), (39, 'linear', 1.), (43, 'smooth', -.025), (44, 'smooth', 0.)],
+        'drop':   [(5, 'linear', 0.), (18, 'settle', 1.), (28, 'linear', 1.), (44, 'slowstart', 0.)],
+        'back':   [(5, 'linear', 0.), (18, 'settle', 1.), (28, 'linear', 1.), (44, 'slowstart', 0.)],
+        'pitch':  [(5, 'linear', 0.), (18, 'settle', 1.), (28, 'linear', 1.), (44, 'slowstart', 0.)],
+        'head':   [(5, 'linear', 0.), (18, 'settle', 1.), (28, 'linear', 1.), (44, 'slowstart', 0.)],
+        'arms':   [(6, 'linear', 0.), (18, 'settle', 1.), (28, 'linear', 1.), (44, 'slowstart', 0.)],
+        'ears':   [(6, 'linear', 0.), (14, 'smooth', 1.), (34, 'linear', 1.), (44, 'smooth', 0.)],
+        'tail_a': [(6, 'linear', 0.), (18, 'settle', 1.), (34, 'linear', 1.), (42, 'smooth', -.015), (44, 'smooth', 0.)],
+        'tail_b': [(7, 'linear', 0.), (18, 'settle', 1.), (34, 'linear', 1.), (42, 'smooth', -.015), (44, 'smooth', 0.)],
+        'tail_c': [(8, 'linear', 0.), (18, 'settle', 1.), (34, 'linear', 1.), (42, 'smooth', -.015), (44, 'smooth', 0.)],
     },
     # the live idle layer (tails swaying at the idle rate, breath, weight shift) runs on through the anticipation and
     # eases to a stop over the sink; on the way up it eases back in on the clock that lands on idle frame 89 at frame 44
-    idle_w=[(4, 'linear', 1.), (14, 'smooth', 0.), (31, 'linear', 0.), (44, 'slowstart', 1.)],
+    idle_w=[(5, 'linear', 1.), (15, 'smooth', 0.), (28, 'linear', 0.), (44, 'slowstart', 1.)],
     end_phase=89,
-    # anticipation, frames 0-3: the chest rises (an inhale) and the head tips up a little; gone by frame 5, before
-    # the knees have bent more than a few degrees (no chest-out, chin-up frame on bent knees)
-    anticipation=[(0, 'linear', 0.), (3, 'smooth', 1.), (5, 'smooth', 0.)],
-    anticip={'chest': [-1.2, 0., 0.], 'head': [-3.0, 0., 0.]},   # plus .9 of a breath (below); no hip move
-    anticip_breath=.9,           # the anticipation's inhale: this share of a full breath (the breath key and rotations)
-    hold=(18, 31),               # one slow breath across the hold (zero on frames 18 and 31, both exactly night_stalk)
-    # the hold's breath, its own rotations: the crouched chest pitches up further and the clavicles lift half as far
-    # with no arm counter-turn (the forward arms ride the shoulders), so the shoulder skin folds no more than the
-    # approved crouch's; the ribcage key at 1.5 of a breath (2.1 folded the crouched chest's sides), no belly
-    hold_layer={'chest': [-2.4, 0., 0.], 'spine': [-.7, 0., 0.], 'clavicle.L': [0., -2.4, 0.], 'clavicle.R': [0., 2.4, 0.],
-                'neck': [2.0, 0., 0.], 'head': [.8, 0., 0.]},
-    hold_breath_key=1.5,
-    twitch=[(25, 'linear', 0.), (27, 'out', 1.), (30, 'smooth', 0.)],      # the top tail's tip: out over 25-27 (breath peak 23-24), settled by 30
+    # anticipation, frames 0-4: the chest rises (an inhale) and the head tips up a little; gone by frame 6, before the
+    # knees have bent more than a few degrees (no chest-out, chin-up frame on bent knees)
+    anticipation=[(0, 'linear', 0.), (4, 'smooth', 1.), (6, 'smooth', 0.)],
+    anticip={'chest': [-2.0, 0., 0.], 'head': [-3.5, 0., 0.]},   # plus anticip_breath of a breath (below); no hip move
+    anticip_breath=1.6,          # the anticipation's inhale: this share of a full breath (the breath key and rotations)
+    hold=(18, 28),               # one slow, shallow breath across the hold (zero on frames 18 and 28, both exactly night_stalk)
+    hold_inhale_share=.5,
+    # the hold's breath, its own rotations, at 0.6 of pass 3's (shallow): the crouched chest pitches up and the
+    # clavicles lift with no arm counter-turn (the forward arms ride the shoulders); the ribcage key at 0.9 of a breath
+    hold_layer={'chest': [-1.44, 0., 0.], 'spine': [-.42, 0., 0.], 'clavicle.L': [0., -1.44, 0.], 'clavicle.R': [0., 1.44, 0.],
+                'neck': [1.2, 0., 0.], 'head': [.48, 0., 0.]},
+    hold_breath_key=.9,
+    twitch=[(19, 'linear', 0.), (21, 'out', 1.), (25, 'smooth', 0.)],      # the top tail's tip: out over 19-21 (breath peak 23), settled by 25
     twitch_deg={'tail_a4': 5.0, 'tail_a5': 9.0},        # on a tail bone (pointing back) +X lifts it: the tip flicks up
 )
 GROUP_OF = {}
@@ -222,23 +234,37 @@ def idle_layers(rig, f):
     # near ear flick: ear_1.L swings back along the approved swept-back direction and returns
     s = flick_share(f % n)
     if s:
-        put('ear_1.L', share_of(rig.body['ear_1.L'], s*P['flick_share']))
+        put('ear_1.L', flick_rotation(rig, s))
     # tails
     for tl in rc.TAILS:
         for k in range(1, rc.TAIL_BONES+1):
             u = (f-P['tail_lag_f']*k)/P['tail_period_f']+P['tail_phase'][tl]
-            lift_w = math.sin(2*math.pi*u)+P['tail_harmonic']*math.sin(4*math.pi*u+.7)
+            ul = u+P['tail_lift_extra'].get(tl, 0.)
+            lift_w = (math.sin(2*math.pi*ul)+P['tail_harmonic']*math.sin(4*math.pi*ul+.7))*P['tail_lift_scale'].get(tl, 1.)
             yaw_w = math.sin(2*math.pi*(u+P['tail_yaw_lead']))+P['tail_harmonic']*math.sin(4*math.pi*(u+P['tail_yaw_lead'])+1.9)
             put(f'tail_{tl}{k}', [P['tail_bias_deg'].get(tl, 0.)-P['tail_lift_deg'][tl][k-1]*lift_w, 0., P['tail_yaw_deg'][tl][k-1]*yaw_w])
     return lay, lift, dict(breath=round(b, 4), flick=round(s, 4), shift=[round(float(v), 5) for v in lift])
 
 
+def flick_rotation(rig, s):
+    """ear_1.L's flick at share s (1 = the full flick): a slight outward swivel of the blade about its own base-to-tip
+    line, then a turn straight back about the head's side-to-side (X) axis; Euler degrees relative to the head."""
+    P = IDLE
+    u = np.subtract(rig.J['ear4.L'], rig.J['ear0.L']).astype(float)
+    u /= np.linalg.norm(u)
+    th = math.radians(P['flick_swivel_deg']*s)
+    K = np.array([[0, -u[2], u[1]], [u[2], 0, -u[0]], [-u[1], u[0], 0]])
+    Rsw = np.eye(3)+math.sin(th)*K+(1-math.cos(th))*K@K        # Rodrigues: positive turns the opening outward (+X)
+    Rback = rc.euler_matrix(-P['flick_back_deg']*s, 0., 0.)     # -X: the tip goes back (+Y)
+    return rc.euler_from_matrix(Rback@Rsw)
+
+
 def flick_share(f):
-    """Ear flick timeline (frames), share of the flick (pass 3, critic): out in 2 frames, held a frame, back over 3
-    to an overshoot forward of 5 degrees (.11 of the 45-degree flick), settled over 2 more."""
+    """Ear flick timeline (frames), share of the flick (pass 4, critic): out in 2 frames, held a frame, back over 4
+    to a small overshoot forward (.08 of the flick), settled on the next frame."""
     f0 = IDLE['flick_start_f']
     tr = cp.Track([(f0, 'linear', {}), (f0+1, 'smooth', {'a': .55}), (f0+2, 'out', {'a': 1.}), (f0+3, 'linear', {'a': .97}),
-                   (f0+6, 'smooth', {'a': -.11}), (f0+8, 'smooth', {'a': 0.})])
+                   (f0+7, 'smooth', {'a': -.08}), (f0+8, 'smooth', {'a': 0.})])
     return tr(f)['a'] if f0 <= f <= f0+8 else 0.
 
 
@@ -302,7 +328,7 @@ def stalk_frame(rig, f):
         pose = add_layer(pose, P['anticip'], an)
         pose = add_layer(pose, breath_layer(P['anticip_breath']), an)
     h0, h1 = P['hold']
-    hb = cp.breath(f-h0, h1-h0, IDLE['breath_inhale_share']) if h0 <= f <= h1 else 0.
+    hb = cp.breath(f-h0, h1-h0, P.get('hold_inhale_share', IDLE['breath_inhale_share'])) if h0 <= f <= h1 else 0.
     if hb > 0:
         pose = add_layer(pose, P['hold_layer'], hb)
     tw = track(P['twitch'], f)

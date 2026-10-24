@@ -150,6 +150,10 @@ for clip in ('idle', 'stalk'):
         pts['pelvis'] = joint(T, 'pelvis')
         pts['neck_base'] = joint(T, 'neck_base')
         pts['ear_tip'] = joint(T, 'ear4.L')
+        pts['ear_base'] = joint(T, 'ear0.L')            # the near ear's base ring (ear_1's head)
+        for t in rc.TAILS:
+            for k in range(1, rc.TAIL_BONES):
+                pts[f'tail_{t}_j{k}'] = joint(T, f'tail_{t}_j{k}')
         for t in rc.TAILS:
             pts[f'tail_{t}_tip'] = joint(T, f'tail_{t}_j5')
         tv = pts['neck_base']-pts['pelvis']

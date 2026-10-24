@@ -58,6 +58,12 @@ p.add_argument('--only', default=None, help='clip:frame list (e.g. idle:0,stalk:
 p.add_argument('--fur-checks', action='store_true')
 p.add_argument('--deep', default='stalk:16')
 p.add_argument('--no-render', action='store_true', help='checks only')
+p.add_argument('--seed', type=int, default=None, help='Cycles seed (fixed for every frame); default: keep the file\'s')
+p.add_argument('--filter-width', type=float, default=None, help='Cycles pixel filter width (px); default: keep the file\'s')
+p.add_argument('--variants', default=None, help='JSON list of {tag, samples, seed, filter_width, denoise}: every frame and view is '
+               'rendered once per variant into <clip>/<view>-<tag>/ (render-setting tests)')
+p.add_argument('--diag-frames', default=None, help='clip:frame list: classify the strands inside the skin there by the region '
+               'their root is on and the region of skin they pass into (fur look, with --fur-checks)')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 t0 = time.time()
 R = a.rig
@@ -79,6 +85,8 @@ ONLY = None
 if a.only:
     ONLY = {(x.split(':')[0], int(x.split(':')[1])) for x in a.only.split(',')}
 DEEP = {(x.split(':')[0], int(x.split(':')[1])) for x in a.deep.split(',')} if a.deep else set()
+DIAG = {(x.split(':')[0], int(x.split(':')[1])) for x in a.diag_frames.split(',')} if a.diag_frames else set()
+VARIANTS = json.loads(a.variants) if a.variants else None
 
 bpy.ops.wm.open_mainfile(filepath=str(a.surface/'surface.blend'))
 sc = bpy.context.scene
@@ -120,6 +128,16 @@ else:
     for o in bpy.data.objects:
         if o.type == 'CURVES' and o is not fur:
             o.hide_render = True
+if a.seed is not None:
+    sc.cycles.seed = a.seed
+    sc.cycles.use_animated_seed = False
+if a.filter_width is not None:
+    sc.cycles.filter_width = a.filter_width
+CYCLES = {k: getattr(sc.cycles, k, None) for k in ('samples', 'seed', 'use_animated_seed', 'use_denoising', 'denoiser',
+                                                     'denoising_input_passes', 'denoising_prefilter', 'denoising_quality',
+                                                     'use_adaptive_sampling', 'adaptive_threshold', 'filter_width', 'filter_type')}
+CYCLES = {k: (v if isinstance(v, (int, float, bool, str, type(None))) else str(v)) for k, v in CYCLES.items()}
+print('cycles settings', CYCLES, 'frame', sc.frame_current, flush=True)
 sc.render.resolution_percentage = 100
 sc.render.image_settings.file_format = 'PNG'
 sc.render.image_settings.color_mode = 'RGB'
@@ -219,18 +237,50 @@ def frame_camera(view):
 fur_rows = []
 
 
-def inside_strands(Px, pts):
+def region_of_bone(b):
+    if b.startswith('tail'):
+        return 'tail_root' if b == 'tail_root' else 'tail_'+b[5]
+    base = rc.base_of(b)
+    if base in ('thigh', 'glute', 'hip'):
+        return 'thigh_'+b[-1]
+    if base in ('shin', 'foot'):
+        return 'lower_leg'
+    if base in ('pelvis', 'root'):
+        return 'pelvis'
+    return 'other'
+
+
+DOM = idx[:, 0]                      # each skin vertex's strongest bone
+
+
+def inside_strands(Px, pts, classify=False):
     bvh = BVHTree.FromPolygons(Px.tolist(), tri.tolist(), all_triangles=True)
     keep = np.ones(len(pts), bool)
     keep[root_ix] = False
     bad = np.zeros(len(pts), bool)
+    hit_tri = np.full(len(pts), -1, np.int64)
     for i in np.flatnonzero(keep):
         q = Vector(pts[i])
-        loc, nrm, _, dist = bvh.find_nearest(q, .05)
+        loc, nrm, k, dist = bvh.find_nearest(q, .05)
         if loc is not None and (q-loc).dot(nrm) < -.0005/s:
             bad[i] = True
+            hit_tri[i] = k
     curve_of = binding['curve_of']
-    return int(len(np.unique(curve_of[bad]))), int(bad.sum())
+    out = [int(len(np.unique(curve_of[bad]))), int(bad.sum())]
+    if classify:
+        names = rc.ANIM_NAMES
+        root_reg = np.array([region_of_bone(names[b]) for b in DOM[binding['Tr'][:, 0]]])
+        hits = np.flatnonzero(bad)
+        hit_reg = np.array([region_of_bone(names[DOM[tri[k, 0]]]) for k in hit_tri[hits]])
+        pairs = {}
+        for c, (r1, r2) in zip(curve_of[hits], zip(root_reg[curve_of[hits]], hit_reg)):
+            pairs.setdefault(f'{r1} -> {r2}', set()).add(int(c))
+        out.append({k: len(v) for k, v in sorted(pairs.items(), key=lambda kv: -len(kv[1]))})
+        # strands rooted on the tail roots and bases, and how many of them have any point inside other skin
+        tail_base = np.isin(root_reg, ['tail_root'])|np.isin(np.array([names[b] for b in DOM[binding['Tr'][:, 0]]]), ['tail_a1', 'tail_b1', 'tail_c1'])
+        out.append(dict(tail_base_strands=int(tail_base.sum()),
+                        tail_base_strands_inside=int(len(set(curve_of[hits]) & set(np.flatnonzero(tail_base).tolist())))))
+    return out
 
 
 def apply(fr, clip):
@@ -266,7 +316,10 @@ def apply(fr, clip):
             row = dict(clip=clip, frame=fr['frame'], root_error_max_mm=round(float(err.max()), 4),
                        root_to_surface_max_mm=round(float(surf.max()), 4), root_to_surface_p99_mm=round(float(np.quantile(surf, .99)), 4),
                        length_change_max_pct=round(float(dl.max()), 4), nonfinite=int((~np.isfinite(pts)).sum()))
-            if (clip, fr['frame']) in DEEP or (clip == clips[0] and fr['frame'] == 0):
+            if (clip, fr['frame']) in DIAG:
+                row['strands_inside_skin'], row['points_inside_skin'], row['inside_by_region'], row['tail_base'] = \
+                    inside_strands(Px, pts, classify=True)
+            elif (clip, fr['frame']) in DEEP or (clip == clips[0] and fr['frame'] == 0):
                 row['strands_inside_skin'], row['points_inside_skin'] = inside_strands(Px, pts)
             row['seconds'] = round(time.time()-t1, 1)
             fur_rows.append(row)
@@ -276,7 +329,7 @@ def apply(fr, clip):
 
 
 log = dict(look=a.look, views=views, size=a.size, sprite=a.sprite, samples=a.samples, box=box.tolist(), spriteBox=sbox.tolist(),
-           renderSeconds={})
+           cycles=CYCLES if a.look == 'fur' or a.seed is not None else None, variants=VARIANTS, renderSeconds={})
 for clip in clips:
     frames = json.loads((a.bake/clip/'poses.json').read_text())
     if clip == 'idle':
@@ -291,10 +344,23 @@ for clip in clips:
             continue
         for v in views:
             frame_camera(v)
-            t1 = time.time()
-            sc.render.filepath = str(a.out/clip/v/f"{fr['frame']:04d}.png")
-            bpy.ops.render.render(write_still=True)
-            log['renderSeconds'].setdefault(f'{clip}/{v}', []).append(round(time.time()-t1, 2))
+            for var in (VARIANTS or [None]):
+                tag = v
+                if var is not None:
+                    tag = f"{v}-{var['tag']}"
+                    sc.cycles.samples = var.get('samples', a.samples)
+                    if 'seed' in var:
+                        sc.cycles.seed = var['seed']
+                        sc.cycles.use_animated_seed = False
+                    if 'filter_width' in var:
+                        sc.cycles.filter_width = var['filter_width']
+                    if 'denoise' in var:
+                        sc.cycles.use_denoising = bool(var['denoise'])
+                    (a.out/clip/tag).mkdir(parents=True, exist_ok=True)
+                t1 = time.time()
+                sc.render.filepath = str(a.out/clip/tag/f"{fr['frame']:04d}.png")
+                bpy.ops.render.render(write_still=True)
+                log['renderSeconds'].setdefault(f'{clip}/{tag}', []).append(round(time.time()-t1, 2))
         print('frame', clip, fr['frame'], {k: v[-1] for k, v in log['renderSeconds'].items()}, round(time.time()-t0), flush=True)
 log['seconds'] = round(time.time()-t0)
 a.out.mkdir(parents=True, exist_ok=True)
