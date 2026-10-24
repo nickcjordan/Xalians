@@ -1,0 +1,105 @@
+[
+ {
+  "kind": "slab",
+  "axis": "y",
+  "from": 0.0,
+  "to": 0.035,
+  "factor": 1.94,
+  "ramp": 0.008,
+  "why": "torso 3.3 cm longer in the belly slab y 0.0 to 0.035, which lies behind the ear blades (their back edge is at y -0.006) and in front of the hind toes (y 0.038), so nothing but belly and back stretches and no exclusion is needed (an exclusion's sharp edge folded the map near the ear)"
+ },
+ {
+  "kind": "rotate",
+  "pivot": [
+   0.11,
+   -0.075,
+   0.47
+  ],
+  "axis": [
+   1,
+   0,
+   0
+  ],
+  "degrees": 11,
+  "region": {
+   "mask": "C:/dev/art-data/studio/recon/hypnopet/r10-mv-oct512/mask-ear-left.npz",
+   "and": {
+    "box": [
+     [
+      -1,
+      1
+     ],
+     [
+      -1,
+      1
+     ],
+     [
+      -1,
+      0.44
+     ]
+    ],
+    "ramp": [
+     0.01,
+     0.01,
+     0.12
+    ]
+   }
+  },
+  "why": "ears rake back about 13 degrees on flesh-side, 2 on the model; the blade swings rigidly from near its root; moved as a detached piece (the ear blade below z 0.44 is its own solid), bending in over 12 cm below the root so the root stays joined (warps-5 bent it over 7 cm, which left a crease across the back of each ear a third of the way down: critic 2 new defect 4)",
+  "detach": true
+ },
+ {
+  "kind": "scale",
+  "pivot": [
+   0.12,
+   0.223,
+   0.03
+  ],
+  "factors": [
+   1.0,
+   1.2,
+   1.0
+  ],
+  "region": {
+   "center": [
+    0.12,
+    0.15,
+    0.02
+   ],
+   "radii": [
+    0.065,
+    0.12,
+    0.065
+   ],
+   "fade": 0.35
+  },
+  "why": "hind foot longer forward from the heel (critic: hind foot 0.23 H against 0.36 H)"
+ },
+ {
+  "kind": "scale",
+  "pivot": [
+   0.05,
+   -0.1,
+   0.02
+  ],
+  "factors": [
+   1.0,
+   0.86,
+   1.0
+  ],
+  "region": {
+   "center": [
+    0.05,
+    -0.16,
+    0.02
+   ],
+   "radii": [
+    0.045,
+    0.075,
+    0.045
+   ],
+   "fade": 0.4
+  },
+  "why": "forepaw shorter toward the wrist (critic: forepaw 0.23 H against 0.17 H)"
+ }
+]

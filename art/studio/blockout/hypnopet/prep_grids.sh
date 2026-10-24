@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Hypnopet sculpt-stage grid preparation (experiment X33). Each step writes a new grid next to the reconstruction;
 # sculpt.py repairs point at the results by path and pin them by sha256. Run from the repository root.
+# The warp lists (board/warps-N.json under the art-data blockout folder) are copied into art/studio/blockout/hypnopet/warps/ so the record survives the data folder.
 set -euo pipefail
 R=C:/dev/art-data/studio/recon/hypnopet/r10-mv-oct512
 B=C:/dev/art-data/studio/blockout/hypnopet

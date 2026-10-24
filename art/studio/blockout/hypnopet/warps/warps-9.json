@@ -1,0 +1,202 @@
+[
+ {
+  "kind": "slab",
+  "axis": "y",
+  "from": 0.0,
+  "to": 0.035,
+  "factor": 1.94,
+  "ramp": 0.008,
+  "why": "torso 3.3 cm longer in the belly slab y 0.0 to 0.035, which lies behind the ear blades (their back edge is at y -0.006) and in front of the hind toes (y 0.038), so nothing but belly and back stretches and no exclusion is needed (an exclusion's sharp edge folded the map near the ear)"
+ },
+ {
+  "kind": "scale",
+  "pivot": [
+   0,
+   0.15,
+   0.03
+  ],
+  "factors": [
+   0.85,
+   1,
+   1
+  ],
+  "region": {
+   "box": [
+    [
+     0.04,
+     0.26
+    ],
+    [
+     0.03,
+     0.34
+    ],
+    [
+     -0.02,
+     0.15
+    ]
+   ],
+   "ramp": [
+    0.03,
+    0.012,
+    0.07
+   ]
+  },
+  "why": "hind lower legs and feet 15 percent in toward the midline below the hock, fading out up the shin by z 0.15: the metric overlays on flesh-front and flesh-back put the hind feet at x 0.10 to 0.17 against the sheet's 0.07 to 0.13 (the lower leg leaned out). Applied before the ear swing and the foot lengthening, when the ear blades lie wholly in front of y 0 and the foot's front is at y 0.067, so the box (y from 0.03) holds the whole foot and no ear; its x range runs well past the foot so its fade does not flare the foot's outer side (a first try with x to 0.19 flared the feet and cut the ear tips)"
+ },
+ {
+  "kind": "rotate",
+  "pivot": [
+   0.11,
+   -0.075,
+   0.47
+  ],
+  "axis": [
+   0.9806,
+   0.1961,
+   0
+  ],
+  "degrees": 15.3,
+  "region": {
+   "mask": "C:/dev/art-data/studio/recon/hypnopet/r10-mv-oct512/mask-ear-left.npz",
+   "and": {
+    "box": [
+     [
+      -1,
+      1
+     ],
+     [
+      -1,
+      1
+     ],
+     [
+      -1,
+      0.44
+     ]
+    ],
+    "ramp": [
+     0.01,
+     0.01,
+     0.12
+    ]
+   }
+  },
+  "why": "ears rake back about 13 degrees on flesh-side, 2 on the model; the blade swings rigidly from near its root; moved as a detached piece (the ear blade below z 0.44 is its own solid), bending in over 12 cm below the root so the root stays joined (warps-5 bent it over 7 cm, which left a crease across the back of each ear a third of the way down: critic 2 new defect 4); warps-7 adds a 6 degree inward swing (one rotation about the combined axis): the metric overlay on flesh-front and flesh-back put the ear tips 4 cm further out than the sheet (x 0.255 against 0.21); warps-9: raked 15 degrees and swung in 3 (critic 4: the 6 degree swing hung the lower ears 0.025 to 0.03 H inside the sheet and against the body in front; the rear edge stayed 0.03 to 0.05 H forward in side view)",
+  "detach": true
+ },
+ {
+  "kind": "scale",
+  "pivot": [
+   0.12,
+   0.223,
+   0.03
+  ],
+  "factors": [
+   1.0,
+   1.2,
+   1.0
+  ],
+  "region": {
+   "center": [
+    0.12,
+    0.15,
+    0.02
+   ],
+   "radii": [
+    0.065,
+    0.12,
+    0.065
+   ],
+   "fade": 0.35
+  },
+  "why": "hind foot longer forward from the heel (critic: hind foot 0.23 H against 0.36 H)"
+ },
+ {
+  "kind": "scale",
+  "pivot": [
+   0.1,
+   0.12,
+   0.03
+  ],
+  "factors": [
+   0.82,
+   1,
+   1
+  ],
+  "region": {
+   "box": [
+    [
+     0.03,
+     0.22
+    ],
+    [
+     0.0,
+     0.3
+    ],
+    [
+     -0.02,
+     0.06
+    ]
+   ],
+   "ramp": [
+    0.02,
+    0.02,
+    0.03
+   ]
+  },
+  "why": "hind feet 18 percent narrower about their own center line (critic 4: flat flippers whose outer half carried no toes)"
+ },
+ {
+  "kind": "scale",
+  "pivot": [
+   0.05,
+   -0.1,
+   0.02
+  ],
+  "factors": [
+   1.0,
+   0.73,
+   1.0
+  ],
+  "region": {
+   "center": [
+    0.05,
+    -0.16,
+    0.02
+   ],
+   "radii": [
+    0.045,
+    0.075,
+    0.045
+   ],
+   "fade": 0.4
+  },
+  "why": "forepaw shorter toward the wrist (critic: forepaw 0.23 H against 0.17 H); warps-8: 0.73 (critic 3 measured the forepaw 0.212 H against the sheet 0.180 H after 0.86)"
+ },
+ {
+  "kind": "scale",
+  "pivot": [
+   0.035,
+   -0.18,
+   0.36
+  ],
+  "factors": [
+   0.6,
+   1,
+   1
+  ],
+  "region": {
+   "center": [
+    0.07,
+    -0.185,
+    0.33
+   ],
+   "radii": [
+    0.085,
+    0.105,
+    0.09
+   ],
+   "fade": 1.0
+  },
+  "why": "lower face tapered to the sheet's heart shape: the jowls narrowed about the mouth corner (x 0.035) between z 0.30 and 0.40 (critic 3: 0.253 H wide at 0.56 H against the sheet's 0.179 H; the sheet's half-width is 0.066 at z 0.372 against 0.084), so the mouth, the eyes (above z 0.40) and the ears (behind y -0.12) do not move. A soft ellipsoid region, fading over most of its radius: a box fading over 2.5 cm in z left a horizontal ledge across the cheek in the side view (sculpt-32)"
+ }
+]
