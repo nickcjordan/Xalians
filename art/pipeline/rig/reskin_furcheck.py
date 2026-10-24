@@ -85,6 +85,38 @@ if SURF:
         for k_ in [a_.name for a_ in go_.data.attributes if not a_.name.startswith('.') and a_.name not in tgt.data.attributes and a_.domain == 'POINT' and len(a_.data) == len(tgt.data.vertices) and a_.data_type == 'FLOAT']:
             v_ = np.empty(len(tgt.data.vertices), np.float32); go_.data.attributes[k_].data.foreach_get('value', v_); tgt.data.attributes.new(k_, 'FLOAT', 'POINT').data.foreach_set('value', v_)
         SURFLOG[nm] = [m_.name for m_ in go_.data.materials]
+    # fur 2: larger eyes (eye and cornea scaled about the eyeball centre) and darker horn tips
+    esc = float(os.environ.get('FC_EYE_SCALE', '1.0'))
+    if esc != 1.0:
+        for nm in ('eye_l', 'eye_r'):
+            for on in (nm, 'surface_cornea_' + nm):
+                o_ = bpy.data.objects.get(on)
+                if o_ is None: continue
+                V_ = np.array([v.co[:] for v in o_.data.vertices]); c_ = np.array([v.co[:] for v in bpy.data.objects[nm].data.vertices]).mean(0)
+                V_ = c_ + (V_ - c_) * esc
+                for v, x in zip(o_.data.vertices, V_): v.co = x.tolist()
+        SURFLOG['eye_scale'] = esc
+    htd = float(os.environ.get('FC_HORN_TIP_DARK', '1.0'))
+    if htd != 1.0:
+        hb = np.array(rig.matrix_world @ rig.pose.bones['head_01'].head)
+        for nm in ('horn_l', 'horn_r'):
+            o_ = bpy.data.objects.get(nm)
+            if o_ is None: continue
+            Mo = np.array(o_.matrix_world); V_ = np.array([v.co[:] for v in o_.data.vertices]) @ Mo[:3, :3].T + Mo[:3, 3]
+            base = V_[np.argmin(np.linalg.norm(V_ - hb, axis=1))]; dd_ = np.linalg.norm(V_ - base, axis=1); t_ = (dd_ / dd_.max()).astype(np.float32)
+            if 'horn_tip' in o_.data.attributes: o_.data.attributes.remove(o_.data.attributes['horn_tip'])
+            o_.data.attributes.new('horn_tip', 'FLOAT', 'POINT').data.foreach_set('value', t_)
+            for m_ in o_.data.materials:
+                nt_ = m_.node_tree; bs_ = next(n for n in nt_.nodes if n.bl_idname == 'ShaderNodeBsdfPrincipled')
+                if 'horn tip dark' in nt_.nodes: continue
+                src_ = bs_.inputs['Base Color'].links[0].from_socket
+                at_ = nt_.nodes.new('ShaderNodeAttribute'); at_.attribute_name = 'horn_tip'; at_.attribute_type = 'GEOMETRY'
+                mr_ = nt_.nodes.new('ShaderNodeMapRange'); mr_.inputs['From Min'].default_value = 0.55; mr_.inputs['From Max'].default_value = 1.0
+                mr_.inputs['To Min'].default_value = 1.0; mr_.inputs['To Max'].default_value = htd
+                mx_ = nt_.nodes.new('ShaderNodeVectorMath'); mx_.operation = 'SCALE'; mx_.name = 'horn tip dark'
+                nt_.links.new(at_.outputs['Fac'], mr_.inputs['Value']); nt_.links.new(src_, mx_.inputs[0]); nt_.links.new(mr_.outputs['Result'], mx_.inputs['Scale'])
+                nt_.links.new(mx_.outputs['Vector'], bs_.inputs['Base Color'])
+        SURFLOG['horn_tip_dark'] = htd
     print('SURFACE materials', json.dumps(SURFLOG), flush=True)
 gproxy = next((o for o in objs if o.type == 'MESH' and o.name.startswith('luceras_plume_spine')), None)
 curves = [o for o in objs if o.type == 'CURVES']
