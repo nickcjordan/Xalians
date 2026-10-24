@@ -1,0 +1,17 @@
+{
+  "id": "N-01M5NQ92VREJ3EBM51HZT8VF3E",
+  "alias": "3arc",
+  "stage": "09-animate",
+  "who": "nick",
+  "words": "It looks good, but I noticed the tail tip no longer straightens like it used to... It still has the tip of the tail curled up mid-flight, but that's not all hair, right? Isn't there some tail inside that tip? So shouldn't it be straighter than what it's showing? (check 3: motion polish approved; plume curl in flight requested)",
+  "date": "2026-10-24",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5G4XQ7B8TVNGHWGFB74VWXZ",
+    "evidence": [
+      "https://claude.ai/artifact/YUmgYBZvCMivUZv3L1umat"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-24T01:09:22Z"
+}
