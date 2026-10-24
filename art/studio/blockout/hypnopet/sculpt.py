@@ -174,7 +174,12 @@ def mouth(spec):
     # upper lip: the sheet's two round muzzle pads under the nose, whose undersides make the opening's top edge
     # (critic 3: the pads were missing and the area under the nose flat); a rounded rim continues them to the corner
     P.append({'part': 'mouth', 'kind': 'mass', 'op': 'add-after', 'mirror': 'x', 'blend': 0.005, 'params': {
-        'center': [0.0125, -0.2645, 0.3830], 'radii': [0.0135, 0.0100, 0.0098], 'exponent': 2.0}})
+        'center': [0.0130, -0.2620, 0.3855], 'radii': [0.0145, 0.0140, 0.0120], 'exponent': 2.0}})
+    # muzzle: a full rounded upper muzzle between the nose and the mouth (critic 6, sculpt-50: in profile a thin nose
+    # tube with a recessed upper lip, 0.045 H deep 0.035 H behind the nose tip against the sheet's 0.075 H); added
+    # before the carves, so the opening is cut through it, with the pads on top
+    P.append({'part': 'mouth', 'kind': 'mass', 'blend': 0.012, 'params': {
+        'center': [0, -0.252, 0.389], 'radii': [0.024, 0.018, 0.015], 'exponent': 2.0}})
     # cheeks: a round mass beside each corner pushing up toward the eye, as a smile does (critic 4: no cheek mass by
     # the corners, and the face concave between the eye and the mouth corner in the side view)
     P.append({'part': 'mouth', 'kind': 'mass', 'mirror': 'x', 'blend': 0.014, 'params': {
@@ -198,7 +203,7 @@ def mouth(spec):
     # the corners, so that was undone (open item: the mouth sits 6 to 9 mm low against the sheet). A bigger tongue
     # (sculpt-47) bulged out as a ball with a slot under it; undone too
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
-        'center': [0, -0.231, 0.3510], 'radii': [0.0175, 0.016, 0.0105], 'exponent': 2.0,
+        'center': [0, -0.227, 0.3500], 'radii': [0.0175, 0.016, 0.0105], 'exponent': 2.0,
         'rotation': [12, 0, 0]}})
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
         'center': [0, -0.212, 0.3370], 'radii': [0.013, 0.020, 0.0068], 'exponent': 2.0}})
@@ -311,7 +316,8 @@ def toes(spec):
     split about 2 cm back on top while the sole stays joined (research/hypnopet/feet). Method: a dome per toe,
     added, then a thin slot carved between neighbours through the front of the foot down to about 1 cm above the
     sole. Critic 5 (sculpt-40): the toe tops stood 0.074 to 0.086 H against the sheet's 0.105 to 0.115 H and the feet
-    read as flat planks in profile; the domes now stand 1 to 1.4 cm taller and the splits are wider V grooves.
+    read as flat planks in profile; domes 1 to 1.4 cm taller with wider splits (sculpt-48 to 51) turned the hind toes
+    into thin fins with pointed tops (critic 6), so that was undone: taller toes need the foot itself rebuilt.
     Positions from slices of the skin grid (forepaw front edge y -0.205, 6.5 cm wide; hind foot front y 0.043);
     the hind toes reach 1 cm further forward (critic 2: hind foot 93 percent of the sheet's length)."""
     P = spec['parts']
@@ -328,16 +334,16 @@ def toes(spec):
             ([0.1197, 0.057, 0.024], 0.017)]
     for c, ry in fore:
         P.append({'part': 'toes', 'kind': 'mass', 'mirror': 'x', 'blend': 0.005, 'params': {
-            'center': [c[0], c[1], c[2]+0.006], 'radii': [0.0092, ry, 0.0250], 'exponent': 2.0}})
+            'center': c, 'radii': [0.0092, ry, 0.0195], 'exponent': 2.0}})
     for c, ry in hind:
         P.append({'part': 'toes', 'kind': 'mass', 'mirror': 'x', 'blend': 0.005, 'params': {
-            'center': [c[0], c[1], c[2]+0.008], 'radii': [0.0078, ry, 0.0290], 'exponent': 2.0}})
+            'center': c, 'radii': [0.0078, ry, 0.0215], 'exponent': 2.0}})
     for x in (0.0325, 0.0475, 0.062):
         P.append({'part': 'toes', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.004, 'params': {
-            'center': [x, -0.190, 0.040], 'radii': [0.0042, 0.0145, 0.028], 'exponent': 2.0}})
+            'center': [x, -0.190, 0.036], 'radii': [0.0034, 0.0145, 0.024], 'exponent': 2.0}})
     for x in (0.0912, 0.1025, 0.1142):
         P.append({'part': 'toes', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.004, 'params': {
-            'center': [x, 0.040, 0.040], 'radii': [0.0044, 0.019, 0.030], 'exponent': 2.0}})
+            'center': [x, 0.040, 0.034], 'radii': [0.0036, 0.019, 0.024], 'exponent': 2.0}})
     return spec
 
 
