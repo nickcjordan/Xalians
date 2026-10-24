@@ -120,7 +120,10 @@ def measure(C, mpath=None, overlays=True):
         cd, fd = C/'frames/clay/idle'/view, C/'frames/fur-idle/idle'/view
         if not (cd.exists() and fd.exists()):
             continue
-        cl, fu = [ld(f) for f in frames(cd)], [ld(f) for f in frames(fd)]
+        fu = [ld(f) for f in frames(fd)]
+        size = fu[0].shape[1], fu[0].shape[0]
+        # the clay side view is 720 px and the fur side 480 px over the same framing: clay is box-filtered to the fur's size
+        cl = [np.asarray(Image.open(f).convert('RGB').resize(size, Image.BOX)).astype(np.int16) for f in frames(cd)]
         fur_share, clay_share = [], []
         for i in range(len(fu)):
             j = (i+1) % len(fu)
