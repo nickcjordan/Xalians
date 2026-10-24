@@ -67,6 +67,8 @@ def args():
     ap.add_argument('--voxel', type=float, default=0.004, help='voxel remesh size when Quadriflow refuses the skin')
     ap.add_argument('--weights-from', type=Path)
     ap.add_argument('--clean-margin', type=float, default=0.01, help='weight cleanup margin in meters (0: off)')
+    ap.add_argument('--smooth', type=int, default=60, help='Laplacian weight smoothing passes on the build skin '
+                    'before it is cleaned there (with --dense)')
     ap.add_argument('--dense', action='store_true', help='pose and render the build skin itself, with the weights '
                     'solved on the remeshed proxy carried over by nearest face')
     ap.add_argument('--label', default='')
@@ -313,14 +315,38 @@ def seg_dist(P, a, b):
     return np.linalg.norm(P-(a+np.outer(t, ab)), axis=1)
 
 
-def clean_weights(body, bones, margin):
-    """Keep a limb chain's weight on a vertex only while the chain's nearest bone is within `margin` of the
-    nearest limb chain's (fading linearly across the margin); the dropped weight goes to the core bone the chain
-    hangs from. Returns the share of vertices changed."""
+def smooth_columns(body, W, iterations, alpha=0.5):
+    """Laplacian smoothing of the weight columns over the mesh edges, `iterations` passes."""
+    n = len(body.data.vertices)
+    E = np.empty(len(body.data.edges)*2, np.int64)
+    body.data.edges.foreach_get('vertices', E)
+    E = E.reshape(-1, 2)
+    deg = np.maximum(np.bincount(E[:, 0], minlength=n)+np.bincount(E[:, 1], minlength=n), 1)
+    for i in np.nonzero(W.any(axis=0))[0]:
+        w = W[:, i].copy()
+        for _ in range(iterations):
+            s = np.bincount(E[:, 0], weights=w[E[:, 1]], minlength=n)+np.bincount(E[:, 1], weights=w[E[:, 0]], minlength=n)
+            w = (1.0-alpha)*w+alpha*s/deg
+        W[:, i] = w
+    return W
+
+
+def clean_weights(body, bones, margin, smooth=0):
+    """Rules on the weights, in order: an optional smoothing (`smooth` Laplacian passes over the mesh edges, for
+    the sawtooth that carrying weights by nearest face leaves and the hard edges heat weights leave at a limb's
+    root); a limb chain keeps its weight on a vertex only while its nearest bone is within `margin` of the nearest
+    limb chain's (fading linearly across the margin); near its root a sided chain (left or right) fades to nothing
+    over 2 cm toward the midline and carries none across it; a bone with "weightBelow" or "weightAbove" (side-view
+    polylines of [y, z]) keeps weight only on that side of its line, fading over "weightRamp" either side. Dropped
+    weight goes to the core bone the chain hangs from (the bone's parent for the line rules). Returns the share of
+    vertices changed."""
     names = [b['name'] for b in bones]
     chains = [chain_of(b) for b in bones]
     by = {b['name']: b for b in bones}
-    W = weight_matrix(body, names)
+    W0 = weight_matrix(body, names)
+    W = W0/np.maximum(W0.sum(axis=1, keepdims=True), 1e-9)
+    if smooth:
+        W = smooth_columns(body, W, smooth)
     P = np.array([v.co[:] for v in body.data.vertices])
     limb = sorted(set(chains)-{'core'})
     D = np.full((len(P), len(limb)), np.inf)
@@ -335,9 +361,20 @@ def clean_weights(body, bones, margin):
     F = np.clip((dmin[:, None]+margin-D)/margin, 0.0, 1.0)
     F = np.where(present, F, 1.0)
     root = {}
-    for u in limb:
+    for k, u in enumerate(limb):
         first = next(b for b in bones if chain_of(b) == u and (not b['parent'] or chain_of(by[b['parent']]) != u))
         root[u] = names.index(first['parent'])
+        if u.endswith('_L') or u.endswith('_R'):
+            # near the limb's root only (within 4 to 6 cm of its first bone: the chest between the upper forelegs,
+            # the rump between the thighs): a forepaw stands 1.5 cm from the midline and must keep its own weight
+            # (audit-11: faded everywhere, the paws' inner edges stayed with the chest and tore into spikes)
+            sx = P[:, 0] if u.endswith('_L') else -P[:, 0]
+            t = np.clip(sx/0.02, 0.0, 1.0)
+            side = t*t*(3-2*t)
+            dr = seg_dist(P, np.array(first['head'], float), np.array(first['tail'], float))
+            n = np.clip((0.06-dr)/0.02, 0.0, 1.0)
+            near = n*n*(3-2*n)
+            F[:, k] *= 1.0-near*(1.0-side)
     W2 = W.copy()
     for i, c in enumerate(chains):
         if c == 'core':
@@ -347,25 +384,26 @@ def clean_weights(body, bones, margin):
         W2[:, i] -= drop
         W2[:, root[c]] += drop
     for i, b in enumerate(bones):
-        line = b.get('weightBelow')
-        if not line:
-            continue
-        L = np.asarray(line, float)
-        zc = np.interp(P[:, 1], L[:, 0], L[:, 1])
-        ramp = float(b.get('weightRamp', 0.004))
-        keep = np.clip((zc-P[:, 2])/ramp*0.5+0.5, 0.0, 1.0)
-        drop = W2[:, i]*(1.0-keep)
-        W2[:, i] -= drop
-        W2[:, names.index(b['parent'])] += drop
+        for key, sign in (('weightBelow', 1.0), ('weightAbove', -1.0)):
+            line = b.get(key)
+            if not line:
+                continue
+            L = np.asarray(line, float)
+            zc = np.interp(P[:, 1], L[:, 0], L[:, 1])
+            ramp = float(b.get('weightRamp', 0.004))
+            keep = np.clip(sign*(zc-P[:, 2])/ramp*0.5+0.5, 0.0, 1.0)
+            drop = W2[:, i]*(1.0-keep)
+            W2[:, i] -= drop
+            W2[:, names.index(b['parent'])] += drop
     W2 /= np.maximum(W2.sum(axis=1, keepdims=True), 1e-9)
-    changed = np.abs(W2-W/np.maximum(W.sum(axis=1, keepdims=True), 1e-9)).max(axis=1) > 1e-3
+    changed = np.abs(W2-W0/np.maximum(W0.sum(axis=1, keepdims=True), 1e-9)).max(axis=1) > 1e-3
     groups = {g.name: g for g in body.vertex_groups}
     for i, n in enumerate(names):
         col = W2[:, i]
-        if not np.any(np.abs(col-W[:, i]) > 1e-6):
+        if not np.any(np.abs(col-W0[:, i]) > 1e-6):
             continue
         g = groups.get(n) or body.vertex_groups.new(name=n)
-        g.remove([int(v) for v in np.nonzero(W[:, i] > 0)[0]])
+        g.remove([int(v) for v in np.nonzero(W0[:, i] > 0)[0]])
         q = np.round(col*1000).astype(int)
         for level in np.unique(q[q > 0]):
             g.add([int(v) for v in np.nonzero(q == level)[0]], level/1000.0, 'REPLACE')
@@ -542,9 +580,17 @@ def main():
         bpy.data.objects.remove(skin)
     rig, bones, snapped = build_armature(spec, dense_bvh)
     joints = {}
+    shafts = {}
     for b in bones:
         joints[b['name']+'.head'] = depth(dense_bvh, b['head'])
         joints[b['name']+'.tail'] = depth(dense_bvh, b['tail'])
+        # the whole shaft, not only its ends: a bone can leave the skin between two joints that are inside it
+        # (audit-9: the shin crossed the air notch under the haunch with both ends inside)
+        h, t = np.array(b['head'], float), np.array(b['tail'], float)
+        out = [depth(dense_bvh, (h+(t-h)*f).tolist()) for f in np.linspace(0.1, 0.9, 9)]
+        worst = max((d for d in out if d is not None), default=None)
+        if worst is not None and worst > 0:
+            shafts[b['name']] = round(float(worst), 4)
     wmode = weights(body, rig, a.weights_from)
     cleaned = None
     if a.weights_from is None and a.clean_margin > 0:
@@ -557,8 +603,8 @@ def main():
         if a.weights_from is None and a.clean_margin > 0:
             # cleaned again on the build skin: where the proxy closed a gap thinner than its voxel (the corners of
             # an open mouth), nearest-face carrying hands one lip the other lip's weights (audit-7: a torn upper lip)
-            clean_weights(body, bones, a.clean_margin)
-            wmode += ' and cleaned there again'
+            clean_weights(body, bones, a.clean_margin, smooth=a.smooth)
+            wmode += f' and cleaned there again after {a.smooth} smoothing passes'
     for o in separate:
         bone = spec.get('separate', {}).get(o.name)
         if bone:
@@ -660,6 +706,7 @@ def main():
          'vertices': len(body.data.vertices), 'faces': len(polys), 'weights': wmode, 'unweightedVertices': unweighted,
          'restIntersectingPairs': len(rest_pairs), 'jointSnapMeters': snapped,
          'jointDepthMeters': joints, 'jointsOutsideSkin': sorted(k for k, d in joints.items() if d is not None and d > 0),
+         'shaftsOutsideSkin': shafts,
          'bleedVertices': int(bleed_mask.sum()), 'bleedShare': float(bleed_mask.mean()),
          'bleedByPair': dict(sorted(pairs.items(), key=lambda kv: -kv[1])), 'poses': results,
          'thresholds': {'crush': CRUSH, 'stretch': STRETCH, 'bleed': BLEED}, 'minutes': (time.time()-t0)/60}

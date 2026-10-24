@@ -28,15 +28,22 @@ from pathlib import Path
 
 import numpy as np
 
-HIND = {'hip': [0.08, 0.175, 0.205], 'knee': [0.10, 0.118, 0.142], 'hock': [0.115, 0.198, 0.045],
-        'tarsus': [0.117, 0.17, 0.03], 'ball': [0.12, 0.075, 0.025], 'toe': [0.113, 0.045, 0.02]}
+# hind leg on sculpt-31's slices (audit-9 critic: the shin ran 5.6 cm in front of the shank through the air notch
+# under the haunch): the knee at the front of the haunch; the hock at the bottom of the shank column (centered
+# x 0.076, y 0.21 from z 0.07 to 0.12), where it meets the foot; the metatarsals forward along the foot (centered
+# x 0.09 to 0.10 after warps-7 moved the feet in)
+HIND = {'hip': [0.08, 0.175, 0.205], 'knee': [0.098, 0.118, 0.142], 'hock': [0.077, 0.212, 0.075],
+        'tarsus': [0.083, 0.185, 0.045], 'ball': [0.095, 0.075, 0.025], 'toe': [0.096, 0.045, 0.02]}
+# the paw and toe joints follow warps-8's shorter forepaw (y about -0.1 scaled by 0.85)
 FORE = {'shoulder': [0.045, -0.11, 0.26], 'elbow': [0.05, -0.08, 0.185], 'wrist': [0.048, -0.095, 0.07],
-        'paw': [0.05, -0.105, 0.035], 'toe': [0.052, -0.16, 0.025]}
+        'paw': [0.05, -0.104, 0.035], 'toe': [0.052, -0.151, 0.025]}
 # the toe bone ends inside the second toe: on the foot's midline it fell in the split between the middle toes
 # (sculpt-27 toes; audit-6 found it outside the skin)
 # the blade joints sit on its thickest line, found as the deepest inside point of each horizontal slice of the
-# sculpt-21 grid: a lop ear is cupped, so a slice's centroid falls in the cup, outside the skin (audit-3)
-EAR = [[0.08, -0.085, 0.49], [0.12, -0.08, 0.515], [0.165, -0.064, 0.42], [0.222, -0.027, 0.28], [0.238, 0.012, 0.13]]
+# grid (re-measured on grid-skin-5c after warps-7 swung the blades in): a lop ear is cupped, so a slice's centroid falls in the cup, outside the skin (audit-3)
+# the root in the ear's root where it joins the crown (audit-9 critic: ear1 sat in the air notch under the arch),
+# then the outer shoulder of the arch
+EAR = [[0.065, -0.085, 0.515], [0.118, -0.08, 0.512], [0.162, -0.057, 0.42], [0.202, -0.029, 0.28], [0.202, 0.015, 0.11]]
 
 
 def bone(name, head, tail, parent=None, chain='core', mirror=False, connect=True):
@@ -53,13 +60,20 @@ def bones():
         bone('neck', [0, -0.085, 0.285], [0, -0.12, 0.37], 'chest'),
         bone('head', [0, -0.12, 0.37], [0, -0.255, 0.405], 'neck'),
         bone('skull', [0, -0.13, 0.40], [0, -0.13, 0.52], 'head', connect=False),
+        # the back of the cranium (to y -0.05) is 5 to 8 cm behind the skull bone; without a core bone there the ear
+        # chains owned it and creased it when the ears moved (audit-9)
+        bone('occiput', [0, -0.12, 0.44], [0, -0.07, 0.455], 'head', connect=False),
         # the jaw carries only what lies below the lip line: the gap's midline at the front, the mouth corner (kept
         # under the opening's roof, 0.375 to 0.381 there), then back along the cheek to below the hinge (sculpt-18
         # mouth; heat weights put jaw weight in the upper lip); the fade is 7 mm either side, so the mouth's back wall
-        # stretches evenly when the jaw opens (audit-8: a 4 mm fade creased it into a ragged curtain)
-        dict(bone('jaw', [0, -0.175, 0.375], [0, -0.243, 0.336], 'head', chain='jaw', connect=False),
+        # stretches evenly when the jaw opens (audit-8: a 4 mm fade creased it into a ragged curtain); and nothing
+        # below the chin and the top of the throat (audit-9: the jaw dragged the throat down to z 0.30 in a V crease).
+        # The hinge sits higher and further back, behind and above the mouth corners (audit-9 critic)
+        dict(bone('jaw', [0, -0.162, 0.388], [0, -0.243, 0.336], 'head', chain='jaw', connect=False),
              weightBelow=[[-0.40, 0.355], [-0.255, 0.358], [-0.240, 0.366], [-0.229, 0.372], [-0.215, 0.370],
-                          [-0.200, 0.366], [-0.150, 0.355], [0.20, 0.355]], weightRamp=0.007),
+                          [-0.200, 0.366], [-0.150, 0.355], [0.20, 0.355]],
+             weightAbove=[[-0.40, 0.295], [-0.235, 0.300], [-0.200, 0.318], [-0.160, 0.335], [0.20, 0.35]],
+             weightRamp=0.007),
         bone('thigh', H['hip'], H['knee'], 'pelvis', 'hind', True, connect=False),
         bone('shin', H['knee'], H['hock'], 'thigh', 'hind', True),
         bone('ankle', H['hock'], H['tarsus'], 'shin', 'hind', True),
@@ -69,8 +83,9 @@ def bones():
         bone('forearm', F['elbow'], F['wrist'], 'upperarm', 'fore', True),
         bone('hand', F['wrist'], F['paw'], 'forearm', 'fore', True),
         bone('paw', F['paw'], F['toe'], 'hand', 'fore', True),
-        bone('tail1', [0, 0.198, 0.262], [0, 0.222, 0.27], 'pelvis', 'tail', connect=False),
-        bone('tail2', [0, 0.222, 0.27], [0, 0.244, 0.276], 'tail1', 'tail'),
+        # the tail stub 1.5 cm lower and 5 mm back with the sculpt's tail ball (sculpt-32)
+        bone('tail1', [0, 0.203, 0.247], [0, 0.227, 0.255], 'pelvis', 'tail', connect=False),
+        bone('tail2', [0, 0.227, 0.255], [0, 0.249, 0.261], 'tail1', 'tail'),
         bone('ear1', E[0], E[1], 'skull', 'ear', True, connect=False),
         bone('ear2', E[1], E[2], 'ear1', 'ear', True),
         bone('ear3', E[2], E[3], 'ear2', 'ear', True),
@@ -169,8 +184,10 @@ def poses_and_limits():
     plant_hind = lambda s: [(f'ankle_{s}', 'head', rest[f'ankle_{s}'][0]), (f'foot_{s}', 'tail', rest[f'foot_{s}'][1])]  # noqa: E731
     plant_fore = lambda s: [(f'hand_{s}', 'head', rest[f'hand_{s}'][0]), (f'paw_{s}', 'tail', rest[f'paw_{s}'][1])]  # noqa: E731
     report = {}
-    # crouch: hips down 4.5 cm and tipped 10 degrees, all four feet planted
-    base = [['pelvis', 'move', [0, 0.0, -0.045]], ['pelvis', 'x', -10], ['tail1', 'x', -25], ['tail2', 'x', -15]]
+    # crouch: the whole body down 3.5 cm, level, the head lifted a little by the neck, all four feet planted, so the
+    # elbows flex as the chest lowers (audit-9 critic: tipping the hips 10 degrees nose-up made a sit-back on locked
+    # forelegs; tipping it nose-down took the shoulder past its limit)
+    base = [['pelvis', 'move', [0, 0.0, -0.035]], ['neck', 'x', -3], ['tail1', 'x', -25], ['tail2', 'x', -15]]
     crouch = list(base)
     for s in ('L', 'R'):
         ang, err = solve(bs, crouch, [(f'thigh_{s}', 'x'), (f'shin_{s}', 'x'), (f'ankle_{s}', 'x')], plant_hind(s))
@@ -179,17 +196,17 @@ def poses_and_limits():
         ang, err = solve(bs, crouch, [(f'upperarm_{s}', 'x'), (f'forearm_{s}', 'x'), (f'hand_{s}', 'x')], plant_fore(s))
         crouch += [[f'upperarm_{s}', 'x', ang[0]], [f'forearm_{s}', 'x', ang[1]], [f'hand_{s}', 'x', ang[2]]]
         report[f'crouch fore {s}'] = err
-    # stride: the stance legs stay on the ground, solved like the crouch: the left hind at push-off (the ball 4.5 cm
-    # back, the heel lifting), the right fore trailing (the toe 4 cm back, the wrist lifting); the swing legs are
+    # stride: the stance legs stay on the ground: the left hind in mid-stance, the right fore trailing (solved like
+    # the crouch: the toe 4 cm back, the wrist lifting); the swing legs are
     # posed freely, the right hind swinging forward folded and the left fore reaching forward with the elbow bent
-    stride = [['thigh_R', 'x', -25], ['shin_R', 'x', 30], ['ankle_R', 'x', -10],
-              ['upperarm_L', 'x', -25], ['forearm_L', 'x', -40], ['hand_L', 'x', 25],
+    # the reaching forepaw hangs flexed at the wrist (audit-9: bent up 25 degrees it showed its sole, heel-first)
+    stride = [['thigh_R', 'x', -25], ['shin_R', 'x', 24], ['ankle_R', 'x', -10],
+              ['upperarm_L', 'x', -25], ['forearm_L', 'x', -40], ['hand_L', 'x', -20],
               ['tail1', 'z', 12], ['neck', 'x', 6]]
     goal = lambda b, end, d: (b, end, (rest[b][0 if end == 'head' else 1]+np.asarray(d, float)).tolist())  # noqa: E731
-    ang, err = solve(bs, stride, [('thigh_L', 'x'), ('shin_L', 'x'), ('ankle_L', 'x')],
-                     [goal('foot_L', 'tail', [0, 0.045, 0]), goal('ankle_L', 'head', [0, 0.05, 0.03])])
-    stride += [['thigh_L', 'x', ang[0]], ['shin_L', 'x', ang[1]], ['ankle_L', 'x', ang[2]]]
-    report['stride hind L'] = err
+    # the left hind is in mid-stance, planted where it stands: a push-off that extends hip, knee and hock needs the
+    # foot well behind the hip, which a single frame with the body still cannot give (audit-9: solving for a foot 4.5
+    # to 13 cm back gave a flexed hock every time, and the hip past its limit)
     ang, err = solve(bs, stride, [('upperarm_R', 'x'), ('forearm_R', 'x'), ('hand_R', 'x')],
                      [goal('paw_R', 'tail', [0, 0.04, 0]), goal('hand_R', 'head', [0, 0.045, 0.015])])
     stride += [['upperarm_R', 'x', ang[0]], ['forearm_R', 'x', ang[1]], ['hand_R', 'x', ang[2]]]
@@ -198,19 +215,22 @@ def poses_and_limits():
         'stride': stride,
         'crouch': crouch,
         # head turned and lifted, jaw a little wider (a laugh, not a yawn), the near ear lifted clear of the thigh it
-        # swings toward (audit-4: it passed through the haunch), the far ear hanging; no paw raised (a paw
+        # swings toward (audit-4: it passed through the haunch) with its blade sagging back toward vertical along
+        # its length (audit-9: posed only at the root, the blade stayed a rigid plank), the far ear hanging; no paw
         # raised on the turning side went through the muzzle in audit-3; the elbow fold is tested in extreme)
         'look': [['neck', 'z', 22], ['head', 'pz', 13], ['head', 'px', -12], ['jaw', 'x', 8],
-                 ['ear1_L', 'y', -16], ['ear1_R', 'y', 8]],
+                 ['ear1_L', 'y', -20], ['ear3_L', 'y', 4], ['ear4_L', 'y', 4], ['ear1_R', 'y', 8]],
         # the deepest folds the limits allow: the left knee and hip flexed with the foot lifted, the right elbow
-        # folded with the paw lifted in front of the chest (shoulder a little forward, so the forearm folds in front of
+        # folded with the paw lifted in front of the chest and curled down at the wrist (audit-9: a palm facing
+        # forward read as a high five) (shoulder a little forward, so the forearm folds in front of
         # the chest rather than through it; audit-4 with the shoulder back: 236 faces through the chest), the neck
         # turned 50 degrees split over neck and head, the near ear lifted off the shoulder and the far ear swung
         # out so it clears the tucked leg (a lop ear drapes over a leg; it never passes through it), the tail swung
-        'extreme': [['thigh_L', 'x', -38], ['shin_L', 'x', 44], ['ankle_L', 'x', -12],
-                    ['upperarm_R', 'x', -10], ['forearm_R', 'x', -105], ['hand_R', 'x', 40],
+        'extreme': [['thigh_L', 'x', -38], ['shin_L', 'x', 26], ['ankle_L', 'x', -12],
+                    ['upperarm_R', 'x', -10], ['forearm_R', 'x', -105], ['hand_R', 'x', -35],
                     ['neck', 'z', 32], ['head', 'pz', 18], ['head', 'px', -18], ['jaw', 'x', 12],
-                    ['ear1_L', 'y', -22], ['ear2_L', 'y', -10], ['ear1_R', 'y', 18], ['ear2_R', 'y', 8],
+                    ['ear1_L', 'y', -22], ['ear2_L', 'y', -10], ['ear3_L', 'y', 10], ['ear4_L', 'y', 8],
+                    ['ear1_R', 'y', 18], ['ear2_R', 'y', 8], ['ear3_R', 'y', -10], ['ear4_R', 'y', -10],
                     ['tail1', 'z', 25], ['tail2', 'z', 18]],
         'mouth-closed': [['jaw', 'x', -12]],
     }

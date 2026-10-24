@@ -56,3 +56,28 @@ python art/studio/recon/grid_soften.py --grid $R/grid-skin-3.npz --out $R/grid-s
 python art/studio/recon/grid_warp.py --grid $R/grid-skin-2.npz --out $R/grid-skin-3b.npz --warps $B/board/warps-6.json
 python art/studio/recon/grid_soften.py --grid $R/grid-skin-3b.npz --out $R/grid-skin-4b.npz --below 0.012,0.010,0.003   --at 0.085,-0.10,0.415,0.030,0.005   --at 0.100,0.115,0.250,0.030,0.005   --at 0.030,-0.100,0.100,0.025,0.004   --at 0.030,-0.080,0.190,0.025,0.005,1   --at 0.170,-0.080,0.420,0.015,0.003   --at 0,0.190,0.215,0.030,0.005,1
 python art/studio/recon/grid_soften.py --grid $R/grid-skin-4b.npz --out $R/grid-skin-5.npz   --at 0,0.205,0.228,0.022,0.006   --at 0,0.185,0.205,0.018,0.005,1   --at 0.062,-0.078,0.490,0.022,0.005
+# 5c-7c: as 5b-7 on board/warps-7.json (the ear blades also swing 6 degrees in, the hind lower legs and feet move 15
+#    percent in below the hock: metric overlays on flesh-front and flesh-back), plus a fill at the top of the cleft
+python art/studio/recon/grid_warp.py --grid $R/grid-skin-2.npz --out $R/grid-skin-3c.npz --warps $B/board/warps-7.json
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-3c.npz --out $R/grid-skin-4c.npz --below 0.012,0.010,0.003   --at 0.085,-0.10,0.415,0.030,0.005   --at 0.100,0.115,0.250,0.030,0.005   --at 0.030,-0.100,0.100,0.025,0.004   --at 0.030,-0.080,0.190,0.025,0.005,1   --at 0.170,-0.080,0.420,0.015,0.003   --at 0,0.190,0.215,0.030,0.005,1
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-4c.npz --out $R/grid-skin-5c.npz   --at 0,0.205,0.228,0.022,0.006   --at 0,0.185,0.205,0.018,0.005,1   --at 0.062,-0.078,0.490,0.022,0.005   --at 0,0.215,0.240,0.020,0.006,1
+# 5d-7d (critic 3): as 5c-7c on board/warps-8.json, which adds the forepaw shortened to 0.73 and the jowls narrowed
+#    about the mouth corner to the sheet's heart-shaped lower face
+python art/studio/recon/grid_warp.py --grid $R/grid-skin-2.npz --out $R/grid-skin-3d.npz --warps $B/board/warps-8.json
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-3d.npz --out $R/grid-skin-4d.npz --below 0.012,0.010,0.003 \
+  --at 0.085,-0.10,0.415,0.030,0.005 \
+  --at 0.100,0.115,0.250,0.030,0.005 \
+  --at 0.030,-0.100,0.100,0.025,0.004 \
+  --at 0.030,-0.080,0.190,0.025,0.005,1 \
+  --at 0.170,-0.080,0.420,0.015,0.003 \
+  --at 0,0.190,0.215,0.030,0.005,1
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-4d.npz --out $R/grid-skin-5d.npz \
+  --at 0,0.205,0.228,0.022,0.006 \
+  --at 0,0.185,0.205,0.018,0.005,1 \
+  --at 0.062,-0.078,0.490,0.022,0.005 \
+  --at 0,0.215,0.240,0.020,0.006,1
+# 8 (critic 3): the dimple on each ear's outer face filled where the swung-in ear now has it, and the inner wrist
+#    bulges softened (positions picked on sculpt-35)
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-5d.npz --out $R/grid-skin-5e.npz \
+  --at 0.184,-0.079,0.424,0.016,0.004,1 \
+  --at 0.019,-0.115,0.074,0.016,0.004

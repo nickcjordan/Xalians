@@ -29,13 +29,18 @@ def horn(spec):
     a small bead. The sheet's rolls tighten and stay deep to the tip (about six), so the turns tighten toward the
     tip (twist 1.25), the ridge depth grows from 12 to 26 percent of the core radius, and the tip is a rounded cap
     no narrower than the last roll (the bead was a 3.5 mm tip sphere on a thinner neck).
+    Critic 3 (sculpt-29): still about four turns against six, the coils fat beads with pinched necks where the sheet
+    is a straight-sided twisted cone, a two-lobed bead at the tip, the base 0.029 H too far back, leaning 8.5
+    degrees against the sheet's 19 and 15 to 23 percent thin front to back. Now: base 1.4 cm forward, leaning 15
+    degrees, the profile 12 percent fuller, six and a half turns with shallower, broader-bottomed grooves (groove
+    0.65, depth 11 to 16 percent), the tip a plain rounded point.
     """
     parts = [p for p in spec['parts'] if p['part'] != 'horn']
     parts.append({'part': 'horn', 'kind': 'spiral', 'blend': 0.012, 'params': {
-        'base': [0, -0.137, 0.49], 'tip': [0, -0.160, 0.658],
-        'profile': [[0, 0.030], [0.24, 0.026], [0.405, 0.0228], [0.59, 0.0182], [0.774, 0.0123], [0.90, 0.0084],
-                    [0.965, 0.0060], [1, 0.0050]],
-        'turns': 5.5, 'twist': 1.25, 'ridges': 1, 'depth': 0.12, 'depthTip': 0.26, 'groove': 0.5, 'handed': 'right',
+        'base': [0, -0.151, 0.49], 'tip': [0, -0.196, 0.652],
+        'profile': [[0, 0.0336], [0.24, 0.0291], [0.405, 0.0255], [0.59, 0.0204], [0.774, 0.0138], [0.90, 0.0090],
+                    [0.965, 0.0060], [1, 0.0040]],
+        'turns': 6.5, 'twist': 1.15, 'ridges': 1, 'depth': 0.11, 'depthTip': 0.16, 'groove': 0.65, 'handed': 'right',
         'phase': 0, 'embed': 0.01}})
     spec['parts'] = parts
     return spec
@@ -117,7 +122,10 @@ def mouth(spec):
     # the corners are rounded ends turned up a little (sculpt-19 to 21 raised them into narrow curls, which left a
     # pointed lip flap between the curl and the side opening that read as a fang in the three-quarter view and
     # stair-stepped at the rig's 2.5 mm remesh)
-    half = [[0.0, 0.3795], [0.006, 0.3775], [0.016, 0.3755], [0.025, 0.3772], [0.031, 0.3800], [0.0345, 0.3815],
+    # the top edge is the two muzzle pads' round undersides meeting at a notch under the nose that rises, not
+    # hangs (critic 3: a center point lower than the pads read as a tooth in three-quarter views)
+    half = [[0.0, 0.3812], [0.004, 0.3790], [0.0085, 0.3770], [0.0135, 0.3763], [0.019, 0.3768], [0.025, 0.3778],
+            [0.031, 0.3800], [0.0345, 0.3815],
             [0.0362, 0.3800], [0.0360, 0.3770], [0.0335, 0.3730], [0.0285, 0.3670], [0.0190, 0.3520],
             [0.0080, 0.3400], [0.0, 0.3370]]
     right = [[-u, v] for u, v in reversed(half[1:-1])]
@@ -138,26 +146,31 @@ def mouth(spec):
     # lower lip: a roll along the U, sinking into the jaw well below the corner (ending at the corner, it stood up
     # in the side opening as a fang, sculpt-20)
     P.append({'part': 'mouth', 'kind': 'sweep', 'op': 'add-after', 'mirror': 'x', 'blend': 0.004, 'params': {
-        'points': [{'p': [0.025, -0.233, 0.358], 'r': 0.0024}, {'p': [0.0225, -0.236, 0.356], 'r': 0.0038},
-                   {'p': [0.017, -0.240, 0.350], 'r': 0.0050}, {'p': [0.0075, -0.2445, 0.3415], 'r': 0.0056},
-                   {'p': [0, -0.2455, 0.3395], 'r': 0.0057}]}})
+        # set 8 mm back from sculpt-29 (critic 3: the lower lip jutted 0.015 to 0.02 H past the sheet's)
+        'points': [{'p': [0.025, -0.229, 0.358], 'r': 0.0024}, {'p': [0.0225, -0.231, 0.356], 'r': 0.0038},
+                   {'p': [0.017, -0.233, 0.350], 'r': 0.0050}, {'p': [0.0075, -0.2365, 0.3415], 'r': 0.0056},
+                   {'p': [0, -0.2375, 0.3395], 'r': 0.0057}]}})
     # chin: a round pad under the lower lip, so the lip is a broad U, not a V over a narrow jaw
     P.append({'part': 'chin', 'kind': 'mass', 'blend': 0.014, 'params': {
-        'center': [0, -0.232, 0.331], 'radii': [0.022, 0.017, 0.012], 'exponent': 2.0}})
-    # upper lip: a rounded rim along the pads' undersides, so the stencil's cut edge is not a sharp sheet
+        'center': [0, -0.226, 0.329], 'radii': [0.021, 0.017, 0.013], 'exponent': 2.0}})
+    # upper lip: the sheet's two round muzzle pads under the nose, whose undersides make the opening's top edge
+    # (critic 3: the pads were missing and the area under the nose flat); a rounded rim continues them to the corner
+    P.append({'part': 'mouth', 'kind': 'mass', 'op': 'add-after', 'mirror': 'x', 'blend': 0.005, 'params': {
+        'center': [0.0125, -0.2645, 0.3850], 'radii': [0.0135, 0.0100, 0.0088], 'exponent': 2.0}})
     P.append({'part': 'mouth', 'kind': 'sweep', 'op': 'add-after', 'mirror': 'x', 'blend': 0.004, 'params': {
         # it runs the whole edge to the corner, tapering (ending at x 0.025, its round end hung as a small tooth in
         # the three-quarter view, sculpt-22); centers 2.5 to 4 mm inside the face front measured at each point
-        'points': [{'p': [0.0, -0.2715, 0.3830], 'r': 0.0038}, {'p': [0.006, -0.2705, 0.3815], 'r': 0.0040},
-                   {'p': [0.016, -0.2650, 0.3797], 'r': 0.0040}, {'p': [0.025, -0.2610, 0.3812], 'r': 0.0032},
+        'points': [{'p': [0.020, -0.2630, 0.3800], 'r': 0.0034}, {'p': [0.025, -0.2610, 0.3812], 'r': 0.0032},
                    {'p': [0.031, -0.2560, 0.3832], 'r': 0.0025}, {'p': [0.0345, -0.2510, 0.3842], 'r': 0.0016}]}})
-    # tongue: two lobes either side of a center groove, lying on the floor, the tip just over the lower lip's front
-    # (flesh-side), tilted up toward the back so its top surface shows in the front view
+    # (a smile crease carved from each corner up into the cheek, sculpt-32 to 34, read as a pockmark above the corner
+    # in the side and three-quarter views, not as a line; dropped)
+    # tongue: two lobes either side of a center groove, lying on the floor inside the lower lip (critic 3: lying over
+    # the lower lip it read as a slab), domed, tilted up toward the back so its top surface shows in the front view
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'mirror': 'x', 'blend': 0.006, 'params': {
-        'center': [0.0092, -0.236, 0.3525], 'radii': [0.0150, 0.018, 0.0085], 'exponent': 2.0,
+        'center': [0.0092, -0.226, 0.3530], 'radii': [0.0150, 0.016, 0.0095], 'exponent': 2.0,
         'rotation': [12, 0, 0]}})
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
-        'center': [0, -0.226, 0.3460], 'radii': [0.017, 0.020, 0.0065], 'exponent': 2.0}})
+        'center': [0, -0.218, 0.3460], 'radii': [0.017, 0.020, 0.0065], 'exponent': 2.0}})
     return spec
 
 
@@ -167,10 +180,12 @@ def bridge(spec):
     with the eye center as the anchor: the bridge stands about 2.2 cm in front of the eye's front edge at the eye's
     mid-height (1 cm on the model) and runs down into the top of the nose button without a step. A wide, low fill
     along the midline (3.6 cm across, ending below the brow), so it reads as the muzzle's top: sculpt-18's narrow
-    sweep stood as a rib between the eyes in the front view."""
+    sweep stood as a rib between the eyes in the front view. Critic 3 (sculpt-29): just above the nose the bridge
+    stood up to 0.02 H in front of the sheet, which has a near-vertical step (a stop) behind the button nose, so it
+    read as a rodent's wedge; the fill now ends 1.5 cm above the nose."""
     spec['parts'].append({'part': 'bridge', 'kind': 'sweep', 'blend': 0.012, 'params': {
         'points': [{'p': [0, -0.222, 0.452], 'r': 0.012}, {'p': [0, -0.230, 0.435], 'r': 0.018},
-                   {'p': [0, -0.240, 0.418], 'r': 0.017}, {'p': [0, -0.250, 0.406], 'r': 0.013}]}})
+                   {'p': [0, -0.234, 0.422], 'r': 0.015}]}})
     return spec
 
 
@@ -199,19 +214,22 @@ def eyes(spec):
     view. The sheet cheats (round irises in front and side at once); a 28 degree outward gaze centers the pupil in
     the opening in the front view (35 degrees put it 10 to 12 px outward) and still shows the iris in the side and
     three-quarter views, which are the sprite facings.
+    Critic 3 (sculpt-29): pupils still 10 px outward of the iris center, the eyes 18 percent further apart than the
+    sheet, 10 percent too tall in front, and the far eye poking out of the face outline in three-quarter view. Now
+    3.75 cm balls, 4 mm closer to the midline, gaze 20 degrees out, the socket 0.4 mm clear of the ball.
     """
     import math
-    a = math.radians(28)
-    c = [0.051, -0.199, 0.436]
+    a = math.radians(20)
+    c = [0.047, -0.199, 0.436]
     for p in spec['parts']:
         if p['part'] in ('eyes', 'head') and p['kind'] == 'mass' and abs(p['params']['center'][0]-0.049) < 1e-3:
             p['params']['center'] = c
             if p.get('separate'):
-                p['params']['radii'] = [0.039]*3
+                p['params']['radii'] = [0.0375]*3
                 p['gaze'] = [math.sin(a), -math.cos(a), 0.035]
                 p['pivot'] = c
             else:
-                p['params']['radii'] = [0.0398]*3
+                p['params']['radii'] = [0.0379]*3
     return spec
 
 
@@ -221,17 +239,18 @@ def lids(spec):
     onward). Points: where the eyes repair's ball (center [0.051, -0.199, 0.436], radius 3.9 cm, gaze 28 degrees out)
     first enters the skin grid along 15 meridians around the gaze, 2 degrees further round, lifted off the ball by
     a little over half the tube radius, so the ring rests on the ball's edge and blends into the skin. Needs eyes;
-    the socket carve trims its inner side 0.8 mm off the ball."""
+    the socket carve trims its inner side off the ball. Sculpt-32 (critic 3: an even ring all round read as goggles):
+    recomputed for the revised eyes, the upper lid 4.5 mm thick and the lower 1.7 mm."""
     spec['parts'].append({'part': 'lids', 'kind': 'sweep', 'mirror': 'x', 'blend': 0.004, 'params': {
         'closed': True, 'points': [
-            {'p': [0.028, -0.2325, 0.4367], 'r': 0.0030}, {'p': [0.0304, -0.2307, 0.4514], 'r': 0.0033},
-            {'p': [0.0382, -0.2265, 0.4635], 'r': 0.0036}, {'p': [0.0500, -0.2207, 0.4708], 'r': 0.0038},
-            {'p': [0.0623, -0.2119, 0.4733], 'r': 0.0038}, {'p': [0.0735, -0.1997, 0.4703], 'r': 0.0037},
-            {'p': [0.0814, -0.1859, 0.4601], 'r': 0.0035}, {'p': [0.0839, -0.1764, 0.4443], 'r': 0.0032},
-            {'p': [0.0830, -0.1755, 0.4275], 'r': 0.0028}, {'p': [0.0819, -0.1879, 0.4125], 'r': 0.0025},
-            {'p': [0.0740, -0.2011, 0.4030], 'r': 0.0023}, {'p': [0.0635, -0.2145, 0.4010], 'r': 0.0022},
-            {'p': [0.0519, -0.2233, 0.4039], 'r': 0.0022}, {'p': [0.0400, -0.2284, 0.4106], 'r': 0.0024},
-            {'p': [0.0313, -0.2315, 0.4221], 'r': 0.0027}]}})
+            {'p': [0.0274, -0.2329, 0.4369], 'r': 0.0031}, {'p': [0.0295, -0.2319, 0.4492], 'r': 0.0037},
+            {'p': [0.0354, -0.2284, 0.4601], 'r': 0.0041}, {'p': [0.0451, -0.2232, 0.4677], 'r': 0.0044},
+            {'p': [0.0570, -0.2160, 0.4708], 'r': 0.0045}, {'p': [0.0689, -0.2043, 0.4689], 'r': 0.0043},
+            {'p': [0.0779, -0.1906, 0.4593], 'r': 0.0039}, {'p': [0.0821, -0.1830, 0.4441], 'r': 0.0034},
+            {'p': [0.0830, -0.1862, 0.4279], 'r': 0.0028}, {'p': [0.0791, -0.1981, 0.4142], 'r': 0.0023},
+            {'p': [0.0696, -0.2117, 0.4075], 'r': 0.0019}, {'p': [0.0584, -0.2211, 0.4067], 'r': 0.0017},
+            {'p': [0.0474, -0.2265, 0.4091], 'r': 0.0018}, {'p': [0.0369, -0.2296, 0.4147], 'r': 0.0021},
+            {'p': [0.0298, -0.2320, 0.4247], 'r': 0.0025}]}})
     return spec
 
 
@@ -248,20 +267,23 @@ def toes(spec):
     P = spec['parts']
     # domes stand about 5 mm proud of the old front and top so each toe has its own round front; the splits are
     # soft V grooves (sculpt-27's 2.2 mm slots read as knife cuts, not toes)
-    fore = [([0.025, -0.197, 0.019], 0.0135), ([0.040, -0.203, 0.020], 0.0145), ([0.055, -0.202, 0.020], 0.0145),
-            ([0.069, -0.194, 0.019], 0.0135)]
-    hind = [([0.097, 0.057, 0.020], 0.017), ([0.113, 0.046, 0.021], 0.018), ([0.130, 0.046, 0.021], 0.018),
-            ([0.146, 0.057, 0.020], 0.017)]
+    # forepaw toes on the shorter paw (warps-8), taller and rounder (critic 3: flat-faced strips on a low slab; the
+    # sheet's toe tops stand 0.066 to 0.088 H)
+    fore = [([0.025, -0.1825, 0.023], 0.0120), ([0.040, -0.1875, 0.024], 0.0125), ([0.055, -0.1865, 0.024], 0.0125),
+            ([0.069, -0.1795, 0.023], 0.0120)]
+    # hind toes on the narrowed foot (warps-7 moved the foot in by 15 percent below the hock)
+    hind = [([0.0825, 0.057, 0.020], 0.017), ([0.096, 0.046, 0.021], 0.018), ([0.1105, 0.046, 0.021], 0.018),
+            ([0.124, 0.057, 0.020], 0.017)]
     for c, ry in fore:
         P.append({'part': 'toes', 'kind': 'mass', 'mirror': 'x', 'blend': 0.005, 'params': {
-            'center': c, 'radii': [0.0088, ry, 0.0160], 'exponent': 2.0}})
+            'center': c, 'radii': [0.0092, ry, 0.0195], 'exponent': 2.0}})
     for c, ry in hind:
         P.append({'part': 'toes', 'kind': 'mass', 'mirror': 'x', 'blend': 0.005, 'params': {
-            'center': c, 'radii': [0.0098, ry, 0.0175], 'exponent': 2.0}})
+            'center': c, 'radii': [0.0092, ry, 0.0175], 'exponent': 2.0}})
     for x in (0.0325, 0.0475, 0.062):
         P.append({'part': 'toes', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.004, 'params': {
-            'center': [x, -0.206, 0.034], 'radii': [0.0034, 0.017, 0.022], 'exponent': 2.0}})
-    for x in (0.105, 0.1215, 0.138):
+            'center': [x, -0.190, 0.036], 'radii': [0.0034, 0.0145, 0.024], 'exponent': 2.0}})
+    for x in (0.089, 0.103, 0.1175):
         P.append({'part': 'toes', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.004, 'params': {
             'center': [x, 0.040, 0.034], 'radii': [0.0036, 0.019, 0.024], 'exponent': 2.0}})
     return spec
@@ -298,7 +320,7 @@ def details(spec):
     return spec
 
 
-SMOOTH_GRID = 'C:/dev/art-data/studio/recon/hypnopet/r10-mv-oct512/grid-skin-5.npz'
+SMOOTH_GRID = 'C:/dev/art-data/studio/recon/hypnopet/r10-mv-oct512/grid-skin-5e.npz'
 
 
 def smooth(spec):
@@ -306,7 +328,14 @@ def smooth(spec):
     instead of 7 (warps-6.json; the short bend left a crease across the back of each ear a third of the way down,
     new defect 4), the raised stem under the tail flattened and the V pinch at the top of the buttock cleft filled
     (item 13), and the diagonal creases where the ear roots meet the back of the skull softened (item 9). Replaces
-    details' grid (it repeats step 6 on the new warp)."""
+    details' grid (it repeats step 6 on the new warp). The warp is warps-7.json: the ear blades also swing 6 degrees
+    in and the hind lower legs and feet move 15 percent in toward the midline below the hock, because metric
+    overlays on the bare front and back sheet views put the ear tips 4 cm and the hind feet 2 to 4 cm further out
+    than the sheet (prep_grids.sh step 5c). Then warps-8.json (step 5d): the forepaw shortened to 0.73 (critic 3:
+    0.212 H against the sheet's 0.180 H) and the jowls narrowed about the mouth corner to the sheet's heart-shaped
+    lower face (critic 3: 0.253 H wide at 0.56 H against 0.179 H), in a soft ellipsoid fading over its whole radius
+    (a box fading over 2.5 cm left a ledge across the cheek, sculpt-32 and 33). Step 8 (grid-skin-5e) fills the dimple
+    on each ear's outer face and softens the inner wrist bulges."""
     import hashlib
     body = next(p for p in spec['parts'] if p['part'] == 'body' and p['kind'] == 'grid')
     body['params']['file'] = SMOOTH_GRID
@@ -318,9 +347,11 @@ def tail(spec):
     """Tail: a round nub set above the cleft (flesh-back), in place of the teardrop that flowed into the
     buttock cleft (critic item 13). Anatomy spec: a short stub of a few small vertebrae under a fur pompon
     (research/hypnopet/tail); bare, a ball about 3.5 cm across on the rump's top-back, slightly upturned. The ball
-    rounds the reconstruction's tail tip (center 1.3 cm in from its tip at y 0.246, z 0.268)."""
+    rounds the reconstruction's tail tip (center 1.3 cm in from its tip at y 0.246, z 0.268). Critic 3: the ball
+    center at 0.407 H against the sheet's 0.376 and about 10 percent large; now 1.5 cm lower on the rump's curve
+    (and 5 mm back, to stay on it) and 9 percent smaller."""
     spec['parts'].append({'part': 'tail', 'kind': 'mass', 'blend': 0.008, 'params': {
-        'center': [0, 0.231, 0.27], 'radii': [0.0175, 0.0165, 0.0175], 'exponent': 2.0}})
+        'center': [0, 0.236, 0.255], 'radii': [0.016, 0.015, 0.016], 'exponent': 2.0}})
     return spec
 
 
