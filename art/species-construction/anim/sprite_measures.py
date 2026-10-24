@@ -439,12 +439,18 @@ def cmd_checks(a):
         f4 = {f: fur_L(C4/f'frames/{fd}/{clip}/sprite/{f:04d}.png') for f in range(n)}
         mine = [shimmer_pair(cl[p], cl[q], fu[p], fu[q]) for p, q in pairs]
         ref = [shimmer_pair(cl[p], cl[q], f4[p], f4[q]) for p, q in pairs]
-        sh[clip] = dict(pairs=len(pairs), pctOver6Mean=round(float(np.nanmean([m[2] for m in mine])), 2),
+        big = [i for i, m in enumerate(mine) if m[0] >= 200]       # shimmer.py's floor: pairs with at least 200 still px
+        sh[clip] = dict(pairs=len(pairs), pairsWith200StillPx=len(big),
+                        pctOver6MeanOver200=round(float(np.mean([mine[i][2] for i in big])), 2),
+                        clips4PctOver6MeanOver200=round(float(np.mean([ref[i][2] for i in big])), 2),
+                        pctOver6PixelWeighted=round(float(sum(m[0]*m[2] for m in mine)/max(sum(m[0] for m in mine), 1)), 2),
+                        clips4PctOver6PixelWeighted=round(float(sum(m[0]*m[2] for m in ref)/max(sum(m[0] for m in ref), 1)), 2),
+                        pctOver6Mean=round(float(np.nanmean([m[2] for m in mine])), 2),
                         pctOver6Worst=round(float(np.nanmax([m[2] for m in mine])), 2),
                         worstPair=f'{pairs[int(np.nanargmax([m[2] for m in mine]))]}', meanAbs=round(float(np.nanmean([m[1] for m in mine])), 2),
                         clips4PctOver6Mean=round(float(np.nanmean([m[2] for m in ref])), 2),
                         clips4PctOver6Worst=round(float(np.nanmax([m[2] for m in ref])), 2),
-                        perPair=[round(m[2], 2) for m in mine])
+                        perPair=[round(m[2], 2) for m in mine], stillPxPerPair=[m[0] for m in mine])
     out['shimmer'] = sh
     # 4. fringe over every frame
     fr = {}
