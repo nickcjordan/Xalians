@@ -33,7 +33,7 @@ EXTRA = {}
 for item in filter(None, os.environ.get('FC_EXTRA', 'crouch_deep=threeq;sig_f16=threeq').split(';')):
     t, v = item.split('='); EXTRA[t] = v.split('+')
 OBLIQUE = {'threeq': (315.0, -12.0, 'chest'), 'low34_front_left': (45.0, -12.0, 'body'), 'low34_rear_left': (135.0, -12.0, 'body'),
-           'back': (180.0, 0.0, 'body'), 'front': (0.0, 0.0, 'body')}
+           'back': (180.0, 0.0, 'body'), 'front': (0.0, 0.0, 'body'), 'head': (35.0, 4.0, 'head')}
 
 
 def arr(items, key, n=3, dt=np.float32):
@@ -49,7 +49,9 @@ for o in list(s.objects):
     if o.name in ('plume_standin',) or o.name.startswith(('game_', 'whiskers_', 'shot_', 'brisket_', 'bk_w_')): o.hide_render = True
 with bpy.data.libraries.load(GROOM, link=False) as (src, dst):
     names = list(src.objects)
-    dst.objects = [n for n in src.objects if n.startswith(('Plume', 'Luceras', 'Pass7', 'Eyelid', 'luceras_blockout', 'lookdev_', 'luceras_plume_spine'))]
+    SURF = os.environ.get('FC_SURFACE', '0') == '1'
+    keep = ('Plume', 'Luceras', 'Pass7', 'Eyelid', 'luceras_blockout', 'lookdev_', 'luceras_plume_spine') + (('horn_', 'eye_', 'groom_cornea', 'fore_claw', 'hind_claw', 'fore_dewclaw') if SURF else ())
+    dst.objects = [n for n in src.objects if n.startswith(keep)]
     dst.worlds = list(src.worlds)
 objs = [o for o in dst.objects if o]
 if PROBE:
@@ -58,6 +60,32 @@ if PROBE:
     print('PROBE clip objects', [(o.name, o.type) for o in s.objects])
     print('PROBE actions', [a.name for a in bpy.data.actions])
 gbody = [o for o in objs if o.type == 'MESH' and o.name.startswith('luceras_blockout')][0]
+SURFLOG = {}
+if SURF:
+    # surface pass (fur 1): the clip's horns, eyes and claws carry clay materials; give them the groom's approved
+    # materials (dark ridged horn, amber eye, dark claws) and add the groom's clear cornea over each eye
+    for p_ in rig.pose.bones: p_.rotation_quaternion = (1, 0, 0, 0); p_.location = (0, 0, 0); p_.scale = (1, 1, 1)
+    bpy.context.view_layer.update()
+    gsurf = {o.name.split('.')[0]: o for o in objs if o.type == 'MESH' and o.name.startswith(('horn_', 'eye_', 'groom_cornea', 'fore_claw', 'hind_claw', 'fore_dewclaw'))}
+    for nm, go_ in gsurf.items():
+        if nm.startswith('groom_cornea'):
+            ce = bpy.data.objects.get(nm.replace('groom_cornea_', ''))
+            if ce is None: continue
+            co = ce.copy(); co.data = ce.data.copy(); co.name = 'surface_cornea_' + ce.name; s.collection.objects.link(co)
+            ge = gsurf.get(nm.replace('groom_cornea_', ''))   # the groom's own eye shares the cornea's parent bone
+            Mi = (ge.matrix_world.inverted() @ go_.matrix_world) if ge is not None else (ce.matrix_world.inverted() @ go_.matrix_world)
+            gv = [Mi @ v.co for v in go_.data.vertices]
+            if len(gv) == len(co.data.vertices):
+                for v, c_ in zip(co.data.vertices, gv): v.co = c_
+            co.data.materials.clear(); [co.data.materials.append(m_) for m_ in go_.data.materials]
+            SURFLOG[co.name] = [m_.name for m_ in go_.data.materials]; continue
+        tgt = bpy.data.objects.get(nm)
+        if tgt is None or tgt is go_: continue
+        tgt.data.materials.clear(); [tgt.data.materials.append(m_) for m_ in go_.data.materials]
+        for k_ in [a_.name for a_ in go_.data.attributes if not a_.name.startswith('.') and a_.name not in tgt.data.attributes and a_.domain == 'POINT' and len(a_.data) == len(tgt.data.vertices) and a_.data_type == 'FLOAT']:
+            v_ = np.empty(len(tgt.data.vertices), np.float32); go_.data.attributes[k_].data.foreach_get('value', v_); tgt.data.attributes.new(k_, 'FLOAT', 'POINT').data.foreach_set('value', v_)
+        SURFLOG[nm] = [m_.name for m_ in go_.data.materials]
+    print('SURFACE materials', json.dumps(SURFLOG), flush=True)
 gproxy = next((o for o in objs if o.type == 'MESH' and o.name.startswith('luceras_plume_spine')), None)
 curves = [o for o in objs if o.type == 'CURVES']
 rig.animation_data_create(); rig.animation_data.action = None; rig.location = (0, 0, 0); bpy.context.view_layer.update()
@@ -192,6 +220,7 @@ for _v in body.data.vertices:
     for _g in _v.groups: _W[_v.index, _g.group] = _g.weight
 _DOM = np.array(_gn)[_W.argmax(1)]
 CHEST = np.isin(_DOM, ['neck_01', 'spine_05', 'leg_fl_01', 'leg_fl_02', 'leg_fr_01', 'leg_fr_02', 'scapula_l', 'scapula_r'])
+HEADM = np.isin(_DOM, ['head_01', 'jaw_01', 'ear_l_01', 'ear_r_01', 'ear_l_02', 'ear_r_02'])
 
 
 def body_bounds(mask=None):
@@ -221,7 +250,7 @@ def cam_oblique(view):
     # oblique and front/back views: fitted to the body (or to the chest), ground hidden when the camera is below it
     az, el, what = OBLIQUE[view]
     for o in GROUND: o.hide_render = el < 0
-    lo, hi = body_bounds(CHEST if what == 'chest' else None); pad = 0.06 if what == 'chest' else 0.03
+    lo, hi = body_bounds(CHEST if what == 'chest' else HEADM if what == 'head' else None); pad = 0.06 if what == 'chest' else 0.09 if what == 'head' else 0.03
     cam = lookdev.place_camera('furcheck_' + view, (Vector((lo - pad).tolist()), Vector((hi + pad).tolist())), az, el, 0.05)
     s.render.resolution_x = 960; s.render.resolution_y = 960; s.camera = cam; bpy.context.view_layer.update(); return cam
 
@@ -291,6 +320,15 @@ def clip_render(spec):
         s.render.filepath = str(out / f'{f:04d}.png'); bpy.ops.render.render(write_still=True); print('CLIP', clip, cam_name, f, flush=True)
     json.dump(dict(camera=dict(az=az, el=el, ortho_scale=cam.data.ortho_scale), plume_root_error_mm=perr, frames=[f0, f1]), open(out / 'camera.json', 'w'), indent=1)
     print('CLIP done', clip, cam_name, flush=True)
+
+
+if os.environ.get('FC_SAVE'):
+    # the scene of record: clip rig and actions, groom fur and materials, plume chain, lights and the sprite camera
+    rig.animation_data.action = bpy.data.actions['sig.horns-first-descent']; s.frame_set(0); rig.location = (0, 0, 0)
+    cam_ = lookdev.place_camera('sprite_side_camera', (Vector((-0.2, -0.75, 0.0)), Vector((0.2, 0.75, 1.0))), 270.0, 0.0, 0.05)
+    cam_.data.ortho_scale = 1.5; s.camera = cam_; s.render.resolution_x = 960; s.render.resolution_y = 640
+    s['scene_of_record'] = 'Luceras sprites: h1 rig with the pass 10 clips, groom ' + GROOM + ', surface fur 1 materials, plume chain (tail_06..tail_09); sprite_side_camera is the 1.5 m side cell (re-centre on the body per frame as reskin_furcheck.py cam_side does)'
+    bpy.ops.wm.save_as_mainfile(filepath=os.environ['FC_SAVE'], compress=True); print('SAVED', os.environ['FC_SAVE'], flush=True); sys.exit(0)
 
 
 if os.environ.get('FC_MEASURE'):
