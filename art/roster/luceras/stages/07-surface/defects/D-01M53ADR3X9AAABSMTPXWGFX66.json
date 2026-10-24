@@ -7,6 +7,7 @@
   "region": "eyes",
   "origin": null,
   "attempts": [],
-  "status": "open",
-  "createdAt": "2026-10-16T21:38:24Z"
+  "status": "closed",
+  "createdAt": "2026-10-16T21:38:24Z",
+  "closedAt": "2026-10-24T14:39:55Z"
 }
