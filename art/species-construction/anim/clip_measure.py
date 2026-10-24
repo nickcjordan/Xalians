@@ -75,7 +75,9 @@ belly = (share(['spine', 'pelvis']) > .5) & (np.abs(rest[:, 0]) < .04) & (rest[:
 BELLY = np.flatnonzero(belly)[np.argsort(rest[belly, 1])[:12]]
 near = np.linalg.norm(rest-np.array(J['shoulder.L']), axis=1) < .08
 TRAPEZIUS = np.flatnonzero(near)[np.argsort(-rest[near, 2])[:12]]      # the slope from the shoulder to the neck (side view top line)
-SETS = dict(shoulder=SHOULDER, trapezius=TRAPEZIUS, sternum=STERNUM, head=HEAD, nose=NOSE, crown=CROWN, belly=BELLY)
+EARL = np.flatnonzero(share([f'ear_{k}.L' for k in range(1, rc.EAR_BONES+1)]) > .9)
+EARL = EARL[::max(1, len(EARL)//3000)]       # the near ear's blade, sampled: its visible tip per camera (farthest from the base)
+SETS = dict(shoulder=SHOULDER, trapezius=TRAPEZIUS, sternum=STERNUM, head=HEAD, nose=NOSE, crown=CROWN, belly=BELLY, ear_blade=EARL)
 SEL = np.unique(np.concatenate(list(SETS.values())))
 POS = {k: np.searchsorted(SEL, v) for k, v in SETS.items()}
 
@@ -161,7 +163,11 @@ for clip in ('idle', 'stalk'):
                    ear_swing_deg=round(ear_swing(fr['pose']), 2),
                    knee_bend_deg={sd: round(knee_bend(T, sd), 2) for sd in 'LR'})
         for cam, c in CAMS.items():
-            row[cam] = {k: [round(float(x), 2) for x in c.px(v)[0]] for k, v in pts.items()}
+            row[cam] = {k: [round(float(x), 2) for x in c.px(v)[0]] for k, v in pts.items() if k != 'ear_blade'}
+            # the ear's visible tip in this camera: the blade vertex projected farthest from the projected base ring
+            q = c.px(P[POS['ear_blade']])
+            bpx = c.px(pts['ear_base'])[0]
+            row[cam]['ear_visible_tip'] = [round(float(x), 2) for x in q[np.argmax(np.linalg.norm(q-bpx, axis=1))]]
         rows.append(row)
     out[clip] = rows
 

@@ -15,20 +15,22 @@ Rig space: metres, +Z up, the creature faces -Y, its left is +X. A positive X ro
 Idle (90 frames, frame 90 = frame 0): two breaths (the breath shape key of breath_key.py swells the ribcage out
 and up, the clavicles lift the shoulders with the arms hanging as before, the chest pitches up a little and the head
 rides with it), a weight shift forward and back (the hips and torso sway over the planted feet as one column, dipping
-at the forward peak where the far knee softens), one flick of the near ear (ear_1.L only, a rigid swing back from
-the base along the approved swept-back direction, 40 degrees, and return), and the three tails swaying, each with its
-own phase and a lag down its chain, up and down as well as sideways. Every periodic term has a whole number of cycles
-in the loop, so the seam is exact.
+at the forward peak where the far knee softens), one flick of the near ear (ear_1.L only, a rigid turn straight back
+from the base with a slight outward swivel, about 33 degrees as the side camera sees it, and return), and the three
+tails swaying a third of a cycle apart with a lag down each chain, up and down as well as sideways, the two lower
+tails' up-and-down swings opposed so they part. Every periodic term has a whole number of cycles in the loop, so the
+seam is exact.
 
-Night Stalk (45 frames, pass 3 timing from the second blind critic): from idle frame 0, an anticipation over frames
-0 to 3 (the chest rises on an inhale and the head tips up, the tails still swaying at the idle rate), the sink over
-frames 4 to 17 into the approved night_stalk pose (rig-p8b poses.json, held exactly: hips down and back, spine lean,
+Night Stalk (45 frames, pass 4 timing from the third blind critic): from idle frame 0, an anticipation over frames
+0 to 4 (the chest rises on an inhale and the head tips up, the tails still swaying at the idle rate), the sink over
+frames 5 to 17 into the approved night_stalk pose (rig-p8b poses.json, held exactly: hips down and back, spine lean,
 head and knees on one eased share, which is the approved crouch clip's own path, easing into the bottom; the ears
 sweep over frames 6 to 14, the tails trail and arrive together, the idle layer eases to a stop), settled at frame 18
-(`conceal`), a 14-frame hold (one slow breath across it and a twitch of the top tail's tip off the breath peak;
-frames 18 and 31 are exactly night_stalk), then the recovery from frame 32 (`recover`): a slow start, the lean coming
-off with the knees, the ears 2 frames and the tails about 2 frames behind with a small overshoot, the idle layer
-easing back in on the clock that lands on idle frame 89 at frame 44, so the idle loop's frame 0 follows directly.
+(`conceal`), an 11-frame hold (one slow, shallow breath across it and a twitch of the top tail's tip off the breath
+peak; frames 18 and 28 are exactly night_stalk), then the recovery from frame 29 (`recover`): a slow start, the lean
+coming off with the knees over 16 frames, the ears and tails starting back at frame 34 and spread over 8 to 10
+frames (the tails with a small overshoot), the idle layer easing back in on the clock that lands on idle frame 89 at
+frame 44, so the idle loop's frame 0 follows directly.
 """
 import json
 import math
