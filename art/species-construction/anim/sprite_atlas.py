@@ -13,7 +13,7 @@ its offset back into the cell; `anchor` is the cell pixel nearest the ground soc
 in cell pixels (continuous, origin top-left, y down), from the posed rig of that frame (clip_frames.py --sockets):
 ground, head, eye_l, eye_r, emitter, carry; status is the head socket's column, --status-clear px above the highest
 head, jaw or ear skin point of that frame. Clips: `idle` (90 frames, loops, no events) and `sig.night-stalk` (45
-frames, plays once, markers conceal and recover from the clip spec, entry and then = idle frame 0).
+frames, plays once, markers set (the clip spec's conceal) and recover from the clip spec, entry and then = idle frame 0).
 """
 import argparse
 import base64
@@ -33,6 +33,9 @@ CLIPS = {'idle': dict(src='idle', frames=90), 'sig.night-stalk': dict(src='stalk
 ROOT = Path(__file__).resolve().parents[3]
 READER = ROOT/'art/creature-motion-pilot/runtime/atlas-player-v2.mjs'
 
+
+# the clip spec's settle event is `conceal`; the contract names a self act's settle event `set` (section 6)
+CONTRACT_EVENT = {'conceal': 'set'}
 
 def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -103,7 +106,8 @@ def cmd_pack(a):
         clip = dict(frameCount=n, durationMs=round(n*1000/FPS, 3), loop=name == 'idle', markers=[])
         if name != 'idle':
             clip.update(name='Night Stalk', act='akinza-defining',
-                        markers=[dict(name=k, frame=ev[k], timeMs=round(ev[k]*1000/FPS, 3)) for k in ('conceal', 'recover')],
+                        archetype='focus',  # contract section 6: a self act (status on self) is the focus brace, events set and recover
+                        markers=[dict(name=CONTRACT_EVENT.get(k, k), frame=ev[k], timeMs=round(ev[k]*1000/FPS, 3)) for k in ('conceal', 'recover')],
                         entry=dict(clip='idle', frame=0, note="frame 0 is idle frame 0's pose: start it in place of idle frame 0"),
                         then=dict(clip='idle', frame=0, note="frame 44 is idle frame 89's pose: idle frame 0 follows, so no image repeats or is skipped"))
         clip['facings'] = dict(side=dict(sheet=fname, size=[W, H], frames=frames))

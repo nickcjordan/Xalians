@@ -124,7 +124,7 @@ test('the Akinza atlas: idle, Night Stalk at idle frame 0, back to idle frame 0'
   assert.equal(stalk.loop, false);
   assert.equal(stalk.frameCount, 45);
   assert.deepEqual(stalk.then, { clip: 'idle', frame: 0, ...(stalk.then.note ? { note: stalk.then.note } : {}) });
-  assert.deepEqual(stalk.markers.map((e) => e.name), ['conceal', 'recover']);
+  assert.deepEqual(stalk.markers.map((e) => e.name), ['set', 'recover']);
   const fd = 1000 / m.fps;
   const seq = createSequencer(m, 'idle');
   for (let i = 0; i < 30; i++) seq.advance(fd);       // idle frame 30
@@ -140,5 +140,5 @@ test('the Akinza atlas: idle, Night Stalk at idle frame 0, back to idle frame 0'
   assert.equal(shown[at - 1], 'idle:89');
   assert.deepEqual(shown.slice(at, at + 45), Array.from({ length: 45 }, (_, k) => `sig.night-stalk:${k}`));
   assert.deepEqual(shown.slice(at + 45, at + 47), ['idle:0', 'idle:1']);
-  assert.deepEqual(events, ['conceal@600', 'recover@967']);
+  assert.deepEqual(events, ['set@600', 'recover@967']);
 });
