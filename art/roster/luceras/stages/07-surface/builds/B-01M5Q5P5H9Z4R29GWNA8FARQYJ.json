@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5Q5P5H9Z4R29GWNA8FARQYJ",
+  "alias": "y7mm",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Match the fur render to the model sheet: materials, leg and plume white, coat, head detail (surface fur passes 1-2, head pass 1)",
+  "scope": "luceras-surface/furpass1, furpass2, headpass1",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-24T14:40:25Z",
+  "briefSha256": "7cab424ebc3c8e3fbf124c1980120d1d1ea52a5c126930a15ac01e8ed6e9c907"
+}
