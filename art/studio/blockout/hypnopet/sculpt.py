@@ -135,7 +135,7 @@ def mouth(spec):
     # the corners barely above the lip line. Critic 5 (sculpt-40): a polygon's corners carved spikes at the mouth's
     # ends and its W top read as a bat wing; the outline is now control points of a smooth closed spline (stencil
     # smooth), so the corners are rounded curls turning up 1.1 cm above the pads' undersides and the bottom a round U
-    half = [[0.0, 0.3790], [0.0075, 0.3755], [0.0135, 0.3742], [0.020, 0.3752], [0.026, 0.3780], [0.0315, 0.3835],
+    half = [[0.0, 0.3772], [0.0075, 0.3752], [0.0135, 0.3742], [0.020, 0.3752], [0.026, 0.3780], [0.0315, 0.3835],
             [0.0350, 0.3855], [0.0372, 0.3830], [0.0355, 0.3760], [0.0310, 0.3650], [0.0215, 0.3485],
             [0.0105, 0.3365], [0.0, 0.3325]]
     right = [[-u, v] for u, v in reversed(half[1:-1])]
@@ -185,9 +185,14 @@ def mouth(spec):
     # the lower lip it read as a slab), domed, tilted up toward the back so its top surface shows in the front view;
     # 3.5 cm across (critic 4: 0.080 H wide against the sheet's 0.050 H, with no dark mouth beside it); its tip
     # comes forward onto the lower lip and up into the light (critic 5: set deep and low it rendered as part of the
-    # hole), the root kept behind the lip (critic 5: it poked through below the lip as a pale tab)
+    # hole), the root kept behind the lip (critic 5: it poked through below the lip as a pale tab); it fills the
+    # lower two thirds of the opening, leaving a dark band under the pads as on the sheet (sculpt-43), and the notch
+    # between the pads rises 3 mm, not 5. Sculpt-44 and 45 raised the whole mouth 6 to 9 mm and narrowed it to match
+    # a metric overlay on flesh-front; the raised corners left the muzzle's side wall as a thin blade and flaps beside
+    # the corners, so that was undone (open item: the mouth sits 6 to 9 mm low against the sheet). A bigger tongue
+    # (sculpt-47) bulged out as a ball with a slot under it; undone too
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
-        'center': [0, -0.229, 0.3485], 'radii': [0.0170, 0.016, 0.0095], 'exponent': 2.0,
+        'center': [0, -0.231, 0.3510], 'radii': [0.0175, 0.016, 0.0105], 'exponent': 2.0,
         'rotation': [12, 0, 0]}})
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
         'center': [0, -0.212, 0.3370], 'radii': [0.013, 0.020, 0.0068], 'exponent': 2.0}})
