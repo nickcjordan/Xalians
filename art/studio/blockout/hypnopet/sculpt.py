@@ -165,16 +165,18 @@ def mouth(spec):
         # set 8 mm back from sculpt-29 (critic 3: the lower lip jutted 0.015 to 0.02 H past the sheet's)
         # along the deeper U, 3 mm under its edge; its end sinks under the edge before the corner (sculpt-39: ending
         # at the old height it stood up out of the deeper opening as a pair of fangs)
-        'points': [{'p': [0.0265, -0.2290, 0.3535], 'r': 0.0020}, {'p': [0.0235, -0.2305, 0.3490], 'r': 0.0035},
-                   {'p': [0.0180, -0.2330, 0.3435], 'r': 0.0048}, {'p': [0.0095, -0.2360, 0.3335], 'r': 0.0055},
-                   {'p': [0, -0.2375, 0.3290], 'r': 0.0057}]}})
+        # a rim that frames the tongue (critic 7, sculpt-52: no lower lip showed; the tongue ran into the chin)
+        'points': [{'p': [0.0265, -0.2300, 0.3535], 'r': 0.0022}, {'p': [0.0235, -0.2330, 0.3490], 'r': 0.0040},
+                   {'p': [0.0180, -0.2370, 0.3435], 'r': 0.0055}, {'p': [0.0095, -0.2405, 0.3335], 'r': 0.0063},
+                   {'p': [0, -0.2420, 0.3290], 'r': 0.0065}]}})
     # chin: a round pad under the lower lip, so the lip is a broad U, not a V over a narrow jaw
     P.append({'part': 'chin', 'kind': 'mass', 'blend': 0.014, 'params': {
         'center': [0, -0.226, 0.323], 'radii': [0.021, 0.017, 0.013], 'exponent': 2.0}})
     # upper lip: the sheet's two round muzzle pads under the nose, whose undersides make the opening's top edge
-    # (critic 3: the pads were missing and the area under the nose flat); a rounded rim continues them to the corner
+    # (critic 3: the pads were missing and the area under the nose flat); a rounded rim continues them to the corner.
+    # Sculpt-53: 4 mm further forward (critic 7: in profile the upper lip sat 3 to 4 cm behind the nose tip)
     P.append({'part': 'mouth', 'kind': 'mass', 'op': 'add-after', 'mirror': 'x', 'blend': 0.005, 'params': {
-        'center': [0.0130, -0.2620, 0.3855], 'radii': [0.0145, 0.0140, 0.0120], 'exponent': 2.0}})
+        'center': [0.0120, -0.2660, 0.3840], 'radii': [0.0140, 0.0145, 0.0115], 'exponent': 2.0}})
     # muzzle: a full rounded upper muzzle between the nose and the mouth (critic 6, sculpt-50: in profile a thin nose
     # tube with a recessed upper lip, 0.045 H deep 0.035 H behind the nose tip against the sheet's 0.075 H); added
     # before the carves, so the opening is cut through it, with the pads on top
@@ -202,8 +204,9 @@ def mouth(spec):
     # a metric overlay on flesh-front; the raised corners left the muzzle's side wall as a thin blade and flaps beside
     # the corners, so that was undone (open item: the mouth sits 6 to 9 mm low against the sheet). A bigger tongue
     # (sculpt-47) bulged out as a ball with a slot under it; undone too
+    # (sculpt-53: 3 mm back again, behind the new lower lip rim)
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
-        'center': [0, -0.227, 0.3500], 'radii': [0.0175, 0.016, 0.0105], 'exponent': 2.0,
+        'center': [0, -0.224, 0.3500], 'radii': [0.0175, 0.016, 0.0105], 'exponent': 2.0,
         'rotation': [12, 0, 0]}})
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
         'center': [0, -0.212, 0.3370], 'radii': [0.013, 0.020, 0.0068], 'exponent': 2.0}})

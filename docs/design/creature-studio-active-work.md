@@ -31,9 +31,13 @@ Nick, 2026-10-12: "I dont want you to do anything with Akinza, that model is bei
 | S1 blockout framework (mass, sweep, shell; part_id) | done | PR #811 |
 | Reuse plan | tentatively signed off | `creature-studio-reuse.md`, audited by Codex and Fable |
 | Vision board and model sheet stages, Codex image runs as builds | not started | design revision 4 |
-| Hypnopet intake | not started | |
-| Hypnopet vision board, model sheet | not started | |
+| Hypnopet intake | done | X27 to X29 in `creature-studio-experiments.md` |
+| Hypnopet vision board, model sheet | done | flesh-front, flesh-side, flesh-back sheet views; picks for face and horn |
+| Hypnopet body tracks A and R | track R chosen for the sculpt stage, A shelved as the joint reference | X32, X33 |
+| Studio aligned with the creature pipeline and the Akinza loop | done | `creature-studio-alignment.md` (X33) |
+| Hypnopet sculpt stage (repair list on the reconstruction) | in progress: sculpt-53 after five rounds and seven sculpt critics; the face is not at standard; open items listed in the round log | `creature-studio-hypnopet-sculpt.md` |
+| Hypnopet deformation audit (test rig) | in progress: audit-24, four deformation critic rounds; open items listed in the round log | `creature-studio-hypnopet-sculpt.md`, `art/studio/blockout/hypnopet/rig_sculpt.py` |
 
 ## Next unfinished action
 
-Verify Codex image generation from this session with one test image; build the vision board and model sheet stages; run Hypnopet's intake and submit it for Nick's review.
+Nick reviews the overnight round (2026-10-24, the review page linked from the session's last message). Then: rebuild Hypnopet's lower face around the sheet's mouth (the open item every sculpt critic has named; carving alone has not got there), then the feet, then a final sculpt critic and deformation audit before the surface (fur) stage, which waits for Nick's go on the bare body.
