@@ -62,7 +62,7 @@ def bones():
         bone('pelvis', [0, 0.19, 0.262], [0, 0.075, 0.272]),
         bone('spine', [0, 0.075, 0.272], [0, -0.05, 0.272], 'pelvis'),
         bone('chest', [0, -0.05, 0.272], [0, -0.085, 0.295], 'spine'),
-        bone('neck', [0, -0.085, 0.285], [0, -0.12, 0.37], 'chest'),
+        bone('neck', [0, -0.085, 0.295], [0, -0.12, 0.37], 'chest'),
         bone('head', [0, -0.12, 0.37], [0, -0.255, 0.405], 'neck'),
         bone('skull', [0, -0.13, 0.40], [0, -0.13, 0.52], 'head', connect=False),
         # the back of the cranium (to y -0.05) is 5 to 8 cm behind the skull bone; without a core bone there the ear
@@ -90,9 +90,13 @@ def bones():
         bone('forearm', F['elbow'], F['wrist'], 'upperarm', 'fore', True),
         bone('hand', F['wrist'], F['paw'], 'forearm', 'fore', True),
         bone('paw', F['paw'], F['toe'], 'hand', 'fore', True),
-        # the tail stub follows the sculpt's tail ball down and into the rump (sculpt-32, sculpt-37)
-        bone('tail1', [0, 0.196, 0.242], [0, 0.222, 0.243], 'pelvis', 'tail', connect=False),
-        bone('tail2', [0, 0.222, 0.243], [0, 0.238, 0.244], 'tail1', 'tail'),
+        # the tail stub on the center line of the sculpt's tail ball (center y 0.234, z 0.257, radius 1.6 cm), its
+        # weight kept to the stub (audit-17: the chain sat in the stub's bottom third and its weight covered a 13 cm
+        # patch of rump, the seam around the haunches)
+        dict(bone('tail1', [0, 0.206, 0.255], [0, 0.228, 0.257], 'pelvis', 'tail', connect=False),
+             weightNear=[0, 0.232, 0.257, 0.022, 0.012]),
+        dict(bone('tail2', [0, 0.228, 0.257], [0, 0.244, 0.258], 'tail1', 'tail'),
+             weightNear=[0, 0.232, 0.257, 0.022, 0.012]),
         bone('ear1', E[0], E[1], 'skull', 'ear', True, connect=False),
         bone('ear2', E[1], E[2], 'ear1', 'ear', True),
         bone('ear3', E[2], E[3], 'ear2', 'ear', True),
@@ -199,8 +203,9 @@ def poses_and_limits():
     crouch = list(base)
     for s in ('L', 'R'):
         # the hock lowers 6 mm toward the ground as a real crouch folds the leg (audit-12: with the hock held at its
-        # standing height the shank lay flat over the air under the haunch; 2.2 cm put the heel through the floor, 1 cm grazed it)
-        ang, err = solve(bs, crouch, [(f'thigh_{s}', 'x'), (f'shin_{s}', 'x'), (f'ankle_{s}', 'x')], plant_hind(s, 0.006))
+        # standing height the shank lay flat over the air under the haunch; 2.2 cm put the heel through the floor, 1 cm
+        # grazed it, 6 mm rocked the foot onto its heel by 1.4 mm)
+        ang, err = solve(bs, crouch, [(f'thigh_{s}', 'x'), (f'shin_{s}', 'x'), (f'ankle_{s}', 'x')], plant_hind(s, 0.003))
         crouch += [[f'thigh_{s}', 'x', ang[0]], [f'shin_{s}', 'x', ang[1]], [f'ankle_{s}', 'x', ang[2]]]
         report[f'crouch hind {s}'] = err
         ang, err = solve(bs, crouch, [(f'upperarm_{s}', 'x'), (f'forearm_{s}', 'x'), (f'hand_{s}', 'x')], plant_fore(s))
@@ -228,21 +233,22 @@ def poses_and_limits():
         'crouch': crouch,
         # head turned and lifted, jaw a little wider (a laugh, not a yawn), the near ear lifted clear of the thigh it
         # swings toward (audit-4: it passed through the haunch) with its blade sagging back toward vertical along
-        # its length (audit-9: posed only at the root, the blade stayed a rigid plank), the far ear hanging; no paw
+        # its length (audit-9: posed only at the root, the blade stayed a rigid plank), the far ear held in a little
+        # so it hangs rather than splaying out with the turn (audit-17: lifted 8 degrees it swung 5 cm out); no paw
         # raised on the turning side went through the muzzle in audit-3; the elbow fold is tested in extreme)
         'look': [['neck', 'z', 22], ['head', 'pz', 13], ['head', 'px', -12], ['jaw', 'x', 8],
-                 ['ear1_L', 'y', -20], ['ear3_L', 'y', 4], ['ear4_L', 'y', 4], ['ear1_R', 'y', 8]],
-        # the deepest folds the limits allow: the left knee and hip flexed with the foot lifted, the right elbow
-        # folded with the paw lifted in front of the chest and curled down at the wrist (audit-9: a palm facing
-        # forward read as a high five; audit-12: the wrist sign was wrong). The shoulder swings well forward and a
-        # little out, so the elbow leaves the chest floor and the forearm folds in front of the chest (audit-12: with
-        # the shoulder 10 degrees forward the folded forearm fused into the breastbone) (shoulder forward, so the forearm folds in front of
-        # the chest rather than through it; audit-4 with the shoulder back: 236 faces through the chest), the neck
-        # turned 50 degrees split over neck and head, the near ear lifted off the shoulder and the far ear swung
-        # out so it clears the tucked leg (a lop ear drapes over a leg; it never passes through it), the tail swung
+                 ['ear1_L', 'y', -20], ['ear3_L', 'y', 4], ['ear4_L', 'y', 4], ['ear1_R', 'y', -4]],
+        # the deepest folds the limits allow: the left knee and hip flexed with the foot lifted; the right forelimb
+        # in a grooming tuck: the shoulder 30 degrees forward and a little out, the elbow folded 75, the wrist curled
+        # 100 so the paw hangs below the forearm (net -5 degrees; audit-9: a palm forward read as a high five; audit-12:
+        # the wrist sign was wrong; audit-17: a 45 degree shoulder and 85 degree elbow held the paw out pointing up,
+        # with the elbow collapsing to a knife edge into the chest; audit-4 with the shoulder back: 236 faces through
+        # the chest); the neck turned 50 degrees with most of it in the neck (a 32 and 18 split creased the throat in a
+        # V where the head and neck weights meet), the near ear lifted off the shoulder and the far ear swung out so it
+        # clears the tucked leg (a lop ear drapes over a leg; it never passes through it), the tail swung
         'extreme': [['thigh_L', 'x', -38], ['shin_L', 'x', 26], ['ankle_L', 'x', -12],
-                    ['upperarm_R', 'x', -45], ['upperarm_R', 'y', 10], ['forearm_R', 'x', -85], ['hand_R', 'x', 95],
-                    ['neck', 'z', 32], ['head', 'pz', 18], ['head', 'px', -18], ['jaw', 'x', 12],
+                    ['upperarm_R', 'x', -30], ['upperarm_R', 'y', 10], ['forearm_R', 'x', -75], ['hand_R', 'x', 100],
+                    ['neck', 'z', 38], ['head', 'pz', 12], ['head', 'px', -18], ['jaw', 'x', 12],
                     ['ear1_L', 'y', -22], ['ear2_L', 'y', -10], ['ear3_L', 'y', 10], ['ear4_L', 'y', 8],
                     ['ear1_R', 'y', 18], ['ear2_R', 'y', 8], ['ear3_R', 'y', -10], ['ear4_R', 'y', -10],
                     ['tail1', 'z', 25], ['tail2', 'z', 18]],

@@ -22,7 +22,9 @@ Steps, all deterministic:
    should judge the surface that ships. A bone with "weightBelow" (a
    polyline of [y, z] points in the side view) keeps weight only below that line, fading over "weightRamp" either
    side (default 4 mm), the rest going
-   to its parent: the lower jaw carries nothing above the lip line (audit-4: an open mouth tore the upper lip).
+   to its parent: the lower jaw carries nothing above the lip line (audit-4: an open mouth tore the upper lip). A
+   bone with "weightNear" ([x, y, z, radius, fade]) keeps weight only inside that sphere (audit-17: the tail's
+   weight covered a 13 cm patch of rump and dragged it in the crouch).
 4. Poses: the skeleton file's fixed poses. Per pose: crushed share (surface area in faces whose area fell below a
    quarter of rest), stretched share (above four times), new self-intersecting face pairs (pairs that do not
    share a vertex and did not touch at rest), and the chains those bad faces belong to.
@@ -386,6 +388,15 @@ def clean_weights(body, bones, margin, smooth=0):
         W2[:, i] -= drop
         W2[:, root[c]] += drop
     for i, b in enumerate(bones):
+        near = b.get('weightNear')
+        if near:
+            # keep weight only within a sphere [x, y, z, radius, fade] (a stub tail must not drag the rump)
+            c, r0, fd = np.asarray(near[:3], float), float(near[3]), float(near[4])
+            t = np.clip((r0+fd-np.linalg.norm(P-c, axis=1))/fd, 0.0, 1.0)
+            keep = t*t*(3-2*t)
+            drop = W2[:, i]*(1.0-keep)
+            W2[:, i] -= drop
+            W2[:, names.index(b['parent'])] += drop
         for key, sign in (('weightBelow', 1.0), ('weightAbove', -1.0)):
             line = b.get(key)
             if not line:
