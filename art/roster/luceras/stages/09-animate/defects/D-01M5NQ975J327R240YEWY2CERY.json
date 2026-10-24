@@ -7,6 +7,7 @@
   "region": "tail tip / plume",
   "origin": "nick",
   "attempts": [],
-  "status": "open",
-  "createdAt": "2026-10-24T01:09:26Z"
+  "status": "closed",
+  "createdAt": "2026-10-24T01:09:26Z",
+  "closedAt": "2026-10-24T02:56:16Z"
 }

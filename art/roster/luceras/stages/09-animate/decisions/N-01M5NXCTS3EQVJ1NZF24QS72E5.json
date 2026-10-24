@@ -1,0 +1,18 @@
+{
+  "id": "N-01M5NXCTS3EQVJ1NZF24QS72E5",
+  "alias": "came",
+  "stage": "09-animate",
+  "who": "nick",
+  "words": "looks good (check 4: plume follows the tail bones in flight)",
+  "date": "2026-10-24",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5G4XQ7B8TVNGHWGFB74VWXZ",
+    "defect": "D-01M5NQ975J327R240YEWY2CERY",
+    "evidence": [
+      "https://claude.ai/artifact/YUmgYBZvCMivUZv3L1umat"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-24T02:56:16Z"
+}
