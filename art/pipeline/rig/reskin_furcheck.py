@@ -33,7 +33,7 @@ EXTRA = {}
 for item in filter(None, os.environ.get('FC_EXTRA', 'crouch_deep=threeq;sig_f16=threeq').split(';')):
     t, v = item.split('='); EXTRA[t] = v.split('+')
 OBLIQUE = {'threeq': (315.0, -12.0, 'chest'), 'low34_front_left': (45.0, -12.0, 'body'), 'low34_rear_left': (135.0, -12.0, 'body'),
-           'back': (180.0, 0.0, 'body'), 'front': (0.0, 0.0, 'body'), 'head': (35.0, 4.0, 'head'), 'head_front': (0.0, 4.0, 'head'), 'head_side': (270.0, 4.0, 'head'), 'face': (35.0, 4.0, 'face'), 'face_front': (0.0, 4.0, 'face'), 'face_side': (270.0, 4.0, 'face')}
+           'back': (180.0, 0.0, 'body'), 'front': (0.0, 0.0, 'body'), 'head': (35.0, 4.0, 'head'), 'head_front': (0.0, 4.0, 'head'), 'head_side': (270.0, 4.0, 'head'), 'face': (35.0, 4.0, 'face'), 'face_front': (0.0, 4.0, 'face'), 'face_side': (270.0, 4.0, 'face'), 'q_front': (305.0, 8.0, 'body'), 'q_back': (235.0, 8.0, 'body')}
 
 
 def arr(items, key, n=3, dt=np.float32):
@@ -623,7 +623,7 @@ def pose(kind, f):
     if kind == 'review':
         rig.animation_data.action = bpy.data.actions['review.poses']; s.frame_set(1 + 10 * POSE_ORDER.index(f))
     else:
-        rig.animation_data.action = bpy.data.actions['sig.horns-first-descent']; s.frame_set(f)
+        rig.animation_data.action = bpy.data.actions['idle' if kind == 'idle' else 'sig.horns-first-descent']; s.frame_set(f)
     ac = rig.animation_data.action
     if hasattr(rig.animation_data, 'action_slot') and rig.animation_data.action_slot is None and len(ac.slots): rig.animation_data.action_slot = ac.slots[0]
     bpy.context.view_layer.update()
@@ -771,14 +771,14 @@ OUT.mkdir(parents=True, exist_ok=True); done = {}
 if PROBE:
     pose('sig', 16); print('PROBE bounds f16', [x.tolist() for x in body_bounds()]); print('PROBE curves', [(o.name, len(o.data.curves)) for o in curves]); sys.exit(0)
 for kind, f in FRAMES:
-    tag = f if kind == 'review' else f'sig_f{f:02d}'
+    tag = f if kind == 'review' else f'{kind}_f{f:02d}'
     pose(kind, f)
     if PLUME_CHECK: print('PLUME', tag, plume_root_error(), flush=True)
     vlist = VIEWS + [v for v in EXTRA.get(tag, []) if v not in VIEWS]
     for vname in vlist:
         if vname == 'side': cam_side('side', f, kind)
         else: cam_oblique(vname)
-        for clay_on in (False, True):
+        for clay_on in ((False,) if os.environ.get('FC_NOCLAY') == '1' else (False, True)):
             set_clay(clay_on); bpy.context.view_layer.update()
             p = OUT / f'{LABEL}_{tag}_{vname}_{"clay" if clay_on else "fur"}.png'
             s.render.filepath = str(p); bpy.ops.render.render(write_still=True); done[str(p.name)] = True
