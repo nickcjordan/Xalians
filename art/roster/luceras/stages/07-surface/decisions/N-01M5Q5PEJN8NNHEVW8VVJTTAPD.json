@@ -1,0 +1,17 @@
+{
+  "id": "N-01M5Q5PEJN8NNHEVW8VVJTTAPD",
+  "alias": "eqh7",
+  "stage": "07-surface",
+  "who": "nick",
+  "words": "the changes do make it look better (checks 5 and 6: surface matched to the sheet, head detail incl. D-c674 eyes; no request for 6a forward eyes or 6b pointed ears)",
+  "date": "2026-10-24",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5Q5P5H9Z4R29GWNA8FARQYJ",
+    "evidence": [
+      "c1db50114bedc2b94db53f9cc62c09b23b0288da44b699ed8b4a3585ec8ab0d3,822f01b6eee0868016e89a4da5dc69d189c905cae78f763cb0d728972c9e1c59"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-24T14:40:34Z"
+}
