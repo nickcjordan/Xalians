@@ -228,6 +228,10 @@ PAGE = r'''<!doctype html>
   --page: #f4f5f6; --ink: #1b2026; --muted: #56606b; --line: #c9ced4; --panel: #ffffff;
   --night: #18212a; --day: #e8ecef; --key: #1f4f8a; --key-ink: #ffffff; --mark: #f2a516;
 }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --page: #101419; --ink: #e6e9ec; --muted: #a3acb6; --line: #333c46; --panel: #1a2028; --key: #7fb0e8; --key-ink: #0d1620; }
+}
+:root[data-theme="dark"] { --page: #101419; --ink: #e6e9ec; --muted: #a3acb6; --line: #333c46; --panel: #1a2028; --key: #7fb0e8; --key-ink: #0d1620; }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--page); color: var(--ink); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
