@@ -6,7 +6,7 @@
 // records the page and document widths (no horizontal scroll means scrollWidth <= the viewport), the smallest tap
 // target, and saves a screenshot. At 390 px it also turns the socket dots on, queues Night Stalk at idle frame 0,
 // steps the page's own sequencer through the clip and back to idle, and records the frame order and markers it
-// shows. Writes <shots dir>/shots.json.
+// shows; then mirrors it (facing right) and records the ground against the anchor. Writes <shots dir>/shots.json.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
@@ -82,6 +82,21 @@ await pp.tap('#step');
 await pp.screenshot({ path: join(shots, 'player-390-stalk19-sockets.png'), fullPage: true });
 const after = await pp.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth }));
 out.views['phone-390'].afterSockets = after;
+// mirrored (facing right): the ground at the anchor frame stays on the anchor, x' = 2*ax - x
+await pp.check('#mirror');
+await pp.screenshot({ path: join(shots, 'player-390-stalk19-sockets-mirrored.png'), fullPage: true });
+out.mirror = await pp.evaluate(() => {
+  const { manifest: m, api } = window.__sprites;
+  const { clip, frame, socket } = m.anchorFrom;
+  return {
+    anchor: m.anchor, formula: m.mirror.formula,
+    groundRelativeToAnchorMirrored: api.socketAt(m, clip, 'side', frame, socket, { flipX: true }),
+    eyeLMirroredInCell: api.socketInCell(m, 'sig.night-stalk', 'side', 19, 'eye_l', { flipX: true }),
+    eyeLInCell: api.socketInCell(m, 'sig.night-stalk', 'side', 19, 'eye_l'),
+    eyeRVisible: api.socketVisible(m, 'side', 'eye_r'), statusBarY: api.statusBarY(m, 'sig.night-stalk', 'side'),
+    scrollWidth: document.documentElement.scrollWidth,
+  };
+});
 await browser.close();
 writeFileSync(join(shots, 'shots.json'), JSON.stringify(out, null, 1));
 console.log(JSON.stringify(out, null, 1));

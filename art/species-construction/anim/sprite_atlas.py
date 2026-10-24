@@ -1,19 +1,27 @@
 """Akinza sprites pass 1 (sprites-pass1-brief.md): pack the furred sprite frames into xalians-frame-atlas-v2 and build
-the standalone review player. PIL and numpy, no Blender.
+the standalone review player. PIL, numpy and scipy, no Blender.
 
-  python art/species-construction/anim/sprite_atlas.py pack <sprites1 dir> <clips spec json> [--status-clear 10]
-      <sprites1>/frames/<clip>/NNNN.png (192 px straight-alpha RGBA cells) and <sprites1>/frames-raw/<clip>/sockets.json
-      (clip_frames.py --sockets) -> <sprites1>/atlas/: manifest.json, one sheet per clip and facing, sha256.txt.
+  python art/species-construction/anim/sprite_atlas.py pack <sprites1 dir> <clips spec json> <rig dir> --sprite-box lo,hi
+      <sprites1>/frames/<clip>/NNNN.png (192 px straight-alpha RGBA cells), <sprites1>/frames-raw/<clip>/sockets.json
+      (clip_frames.py --sockets) and <sprites1>/eyes/eye-sockets.json (sprite_eyes.py) -> <sprites1>/atlas/:
+      manifest.json, one sheet per clip and facing, sha256.txt; <sprites1>/atlas-pack.json (status numbers).
   python art/species-construction/anim/sprite_atlas.py player <sprites1 dir>
       <sprites1>/player.html: one standalone page with the sheets as data URIs and the v2 reader inlined.
 
 Atlas (docs/design/creature-asset-contract.md section 8, decision 12): one fixed 192 px cell for both clips (the
-clips4 sprite camera); each frame trimmed to its pixels with any alpha, packed into its clip's sheet (2 px apart), with
-its offset back into the cell; `anchor` is the cell pixel nearest the ground socket at idle frame 0. Sockets per frame
-in cell pixels (continuous, origin top-left, y down), from the posed rig of that frame (clip_frames.py --sockets):
-ground, head, eye_l, eye_r, emitter, carry; status is the head socket's column, --status-clear px above the highest
-head, jaw or ear skin point of that frame. Clips: `idle` (90 frames, loops, no events) and `sig.night-stalk` (45
-frames, plays once, markers set (the clip spec's conceal) and recover from the clip spec, entry and then = idle frame 0).
+clips4 sprite camera), with its scale in pixels per meter. Each frame is trimmed to its pixels with any alpha and packed
+into its clip's sheet at least GAP (4) px from every other frame, with its offset back into the cell. Alpha is straight
+(not premultiplied); every fully transparent pixel in a frame's rect and in the GAP/2 px around it carries the color of
+the nearest pixel with alpha (alpha unchanged), so a smoothed sampler does not pull black into the outline. `anchor` is
+the continuous ground socket at idle frame 0; facing the other way mirrors every cell x as x' = 2*ax - x.
+
+Sockets per frame in cell pixels (continuous, origin top-left, y down), from the posed rig of that frame: ground,
+head, emitter, carry (clip_frames.py --sockets); eye_l and eye_r, each eye's cornea front (sprite_eyes.py); status, the
+bottom-center of a status icon up to STATUS_W (16) px wide at the head socket's column, STATUS_CLEAR (4) px above the
+highest drawn pixel (alpha > 0 in the frame) under the icon. Per clip and facing, `statusBarY`: STATUS_CLEAR px above the
+clip's highest drawn pixel, one steady height for a health bar. Per facing, each socket's visibility (eye_r is behind the
+head from the side). Clips: `idle` (90 frames, loops, no events) and `sig.night-stalk` (45 frames, plays once, markers
+set (the clip spec's conceal) and recover, entry and then = idle frame 0).
 """
 import argparse
 import base64
@@ -24,10 +32,13 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image
+from scipy import ndimage
 
 CELL = 192
 FPS = 30
-PAD = 2
+GAP = 4
+STATUS_W = 16
+STATUS_CLEAR = 4
 SOCKETS = ['ground', 'head', 'eye_l', 'eye_r', 'emitter', 'status', 'carry']
 CLIPS = {'idle': dict(src='idle', frames=90), 'sig.night-stalk': dict(src='stalk', frames=45)}
 ROOT = Path(__file__).resolve().parents[3]
@@ -48,61 +59,102 @@ def trim(im):
     return im.crop((x0, y0, x1, y1)), (x0, y0)
 
 
+def bleed(tile, border):
+    """The tile with `border` transparent px around it, every pixel with alpha 0 given the RGB of the nearest pixel
+    with alpha (Euclidean, scipy's distance transform); alpha is unchanged."""
+    a = np.asarray(tile)
+    h, w = a.shape[:2]
+    out = np.zeros((h+2*border, w+2*border, 4), np.uint8)
+    out[border:border+h, border:border+w] = a
+    empty = out[..., 3] == 0
+    _, (iy, ix) = ndimage.distance_transform_edt(empty, return_indices=True)
+    out[..., :3] = out[iy, ix, :3]
+    return Image.fromarray(out, 'RGBA')
+
+
 def shelf(sizes):
-    """Shelf packing in frame order: rows left to right, wrapped at a width near the square root of the total area."""
-    area = sum((w+PAD)*(h+PAD) for w, h in sizes)
+    """Shelf packing in frame order: rows left to right, wrapped at a width near the square root of the total area;
+    each size here already includes its GAP/2 px border, so frame rects end up GAP px apart."""
+    area = sum(w*h for w, h in sizes)
     width = max(max(w for w, _ in sizes), int(math.ceil(math.sqrt(area)*1.05)))
     x = y = row_h = 0
     out = []
     for w, h in sizes:
         if x and x+w > width:
-            x, y, row_h = 0, y+row_h+PAD, 0
+            x, y, row_h = 0, y+row_h, 0
         out.append((x, y))
-        x += w+PAD
+        x += w
         row_h = max(row_h, h)
     return out, width, y+row_h
+
+
+def status_point(A, head_x):
+    """Bottom-center of a status icon STATUS_W px wide at head_x, STATUS_CLEAR px above the highest drawn pixel (alpha
+    > 0) under it; and the clearance from that point to the nearest drawn pixel anywhere (pixel boxes)."""
+    cols = np.arange(CELL)+.5
+    band = np.abs(cols-head_x) <= STATUS_W/2
+    rows = np.nonzero((A[:, band] > 0).any(1))[0]
+    top = int(rows.min())
+    y = top-STATUS_CLEAR
+    ys, xs = np.nonzero(A > 0)
+    dx = np.maximum(0, np.maximum(xs-head_x, head_x-(xs+1)))
+    dy = np.maximum(0, np.maximum(ys-y, y-(ys+1)))
+    return [round(float(head_x), 3), float(y)], dict(bandTopRow=top, nearestDrawnPx=round(float(np.hypot(dx, dy).min()), 3))
 
 
 def cmd_pack(a):
     S = Path(a.sprites)
     spec = json.loads(Path(a.spec).read_text())
+    rig = json.loads((Path(a.rig)/'rig.json').read_text())
+    eyes = json.loads((S/'eyes/eye-sockets.json').read_text())
     out = S/'atlas'
     out.mkdir(parents=True, exist_ok=True)
     for f in out.iterdir():
         if f.is_file():
             f.unlink()                               # this pass's own output folder, rebuilt each run
-    socks = {}
+    socks, eye = {}, {}
     for name, c in CLIPS.items():
         rows = json.loads((S/'frames-raw'/c['src']/'sockets.json').read_text())['rows']
         socks[name] = {r['frame']: r for r in rows}
-        assert sorted(socks[name]) == list(range(c['frames'])), name
-    g0 = np.array(socks['idle'][0]['uv']['ground'])*CELL
-    anchor = [int(math.floor(g0[0])), int(math.floor(g0[1]))]
+        eye[name] = {r['frame']: r for r in eyes['clips'][c['src']]}
+        assert sorted(socks[name]) == list(range(c['frames'])) == sorted(eye[name]), name
+    px = lambda uvp: [round(v*CELL, 3) for v in uvp]
+    anchor = px(socks['idle'][0]['uv']['ground'])
+    # scale: the sprite camera's ortho width (source units: the sprite box's larger side seen from side_left, plus the
+    # 6 percent margin each side, as lookdev.place_camera) in meters through the rig's source-to-meters scale
+    box = np.array([float(v) for v in a.sprite_box.split(',')])
+    ortho = max(box[4]-box[1], box[5]-box[2])*1.12
+    assert abs(ortho-eyes['orthoSource']) < 1e-9
+    m_per_px = ortho*rig['transform']['scale']/CELL
     ev = {e['name']: e['frame'] for e in spec['nightStalk']['events']}
-    clips, files = {}, {}
+    clips, files, report = {}, {}, {}
     for name, c in CLIPS.items():
         n = c['frames']
         assert spec['idle' if name == 'idle' else 'nightStalk']['frames'] == n
-        tiles, offs = [], []
+        tiles, offs, alphas = [], [], []
         for f in range(n):
             im = Image.open(S/'frames'/c['src']/f'{f:04d}.png')
             assert im.mode == 'RGBA' and im.size == (CELL, CELL), (name, f, im.mode, im.size)
+            alphas.append(np.asarray(im)[..., 3])
             t, o = trim(im)
-            tiles.append(t)
+            tiles.append(bleed(t, GAP//2))
             offs.append(o)
         pos, W, H = shelf([t.size for t in tiles])
         sheet = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-        frames = []
+        frames, srows = [], []
         for f, (t, o, p) in enumerate(zip(tiles, offs, pos)):
             sheet.paste(t, p)
             r = socks[name][f]
-            sk = {k: [round(v*CELL, 2) for v in r['uv'][k]] for k in ('ground', 'head', 'eye_l', 'eye_r', 'emitter', 'carry')}
-            top = r['aux']['head_ear_top'][1]*CELL
-            sk['status'] = [round(r['uv']['head'][0]*CELL, 2), round(top-a.status_clear, 2)]
-            frames.append(dict(x=p[0], y=p[1], w=t.size[0], h=t.size[1], offset=[o[0], o[1]], sockets={k: sk[k] for k in SOCKETS}))
+            sk = {k: px(r['uv'][k]) for k in ('ground', 'head', 'emitter', 'carry')}
+            sk['eye_l'], sk['eye_r'] = px(eye[name][f]['eye_l']), px(eye[name][f]['eye_r'])
+            sk['status'], st = status_point(alphas[f], r['uv']['head'][0]*CELL)
+            srows.append(st)
+            frames.append(dict(x=p[0]+GAP//2, y=p[1]+GAP//2, w=t.size[0]-GAP, h=t.size[1]-GAP, offset=[o[0], o[1]],
+                               sockets={k: sk[k] for k in SOCKETS}))
         fname = f'{name}-side.png'
         sheet.save(out/fname, optimize=True)
         files[fname] = sha(out/fname)
+        top = min(int(np.nonzero((A > 0).any(1))[0].min()) for A in alphas)
         clip = dict(frameCount=n, durationMs=round(n*1000/FPS, 3), loop=name == 'idle', markers=[])
         if name != 'idle':
             clip.update(name='Night Stalk', act='akinza-defining',
@@ -110,33 +162,57 @@ def cmd_pack(a):
                         markers=[dict(name=CONTRACT_EVENT.get(k, k), frame=ev[k], timeMs=round(ev[k]*1000/FPS, 3)) for k in ('conceal', 'recover')],
                         entry=dict(clip='idle', frame=0, note="frame 0 is idle frame 0's pose: start it in place of idle frame 0"),
                         then=dict(clip='idle', frame=0, note="frame 44 is idle frame 89's pose: idle frame 0 follows, so no image repeats or is skipped"))
+        clip['statusBarY'] = dict(side=float(top-STATUS_CLEAR))
         clip['facings'] = dict(side=dict(sheet=fname, size=[W, H], frames=frames))
         clips[name] = clip
+        report[name] = dict(statusNearestDrawnMinPx=min(x['nearestDrawnPx'] for x in srows),
+                            statusNearestDrawnMinFrame=int(np.argmin([x['nearestDrawnPx'] for x in srows])),
+                            statusBandClearPx=STATUS_CLEAR, highestDrawnRow=top, statusBarY=top-STATUS_CLEAR,
+                            statusY=[min(f['sockets']['status'][1] for f in frames), max(f['sockets']['status'][1] for f in frames)])
     info = json.loads((S/'sprites.json').read_text()) if (S/'sprites.json').exists() else {}
+    vis = {k: 'visible' for k in SOCKETS}
+    vis['eye_r'] = 'hidden'
     manifest = dict(
         format='xalians-frame-atlas-v2', species='akinza', profile='slice-side-192',
-        cell=dict(w=CELL, h=CELL), anchor=anchor, fps=FPS,
+        cell=dict(w=CELL, h=CELL), anchor=anchor, anchorFrom=dict(clip='idle', frame=0, socket='ground'), fps=FPS,
+        scale=dict(pixelsPerMeter=round(1/m_per_px, 4), metersPerPixel=round(m_per_px, 7),
+                   referenceHeightCm=rig['transform']['heightCm'], referenceHeightPx=round(rig['transform']['heightCm']/100/m_per_px, 2),
+                   rule='cell pixels per meter of the creature at its reference size (rig.json heightCm, the middle of the record band); '
+                        "compare sizes across species through pixelsPerMeter"),
         pixels='cell pixels: origin at the cell top-left, x right, y down; pixel (i, j) covers [i, i+1) x [j, j+1); socket '
-               'positions are continuous. A frame goes into the cell at its offset; the anchor goes on the creature\'s floor point',
-        facings=dict(side=dict(camera='side_left', faces='left', note='the creature faces left (-x); mirror x about the anchor to face right')),
+               "positions are continuous. A frame goes into the cell at its offset; the anchor goes on the creature's floor point",
+        alpha='straight',
+        transparentRgb=f"every fully transparent pixel in a frame's rect and in the {GAP//2} px around it carries the color of the "
+                       'nearest pixel with alpha (alpha unchanged), so smoothed sampling does not darken the outline',
+        frameGapPx=GAP,
+        mirror=dict(formula="x' = 2*ax - x", ax='anchor[0]',
+                    note='to face the other way, mirror every cell x (frame pixels and sockets) about the anchor; y is unchanged'),
+        facings=dict(side=dict(camera='side_left', faces='left', socketVisibility=vis,
+                               note='the creature faces left (-x); eye_r is behind the head from this side: its position is '
+                                    'kept for effects that need it, hidden means a game should not draw on it')),
         sockets=SOCKETS,
+        statusIcon=dict(maxWidthPx=STATUS_W, clearPx=STATUS_CLEAR),
         socketRules=dict(
             ground='the floor point midway between the two planted ankles', head="the head bone's midpoint",
-            eye_l="the rig's left eye center on the head bone (the creature's left, the near side here)",
-            eye_r="the rig's right eye center on the head bone (far side, behind the head here)",
+            eye_l="the left eye's cornea front as the camera sees it: the eyeball center plus the radius along the eye's "
+                  "forward axis (to where that axis leaves the eye globe), on the head bone (the creature's left, the near side here)",
+            eye_r="the right eye's cornea front, the same way (the far side: hidden behind the head here)",
             emitter='the front of the mouth: the midline skin point at the mouth height that is farthest forward',
-            status=f'the head socket\'s column, {a.status_clear} px above the highest head, jaw or ear skin point of the frame',
+            status=f"the bottom-center of a status icon up to {STATUS_W} px wide at the head socket's column, {STATUS_CLEAR} px "
+                   'above the highest drawn pixel (alpha > 0 in the frame) under the icon',
+            statusBarY=f"per clip and facing: {STATUS_CLEAR} px above the clip's highest drawn pixel, a steady height for a bar",
             carry="midway between the two hand bones' midpoints"),
         clips=clips, files=files,
         source=dict(rig='anim/rig-p8b', fur='surface/fur-steps/s12-29c-legs3b', palette='T7',
                     clips='anim/clips4 (akinza_clips.py, clip_frames.py at 8e3286ad), approved F40',
                     render=info.get('render'), camera='clips4 sprite camera: look-dev side_left, azimuth 90, elevation 0, '
-                    'ortho, fitted to the union of both clips\' skin bounds 6 cm out, 6 percent margin'))
-    (out/'manifest.json').write_text(json.dumps(manifest, indent=1)+'\n')
+                    "ortho, fitted to the union of both clips' skin bounds 6 cm out, 6 percent margin"))
+    (out/'manifest.json').write_bytes((json.dumps(manifest, indent=1)+'\n').encode())
     lines = [f'{sha(out/f)}  {f}' for f in sorted(p.name for p in out.iterdir() if p.is_file() and p.name != 'sha256.txt')]
-    (out/'sha256.txt').write_text('\n'.join(lines)+'\n')
+    (out/'sha256.txt').write_bytes(('\n'.join(lines)+'\n').encode())
+    (S/'atlas-pack.json').write_text(json.dumps(report, indent=1))
     print('packed', {k: (v['facings']['side']['size'], (out/v['facings']['side']['sheet']).stat().st_size) for k, v in clips.items()},
-          'anchor', anchor)
+          'anchor', anchor, 'px per m', manifest['scale']['pixelsPerMeter'], json.dumps(report))
 
 
 # ---------------------------------------------------------------- player
@@ -188,6 +264,7 @@ figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
   <button id="step" type="button" aria-label="Step one frame">Step</button>
   <label class="toggle"><input id="sockets" type="checkbox"> Socket dots</label>
   <label class="toggle"><input id="entry" type="checkbox" checked> Start at idle frame 0</label>
+  <label class="toggle"><input id="mirror" type="checkbox"> Face right (mirrored)</label>
 </div>
 <div id="status" aria-live="polite">loading</div>
 <div class="stages" id="stages"></div>
@@ -255,10 +332,15 @@ for (const [name, shape] of Object.entries(MARKS)) {
 }
 const showSockets = document.getElementById('sockets');
 showSockets.addEventListener('change', () => { legend.hidden = !showSockets.checked; draw(); });
+const mirror = document.getElementById('mirror');
+mirror.addEventListener('change', () => draw());
+const hidden = document.createElement('span');
+hidden.textContent = 'hollow = hidden in this facing; dashed line = ground (anchor); solid line = the clip\'s status bar height';
+legend.append(hidden);
 const seq = createSequencer(MANIFEST, 'idle');
 const fd = frameDurationMs(MANIFEST);
 const log = { shown: [], events: [] };
-window.__sprites = { seq, log, manifest: MANIFEST };
+window.__sprites = { seq, log, manifest: MANIFEST, api: { socketAt, socketInCell, mirrorX, socketVisible, statusBarY } };
 let lastEvent = '';
 function draw() {
   const clip = seq.clip, frame = seq.frame();
@@ -267,14 +349,22 @@ function draw() {
     ctx.setTransform(k, 0, 0, k, 0, 0);
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = BG[st.bg]; ctx.fillRect(0, 0, st.w, st.h);
-    const ax = (MANIFEST.anchor[0] - st.view[0]) * st.scale, ay = (MANIFEST.anchor[1] - st.view[1]) * st.scale;
-    drawFrame(ctx, atlas, clip, 'side', frame, ax, ay, st.scale);
+    const flipX = mirror.checked;
+    // a mirrored stage shows the view window mirrored about the anchor too (x' = 2*ax - x), so the anchor stays put
+    const vx0 = flipX ? mirrorX(MANIFEST, st.view[2]) : st.view[0];
+    const ax = (MANIFEST.anchor[0] - vx0) * st.scale, ay = (MANIFEST.anchor[1] - st.view[1]) * st.scale;
+    drawFrame(ctx, atlas, clip, 'side', frame, ax, ay, st.scale, flipX);
     if (showSockets.checked) {
-      ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = st.bg === 'night' ? 'rgba(232,236,239,.55)' : 'rgba(24,33,42,.5)'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, ay + 0.5); ctx.lineTo(st.w, ay + 0.5); ctx.stroke(); ctx.restore();
+      const line = st.bg === 'night' ? 'rgba(232,236,239,.6)' : 'rgba(24,33,42,.55)';
+      ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = line; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, ay + 0.5); ctx.lineTo(st.w, ay + 0.5); ctx.stroke();
+      const by = (MANIFEST.clips[clip].statusBarY.side - st.view[1]) * st.scale;
+      ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(0, by); ctx.lineTo(st.w, by); ctx.stroke(); ctx.restore();
       for (const name of MANIFEST.sockets) {
-        const [sx, sy] = socketAt(MANIFEST, clip, 'side', frame, name, { scale: st.scale });
-        mark(ctx, MARKS[name], ax + sx, ay + sy, st.scale === 1 ? 2.5 : 3.5);
+        const [sx, sy] = socketAt(MANIFEST, clip, 'side', frame, name, { scale: st.scale, flipX });
+        const r = st.scale === 1 ? 2.5 : 3.5;
+        if (socketVisible(MANIFEST, 'side', name)) mark(ctx, MARKS[name], ax + sx, ay + sy, r);
+        else { ctx.beginPath(); ctx.arc(ax + sx, ay + sy, r + 1, 0, Math.PI * 2); ctx.lineWidth = 1.5; ctx.strokeStyle = '#101418'; ctx.stroke(); }
       }
     }
   }
@@ -338,7 +428,10 @@ def cmd_player(a):
     r = info.get('render', {})
     facts = ('Render: ' + (r.get('way', '') or '') + f"; Cycles {r.get('samples', '')} samples, {r.get('filterWidth', '')} px filter, "
              f"OpenImageDenoise, seed {r.get('seed', '')}; film transparent, straight-alpha RGBA. Rig rig-p8b, fur s12-29c-legs3b, palette T7. "
-             f"Sheets: " + ', '.join(f"<code>{k}</code> {Path(A/k).stat().st_size//1024} KB" for k in sheets) + '. Manifest <code>atlas/manifest.json</code>.')
+             f"Sheets: " + ', '.join(f"<code>{k}</code> {Path(A/k).stat().st_size//1024} KB" for k in sheets) + '. '
+             f"Scale {m['scale']['pixelsPerMeter']} px per meter ({m['scale']['referenceHeightCm']} cm reference height = "
+             f"{m['scale']['referenceHeightPx']} px). Anchor {m['anchor']} (the ground socket at idle frame 0); mirrored x' = 2*ax - x. "
+             'Straight alpha, edge colors spread into transparent pixels, frames 4 px apart. Manifest <code>atlas/manifest.json</code>.')
     reader = READER.read_text()
     html = (PAGE.replace('__READER__', reader).replace('__MANIFEST__', json.dumps(m))
             .replace('__SHEETS__', json.dumps(sheets)).replace('__VIEW2X__', json.dumps(view)).replace('__FACTS__', json.dumps(facts)))
@@ -354,7 +447,8 @@ if __name__ == '__main__':
     k = sub.add_parser('pack')
     k.add_argument('sprites')
     k.add_argument('spec')
-    k.add_argument('--status-clear', type=float, default=10.)
+    k.add_argument('rig')
+    k.add_argument('--sprite-box', required=True)
     q = sub.add_parser('player')
     q.add_argument('sprites')
     a = p.parse_args()

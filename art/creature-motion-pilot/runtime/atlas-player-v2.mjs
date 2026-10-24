@@ -4,10 +4,12 @@
  *
  * A v2 atlas has one fixed cell for every clip and facing (the same cell, ground line and scale, so a game can swap
  * clips without a jump). Each frame is stored trimmed in its clip-and-facing sheet at (x, y, w, h) and goes back
- * into the cell at `offset` (its top-left in cell pixels). `anchor` is the cell pixel a game puts on the
- * creature's floor point. Sockets are per frame, in cell pixels (origin top-left, y down). Clip events are
- * `markers` with `timeMs`. A clip that does not loop names the clip and frame that follow it in `then`; a clip that
- * starts from another clip's pose names it in `entry`.
+ * into the cell at `offset` (its top-left in cell pixels). `anchor` is the continuous cell point a game puts on the
+ * creature's floor point (the ground socket of the frame `anchorFrom` names); facing the other way mirrors every cell x
+ * about it, x' = 2*ax - x (`mirror`). Sockets are per frame, in cell pixels (origin top-left, y down), and a facing may
+ * mark some hidden (`socketVisibility`). Clip events are `markers` with `timeMs`. A clip that does not loop names the
+ * clip and frame that follow it in `then`; a clip that starts from another clip's pose names it in `entry`. Alpha is
+ * straight; transparent pixels carry edge colors, so smoothed sampling of a sheet is safe.
  */
 
 export const FORMAT = 'xalians-frame-atlas-v2';
@@ -26,6 +28,12 @@ export function validateManifest(manifest) {
   if (!isNum(manifest.fps) || manifest.fps <= 0) fail('fps');
   if (!manifest.facings || typeof manifest.facings !== 'object' || !Object.keys(manifest.facings).length) fail('facings');
   if (!Array.isArray(manifest.sockets)) fail('sockets');
+  if (manifest.alpha !== undefined && manifest.alpha !== 'straight') fail(`alpha ${manifest.alpha} (this reader draws straight alpha)`);
+  for (const [facing, f] of Object.entries(manifest.facings)) {
+    for (const [s, v] of Object.entries(f.socketVisibility || {})) {
+      if (!manifest.sockets.includes(s) || !['visible', 'hidden'].includes(v)) fail(`${facing}: socketVisibility ${s}`);
+    }
+  }
   if (!manifest.clips || typeof manifest.clips !== 'object' || !Object.keys(manifest.clips).length) fail('clips');
   for (const [name, clip] of Object.entries(manifest.clips)) {
     if (!isInt(clip.frameCount) || clip.frameCount <= 0) fail(`${name}: frameCount`);
@@ -91,30 +99,54 @@ export function frameOf(manifest, clipName, facing, index) {
   return side.frames[index];
 }
 
-/**
- * A socket's position for one frame, relative to the anchor (so a game adds its own floor point), in cell pixels
- * times scale. flipX mirrors about the anchor, for drawing the facing the other way.
- */
-export function socketAt(manifest, clipName, facing, index, socket, { scale = 1, flipX = false } = {}) {
+/** The manifest's mirror for facing the other way: x' = 2*ax - x, about the anchor's x (cell pixels). */
+export function mirrorX(manifest, x) {
+  return 2 * manifest.anchor[0] - x;
+}
+
+/** A socket's cell position for one frame; flipX mirrors it about the anchor (x' = 2*ax - x). */
+export function socketInCell(manifest, clipName, facing, index, socket, { flipX = false } = {}) {
   const p = frameOf(manifest, clipName, facing, index).sockets[socket];
   if (!p) throw new Error(`No socket ${socket}`);
-  const dx = (p[0] - manifest.anchor[0]) * scale;
-  return [flipX ? -dx : dx, (p[1] - manifest.anchor[1]) * scale];
+  return [flipX ? mirrorX(manifest, p[0]) : p[0], p[1]];
+}
+
+/**
+ * A socket's position for one frame relative to the anchor (so a game adds its own floor point), in cell pixels
+ * times scale; flipX mirrors it about the anchor (x' = 2*ax - x) for drawing the facing the other way.
+ */
+export function socketAt(manifest, clipName, facing, index, socket, { scale = 1, flipX = false } = {}) {
+  const [cx, cy] = socketInCell(manifest, clipName, facing, index, socket, { flipX });
+  return [(cx - manifest.anchor[0]) * scale, (cy - manifest.anchor[1]) * scale];
+}
+
+/** False when the facing marks the socket hidden (behind the body from that side); sockets not listed are visible. */
+export function socketVisible(manifest, facing, socket) {
+  return (manifest.facings[facing]?.socketVisibility?.[socket] ?? 'visible') !== 'hidden';
+}
+
+/** One clip's steady status bar height for a facing (cell pixels), or null when the atlas has none. */
+export function statusBarY(manifest, clipName, facing) {
+  const v = manifest.clips[clipName]?.statusBarY?.[facing];
+  return Number.isFinite(v) ? v : null;
 }
 
 /**
  * Draws one frame with the cell's anchor at (x, y). ctx needs save, translate, scale, drawImage, restore (a 2D
- * canvas context). Returns the frame.
+ * canvas context). flipX draws the facing the other way, every cell x mirrored about the anchor (x' = 2*ax - x): the
+ * frame's left edge ox lands at 2*ax - ox. Returns the frame.
  */
 export function drawFrame(ctx, atlas, clipName, facing, index, x, y, scale = 1, flipX = false) {
   const { manifest, images } = atlas;
   const fr = frameOf(manifest, clipName, facing, index);
   const sheet = images[manifest.clips[clipName].facings[facing].sheet];
   if (!sheet) throw new Error(`Missing sheet for ${clipName}/${facing}`);
+  const [ax, ay] = manifest.anchor;
+  const left = flipX ? mirrorX(manifest, fr.offset[0]) : fr.offset[0];   // where the frame's own left column lands
   ctx.save();
-  ctx.translate(x, y);
+  ctx.translate(x + (left - ax) * scale, y + (fr.offset[1] - ay) * scale);
   ctx.scale(flipX ? -scale : scale, scale);
-  ctx.drawImage(sheet, fr.x, fr.y, fr.w, fr.h, fr.offset[0] - manifest.anchor[0], fr.offset[1] - manifest.anchor[1], fr.w, fr.h);
+  ctx.drawImage(sheet, fr.x, fr.y, fr.w, fr.h, 0, 0, fr.w, fr.h);
   ctx.restore();
   return fr;
 }

@@ -11,6 +11,8 @@ numpy, no Blender. Numbers only; nothing here grades the look.
   python art/species-construction/anim/sprite_measures.py checks <sprites1 dir> <clips4 dir>
       The final frame checks (<sprites1>/frames, the clay at the same camera in <sprites1>/clay, the atlas in
       <sprites1>/atlas): writes <sprites1>/checks.json.
+  python art/species-construction/anim/sprite_measures.py bilinear <sprites1 dir>
+      The half-pixel bilinear test on atlas-before-fixes and atlas (see cmd_bilinear).
   python art/species-construction/anim/sprite_measures.py report <sprites1 dir> [--validator log] [--tests log]
       <sprites1>/sprites.json: the render settings and times (frames-raw/frames-fur.json), the render test, the checks,
       the player shots and the quoted validator and test output, from whatever exists so far.
@@ -372,33 +374,51 @@ def mask_offset(m0, m1, search=3):
 
 
 def socket_checks(S, m):
-    """Per frame, from the atlas: every socket inside the cell; the status point's clearance (distance to the nearest
-    pixel with alpha above 0.02, in that frame's cell image, ear tips included) and its height over the head; the ground
-    socket's drift from idle frame 0; alpha under the near eye and the emitter."""
+    """Per frame, from the atlas: every socket inside the cell; the status point's clearance from the drawn outline
+    (alpha > 0 in that frame's cell image, ear tips included): to the nearest drawn pixel anywhere, and to the drawn
+    pixels under the status icon (statusIcon.maxWidthPx wide); the clip's statusBarY against every frame's highest drawn
+    pixel; the ground socket's drift from idle frame 0; the anchor against the ground socket at anchorFrom; alpha under
+    the near eye and the emitter; the eye sockets against the rendered iris (eyes/eye-sockets.json)."""
     src = {'idle': 'idle', 'sig.night-stalk': 'stalk'}
     g0 = np.array(m['clips']['idle']['facings']['side']['frames'][0]['sockets']['ground'])
-    rows = []
+    icon = m.get('statusIcon', dict(maxWidthPx=16, clearPx=4))
+    rows, bars = [], {}
     for name, clip in m['clips'].items():
+        tops = []
         for f, fr in enumerate(clip['facings']['side']['frames']):
             A = np.asarray(Image.open(S/f'frames/{src[name]}/{f:04d}.png'))[..., 3].astype(float)/255
-            ys, xs = np.nonzero(A > .02)
+            ys, xs = np.nonzero(A > 0)
+            tops.append(int(ys.min()))
             sx, sy = fr['sockets']['status']
-            clear = float(np.min(np.hypot(xs+.5-sx, ys+.5-sy)))
-            above = float(ys.min()-sy)                # >0: the status point is above the figure's top pixel row
+            dx = np.maximum(0, np.maximum(xs-sx, sx-(xs+1)))
+            dy = np.maximum(0, np.maximum(ys-sy, sy-(ys+1)))
+            under = ys[np.abs(xs+.5-sx) <= icon['maxWidthPx']/2]
             inside = all(0 <= p[0] <= CELL and 0 <= p[1] <= CELL for p in fr['sockets'].values())
             ex, ey = fr['sockets']['eye_l']
             mx, my = fr['sockets']['emitter']
-            rows.append(dict(frame=f'{name}:{f}', statusClearPx=round(clear, 2), statusAboveTopPx=round(above, 2), inside=inside,
+            rows.append(dict(frame=f'{name}:{f}', statusNearestDrawnPx=round(float(np.hypot(dx, dy).min()), 3),
+                             statusClearUnderIconPx=round(float(under.min()-sy), 3), inside=inside,
                              groundDriftPx=round(float(np.hypot(*(np.array(fr['sockets']['ground'])-g0))), 3),
                              eyeAlpha=round(float(A[int(ey), int(ex)]), 3), emitterAlpha=round(float(A[int(my), int(mx)]), 3)))
-    return dict(frames=len(rows), allInsideCell=all(r['inside'] for r in rows),
-                statusClearMinPx=min(r['statusClearPx'] for r in rows),
-                statusClearMinFrame=min(rows, key=lambda r: r['statusClearPx'])['frame'],
-                statusAboveTopMinPx=min(r['statusAboveTopPx'] for r in rows),
-                statusYRange=[round(min(fr['sockets']['status'][1] for c in m['clips'].values() for fr in c['facings']['side']['frames']), 2),
-                              round(max(fr['sockets']['status'][1] for c in m['clips'].values() for fr in c['facings']['side']['frames']), 2)],
-                groundDriftMaxPx=max(r['groundDriftPx'] for r in rows),
-                eyeAlphaMin=min(r['eyeAlpha'] for r in rows), emitterAlphaMin=min(r['emitterAlpha'] for r in rows), rows=rows)
+        bar = clip.get('statusBarY', {}).get('side')
+        bars[name] = dict(statusBarY=bar, highestDrawnRow=min(tops), clearPx=None if bar is None else round(min(tops)-bar, 3))
+    eyes = json.loads((S/'eyes/eye-sockets.json').read_text()) if (S/'eyes/eye-sockets.json').exists() else None
+    af = m.get('anchorFrom')
+    out = dict(frames=len(rows), allInsideCell=all(r['inside'] for r in rows),
+               statusNearestDrawnMinPx=min(r['statusNearestDrawnPx'] for r in rows),
+               statusNearestDrawnMinFrame=min(rows, key=lambda r: r['statusNearestDrawnPx'])['frame'],
+               statusClearUnderIconMinPx=min(r['statusClearUnderIconPx'] for r in rows),
+               statusYRange=[round(min(fr['sockets']['status'][1] for c in m['clips'].values() for fr in c['facings']['side']['frames']), 2),
+                             round(max(fr['sockets']['status'][1] for c in m['clips'].values() for fr in c['facings']['side']['frames']), 2)],
+               statusBar=bars, groundDriftMaxPx=max(r['groundDriftPx'] for r in rows),
+               eyeAlphaMin=min(r['eyeAlpha'] for r in rows), emitterAlphaMin=min(r['emitterAlpha'] for r in rows), rows=rows)
+    if af:
+        g = m['clips'][af['clip']]['facings']['side']['frames'][af['frame']]['sockets'][af['socket']]
+        out['anchorMinusGroundPx'] = [round(m['anchor'][0]-g[0], 4), round(m['anchor'][1]-g[1], 4)]
+        out['groundMovesWhenMirroredPx'] = round(abs((2*m['anchor'][0]-g[0])-g[0]), 4)
+    if eyes:
+        out['eyeLAgainstIris'] = eyes['summary']
+    return out
 
 
 def cmd_checks(a):
@@ -477,6 +497,69 @@ def cmd_checks(a):
     print(json.dumps({k: ({kk: vv for kk, vv in v.items() if kk != 'rows'} if isinstance(v, dict) else v) for k, v in out.items()}, indent=1)[:6000])
 
 
+def bilinear_half(sheet, fr, bg):
+    """One frame sampled half a pixel off (each output pixel the mean of a 2x2 block of the sheet, the frame's rect and
+    1 px around it) and composited on bg, two ways: straight (RGB and alpha filtered apart, as a sampler does with a
+    straight-alpha texture) and the premultiplied reference. 8-bit sRGB values."""
+    sheet = np.pad(sheet, ((1, 1), (1, 1), (0, 0)))               # transparent black outside the sheet
+    x0, y0, x1, y1 = fr['x'], fr['y'], fr['x']+fr['w']+2, fr['y']+fr['h']+2
+    a = sheet[y0:y1, x0:x1].astype(np.float64)/255
+    blk = lambda q: (q[:-1, :-1]+q[1:, :-1]+q[:-1, 1:]+q[1:, 1:])/4
+    al = blk(a[..., 3:4])
+    straight = blk(a[..., :3])*255*al+np.asarray(bg, float)*(1-al)
+    ref = blk(a[..., :3]*a[..., 3:4])*255+np.asarray(bg, float)*(1-al)
+    return straight, ref, al[..., 0]
+
+
+def cmd_bilinear(a):
+    """The blind critic's test, before and after: every frame drawn half a pixel off with bilinear sampling on
+    #e8ecef; darkening = luminance(premultiplied reference) - luminance(straight-alpha sample), on edge pixels (0 <
+    sampled alpha < 1). Writes <sprites1>/bilinear-test.json and bilinear-test.png (Night Stalk 19's head at 5x:
+    before, after, the premultiplied reference)."""
+    S = Path(a.sprites)
+    bg = (0xe8, 0xec, 0xef)
+    out = {}
+    for tag, d in (('before', S/'atlas-before-fixes'), ('after', S/'atlas')):
+        m = json.loads((d/'manifest.json').read_text())
+        dk = []
+        for name, clip in m['clips'].items():
+            side = clip['facings']['side']
+            sheet = np.asarray(Image.open(d/side['sheet']))
+            for fr in side['frames']:
+                st, ref, al = bilinear_half(sheet, fr, bg)
+                e = (al > 0) & (al < 1)
+                dk.append(luma(ref)[e]-luma(st)[e])
+        dk = np.concatenate(dk)
+        out[tag] = dict(edgePx=int(dk.size), darkeningMean=round(float(dk.mean()), 2), darkeningMax=round(float(dk.max()), 1),
+                        pctOver6=round(float((dk > 6).mean()*100), 2), pctOver12=round(float((dk > 12).mean()*100), 2),
+                        lighteningMax=round(float(-dk.min()), 2))
+    (S/'bilinear-test.json').write_text(json.dumps(out, indent=1))
+    # picture: stalk 19, the head
+    panels = []
+    for tag, d in (('before', S/'atlas-before-fixes'), ('after', S/'atlas')):
+        m = json.loads((d/'manifest.json').read_text())
+        side = m['clips']['sig.night-stalk']['facings']['side']
+        fr = side['frames'][19]
+        st, ref, _ = bilinear_half(np.asarray(Image.open(d/side['sheet'])), fr, bg)
+        panels.append((tag+': straight alpha as shipped', st))
+        if tag == 'after':
+            panels.append(('premultiplied reference', ref))
+    crop = lambda q: q[:60, :90]
+    F = font(16)
+    W = sum(crop(q).shape[1]*5+16 for _, q in panels)+16
+    img = Image.new('RGB', (W, 60*5+44), (250, 250, 250))
+    dr = ImageDraw.Draw(img)
+    x = 16
+    for label, q in panels:
+        pim = Image.fromarray(np.clip(np.round(crop(q)), 0, 255).astype(np.uint8), 'RGB')
+        pim = pim.resize((pim.width*5, pim.height*5), Image.NEAREST)
+        img.paste(pim, (x, 36))
+        dr.text((x, 8), label, fill=(20, 20, 20), font=F)
+        x += pim.width+16
+    img.save(S/'bilinear-test.png')
+    print(json.dumps(out, indent=1))
+
+
 def cmd_report(a):
     """<sprites1>/sprites.json: settings, times and check numbers, from whatever this pass has written so far."""
     S = Path(a.sprites)
@@ -498,7 +581,8 @@ def cmd_report(a):
         out['times'] = dict(frames=len(rs), frame1RenderSeconds=rs[0], frame1PoseSeconds=ps[0], renderSecondsMean=round(float(np.mean(rs)), 2),
                             renderSecondsMax=max(rs), poseSecondsMean=round(float(np.mean(ps)), 2), renderSecondsTotal=round(float(sum(rs))),
                             runSeconds=log['seconds'], startupSeconds=round(log['seconds']-sum(rs)-sum(ps)))
-    for k, f in (('renderTest', 'render-test.json'), ('checks', 'checks.json'), ('playerShots', 'player-shots/shots.json')):
+    for k, f in (('renderTest', 'render-test.json'), ('checks', 'checks.json'), ('playerShots', 'player-shots/shots.json'),
+                 ('bilinearTest', 'bilinear-test.json'), ('atlasPack', 'atlas-pack.json')):
         if (S/f).exists():
             d = json.loads((S/f).read_text())
             if k == 'renderTest':
@@ -535,5 +619,7 @@ if __name__ == '__main__':
     r.add_argument('sprites')
     r.add_argument('--validator', default=None, help='a saved validator output to quote')
     r.add_argument('--tests', default=None, help='a saved test run output to quote')
+    b = sub.add_parser('bilinear')
+    b.add_argument('sprites')
     a = p.parse_args()
-    {'down': cmd_down, 'test': cmd_test, 'checks': cmd_checks, 'report': cmd_report}[a.cmd](a)
+    {'down': cmd_down, 'test': cmd_test, 'checks': cmd_checks, 'report': cmd_report, 'bilinear': cmd_bilinear}[a.cmd](a)
