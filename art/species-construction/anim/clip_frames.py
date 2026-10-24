@@ -20,6 +20,18 @@ Writes <out>/<clip>/<view>/NNNN.png and <out>/<clip>/frames.json (render seconds
 point on the posed skin triangle, and against the nearest point of the posed skin surface), and the largest strand
 length change; at frame 0 of the first clip and at each --deep clip:frame, the strands with a point more than
 0.5 mm inside the posed skin (nearest surface point, signed by its normal). Writes <out>/fur-checks.json.
+
+Sprites pass 1 (sprites-pass1-brief.md) adds two options that leave every pose untouched:
+--alpha     film transparent, 8-bit RGBA PNG (Blender writes PNG alpha straight, not premultiplied);
+--sockets   per frame, the asset contract's sockets projected into the sprite view, from the posed rig of that frame:
+            ground (the floor point midway between the two planted ankles), head (the head bone's midpoint), eye_l and
+            eye_r (the rig's eye centers on the head bone; +X is the creature's left, the near side), emitter (the
+            front of the mouth: the midline skin vertex at the rig's mouth height that is farthest forward, posed),
+            carry (midway between the two hand bones' midpoints); plus measuring points: the top of the head, jaw and
+            ear skin (highest posed vertex whose strongest bone is head, jaw or an ear bone) and the head's column
+            there, each ear's base and tip joints, and the posed skin's bounds. Coordinates are [u, v], the share of
+            the sprite image from its top-left (v down), so they hold at any --sprite size. Writes
+            <out>/<clip>/sockets.json. Also logs each frame's posing seconds (applySeconds).
 """
 import argparse
 import json
@@ -64,6 +76,8 @@ p.add_argument('--variants', default=None, help='JSON list of {tag, samples, see
                'rendered once per variant into <clip>/<view>-<tag>/ (render-setting tests)')
 p.add_argument('--diag-frames', default=None, help='clip:frame list: classify the strands inside the skin there by the region '
                'their root is on and the region of skin they pass into (fur look, with --fur-checks)')
+p.add_argument('--alpha', action='store_true', help='film transparent, straight-alpha 8-bit RGBA PNG')
+p.add_argument('--sockets', action='store_true', help='per frame, the contract sockets in the sprite view: <out>/<clip>/sockets.json')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 t0 = time.time()
 R = a.rig
@@ -141,6 +155,10 @@ print('cycles settings', CYCLES, 'frame', sc.frame_current, flush=True)
 sc.render.resolution_percentage = 100
 sc.render.image_settings.file_format = 'PNG'
 sc.render.image_settings.color_mode = 'RGB'
+if a.alpha:
+    sc.render.film_transparent = True
+    sc.render.image_settings.color_mode = 'RGBA'
+    sc.render.image_settings.color_depth = '8'
 cam = bpy.data.objects.new('clip camera', bpy.data.cameras.new('clip camera'))
 sc.collection.objects.link(cam)
 sc.camera = cam
@@ -283,6 +301,9 @@ def inside_strands(Px, pts, classify=False):
     return out
 
 
+LAST = {}
+
+
 def apply(fr, clip):
     global rest_len
     pose, lift = fr['pose'], fr['lift']
@@ -290,6 +311,7 @@ def apply(fr, clip):
     Px = from_m(Pm)
     set_world_co(skin, Px)
     T = rc.bone_transforms(J, pose, bones=rc.ANIM_BONES, root_translate=tuple(rc.lift_vec(lift)))
+    LAST.update(Px=Px, T=T)
     for o in bpy.data.objects:
         if o.type != 'MESH' or o is skin or o.name not in others:
             continue
@@ -328,18 +350,85 @@ def apply(fr, clip):
     return vals
 
 
+# ---------------------------------------------------------------- sockets (--sockets)
+MOUTH_V = None
+HEAD_SET = None
+if a.sockets:
+    mz = float(rig['mouthZ'])
+    band = np.flatnonzero((np.abs(skin_rest[:, 0]) < .006) & (np.abs(skin_rest[:, 2]-mz) < .006))
+    MOUTH_V = int(band[np.argmin(skin_rest[band, 1])])            # the creature faces -Y: the most forward lip point
+    names = rc.ANIM_NAMES
+    HEAD_SET = np.flatnonzero(np.array([names[b] in ('head', 'jaw') or names[b].startswith('ear_') for b in range(len(names))])[DOM])
+    EYES = {('eye_l' if c[0] > 0 else 'eye_r'): to_m(np.asarray(c, float)) for c in rig['eyeCentres']}
+    print('sockets: mouth vertex', MOUTH_V, skin_rest[MOUTH_V].round(4).tolist(), 'head and ear vertices', len(HEAD_SET), flush=True)
+
+
+def project(X):
+    """World points -> [u, v] shares of the square sprite image from its top-left, for the ortho camera as set."""
+    assert sc.render.resolution_x == sc.render.resolution_y and cam.data.type == 'ORTHO'
+    M = np.array(cam.matrix_world.inverted())
+    Xc = np.atleast_2d(X)@M[:3, :3].T+M[:3, 3]
+    osc = cam.data.ortho_scale
+    u = Xc[:, 0]/osc+.5-cam.data.shift_x
+    v = .5-(Xc[:, 1]/osc-cam.data.shift_y)
+    return np.stack([u, v], 1)
+
+
+def socket_row(fr):
+    from bpy_extras.object_utils import world_to_camera_view
+    Px, T = LAST['Px'], LAST['T']
+
+    def carried(bone, p_m):
+        R, t = T[bone]
+        return from_m(R@np.asarray(p_m, float)+t)
+
+    def mid(j0, j1):
+        return (np.asarray(J[j0], float)+np.asarray(J[j1], float))/2
+    g = (carried('foot.L', J['ankle.L'])+carried('foot.R', J['ankle.R']))/2
+    g[2] = rc.FLOOR_Z
+    pts = dict(ground=g, head=carried('head', mid('head_base', 'head_top')),
+               eye_l=carried('head', EYES['eye_l']), eye_r=carried('head', EYES['eye_r']), emitter=Px[MOUTH_V],
+               carry=(carried('hand.L', mid('wrist.L', 'fingertip.L'))+carried('hand.R', mid('wrist.R', 'fingertip.R')))/2)
+    aux = {}
+    for sd in ('L', 'R'):
+        aux[f'ear_base_{sd}'] = carried(f'ear_1.{sd}', J[f'ear0.{sd}'])
+        aux[f'ear_tip_{sd}'] = carried(f'ear_4.{sd}', J[f'ear4.{sd}'])
+    names = list(pts)+list(aux)
+    uv = project(np.array([pts[k] for k in pts]+[aux[k] for k in aux]))
+    # the numpy projection against Blender's own, on the head point
+    ref = world_to_camera_view(sc, cam, Vector(tuple(pts['head'])))
+    assert abs(ref.x-uv[1, 0]) < 1e-5 and abs((1-ref.y)-uv[1, 1]) < 1e-5, (tuple(ref), uv[1])
+    hv = project(Px[HEAD_SET])
+    top = int(np.argmin(hv[:, 1]))
+    allv = project(Px)
+    row = dict(frame=fr['frame'], uv={k: [round(float(x), 6) for x in uv[i]] for i, k in enumerate(names) if k in pts},
+               aux={k: [round(float(x), 6) for x in uv[i]] for i, k in enumerate(names) if k in aux})
+    row['aux']['head_ear_top'] = [round(float(x), 6) for x in hv[top]]
+    row['aux']['skin_bounds'] = [round(float(x), 6) for x in (*allv.min(0), *allv.max(0))]
+    return row
+
+
 log = dict(look=a.look, views=views, size=a.size, sprite=a.sprite, samples=a.samples, box=box.tolist(), spriteBox=sbox.tolist(),
-           cycles=CYCLES if a.look == 'fur' or a.seed is not None else None, variants=VARIANTS, renderSeconds={})
+           cycles=CYCLES if a.look == 'fur' or a.seed is not None else None, variants=VARIANTS, alpha=a.alpha, renderSeconds={},
+           applySeconds={})
 for clip in clips:
     frames = json.loads((a.bake/clip/'poses.json').read_text())
     if clip == 'idle':
         frames = [f for f in frames if f['frame'] < 90]          # frame 90 is the seam copy of frame 0
     for v in views:
         (a.out/clip/v).mkdir(parents=True, exist_ok=True)
+    sock_rows = []
     for fr in frames:
         if ONLY is not None and (clip, fr['frame']) not in ONLY:
             continue
+        t1 = time.time()
         apply(fr, clip)
+        log['applySeconds'].setdefault(clip, []).append(round(time.time()-t1, 2))
+        if a.sockets:
+            frame_camera('sprite')
+            sock_rows.append(socket_row(fr))
+            (a.out/clip).mkdir(parents=True, exist_ok=True)
+            (a.out/clip/'sockets.json').write_text(json.dumps(dict(sprite=a.sprite, spriteBox=sbox.tolist(), rows=sock_rows), indent=0))
         if a.no_render:
             continue
         for v in views:
