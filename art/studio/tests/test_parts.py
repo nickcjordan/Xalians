@@ -603,6 +603,20 @@ class SpiralTests(unittest.TestCase):
         crossings = np.sum(np.diff(np.sign(wiggle)) != 0)
         self.assertGreaterEqual(crossings, 4)
 
+    def test_twist_tightens_toward_tip(self):
+        from parts import spiral
+        # with twist above 1 the ridge crosses a fixed angle more often in the top half than in the bottom half
+        P = {**self.P, 'turns': 4, 'twist': 1.6, 'depthTip': 0.25}
+        zs = np.linspace(0.002, 0.088, 600)
+        r = np.linspace(0.0, 0.03, 600)
+        wig = []
+        for z in zs:
+            pts = np.stack([r, np.zeros_like(r), np.full_like(r, z)], axis=1)
+            rad = r[np.argmin(np.abs(spiral.sdf(P, pts)))]
+            wig.append(rad/(0.02+(0.003-0.02)*z/0.1)-1)
+        flips = np.diff(np.sign(np.array(wig))) != 0
+        self.assertGreater(flips[300:].sum(), flips[:300].sum())
+
     def test_bad_profile(self):
         from parts import spiral
         with self.assertRaises(ValueError):

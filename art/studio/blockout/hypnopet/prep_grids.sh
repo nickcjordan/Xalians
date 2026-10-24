@@ -37,3 +37,22 @@ python art/studio/recon/grid_soften.py --grid $R/grid-skin-1.npz --out $R/grid-s
   --at 0.080,-0.198,0.446,0.022,0.004 \
   --at 0.070,-0.185,0.375,0.025,0.004 \
   --at 0,-0.282,0.396,0.022,0.004
+# 5. proportions (critic items 4 and 5): board/warps-5.json, run by grid_warp.py on the face grid
+python art/studio/recon/grid_mask.py --grid $R/grid-skin-2.npz --seed 0.23,-0.06,0.25 --box 0.0,0.4,-0.33,0.33,0.0,0.44 --out $R/mask-ear-left.npz
+python art/studio/recon/grid_warp.py --grid $R/grid-skin-2.npz --out $R/grid-skin-3.npz --warps $B/board/warps-5.json
+# 6. close-up blemishes (critic items 6, 9, 10, 11, 12, 13), positions from the critic's pixel coordinates mapped
+#    through the board cameras: sole rims, head-back lobes, the thigh's front crease, the wrist lumps, the armpit
+#    slits (fill), the ear pinch, and the buttock cleft under the tail (fill)
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-3.npz --out $R/grid-skin-4.npz --below 0.012,0.010,0.003 \
+  --at 0.085,-0.10,0.415,0.030,0.005 \
+  --at 0.100,0.115,0.250,0.030,0.005 \
+  --at 0.030,-0.100,0.100,0.025,0.004 \
+  --at 0.030,-0.080,0.190,0.025,0.005,1 \
+  --at 0.170,-0.080,0.420,0.015,0.003 \
+  --at 0,0.190,0.215,0.030,0.005,1
+# 5b-7 (critic 2): the ear rake bent over 12 cm (board/warps-6.json; warps-5's 7 cm bend creased the back of each
+#    ear), step 6's softening repeated on it, then the tail stem flattened, the cleft's V pinch filled and the
+#    creases where the ear roots meet the back of the skull softened (positions picked on sculpt-28's curvature board)
+python art/studio/recon/grid_warp.py --grid $R/grid-skin-2.npz --out $R/grid-skin-3b.npz --warps $B/board/warps-6.json
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-3b.npz --out $R/grid-skin-4b.npz --below 0.012,0.010,0.003   --at 0.085,-0.10,0.415,0.030,0.005   --at 0.100,0.115,0.250,0.030,0.005   --at 0.030,-0.100,0.100,0.025,0.004   --at 0.030,-0.080,0.190,0.025,0.005,1   --at 0.170,-0.080,0.420,0.015,0.003   --at 0,0.190,0.215,0.030,0.005,1
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-4b.npz --out $R/grid-skin-5.npz   --at 0,0.205,0.228,0.022,0.006   --at 0,0.185,0.205,0.018,0.005,1   --at 0.062,-0.078,0.490,0.022,0.005

@@ -6,10 +6,14 @@ params:
     profile   [[t, r], ...]: the core radius along the axis, t from 0 (base) to 1 (tip), linear between points;
               the last point is the tip's rounding radius (it should be small, a few millimeters)
     turns     how many full turns each ridge makes from base to tip (default 4.5)
+    twist     how the turns spread along the axis (default 1: evenly); above 1 they tighten toward the tip, as a
+              narwhal tusk's grooves do (the angle runs with t ** twist)
     ridges    how many ridges run side by side (1 = one strand coiled like a soft-serve swirl; default 1)
     depth     ridge height as a fraction of the core radius (default 0.16): the surface radius is
-              r(t) * (1 + depth * (2 g - 1)), g = ((1 + cos(ridges * angle - handedness * 2 pi * turns * t
+              r(t) * (1 + depth * (2 g - 1)), g = ((1 + cos(ridges * angle - handedness * 2 pi * turns * t ** twist
               - phase)) / 2) ** groove
+    depthTip  the ridge height fraction at the tip (default: depth), linear in t between; a fixed fraction leaves
+              the narrow top of a tapered horn nearly smooth
     groove    ridge shape exponent (default 1: a plain sine; below 1 the ridge tops broaden and the grooves between
               turns narrow to V cuts, like a strand coiled tight around a cone)
     handed    "right" (default, the ridge climbs counterclockwise seen from the tip) or "left"
@@ -55,7 +59,9 @@ def sdf(params, pts):
     prof = _profile(params)
     turns = float(params.get('turns', 4.5))
     ridges = int(params.get('ridges', 1))
-    depth = float(params.get('depth', 0.16))
+    depth0 = float(params.get('depth', 0.16))
+    depth1 = float(params.get('depthTip', depth0))
+    twist = float(params.get('twist', 1.0))
     hand = -1.0 if params.get('handed', 'right') == 'left' else 1.0
     phase = np.radians(float(params.get('phase', 0.0)))
     embed = float(params.get('embed', 0.0))
@@ -71,14 +77,17 @@ def sdf(params, pts):
     # the ridges fade out over the last tenth so the tip is a clean rounded point
     fade = np.clip((1.0-t)/0.1, 0.0, 1.0)
     groove = float(params.get('groove', 1.0))
-    arg = ridges*theta-hand*2*np.pi*turns*t-phase
+    depth = depth0+(depth1-depth0)*t
+    tw = np.power(np.maximum(t, 1e-9), twist)
+    dtw = twist*np.power(np.maximum(t, 1e-9), twist-1.0)      # d tw / d t
+    arg = ridges*theta-hand*2*np.pi*turns*tw-phase
     c = np.clip((1.0+np.cos(arg))/2, 1e-3, 1.0)
     g = c**groove
     dg = groove*c**(groove-1)*(-np.sin(arg)/2)          # d g / d arg
     m = 1.0+depth*fade*(2*g-1)
     R = r*m
     dR_dtheta = r*depth*fade*2*dg*ridges
-    dR_dz = (dr_dt*m-r*depth*fade*2*dg*hand*2*np.pi*turns)/length
+    dR_dz = (dr_dt*m+r*(depth1-depth0)*fade*(2*g-1)-r*depth*fade*2*dg*hand*2*np.pi*turns*dtw)/length
     grad = np.sqrt(1.0+(dR_dtheta/np.maximum(rho, 1e-4))**2+dR_dz**2)
     lateral = (rho-R)/grad
     # caps: below the base the solid continues for `embed` at the base radius; above the tip it ends in a sphere
@@ -93,7 +102,8 @@ def sdf(params, pts):
 def bounds(params):
     base, u, e1, e2, length = _frame(params)
     prof = _profile(params)
-    rmax = float(prof[:, 1].max())*(1.0+float(params.get('depth', 0.16)))
+    d = float(params.get('depth', 0.16))
+    rmax = float(prof[:, 1].max())*(1.0+max(d, float(params.get('depthTip', d))))
     embed = float(params.get('embed', 0.0))
     ends = np.array([base-u*embed, base+u*length])
     return ends.min(axis=0)-rmax, ends.max(axis=0)+rmax

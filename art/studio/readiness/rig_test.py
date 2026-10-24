@@ -12,6 +12,17 @@ Steps, all deterministic:
    ways. Every joint's distance moved and its depth inside the skin go in metrics.json.
 3. Weights: Blender's automatic (heat) weights, or --weights-from another arm's rigged mesh, copied by nearest
    face (the "regions from the authored blockout" route). Separate objects (eyes) are bone-parented rigidly.
+   Automatic weights are then cleaned (--clean-margin, default 1 cm; 0 turns it off): a vertex keeps a limb chain's
+   weight only while that chain's nearest bone is within the margin of the nearest limb chain's, and the weight it
+   drops goes to the core bone the chain hangs from. Heat weights let the two forelegs, the tail and the haunches,
+   and the jaw and the shoulders share vertices (audit-3: 3 percent of the skin), so one limb dragged another; the
+   rule is continuous in position, so it leaves no seam where two chains meet. With --dense the weights solved on
+   the proxy are carried to the build's own skin by nearest face and that skin is posed, measured and rendered: a
+   2.5 mm voxel proxy stair-steps thin features (lip edges, lid rims) that the build does not have, and the audit
+   should judge the surface that ships. A bone with "weightBelow" (a
+   polyline of [y, z] points in the side view) keeps weight only below that line, fading over "weightRamp" either
+   side (default 4 mm), the rest going
+   to its parent: the lower jaw carries nothing above the lip line (audit-4: an open mouth tore the upper lip).
 4. Poses: the skeleton file's fixed poses. Per pose: crushed share (surface area in faces whose area fell below a
    quarter of rest), stretched share (above four times), new self-intersecting face pairs (pairs that do not
    share a vertex and did not touch at rest), and the chains those bad faces belong to.
@@ -55,6 +66,9 @@ def args():
     ap.add_argument('--faces', type=int, default=16000)
     ap.add_argument('--voxel', type=float, default=0.004, help='voxel remesh size when Quadriflow refuses the skin')
     ap.add_argument('--weights-from', type=Path)
+    ap.add_argument('--clean-margin', type=float, default=0.01, help='weight cleanup margin in meters (0: off)')
+    ap.add_argument('--dense', action='store_true', help='pose and render the build skin itself, with the weights '
+                    'solved on the remeshed proxy carried over by nearest face')
     ap.add_argument('--label', default='')
     ap.add_argument('--audit', action='store_true', help='deformation audit: eight cameras, clay, curvature and '
                     'flag looks per pose, and the plausibility limits in the skeleton file')
@@ -265,6 +279,99 @@ def weights(body, rig, src_dir):
     return f'from {src_dir.name}'
 
 
+def carry_weights(proxy, dense, rig):
+    """Copy the proxy's vertex groups to the dense skin by nearest-face interpolation, bind the dense skin to the
+    rig, and drop the proxy. Returns the dense skin, renamed 'body'."""
+    for g in proxy.vertex_groups:
+        dense.vertex_groups.new(name=g.name)
+    m = dense.modifiers.new('transfer', 'DATA_TRANSFER')
+    m.object = proxy
+    m.use_vert_data = True
+    m.data_types_verts = {'VGROUP_WEIGHTS'}
+    m.vert_mapping = 'POLYINTERP_NEAREST'
+    m.layers_vgroup_select_src = 'ALL'
+    m.layers_vgroup_select_dst = 'NAME'
+    for o in bpy.context.selected_objects:
+        o.select_set(False)
+    bpy.context.view_layer.objects.active = dense
+    dense.select_set(True)
+    bpy.ops.object.modifier_apply(modifier='transfer')
+    bpy.ops.object.vertex_group_normalize_all(lock_active=False)
+    bpy.data.objects.remove(proxy)
+    dense.name = 'body'
+    dense.data.name = 'body'
+    dense.select_set(True)
+    rig.select_set(True)
+    bpy.context.view_layer.objects.active = rig
+    bpy.ops.object.parent_set(type='ARMATURE')
+    return dense
+
+
+def seg_dist(P, a, b):
+    ab = b-a
+    t = np.clip(((P-a)@ab)/max(float(ab@ab), 1e-12), 0.0, 1.0)
+    return np.linalg.norm(P-(a+np.outer(t, ab)), axis=1)
+
+
+def clean_weights(body, bones, margin):
+    """Keep a limb chain's weight on a vertex only while the chain's nearest bone is within `margin` of the
+    nearest limb chain's (fading linearly across the margin); the dropped weight goes to the core bone the chain
+    hangs from. Returns the share of vertices changed."""
+    names = [b['name'] for b in bones]
+    chains = [chain_of(b) for b in bones]
+    by = {b['name']: b for b in bones}
+    W = weight_matrix(body, names)
+    P = np.array([v.co[:] for v in body.data.vertices])
+    limb = sorted(set(chains)-{'core'})
+    D = np.full((len(P), len(limb)), np.inf)
+    for i, b in enumerate(bones):
+        if chains[i] == 'core':
+            continue
+        k = limb.index(chains[i])
+        D[:, k] = np.minimum(D[:, k], seg_dist(P, np.array(b['head'], float), np.array(b['tail'], float)))
+    CW = np.stack([W[:, [i for i, c in enumerate(chains) if c == u]].sum(axis=1) for u in limb], axis=1)
+    present = CW > 1e-4
+    dmin = np.where(present, D, np.inf).min(axis=1)
+    F = np.clip((dmin[:, None]+margin-D)/margin, 0.0, 1.0)
+    F = np.where(present, F, 1.0)
+    root = {}
+    for u in limb:
+        first = next(b for b in bones if chain_of(b) == u and (not b['parent'] or chain_of(by[b['parent']]) != u))
+        root[u] = names.index(first['parent'])
+    W2 = W.copy()
+    for i, c in enumerate(chains):
+        if c == 'core':
+            continue
+        k = limb.index(c)
+        drop = W[:, i]*(1.0-F[:, k])
+        W2[:, i] -= drop
+        W2[:, root[c]] += drop
+    for i, b in enumerate(bones):
+        line = b.get('weightBelow')
+        if not line:
+            continue
+        L = np.asarray(line, float)
+        zc = np.interp(P[:, 1], L[:, 0], L[:, 1])
+        ramp = float(b.get('weightRamp', 0.004))
+        keep = np.clip((zc-P[:, 2])/ramp*0.5+0.5, 0.0, 1.0)
+        drop = W2[:, i]*(1.0-keep)
+        W2[:, i] -= drop
+        W2[:, names.index(b['parent'])] += drop
+    W2 /= np.maximum(W2.sum(axis=1, keepdims=True), 1e-9)
+    changed = np.abs(W2-W/np.maximum(W.sum(axis=1, keepdims=True), 1e-9)).max(axis=1) > 1e-3
+    groups = {g.name: g for g in body.vertex_groups}
+    for i, n in enumerate(names):
+        col = W2[:, i]
+        if not np.any(np.abs(col-W[:, i]) > 1e-6):
+            continue
+        g = groups.get(n) or body.vertex_groups.new(name=n)
+        g.remove([int(v) for v in np.nonzero(W[:, i] > 0)[0]])
+        q = np.round(col*1000).astype(int)
+        for level in np.unique(q[q > 0]):
+            g.add([int(v) for v in np.nonzero(q == level)[0]], level/1000.0, 'REPLACE')
+    return float(changed.mean())
+
+
 def weight_matrix(body, names):
     w = np.zeros((len(body.data.vertices), len(names)))
     col = {g.index: names.index(g.name) for g in body.vertex_groups if g.name in names}
@@ -291,7 +398,10 @@ def pose(rig, bones, steps):
             pb.matrix = Matrix.Translation(Vector(deg)) @ pb.matrix
             bpy.context.view_layer.update()
             continue
-        a = Vector({'x': (1, 0, 0), 'y': (0, 1, 0), 'z': (0, 0, 1)}[axis])
+        a = Vector({'x': (1, 0, 0), 'y': (0, 1, 0), 'z': (0, 0, 1)}[axis[-1]])
+        if axis[0] == 'p' and pb.parent:                 # an axis carried by the parent's pose so far ('px' after
+            par = pb.parent                              # a neck turn is the head's own pitch, not a roll)
+            a = (par.matrix.to_3x3() @ par.bone.matrix_local.to_3x3().inverted()) @ a
         h = pb.matrix.translation.copy()
         pb.matrix = Matrix.Translation(h) @ Matrix.Rotation(math.radians(deg), 4, a) @ Matrix.Translation(-h) @ pb.matrix
         bpy.context.view_layer.update()
@@ -386,7 +496,7 @@ def check_limits(spec, steps):
         if axis == 'move':
             continue
         key = bone[:-2] if bone[-2:] in ('_L', '_R') else bone
-        total[(bone, key, axis)] = total.get((bone, key, axis), 0.0)+deg
+        total[(bone, key, axis[-1])] = total.get((bone, key, axis[-1]), 0.0)+deg
     out = []
     for (bone, key, axis), deg in total.items():
         rng = lim.get(key, {}).get(axis)
@@ -421,6 +531,12 @@ def main():
     skin = bpy.data.objects['skin']
     dense_bvh = BVHTree.FromObject(skin, bpy.context.evaluated_depsgraph_get())
     separate = [o for o in bpy.data.objects if o.name != 'skin' and o.type == 'MESH']
+    dense = None
+    if a.dense:
+        dense = skin.copy()
+        dense.data = skin.data.copy()
+        dense.name = 'dense'
+        bpy.context.scene.collection.objects.link(dense)
     body, method = retopo(skin, a.retopo, a.faces, a.voxel)
     if skin.name in bpy.data.objects:
         bpy.data.objects.remove(skin)
@@ -430,6 +546,19 @@ def main():
         joints[b['name']+'.head'] = depth(dense_bvh, b['head'])
         joints[b['name']+'.tail'] = depth(dense_bvh, b['tail'])
     wmode = weights(body, rig, a.weights_from)
+    cleaned = None
+    if a.weights_from is None and a.clean_margin > 0:
+        cleaned = clean_weights(body, bones, a.clean_margin)
+        wmode += f', cleaned (margin {a.clean_margin*100:.1f} cm, {100*cleaned:.1f}% of vertices changed)'
+    if dense is not None:
+        body = carry_weights(body, dense, rig)
+        method += ' proxy; posed on the build skin'
+        wmode += ', carried to the build skin by nearest face'
+        if a.weights_from is None and a.clean_margin > 0:
+            # cleaned again on the build skin: where the proxy closed a gap thinner than its voxel (the corners of
+            # an open mouth), nearest-face carrying hands one lip the other lip's weights (audit-7: a torn upper lip)
+            clean_weights(body, bones, a.clean_margin)
+            wmode += ' and cleaned there again'
     for o in separate:
         bone = spec.get('separate', {}).get(o.name)
         if bone:
@@ -501,6 +630,9 @@ def main():
             'p95AreaChange': float(np.percentile(np.abs(np.log2(np.maximum(ratio, 1e-6))), 95)),
         }
         results[pname]['limitViolations'] = check_limits(spec, steps)
+        low = int(np.argmin(v[:, 2]))
+        results[pname]['lowestZ'] = float(v[low, 2])           # below -0.005 is a limb through the floor
+        results[pname]['lowestChain'] = allchains[int(CWall[low].argmax())]
         print(pname, json.dumps(results[pname]), flush=True)
         color_attr(body.data, 'distort', flag_colors(ratio, bad_faces, len(polys)) if a.audit else distortion_colors(ratio))
         for view in (AUDIT_VIEWS if a.audit else ('side', 'threequarter', 'front')):

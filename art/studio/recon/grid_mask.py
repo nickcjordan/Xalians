@@ -26,7 +26,7 @@ ap.add_argument('--smooth', type=float, default=0.002)
 a = ap.parse_args()
 z = np.load(a.grid)
 origin, voxel, vals = np.asarray(z['origin'], float), float(z['voxel']), np.asarray(z['values'], np.float32)
-solid = vals < 0
+solid = vals < 0.8*voxel          # a band of a voxel: a thin rim stays connected to its plate
 if a.box:
     x0, x1, y0, y1, z0, z1 = (float(t) for t in a.box.split(','))
     lo = np.floor((np.array([x0, y0, z0])-origin)/voxel).astype(int).clip(0)
@@ -34,7 +34,7 @@ if a.box:
     keep = np.zeros_like(solid)
     keep[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = True
     solid &= keep
-lab, n = ndimage.label(solid)
+lab, n = ndimage.label(solid, structure=np.ones((3, 3, 3)))
 seed = np.round((np.array([float(t) for t in a.seed.split(',')])-origin)/voxel).astype(int)
 k = lab[tuple(seed)]
 if k == 0:

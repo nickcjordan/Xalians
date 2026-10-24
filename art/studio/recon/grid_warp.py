@@ -218,12 +218,15 @@ def apply(w, origin, voxel, vals, grow):
                 q[:, k], sc = slab_inverse(w, q[:, k])
             out[i] = (trilinear(origin, voxel, vals, q, far)*np.minimum(sc, 1.0)).reshape(Y.shape)
             continue
-        q = region_inverse(w, p)
+        # a detached piece moves as a whole: its weight is only the taper box (smooth over centimeters), never
+        # the mask, whose millimeter-scale edge would fold the map (sculpt-13: islands where the inverse failed)
+        ww = {**w, 'region': w['region'].get('and', {'box': [[-9, 9], [-9, 9], [-9, 9]], 'ramp': [1, 1, 1]})}             if detach else w
+        q = region_inverse(ww, p)
         sc = np.ones(len(p))
         if w['kind'] == 'scale':
             f = np.asarray(w['factors'], float)
             if f.min() < 1:
-                sc = 1+region_weight(w['region'], q)*(f.min()-1)
+                sc = 1+region_weight(ww['region'], q)*(f.min()-1)
         if detach:
             rest = trilinear(origin, voxel, rest_vals, p, 0.02)
             piece = trilinear(origin, voxel, piece_vals, q, 0.02)*sc
