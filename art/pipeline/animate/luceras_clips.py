@@ -228,6 +228,19 @@ SIG_DEFAULTS = {
     "fore_tuck_pose": FORE_TUCK,
     "fore_land_tuck": 0.0,        # B-sntv pass 5: after the fore feet land, turn the elbow plane toward the body (IK pole)
     "hind_gather_pose": HIND_GATHER,  # B-sntv pass 5: the landing reach of the hind legs as a parameter (default unchanged)
+    # B-sntv pass 10 (motion polish); every default keeps the earlier motion
+    "dive_accel": 0.0,            # 0..1: the dive keeps articulating into the hit (pitch, neck, head and the fore sweep end
+                                  # at the hit with an accelerating ease) instead of reaching the dive pose early and gliding
+    "hitstop_frames": 0.0,        # >0: the impact compression is reached one frame after the hit and held to the end of
+                                  # the hit-stop (hold_ms), a deliberate held impact instead of a 45 ms ease into the hold
+    "land_pitch_lead_ms": 60.0,   # the level-out key this long before the fore feet land (longer spreads the pitch-up)
+    "fore_compress_m": 0.0,       # body drop as the fore feet take the weight (fore_land to fore_land + fore_compress_ms)
+    "fore_compress_ms": 50.0,
+    "fore_compress_pitch_deg": 0.0,   # nose-down dip with it (the forelegs absorb before the hind feet land)
+    "fore_sweep_ease": "smooth",  # ease of the fore sweep from the tuck to the dive pose
+    "rebound_pitch_deg": 14.0,    # nose-up of the rebound peak from the dive pitch (less: the fore feet rise less after the hit)
+    "settle_pitch_ms": 80.0,      # the post-landing level key this long after the hind feet land (longer: slower nose-up)
+    "fore_unreach_ms": 220.0,     # after the fore feet land, the reach pose unwinds over this (longer: no fast elbow unfold)
     "fore_tuck_abduct_deg": 0.0,  # B-sntv: the tucked forelegs swing this far out from the chest wall (in with the tuck,
                                   # out with the reach), so the folded forearms ride beside the ribs instead of in them    # B-sntv: the sweep starts this long before the apex and ends at the dive start
     "leg_reach_window_m": 0.30,   # pass 1-2 only (height window; it fired inside two frames as the body fell). Unused.
@@ -331,7 +344,8 @@ def make_sig(params=None, rest_center_z=0.48):
         (T["impact"], "linear", {"f": f_hit, "z": z_hit}),       # hit-stop (the horn pin adds the squash)
         (T["peak"], "out", {"f": f_hit - 0.45 * P["recoil_m"], "z": z_hit + P["rebound_rise_m"]}),
         (T["fore_land"], "in", {"f": f_land - 0.01, "z": 0.015}),
-        (T["hind_land"] + 60, "out", {"f": f_land, "z": -P["land_compress_m"]}),
+        *([(T["fore_land"] + P["fore_compress_ms"], "out", {"f": f_land - 0.006, "z": 0.015 - P["fore_compress_m"]})] if P["fore_compress_m"] else []),
+        (T["hind_land"] + 60, "out" if not P["fore_compress_m"] else "smooth", {"f": f_land, "z": -P["land_compress_m"]}),
         (T["recover"], "smooth", {"f": f_land, "z": 0.006}),
         (T["end"], "smooth", {"f": f_land}),
     ])
@@ -341,13 +355,15 @@ def make_sig(params=None, rest_center_z=0.48):
         (T["takeoff"], "in", {"p": P["launch_pitch_deg"]}),
         (T["apex"] - 40, "smooth", {"p": P["apex_pitch_deg"]}),
         (T["pitch0"], "smooth", {"p": P["apex_pitch_deg"] - 6}),
-        (T["dive"] + 10, "smooth", {"p": -P["dive_pitch_deg"]}),
-        (T["hit"], "linear", {"p": -P["dive_pitch_deg"]}),
+        (T["dive"] + (0 if P["dive_accel"] else 10), "smooth", {"p": -P["dive_pitch_deg"] * (1 - 0.35 * P["dive_accel"])}),
+        (T["hit"], "in" if P["dive_accel"] else "linear", {"p": -P["dive_pitch_deg"]}),
+        *([(T["hit"] + 1000.0 / 30 * P["hitstop_frames"] / max(1.0, P["hitstop_frames"]), "out", {"p": -P["dive_pitch_deg"] + 2})] if P["hitstop_frames"] else []),
         (T["impact"], "linear", {"p": -P["dive_pitch_deg"] + 2}),
-        (T["peak"], "out", {"p": -P["dive_pitch_deg"] + 14}),
-        (T["fore_land"] - 60, "smooth", {"p": P["land_pitch_deg"] + 4}),
+        (T["peak"], "out", {"p": -P["dive_pitch_deg"] + P["rebound_pitch_deg"]}),
+        (T["fore_land"] - P["land_pitch_lead_ms"], "smooth", {"p": P["land_pitch_deg"] + 4}),
         (T["fore_land"], "smooth", {"p": P["land_pitch_deg"]}),
-        (T["hind_land"] + 80, "smooth", {"p": 1.5}),
+        *([(T["fore_land"] + P["fore_compress_ms"], "out", {"p": P["land_pitch_deg"] - P["fore_compress_pitch_deg"]})] if P["fore_compress_m"] else []),
+        (T["hind_land"] + P["settle_pitch_ms"], "smooth", {"p": 1.5}),
         (T["recover"], "smooth", {"p": 0.0}),
         (T["end"], "smooth", {}),
     ])
@@ -357,13 +373,13 @@ def make_sig(params=None, rest_center_z=0.48):
         (T["crouch"], "smooth", {"n1": -4, "n2": -12, "h": P["crouch_head_deg"], "bend": 2.0, "ear": 25}),
         (T["takeoff"], "in", {"n1": -6, "n2": -16, "h": P["crouch_head_deg"] * 0.7, "bend": -3.0, "ear": 45, "jaw": 0}),
         (T["apex"] - 40, "smooth", {"n1": -8, "n2": -22, "h": -30, "bend": -2.5, "ear": P["ears_back_deg"]}),
-        (T["dive"], "smooth", {"n1": nk1, "n2": nk2, "h": P["dive_head_deg"], "bend": 0.0, "ear": P["ears_back_deg"]}),
-        (T["hit"], "linear", {"n1": nk1, "n2": nk2, "h": P["dive_head_deg"], "ear": P["ears_back_deg"]}),
-        (T["hit"] + 45, "out", {"n1": nk1 + P["impact_neck_deg"], "n2": nk2 - P["impact_neck_deg"],
+        (T["dive"], "smooth", {"n1": nk1 * (1 - 0.4 * P["dive_accel"]), "n2": nk2 * (1 - 0.4 * P["dive_accel"]), "h": P["dive_head_deg"] * (1 - 0.4 * P["dive_accel"]), "bend": 0.0, "ear": P["ears_back_deg"]}),
+        (T["hit"], "in" if P["dive_accel"] else "linear", {"n1": nk1, "n2": nk2, "h": P["dive_head_deg"], "ear": P["ears_back_deg"]}),
+        (T["hit"] + (1000.0 / 30 if P["hitstop_frames"] else 45), "out", {"n1": nk1 + P["impact_neck_deg"], "n2": nk2 - P["impact_neck_deg"],
                                 "h": P["dive_head_deg"], "bend": P["impact_bend_deg"], "sq": P["impact_squash"],
                                 "ear": P["ears_back_deg"] + 15, "jaw": 5}),
-        (T["impact"], "smooth", {"n1": nk1 + 0.8 * P["impact_neck_deg"], "n2": nk2 - 0.8 * P["impact_neck_deg"],
-                                 "h": P["dive_head_deg"], "bend": 0.8 * P["impact_bend_deg"], "sq": 0.7 * P["impact_squash"],
+        (T["impact"], "linear" if P["hitstop_frames"] else "smooth", {"n1": nk1 + (1.0 if P["hitstop_frames"] else 0.8) * P["impact_neck_deg"], "n2": nk2 - (1.0 if P["hitstop_frames"] else 0.8) * P["impact_neck_deg"],
+                                 "h": P["dive_head_deg"], "bend": (1.0 if P["hitstop_frames"] else 0.8) * P["impact_bend_deg"], "sq": (1.0 if P["hitstop_frames"] else 0.7) * P["impact_squash"],
                                  "ear": P["ears_back_deg"] + 15, "jaw": 4}),
         (T["impact"] + P["pin_release_ms"] + 20, "smooth", {"n1": -10, "n2": -12, "h": -24, "bend": 2.0, "sq": 0.0, "ear": 40}),
         (T["fore_land"], "smooth", {"n1": -4, "n2": -6, "h": -14, "bend": 1.5, "ear": 30}),
@@ -448,7 +464,8 @@ def make_sig(params=None, rest_center_z=0.48):
         fore_off = T["fore_off"]
         land = T["fore_land"]
         s0 = T["apex"] - P["dive_fore_lead_ms"]
-        sweep = P["dive_fore_sweep"] * ease("smooth", (t - s0) / max(1.0, T["dive"] - s0))
+        s1 = T["hit"] if P["dive_accel"] else T["dive"]
+        sweep = P["dive_fore_sweep"] * ease(P["fore_sweep_ease"], (t - s0) / max(1.0, s1 - s0))
         tuck_pose = tuple(a + (b - a) * sweep for a, b in zip(P["fore_tuck_pose"], P["dive_fore_pose"]))
         tuck = P["fore_crouch_elbow_tuck"] * ease("smooth", t / T["crouch"])   # B-bafy: elbows stay in line, not splayed
         if t <= fore_off:
@@ -463,7 +480,7 @@ def make_sig(params=None, rest_center_z=0.48):
             fk = tuple(a + (b - a) * u for a, b in zip(tuck_pose, FORE_REACH))
             w = ease("smooth", (t - (land - P["fore_plant_blend_ms"])) / P["fore_plant_blend_ms"])   # pass 3: smooth, was "in" over 80 ms
             return {"plant": w, "roll": 0.0, "fk": fk, "abduct": P["fore_tuck_abduct_deg"] * (1 - u)}
-        u = ease("smooth", (t - land) / 220.0)
+        u = ease("smooth", (t - land) / P["fore_unreach_ms"])
         return {"plant": 1.0, "roll": 0.0, "fk": tuple(a * (1 - u) for a in FORE_REACH), "tuck": P["fore_land_tuck"] * (1 - ease("smooth", (t - land - 220.0) / 300.0))}
 
     def tail_at(t):
