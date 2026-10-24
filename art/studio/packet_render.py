@@ -1,6 +1,7 @@
 """Packet renderer (runs inside Blender, launched by packet.py through runner.py blender).
 
     packet_render.py --scene <assembly .blend> --cameras <cameras json> --out <dir> [--only id,id] [--samples N]
+        [--look clay|grazing|curvature]
 
 Opens the assembly, gives the skin a neutral clay material (the pale inner-ear coat, eyes, irises, nose,
 mouth and claws keep their own materials), gives every object that carries a material tag (the custom property
@@ -8,6 +9,13 @@ mouth and claws keep their own materials), gives every object that carries a mat
 an unknown or empty tag gets the clay), lights it with one fixed rig that never moves with a camera,
 and renders every camera of the cameras file to <out>/<id>.png as RGBA (transparent background; packet.py
 composites). Fixed seed, fixed samples, CPU device: two runs of the same scene give the same pixels.
+
+Looks (alignment with the creature pipeline's review rules, 2026-10-23): `clay` is the standard look; `grazing` drops
+the fixed rig and lights each camera with one hard light raking across the surface from the camera's left at a low
+angle, so lumps, ripples, steps and seams cast long shadows; `curvature` replaces every material with an unlit
+color from each vertex's relief against a smoothed copy of the surface (crease blue, flat gray, ridge amber, full
+color at 1.2 mm), which shows creases, grafts and pinches that shading hides (lesson 43: part joins need a
+curvature check).
 """
 import argparse
 import json
@@ -23,6 +31,7 @@ p.add_argument('--cameras', type=Path, required=True)
 p.add_argument('--out', type=Path, required=True)
 p.add_argument('--only', default='')
 p.add_argument('--samples', type=int, default=0, help='override the cameras file sample count (quick previews); denoising is forced on')
+p.add_argument('--look', default='clay', choices=['clay', 'grazing', 'curvature'])
 args = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 spec = json.loads(args.cameras.read_text(encoding='utf-8'))
 cfg = spec['render']
@@ -147,9 +156,73 @@ bg = next(n for n in sc.world.node_tree.nodes if n.type == 'BACKGROUND')
 bg.inputs['Color'].default_value = (*cfg['world']['color'], 1)
 bg.inputs['Strength'].default_value = cfg['world']['strength']
 
+def relief(mesh, iterations=40):
+    """Signed relief per vertex at a scale of a few millimeters: how far each vertex stands out along its normal
+    from a Laplacian-smoothed copy of the surface (positive on ridges and bumps, negative in creases and steps).
+    Cycles' pointiness measures the angle at single edges, which is near flat everywhere on a dense voxel mesh."""
+    import numpy as np
+    n = len(mesh.vertices)
+    co = np.empty(n*3)
+    mesh.vertices.foreach_get('co', co)
+    co = co.reshape(-1, 3)
+    nor = np.empty(n*3)
+    mesh.vertex_normals.foreach_get('vector', nor)
+    nor = nor.reshape(-1, 3)
+    ed = np.empty(len(mesh.edges)*2, dtype=np.int64)
+    mesh.edges.foreach_get('vertices', ed)
+    a, b = ed[0::2], ed[1::2]
+    deg = np.bincount(a, minlength=n)+np.bincount(b, minlength=n)
+    deg = np.maximum(deg, 1)[:, None]
+    sm = co.copy()
+    for _ in range(iterations):
+        nb = np.stack([np.bincount(a, weights=sm[b, k], minlength=n)+np.bincount(b, weights=sm[a, k], minlength=n)
+                       for k in range(3)], axis=1)
+        sm = 0.5*sm+0.5*nb/deg
+    return ((co-sm)*nor).sum(axis=1)
+
+
+def curvature_material():
+    """Unlit color from the 'relief' attribute: 1.2 mm into a crease is full blue, 1.2 mm out on a ridge is full
+    amber, flat is gray."""
+    mat = bpy.data.materials.new('packet curvature')
+    mat.use_nodes = True
+    nt = mat.node_tree
+    for n in list(nt.nodes):
+        if n.type != 'OUTPUT_MATERIAL':
+            nt.nodes.remove(n)
+    out = next(n for n in nt.nodes if n.type == 'OUTPUT_MATERIAL')
+    attr = nt.nodes.new('ShaderNodeAttribute')
+    attr.attribute_name = 'relief'
+    rng = nt.nodes.new('ShaderNodeMapRange')
+    rng.inputs['From Min'].default_value, rng.inputs['From Max'].default_value = -0.0012, 0.0012
+    ramp = nt.nodes.new('ShaderNodeValToRGB')
+    els = ramp.color_ramp.elements
+    els[0].position, els[0].color = 0.0, (0.03, 0.16, 0.85, 1)        # crease: blue
+    els[1].position, els[1].color = 1.0, (0.95, 0.52, 0.03, 1)        # ridge: amber
+    mid = els.new(0.5)
+    mid.color = (0.6, 0.6, 0.6, 1)
+    emit = nt.nodes.new('ShaderNodeEmission')
+    nt.links.new(attr.outputs['Fac'], rng.inputs['Value'])
+    nt.links.new(rng.outputs['Result'], ramp.inputs['Fac'])
+    nt.links.new(ramp.outputs['Color'], emit.inputs['Color'])
+    nt.links.new(emit.outputs['Emission'], out.inputs['Surface'])
+    return mat
+
+
+if args.look == 'curvature':
+    cmat = curvature_material()
+    for obj in sc.objects:
+        if obj.type == 'MESH':
+            values = relief(obj.data)
+            at = obj.data.attributes.get('relief') or obj.data.attributes.new('relief', 'FLOAT', 'POINT')
+            at.data.foreach_set('value', values)
+            obj.data.materials.clear()
+            obj.data.materials.append(cmat)
+    bg.inputs['Strength'].default_value = 0.0
+
 rig = spec['lightRig']
 aim = Vector(rig['aim'])
-for lamp_spec in rig['lamps']:
+for lamp_spec in (rig['lamps'] if args.look == 'clay' else []):
     bpy.ops.object.light_add(type='AREA', location=aim+Vector(lamp_spec['offset']))
     lamp = bpy.context.object
     lamp.data.energy, lamp.data.size = lamp_spec['power'], lamp_spec['size']
@@ -167,7 +240,22 @@ for cam_spec in spec['cameras']:
     res = cam_spec.get('resolution', spec['resolution'])
     sc.render.resolution_x = sc.render.resolution_y = res
     sc.camera = cam
+    rake = None
+    if args.look == 'grazing':
+        view = (target-cam.location).normalized()
+        left = view.cross(Vector((0, 0, 1)))
+        if left.length < 1e-6:
+            left = Vector((1, 0, 0))
+        left.normalize()
+        direction = (left*0.9-view*0.3+Vector((0, 0, 0.25))).normalized()   # source on the camera's left, low
+        bpy.ops.object.light_add(type='SUN', location=target)
+        rake = bpy.context.object
+        rake.data.energy, rake.data.angle = 4.0, 0.02
+        rake.rotation_euler = (-direction).to_track_quat('-Z', 'Y').to_euler()
+        bg.inputs['Strength'].default_value = 0.22
     sc.render.filepath = str(args.out/f"{cam_spec['id']}.png")
     bpy.ops.render.render(write_still=True)
     bpy.data.objects.remove(cam)
+    if rake is not None:
+        bpy.data.objects.remove(rake)
 print('PACKET RENDER DONE')

@@ -1,10 +1,13 @@
 {
-  "note": "Blender runner config for Creature Studio. The Blender path comes from the environment variable named in blenderEnv, else blenderDefault. Slot lock files go in <work>/slots and logs in <work>/logs.",
+  "note": "Blender runner config for Creature Studio. The Blender path comes from the environment variable named in blenderEnv, else blenderDefault. Slot lock files go in <work>/slots and logs in <work>/logs. sharedSlot is the machine-wide Blender/GPU lock every pipeline session uses (creature-pipeline design section 10); run_blender takes its blender slot first, waiting up to sharedSlotWait seconds. If it is still busy then (a long GPU job holds the machine), the run goes ahead at below-normal priority only when sharedSlotFallbackFreeGb of memory is free, and the log says so.",
   "blenderEnv": "XALIANS_BLENDER",
   "blenderDefault": "C:/Users/njord/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Local/XaliansArtTools/blender-5.2.2-windows-x64/blender.exe",
   "work": "C:/dev/art-data/studio/blender",
   "maxSlots": 3,
   "minFreeGb": 9,
   "thirdSlotFreeGb": 14,
-  "settleSeconds": 15
+  "settleSeconds": 15,
+  "sharedSlot": "C:/dev/src/xalians-creature-pipeline/art/pipeline/slot/slot.py",
+  "sharedSlotWait": 180,
+  "sharedSlotFallbackFreeGb": 4
 }

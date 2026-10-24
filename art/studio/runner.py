@@ -129,16 +129,46 @@ def acquire_slot(cfg=None, free_memory=free_memory_gb, alive=pid_alive, sleep=ti
         sleep(3)
 
 
+def shared_acquire(cfg, owner):
+    """Take the machine-wide blender slot (the creature pipeline's slot.py) so studio runs queue with every other
+    session's Blender and GPU work. Returns (token or None, note). None with a note means the shared lock is
+    absent, or busy past the wait and the fallback rule allowed running anyway at below-normal priority."""
+    path = cfg.get('sharedSlot')
+    if not path or not Path(path).is_file() or os.environ.get('XALIANS_NO_SLOT') == '1':
+        return None, 'shared slot not used'
+    wait = str(int(cfg.get('sharedSlotWait', 1200)))
+    r = subprocess.run([sys.executable, path, 'acquire', 'blender', '--wait', wait, '--owner', owner],
+                       capture_output=True, text=True, **_NO_WINDOW)
+    if r.returncode == 0 and r.stdout.strip():
+        return r.stdout.strip(), 'shared slot held'
+    free = free_memory_gb()
+    if free < cfg.get('sharedSlotFallbackFreeGb', 4):
+        sys.exit(f'shared Blender slot busy after {wait} s and only {free:.1f} GB free; not starting ({r.stderr.strip()})')
+    return None, f'shared slot busy after {wait} s; running at below-normal priority with {free:.1f} GB free'
+
+
+def shared_release(cfg, token):
+    if token:
+        subprocess.run([sys.executable, cfg['sharedSlot'], 'release', token], capture_output=True, **_NO_WINDOW)
+
+
 def run_blender(arguments, log, cfg=None):
     cfg = cfg or load_config()
     command = [str(blender_path(cfg)), '-b', *arguments]
     Path(log).parent.mkdir(parents=True, exist_ok=True)
+    token, note = shared_acquire(cfg, f'studio {Path(log).stem}')
     slot = acquire_slot(cfg)
+    flags = dict(_NO_WINDOW)
+    if os.name == 'nt' and token is None and 'busy' in note:
+        flags['creationflags'] = flags.get('creationflags', 0) | 0x4000      # BELOW_NORMAL_PRIORITY_CLASS
     try:
         with open(log, 'w', encoding='utf-8', errors='replace') as handle:
-            result = subprocess.run(command, stdout=handle, stderr=subprocess.STDOUT, cwd=ROOT, **_NO_WINDOW)
+            handle.write(f'[runner] {note}' + chr(10))
+            handle.flush()
+            result = subprocess.run(command, stdout=handle, stderr=subprocess.STDOUT, cwd=ROOT, **flags)
     finally:
         slot.unlink(missing_ok=True)
+        shared_release(cfg, token)
     text = Path(log).read_text(encoding='utf-8', errors='replace')
     if result.returncode or 'Traceback' in text:
         tail = '\n'.join(text.splitlines()[-25:])
