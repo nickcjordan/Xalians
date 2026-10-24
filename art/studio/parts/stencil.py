@@ -10,6 +10,8 @@ params:
     depth     [a, b]: the extrusion range along the third axis, a < b
     round     rounding radius of the extrusion's two end faces (default 0.003): the end caps are blended with
               the outline by a smooth maximum of this radius
+    smooth    when set, the outline points are control points of a closed centripetal Catmull-Rom spline sampled
+              this many times, so the opening has no corners (a polygon's corners carved spikes at a mouth's ends)
 
 The distance is exact inside the outline's plane (distance to the nearest segment, negative inside, by the even-odd
 rule) and combined with the depth slab by a smooth maximum, which is a bound, close near the side walls.
@@ -21,10 +23,33 @@ from .common import smax
 AXES = {'xz': (0, 2, 1), 'yz': (1, 2, 0), 'xy': (0, 1, 2)}
 
 
+def _spline(P, n):
+    """Closed centripetal Catmull-Rom through P, n samples in all."""
+    m = len(P)
+    seg = max(n//m, 2)
+    out = []
+    for i in range(m):
+        p0, p1, p2, p3 = P[i-1], P[i], P[(i+1) % m], P[(i+2) % m]
+        t0 = 0.0
+        t1 = t0+max(np.linalg.norm(p1-p0), 1e-9)**0.5
+        t2 = t1+max(np.linalg.norm(p2-p1), 1e-9)**0.5
+        t3 = t2+max(np.linalg.norm(p3-p2), 1e-9)**0.5
+        for t in np.linspace(t1, t2, seg, endpoint=False):
+            a1 = (t1-t)/(t1-t0)*p0+(t-t0)/(t1-t0)*p1
+            a2 = (t2-t)/(t2-t1)*p1+(t-t1)/(t2-t1)*p2
+            a3 = (t3-t)/(t3-t2)*p2+(t-t2)/(t3-t2)*p3
+            b1 = (t2-t)/(t2-t0)*a1+(t-t0)/(t2-t0)*a2
+            b2 = (t3-t)/(t3-t1)*a2+(t-t1)/(t3-t1)*a3
+            out.append((t2-t)/(t2-t1)*b1+(t-t1)/(t2-t1)*b2)
+    return np.asarray(out)
+
+
 def _outline(params):
     poly = np.asarray(params['outline'], float)
     if poly.ndim != 2 or poly.shape[1] != 2 or len(poly) < 3:
         raise ValueError('stencil outline needs at least three [u, v] points')
+    if params.get('smooth'):
+        poly = _spline(poly, int(params['smooth']))
     return poly
 
 

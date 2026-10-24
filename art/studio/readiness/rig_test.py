@@ -365,14 +365,16 @@ def clean_weights(body, bones, margin, smooth=0):
         first = next(b for b in bones if chain_of(b) == u and (not b['parent'] or chain_of(by[b['parent']]) != u))
         root[u] = names.index(first['parent'])
         if u.endswith('_L') or u.endswith('_R'):
-            # near the limb's root only (within 4 to 6 cm of its first bone: the chest between the upper forelegs,
+            # near the limb's root only (within 4 to 9 cm of its first bone: the chest between the upper forelegs,
             # the rump between the thighs): a forepaw stands 1.5 cm from the midline and must keep its own weight
             # (audit-11: faded everywhere, the paws' inner edges stayed with the chest and tore into spikes)
+            # both fades are wide (3 cm to the midline, 4 to 9 cm from the root bone): narrower ones left a hard edge
+            # that read as a seam around the haunch and across the lower back once the leg moved (audit-12)
             sx = P[:, 0] if u.endswith('_L') else -P[:, 0]
-            t = np.clip(sx/0.02, 0.0, 1.0)
+            t = np.clip(sx/0.03, 0.0, 1.0)
             side = t*t*(3-2*t)
             dr = seg_dist(P, np.array(first['head'], float), np.array(first['tail'], float))
-            n = np.clip((0.06-dr)/0.02, 0.0, 1.0)
+            n = np.clip((0.09-dr)/0.05, 0.0, 1.0)
             near = n*n*(3-2*n)
             F[:, k] *= 1.0-near*(1.0-side)
     W2 = W.copy()

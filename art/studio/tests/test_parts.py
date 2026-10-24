@@ -634,6 +634,17 @@ class StencilTests(unittest.TestCase):
         self.assertAlmostEqual(d[2], 0.01, places=6)
         self.assertAlmostEqual(d[3], 0.01, places=6)
 
+    def test_smooth_outline_has_no_corners(self):
+        from parts import stencil
+        # the smoothed outline passes through the control points with no sharp turn (a square's polygon turns 90
+        # degrees at each corner)
+        sq = np.array([[-0.01, 0], [0.01, 0], [0.01, 0.02], [-0.01, 0.02]], float)
+        c = stencil._outline({'outline': sq.tolist(), 'smooth': 64})
+        d = np.diff(np.vstack([c, c[:1]]), axis=0)
+        ang = np.degrees(np.abs(np.angle(np.exp(1j*np.diff(np.unwrap(np.arctan2(d[:, 1], d[:, 0])))))))
+        self.assertLess(ang.max(), 30)
+        self.assertTrue(np.allclose(c[0], sq[0]))
+
     def test_concave_outline(self):
         from parts import stencil
         # a U shape: the notch between the arms is outside

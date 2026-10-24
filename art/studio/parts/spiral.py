@@ -19,6 +19,8 @@ params:
     handed    "right" (default, the ridge climbs counterclockwise seen from the tip) or "left"
     phase     degrees (default 0), turns the ridges about the axis
     embed     meters the solid continues below the base along the axis at the base radius (default 0.0)
+    fade      the share of the length at the tip over which the ridges fade out (default 0.1); a longer fade keeps
+              the last ridge from ending as a ledge under the tip
 
 Distance is the radial gap divided by the gradient norm of the ridged radius, a close bound near the surface,
 so the field meshes cleanly at the studio voxel size. The tip is a sphere of the last profile radius.
@@ -74,8 +76,8 @@ def sdf(params, pts):
     r = np.interp(t, prof[:, 0], prof[:, 1])
     dr_dt = np.interp(t, prof[:, 0][1:]-1e-9, np.diff(prof[:, 1])/np.diff(prof[:, 0])) if len(prof) > 2 else \
         np.full_like(t, (prof[1, 1]-prof[0, 1]))
-    # the ridges fade out over the last tenth so the tip is a clean rounded point
-    fade = np.clip((1.0-t)/0.1, 0.0, 1.0)
+    # the ridges fade out over the last tenth (or `fade`) so the tip is a clean rounded point
+    fade = np.clip((1.0-t)/float(params.get('fade', 0.1)), 0.0, 1.0)
     groove = float(params.get('groove', 1.0))
     depth = depth0+(depth1-depth0)*t
     tw = np.power(np.maximum(t, 1e-9), twist)
