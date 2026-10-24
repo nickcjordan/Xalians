@@ -75,10 +75,11 @@ def bones():
         # below the chin and the top of the throat (audit-9: the jaw dragged the throat down to z 0.30 in a V crease).
         # The hinge sits higher and further back, behind and above the mouth corners (audit-9 critic); the tip in the
         # chin, under the deeper mouth of sculpt-37
-        dict(bone('jaw', [0, -0.162, 0.388], [0, -0.232, 0.322], 'head', chain='jaw', connect=False),
-             weightBelow=[[-0.40, 0.355], [-0.255, 0.358], [-0.240, 0.366], [-0.229, 0.372], [-0.215, 0.370],
-                          [-0.200, 0.366], [-0.150, 0.355], [0.20, 0.355]],
-             weightAbove=[[-0.40, 0.295], [-0.235, 0.300], [-0.200, 0.318], [-0.160, 0.335], [0.20, 0.35]],
+        # (lines and tip moved by sculpt.py's lower-face map with the sculpt, sculpt-48)
+        dict(bone('jaw', [0, -0.162, 0.388], [0, -0.232, 0.3314], 'head', chain='jaw', connect=False),
+             weightBelow=[[-0.40, 0.355], [-0.255, 0.363], [-0.240, 0.3701], [-0.229, 0.3754], [-0.215, 0.3736],
+                          [-0.200, 0.3701], [-0.150, 0.3604], [0.20, 0.355]],
+             weightAbove=[[-0.40, 0.295], [-0.235, 0.312], [-0.200, 0.3278], [-0.160, 0.3428], [0.20, 0.35]],
              weightRamp=0.007),
         bone('thigh', H['hip'], H['knee'], 'pelvis', 'hind', True, connect=False),
         bone('shin', H['knee'], H['hock'], 'thigh', 'hind', True),

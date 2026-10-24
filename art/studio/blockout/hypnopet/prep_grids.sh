@@ -98,3 +98,20 @@ python art/studio/recon/grid_soften.py --grid $R/grid-skin-4f.npz --out $R/grid-
   --at 0,0.215,0.240,0.020,0.006,1 \
   --at 0.184,-0.079,0.424,0.016,0.004,1 \
   --at 0.019,-0.115,0.074,0.016,0.004
+# 5g-7g (critic 5): as 5f-7f on board/warps-10.json, which also shortens the lower face 12 percent about z 0.40
+#    (the authored mouth, tongue and chin parts are moved by the same map in sculpt.py's lowerface repair)
+python art/studio/recon/grid_warp.py --grid $R/grid-skin-2.npz --out $R/grid-skin-3g.npz --warps $B/board/warps-10.json
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-3g.npz --out $R/grid-skin-4g.npz --below 0.012,0.010,0.003 \
+  --at 0.085,-0.10,0.415,0.030,0.005 \
+  --at 0.100,0.115,0.250,0.030,0.005 \
+  --at 0.030,-0.100,0.100,0.025,0.004 \
+  --at 0.030,-0.080,0.190,0.025,0.005,1 \
+  --at 0.170,-0.080,0.420,0.015,0.003 \
+  --at 0,0.190,0.215,0.030,0.005,1
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-4g.npz --out $R/grid-skin-5g.npz \
+  --at 0,0.205,0.228,0.022,0.006 \
+  --at 0,0.185,0.205,0.018,0.005,1 \
+  --at 0.062,-0.078,0.490,0.022,0.005 \
+  --at 0,0.215,0.240,0.020,0.006,1 \
+  --at 0.184,-0.079,0.424,0.016,0.004,1 \
+  --at 0.019,-0.115,0.074,0.016,0.004

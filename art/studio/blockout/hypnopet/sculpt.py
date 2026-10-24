@@ -40,7 +40,11 @@ def horn(spec):
     pitch is twice the groove spacing) was tried and read as a twisted blade, not rolls (sculpt-37). Kept one strand:
     six turns tightening toward the tip (twist 1.15; 1.4 left the bottom third a plain cone, sculpt-38), a gentler
     sine groove, the ridges fading over the last 18 percent into a rounded point that narrows without a neck, the base
-    11 percent narrower.
+    11 percent narrower. Critic 5 (sculpt-40): still 4.5 turns against 5.5 with grooves at 4 to 17 degrees against
+    the sheet's 34 to 40, which no single strand can give (a 35 degree groove on this cone needs a 9 cm pitch, two
+    turns). Three strands twisted 1.9 turns each (sculpt-48, 49) read as a smooth goat horn at board size, and two
+    (sculpt-37) as a twisted blade; the six-turn single strand reads as the sheet's rolled horn at every size, so it
+    stays and the groove angle is an open difference.
     """
     parts = [p for p in spec['parts'] if p['part'] != 'horn']
     parts.append({'part': 'horn', 'kind': 'spiral', 'blend': 0.006, 'params': {
@@ -135,9 +139,11 @@ def mouth(spec):
     # the corners barely above the lip line. Critic 5 (sculpt-40): a polygon's corners carved spikes at the mouth's
     # ends and its W top read as a bat wing; the outline is now control points of a smooth closed spline (stencil
     # smooth), so the corners are rounded curls turning up 1.1 cm above the pads' undersides and the bottom a round U
-    half = [[0.0, 0.3772], [0.0075, 0.3752], [0.0135, 0.3742], [0.020, 0.3752], [0.026, 0.3780], [0.0315, 0.3835],
-            [0.0350, 0.3855], [0.0372, 0.3830], [0.0355, 0.3760], [0.0310, 0.3650], [0.0215, 0.3485],
-            [0.0105, 0.3365], [0.0, 0.3325]]
+    # sculpt-49: the corners 4 mm narrower (the overlay put the dark opening at x 0.035 against the sheet's 0.028,
+    # its corners thin creases out to 0.033)
+    half = [[0.0, 0.3772], [0.0075, 0.3752], [0.0135, 0.3742], [0.020, 0.3752], [0.025, 0.3780], [0.0290, 0.3830],
+            [0.0318, 0.3852], [0.0335, 0.3828], [0.0322, 0.3765], [0.0285, 0.3655], [0.0205, 0.3490],
+            [0.0100, 0.3370], [0.0, 0.3330]]
     right = [[-u, v] for u, v in reversed(half[1:-1])]
     P = spec['parts']
     P.append({'part': 'mouth', 'kind': 'stencil', 'op': 'carve', 'blend': 0.004, 'params': {
@@ -149,10 +155,10 @@ def mouth(spec):
     P.append({'part': 'mouth', 'kind': 'stencil', 'op': 'carve', 'blend': 0.004, 'params': {
         'plane': 'yz', 'outline': [[-0.32, 0.369], [-0.252, 0.369], [-0.243, 0.376], [-0.235, 0.3825], [-0.229, 0.3815],
                                    [-0.2305, 0.3765], [-0.238, 0.3620], [-0.248, 0.3430], [-0.32, 0.333]],
-        'depth': [-0.034, 0.034], 'round': 0.004}})
+        'depth': [-0.031, 0.031], 'round': 0.004}})
     # the muzzle's side wall between the lips, just outside the wedge, rounded away by a smooth carve at each corner
     P.append({'part': 'mouth', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.003, 'params': {
-        'center': [0.036, -0.245, 0.3720], 'radii': [0.010, 0.011, 0.0065], 'exponent': 2.0}})
+        'center': [0.033, -0.245, 0.3720], 'radii': [0.009, 0.011, 0.0065], 'exponent': 2.0}})
     # lower lip: a roll along the U, sinking into the jaw well below the corner (ending at the corner, it stood up
     # in the side opening as a fang, sculpt-20)
     P.append({'part': 'mouth', 'kind': 'sweep', 'op': 'add-after', 'mirror': 'x', 'blend': 0.004, 'params': {
@@ -304,7 +310,9 @@ def toes(spec):
     a rounded dome about 1.7 cm across at the front of the foot, the middle two slightly ahead of the outer two,
     split about 2 cm back on top while the sole stays joined (research/hypnopet/feet). Method: a dome per toe,
     added, then a thin slot carved between neighbours through the front of the foot down to about 1 cm above the
-    sole. Positions from slices of the skin grid (forepaw front edge y -0.205, 6.5 cm wide; hind foot front y 0.043);
+    sole. Critic 5 (sculpt-40): the toe tops stood 0.074 to 0.086 H against the sheet's 0.105 to 0.115 H and the feet
+    read as flat planks in profile; the domes now stand 1 to 1.4 cm taller and the splits are wider V grooves.
+    Positions from slices of the skin grid (forepaw front edge y -0.205, 6.5 cm wide; hind foot front y 0.043);
     the hind toes reach 1 cm further forward (critic 2: hind foot 93 percent of the sheet's length)."""
     P = spec['parts']
     # domes stand about 5 mm proud of the old front and top so each toe has its own round front; the splits are
@@ -320,16 +328,16 @@ def toes(spec):
             ([0.1197, 0.057, 0.024], 0.017)]
     for c, ry in fore:
         P.append({'part': 'toes', 'kind': 'mass', 'mirror': 'x', 'blend': 0.005, 'params': {
-            'center': c, 'radii': [0.0092, ry, 0.0195], 'exponent': 2.0}})
+            'center': [c[0], c[1], c[2]+0.006], 'radii': [0.0092, ry, 0.0250], 'exponent': 2.0}})
     for c, ry in hind:
         P.append({'part': 'toes', 'kind': 'mass', 'mirror': 'x', 'blend': 0.005, 'params': {
-            'center': c, 'radii': [0.0078, ry, 0.0215], 'exponent': 2.0}})
+            'center': [c[0], c[1], c[2]+0.008], 'radii': [0.0078, ry, 0.0290], 'exponent': 2.0}})
     for x in (0.0325, 0.0475, 0.062):
         P.append({'part': 'toes', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.004, 'params': {
-            'center': [x, -0.190, 0.036], 'radii': [0.0034, 0.0145, 0.024], 'exponent': 2.0}})
+            'center': [x, -0.190, 0.040], 'radii': [0.0042, 0.0145, 0.028], 'exponent': 2.0}})
     for x in (0.0912, 0.1025, 0.1142):
         P.append({'part': 'toes', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.004, 'params': {
-            'center': [x, 0.040, 0.034], 'radii': [0.0036, 0.019, 0.024], 'exponent': 2.0}})
+            'center': [x, 0.040, 0.040], 'radii': [0.0044, 0.019, 0.030], 'exponent': 2.0}})
     return spec
 
 
@@ -389,6 +397,55 @@ def smooth(spec):
     return spec
 
 
+FACE_GRID = 'C:/dev/art-data/studio/recon/hypnopet/r10-mv-oct512/grid-skin-5g.npz'
+FACE_BOX = ([-0.12, 0.12], [-0.32, -0.12], [0.27, 0.40])
+FACE_RAMP = (0.03, 0.03, 0.02)
+
+
+def face_map(p, factor=0.88, pivot=0.40):
+    """warps-10's lower-face map at point p: (new z, local z factor). The same box weight as grid_warp.py."""
+    def sm(t):
+        t = min(max(t, 0.0), 1.0)
+        return t*t*(3-2*t)
+    w = 1.0
+    for k in range(3):
+        lo, hi = FACE_BOX[k]
+        w *= sm((p[k]-lo)/FACE_RAMP[k])*sm((hi-p[k])/FACE_RAMP[k])
+    f = 1.0-(1.0-factor)*w
+    return pivot+(p[2]-pivot)*f, f
+
+
+def lowerface(spec):
+    """Lower face 12 percent shorter about z 0.40 (critic 5, sculpt-40: eye to chin 22 percent long against
+    flesh-front and 7 percent against flesh-side, and the mouth 6 to 9 mm low; the jowl lobes hang low in the back
+    view). The grid is warped by board/warps-10.json (grid-skin-5g, prep_grids.sh step 5g), and every authored mouth,
+    tongue and chin part is moved by the same map here, so the carved opening keeps the walls it had: moving the
+    carves alone (sculpt-44, 45) left the muzzle's side walls as thin blades. Needs smooth and mouth; supersedes
+    smooth's grid."""
+    import hashlib
+    body = next(p for p in spec['parts'] if p['part'] == 'body' and p['kind'] == 'grid')
+    body['params']['file'] = FACE_GRID
+    body['params']['sha256'] = hashlib.sha256(open(FACE_GRID, 'rb').read()).hexdigest()
+    for part in spec['parts']:
+        if part['part'] not in ('mouth', 'tongue', 'chin'):
+            continue
+        prm = part['params']
+        if part['kind'] == 'mass':
+            z, f = face_map(prm['center'])
+            prm['center'] = [prm['center'][0], prm['center'][1], round(z, 5)]
+            prm['radii'] = [prm['radii'][0], prm['radii'][1], round(prm['radii'][2]*f, 5)]
+        elif part['kind'] == 'sweep':
+            for q in prm['points']:
+                q['p'] = [q['p'][0], q['p'][1], round(face_map(q['p'])[0], 5)]
+        elif part['kind'] == 'stencil':
+            if prm['plane'] == 'xz':
+                y = sum(prm['depth'])/2
+                prm['outline'] = [[u, round(face_map([u, y, v])[0], 5)] for u, v in prm['outline']]
+            elif prm['plane'] == 'yz':
+                prm['outline'] = [[u, round(face_map([0.0, u, v])[0], 5)] for u, v in prm['outline']]
+    return spec
+
+
 def tail(spec):
     """Tail: a round nub set above the cleft (flesh-back), in place of the teardrop that flowed into the
     buttock cleft (critic item 13). Anatomy spec: a short stub of a few small vertebrae under a fur pompon
@@ -404,7 +461,7 @@ def tail(spec):
     return spec
 
 
-REPAIRS = {'chest': chest, 'smooth': smooth, 'toes': toes, 'lids': lids, 'bridge': bridge, 'details': details, 'tail': tail, 'proportions': proportions, 'horn': horn, 'crown': crown, 'skin': skin, 'face': face, 'mouth': mouth, 'nose': nose, 'eyes': eyes}
+REPAIRS = {'lowerface': lowerface, 'chest': chest, 'smooth': smooth, 'toes': toes, 'lids': lids, 'bridge': bridge, 'details': details, 'tail': tail, 'proportions': proportions, 'horn': horn, 'crown': crown, 'skin': skin, 'face': face, 'mouth': mouth, 'nose': nose, 'eyes': eyes}
 
 
 def build(base, names):
