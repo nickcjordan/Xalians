@@ -136,7 +136,17 @@ def shared_acquire(cfg, owner):
     path = cfg.get('sharedSlot')
     if not path or not Path(path).is_file() or os.environ.get('XALIANS_NO_SLOT') == '1':
         return None, 'shared slot not used'
-    wait = str(int(cfg.get('sharedSlotWait', 1200)))
+    wait = int(cfg.get('sharedSlotWait', 1200))
+    try:                                   # a long render holding the slot will not end soon: do not wait long
+        import datetime
+        locks = Path(cfg.get('sharedLocks', 'C:/dev/art-data/pipeline/locks'))/'blender'
+        recs = [json.loads(f.read_text()) for f in locks.glob('*.json')]
+        if recs and all((datetime.datetime.now()-datetime.datetime.fromisoformat(r['started'])).total_seconds()
+                        > 60*cfg.get('sharedSlotLongHoldMinutes', 10) for r in recs):
+            wait = int(cfg.get('sharedSlotShortWait', 20))
+    except (OSError, ValueError, KeyError):
+        pass
+    wait = str(wait)
     r = subprocess.run([sys.executable, path, 'acquire', 'blender', '--wait', wait, '--owner', owner],
                        capture_output=True, text=True, **_NO_WINDOW)
     if r.returncode == 0 and r.stdout.strip():
@@ -149,7 +159,10 @@ def shared_acquire(cfg, owner):
 
 def shared_release(cfg, token):
     if token:
-        subprocess.run([sys.executable, cfg['sharedSlot'], 'release', token], capture_output=True, **_NO_WINDOW)
+        r = subprocess.run([sys.executable, cfg['sharedSlot'], 'release', token], capture_output=True, text=True,
+                           **_NO_WINDOW)
+        if r.returncode:
+            print(f'warning: shared slot release failed for {token}: {r.stderr.strip()}', file=sys.stderr)
 
 
 def run_blender(arguments, log, cfg=None):

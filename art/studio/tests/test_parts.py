@@ -168,7 +168,7 @@ class InstanceTests(unittest.TestCase):
             inst('blob', {})
 
     def test_kinds_registered(self):
-        self.assertEqual(sorted(KINDS), ['grid', 'mass', 'shell', 'sweep'])
+        self.assertEqual(sorted(KINDS), ['grid', 'mass', 'shell', 'spiral', 'stencil', 'sweep'])
 
 
 class UnionTests(unittest.TestCase):
@@ -574,3 +574,57 @@ class SeparateTests(unittest.TestCase):
         self.assertGreater(solo.sdf(np.array([[-0.1, -0.2, 0.0]]))[0], 0)
         unnamed = separate_objects([Instance({k: v for k, v in self.EYE.items() if k not in ('name', 'mirrorName')})])
         self.assertEqual([o['name'] for o in unnamed], ['eye-0', 'eye-0-mirror'])
+
+
+class SpiralTests(unittest.TestCase):
+    P = {'base': [0, 0, 0], 'tip': [0, 0, 0.1], 'profile': [[0, 0.02], [1, 0.003]], 'turns': 3, 'depth': 0.15}
+
+    def test_inside_outside_and_tip(self):
+        from parts import spiral
+        d = spiral.sdf(self.P, np.array([[0, 0, 0.05], [0.05, 0, 0.05], [0, 0, 0.1], [0, 0, 0.11]]))
+        self.assertLess(d[0], 0)
+        self.assertGreater(d[1], 0)
+        self.assertAlmostEqual(d[2], 0.0, places=3)
+        self.assertGreater(d[3], 0)
+
+    def test_ridge_turns_with_height(self):
+        from parts import spiral
+        # at a fixed angle the surface radius rises and falls `turns` times along the axis
+        zs = np.linspace(0.005, 0.085, 400)
+        radii = []
+        for z in zs:
+            r = np.linspace(0.0, 0.03, 600)
+            pts = np.stack([r, np.zeros_like(r), np.full_like(r, z)], axis=1)
+            d = spiral.sdf(self.P, pts)
+            radii.append(r[np.argmin(np.abs(d))])
+        radii = np.array(radii)
+        core = 0.02+(0.003-0.02)*zs/0.1
+        wiggle = radii/core-1
+        crossings = np.sum(np.diff(np.sign(wiggle)) != 0)
+        self.assertGreaterEqual(crossings, 4)
+
+    def test_bad_profile(self):
+        from parts import spiral
+        with self.assertRaises(ValueError):
+            spiral.bounds({**self.P, 'profile': [[0.2, 0.02], [1, 0.003]]})
+
+
+class StencilTests(unittest.TestCase):
+    P = {'plane': 'xz', 'outline': [[-0.01, 0], [0.01, 0], [0.01, 0.02], [-0.01, 0.02]], 'depth': [-0.05, 0.0], 'round': 0.0}
+
+    def test_box(self):
+        from parts import stencil
+        d = stencil.sdf(self.P, np.array([[0, -0.02, 0.01], [0, -0.02, 0.03], [0.02, -0.02, 0.01], [0, 0.01, 0.01]]))
+        self.assertAlmostEqual(d[0], -0.01, places=6)
+        self.assertAlmostEqual(d[1], 0.01, places=6)
+        self.assertAlmostEqual(d[2], 0.01, places=6)
+        self.assertAlmostEqual(d[3], 0.01, places=6)
+
+    def test_concave_outline(self):
+        from parts import stencil
+        # a U shape: the notch between the arms is outside
+        u = [[0, 0], [3, 0], [3, 3], [2, 3], [2, 1], [1, 1], [1, 3], [0, 3]]
+        d = stencil.polygon_sdf(np.array(u, float), np.array([[1.5, 2.0], [0.5, 2.0], [1.5, 0.5]]))
+        self.assertGreater(d[0], 0)
+        self.assertLess(d[1], 0)
+        self.assertLess(d[2], 0)

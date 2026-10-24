@@ -1,13 +1,15 @@
 """Soften a reconstruction grid locally: a heavy blur inside given spheres, faded into the untouched field.
 
-    python art/studio/recon/grid_soften.py --grid <grid.npz> --out <grid.npz> --at x,y,z,radius,sigma [--at ...]
+    python art/studio/recon/grid_soften.py --grid <grid.npz> --out <grid.npz> --at x,y,z,radius,sigma[,fill] [--at ...]
         [--mirror-x] [--below z,fade,sigma]
 
 Each --at is a sphere (center and radius in meters) and a blur width (sigma, meters). Inside the sphere the
 field is the blurred one, fading back to the original over the outer third of the radius. A blurred distance
 field loses its small bumps and ridges while large forms stay put, so this flattens a feature the reconstruction
 invented (the closed eye mounds with their raised skirts, which read as goggles once the studio's eyes are
-seated) without editing the mesh. --mirror-x also softens each sphere's reflection through x = 0.
+seated) without editing the mesh. --mirror-x also softens each sphere's reflection through x = 0. A sixth value of 1
+(fill) keeps min(native, blurred) inside that sphere: concave pockets and slots fill while convex forms keep their
+native surface (the Akinza field-space lesson), so a mouth slot can be closed before a new mouth is carved.
 --below softens a whole horizontal slab instead: full blur below height z, fading out over the next `fade`
 meters (the jagged cut edge grid_plate.py leaves around the feet). Experiments X29, X32.
 """
@@ -34,19 +36,21 @@ def main():
     record = json.loads(str(z['record'])) if 'record' in z.files else {}
     spheres = []
     for a in args.at:
-        x, y, zc, r, s = (float(t) for t in a.split(','))
-        spheres.append((x, y, zc, r, s))
+        vals_ = [float(t) for t in a.split(',')]
+        x, y, zc, r, s = vals_[:5]
+        fill = len(vals_) > 5 and vals_[5] > 0
+        spheres.append((x, y, zc, r, s, fill))
         if args.mirror_x and x != 0:
-            spheres.append((-x, y, zc, r, s))
+            spheres.append((-x, y, zc, r, s, fill))
     out = vals.copy()
     axes = [origin[i]+np.arange(vals.shape[i])*voxel for i in range(3)]
-    for x, y, zc, r, s in spheres:
+    for x, y, zc, r, s, fill in spheres:
         lo = [max(0, int((c-r*1.2-o)/voxel)) for c, o in zip((x, y, zc), origin)]
         hi = [min(n, int((c+r*1.2-o)/voxel)+1) for c, n, o in zip((x, y, zc), vals.shape, origin)]
         pad = int(np.ceil(3*s/voxel))
         plo = [max(0, a-pad) for a in lo]
         phi = [min(n, b+pad) for b, n in zip(hi, vals.shape)]
-        block = vals[plo[0]:phi[0], plo[1]:phi[1], plo[2]:phi[2]]
+        block = out[plo[0]:phi[0], plo[1]:phi[1], plo[2]:phi[2]]
         blurred = ndimage.gaussian_filter(block, s/voxel)
         sl = tuple(slice(a-p, b-p) for a, b, p in zip(lo, hi, plo))
         X, Y, Z = np.meshgrid(axes[0][lo[0]:hi[0]], axes[1][lo[1]:hi[1]], axes[2][lo[2]:hi[2]], indexing='ij')
@@ -54,7 +58,8 @@ def main():
         w = np.clip((1.0-d)/(1/3), 0.0, 1.0)            # 1 inside two thirds of the radius, 0 at the radius
         w = w*w*(3-2*w)
         cur = out[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]]
-        out[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = (cur*(1-w)+blurred[sl]*w).astype(np.float32)
+        target = np.minimum(cur, blurred[sl]) if fill else blurred[sl]
+        out[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = (cur*(1-w)+target*w).astype(np.float32)
     below = None
     if args.below:
         zc, fade, s = (float(t) for t in args.below.split(','))

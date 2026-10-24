@@ -36,6 +36,11 @@ from mathutils.bvhtree import BVHTree
 
 FRAME = {'center': (0.0, 0.0, 0.33), 'scale': 0.8}
 VIEWS = {'side': (1, 0, 0), 'threequarter': (0.75, -0.66, 0.2), 'front': (0, -1, 0.12)}
+# the deformation audit's eight cameras (alignment decision 9): every side of the body, so nothing hides
+AUDIT_VIEWS = {'side': (1, 0, 0), 'side-right': (-1, 0, 0), 'front': (0, -1, 0.12), 'back': (0, 1, 0.12),
+               'threequarter': (0.75, -0.66, 0.2), 'threequarter-right': (-0.75, -0.66, 0.2),
+               'rear-threequarter': (0.7, 0.7, 0.15), 'top': (0.001, -0.25, 1.0)}
+VIEWS.update(AUDIT_VIEWS)
 CRUSH, STRETCH = 0.25, 4.0
 BLEED = 0.1
 
@@ -51,6 +56,8 @@ def args():
     ap.add_argument('--voxel', type=float, default=0.004, help='voxel remesh size when Quadriflow refuses the skin')
     ap.add_argument('--weights-from', type=Path)
     ap.add_argument('--label', default='')
+    ap.add_argument('--audit', action='store_true', help='deformation audit: eight cameras, clay, curvature and '
+                    'flag looks per pose, and the plausibility limits in the skeleton file')
     return ap.parse_args(argv)
 
 
@@ -342,8 +349,15 @@ def setup_render(out_size=900):
     return co
 
 
-def render(co, view, path, mode):
+def render(co, view, path, mode, cavity=False):
     sc = bpy.context.scene
+    sc.display.shading.show_cavity = cavity
+    if cavity:                                         # the curvature look: ridges light, valleys dark
+        sc.display.shading.cavity_type = 'BOTH'
+        sc.display.shading.curvature_ridge_factor = 2.0
+        sc.display.shading.curvature_valley_factor = 2.0
+        sc.display.shading.cavity_ridge_factor = 2.0
+        sc.display.shading.cavity_valley_factor = 2.0
     d = Vector(VIEWS[view]).normalized()
     c = Vector(FRAME['center'])
     co.location = c+d*2.0
@@ -353,6 +367,32 @@ def render(co, view, path, mode):
     sh.single_color = (0.78, 0.74, 0.7)
     sc.render.filepath = str(path)
     bpy.ops.render.render(write_still=True)
+
+
+def flag_colors(ratio, bad_faces, n):
+    """Audit flags per face: crushed blue, stretched amber (as distortion_colors), self-intersecting near black."""
+    cols = distortion_colors(ratio)
+    for i in bad_faces:
+        cols[i] = (0.03, 0.03, 0.03)
+    return cols
+
+
+def check_limits(spec, steps):
+    """Per bone and world axis, the pose's total rotation against the skeleton file's plausibility limits
+    (degrees, from real-animal reference). Returns the violations."""
+    lim = spec.get('limits', {})
+    total = {}
+    for bone, axis, deg in steps:
+        if axis == 'move':
+            continue
+        key = bone[:-2] if bone[-2:] in ('_L', '_R') else bone
+        total[(bone, key, axis)] = total.get((bone, key, axis), 0.0)+deg
+    out = []
+    for (bone, key, axis), deg in total.items():
+        rng = lim.get(key, {}).get(axis)
+        if rng and not rng[0] <= deg <= rng[1]:
+            out.append({'bone': bone, 'axis': axis, 'degrees': deg, 'limit': rng, 'source': lim.get(key, {}).get('source', '')})
+    return out
 
 
 def bone_sticks(rig):
@@ -460,14 +500,29 @@ def main():
             'intersectingFacesByChain': dict(sorted(hit.items(), key=lambda kv: -kv[1])),
             'p95AreaChange': float(np.percentile(np.abs(np.log2(np.maximum(ratio, 1e-6))), 95)),
         }
+        results[pname]['limitViolations'] = check_limits(spec, steps)
         print(pname, json.dumps(results[pname]), flush=True)
-        color_attr(body.data, 'distort', distortion_colors(ratio))
-        for view in ('side', 'threequarter', 'front'):
+        color_attr(body.data, 'distort', flag_colors(ratio, bad_faces, len(polys)) if a.audit else distortion_colors(ratio))
+        for view in (AUDIT_VIEWS if a.audit else ('side', 'threequarter', 'front')):
             render(co, view, a.out/'renders'/f'{pname}-{view}.png', 'SINGLE')
             render(co, view, a.out/'renders'/f'{pname}-distort-{view}.png', 'VERTEX')
+            if a.audit:
+                render(co, view, a.out/'renders'/f'{pname}-curvature-{view}.png', 'SINGLE', cavity=True)
     pose(rig, bones, [])
-    for view in ('side', 'threequarter', 'front'):
+    for view in (AUDIT_VIEWS if a.audit else ('side', 'threequarter', 'front')):
         render(co, view, a.out/'renders'/f'rest-{view}.png', 'SINGLE')
+        if a.audit:
+            render(co, view, a.out/'renders'/f'rest-curvature-{view}.png', 'SINGLE', cavity=True)
+    if a.audit:                                        # the setup check: bones over the rest mesh, every side
+        sticks = bone_sticks(rig)
+        others = [o for o in bpy.data.objects if o.type == 'MESH' and o != sticks]
+        for o in others:
+            o.hide_render = True
+        for view in ('side-right', 'back', 'top', 'threequarter-right'):
+            render(co, view, a.out/'renders'/f'bones-{view}.png', 'OBJECT')
+        for o in others:
+            o.hide_render = False
+        bpy.data.objects.remove(sticks)
 
     m = {'label': a.label, 'build': str(a.build), 'skeleton': str(a.skeleton), 'retopo': method,
          'vertices': len(body.data.vertices), 'faces': len(polys), 'weights': wmode, 'unweightedVertices': unweighted,

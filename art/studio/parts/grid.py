@@ -6,7 +6,8 @@ params:
     clip      {"center": [x, y, z], "radii": [rx, ry, rz], "blend": k}: the field is kept only inside this
               ellipsoid, joined to it by a smooth intersection of radius k (the cut edge is rounded, not sheared)
     offset    optional [x, y, z] added to the grid's position (default none)
-    cuts      optional list of {"center", "radii", "blend"} ellipsoids removed from the field (smooth subtraction):
+    cuts      optional list of {"center", "radii", "blend", "rotation"} ellipsoids removed from the field (smooth
+              subtraction; rotation is optional Blender-style XYZ Euler degrees, so a cut can follow a leaning part):
               for example the face region when the face comes from its own finer grid, or a reconstruction's own
               horn where an authored horn goes
 
@@ -17,7 +18,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .common import BIG, smax
+from .common import BIG, euler_matrix, smax
 
 _GRIDS = {}
 
@@ -83,7 +84,12 @@ def sdf(params, pts):
         cr = np.asarray(cut['radii'], float)
         if cr.shape != (3,) or (cr <= 0).any():
             raise ValueError('grid cut radii must be three positive numbers')
-        d = smax(d, -_ellipsoid(np.asarray(cut['center'], float), cr, pts), float(cut.get('blend', 0.0)))
+        cc = np.asarray(cut['center'], float)
+        local = pts
+        if cut.get('rotation'):
+            rot = euler_matrix(cut['rotation'])
+            local = (pts-cc)@rot+cc                  # world to the cut's frame (rows times R = R transposed)
+        d = smax(d, -_ellipsoid(cc, cr, local), float(cut.get('blend', 0.0)))
     return d
 
 

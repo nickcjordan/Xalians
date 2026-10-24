@@ -9,11 +9,11 @@ The creature's left is +x, it faces -y and up is +z (the convention of cameras/a
 """
 import numpy as np
 
-from . import grid, mass, sweep, shell
+from . import grid, mass, spiral, stencil, sweep, shell
 from .common import BIG, smin, smax  # noqa: F401  (re-exported)
 from .field import build_field, ownership, project_to_surface, sample_region, union_at  # noqa: F401
 
-KINDS = {'mass': mass, 'sweep': sweep, 'shell': shell, 'grid': grid}
+KINDS = {'mass': mass, 'sweep': sweep, 'shell': shell, 'grid': grid, 'spiral': spiral, 'stencil': stencil}
 OPS = ('add', 'carve', 'add-after')
 
 

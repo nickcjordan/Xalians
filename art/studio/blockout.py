@@ -64,12 +64,14 @@ def analyse(bm):
     """Connected components over vertices that belong to faces, plus non-manifold and boundary edges."""
     import bmesh
     seen, comps = set(), 0
+    analyse.pieces = []                      # (vertex count, centroid) per component, for refusal messages
     for v in bm.verts:
         if v.index in seen:
             continue
         comps += 1
         stack = [v]
         seen.add(v.index)
+        members = [v.co.copy()]
         while stack:
             cur = stack.pop()
             for e in cur.link_edges:
@@ -77,6 +79,9 @@ def analyse(bm):
                 if o.index not in seen:
                     seen.add(o.index)
                     stack.append(o)
+                    members.append(o.co.copy())
+        n = len(members)
+        analyse.pieces.append((n, tuple(round(sum(c[k] for c in members)/n, 4) for k in range(3))))
     nonmanifold = sum(1 for e in bm.edges if len(e.link_faces) != 2)
     boundary = sum(1 for e in bm.edges if len(e.link_faces) == 1)
     return comps, nonmanifold, boundary
@@ -132,6 +137,7 @@ def main():
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     bm.verts.ensure_lookup_table()
     comps, nonmanifold, boundary = analyse(bm)
+    skin_pieces = sorted(analyse.pieces, reverse=True)
     bm.to_mesh(mesh)
     bm.free()
 
@@ -162,7 +168,9 @@ def main():
               'grid': info, 'separate': sep_records}
     problems = []
     if comps != 1:
-        problems.append(f'{comps} connected components (a creature skin must be exactly one)')
+        pieces = skin_pieces
+        problems.append(f'{comps} connected components (a creature skin must be exactly one); '
+                        f'pieces (vertices, centroid): {pieces[:6]}')
     if nonmanifold:
         problems.append(f'{nonmanifold} non-manifold edges ({boundary} open boundary edges)')
     if not len(mesh.polygons):

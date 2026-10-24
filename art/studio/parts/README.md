@@ -83,6 +83,10 @@ Curved plate: give `spine` (three or more `[x, y, z]` points) instead of `bend`.
 
 A shell must overlap or come within its `blend` of another part, or the skin is two components and the build refuses.
 
+## spiral
+
+A tapered horn or tusk with helical ridges (Hypnopet's unicorn horn, 2026-10-23). A straight axis from `base` to `tip`, a core radius `profile` of `[t, r]` pairs from 0 (base) to 1 (tip, the rounding radius), and ridges: the surface radius is `r(t) * (1 + depth * cos(ridges * angle - 2 pi * turns * t - phase))`, faded out over the last tenth so the tip is a clean point. `turns` (default 4.5), `ridges` (default 1: one strand coiled like a soft-serve swirl), `depth` (default 0.16 of the core radius), `handed` (`right` or `left`), `phase` in degrees, `embed` (meters the base continues into the body at the base radius). The distance is the radial gap divided by the ridged radius' gradient norm, about 1 near the surface (checked in the tests), so it meshes cleanly. Method rule (alignment decision 3): precise tubes such as horns are swept, never reconstructed.
+
 ## Carving
 
 `"op": "carve"` smoothly subtracts the instance's shape from the union of everything added, with its own `blend` radius (polynomial smooth max of the union and the negated shape). Order of evaluation, whatever the spec order: all `add` instances (spec order), then every `carve` (spec order), then every `"add-after"` instance, which is added on top and is not carved, so an eyeball can sit inside a carved socket. Use it for eye sockets, mouth openings and ear cups. A carve never enlarges the grid. Ownership: the carved wall belongs to the carving instance's part, within half its blend of its shape's surface.
