@@ -81,3 +81,20 @@ python art/studio/recon/grid_soften.py --grid $R/grid-skin-4d.npz --out $R/grid-
 python art/studio/recon/grid_soften.py --grid $R/grid-skin-5d.npz --out $R/grid-skin-5e.npz \
   --at 0.184,-0.079,0.424,0.016,0.004,1 \
   --at 0.019,-0.115,0.074,0.016,0.004
+# 5f-7f (critic 4): as 5d-7d plus step 8 on board/warps-9.json, which rakes the ears 15 degrees and swings them in 3
+#    (6 hung them against the body), and narrows the hind feet 18 percent about their own center line (x 0.10)
+python art/studio/recon/grid_warp.py --grid $R/grid-skin-2.npz --out $R/grid-skin-3f.npz --warps $B/board/warps-9.json
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-3f.npz --out $R/grid-skin-4f.npz --below 0.012,0.010,0.003 \
+  --at 0.085,-0.10,0.415,0.030,0.005 \
+  --at 0.100,0.115,0.250,0.030,0.005 \
+  --at 0.030,-0.100,0.100,0.025,0.004 \
+  --at 0.030,-0.080,0.190,0.025,0.005,1 \
+  --at 0.170,-0.080,0.420,0.015,0.003 \
+  --at 0,0.190,0.215,0.030,0.005,1
+python art/studio/recon/grid_soften.py --grid $R/grid-skin-4f.npz --out $R/grid-skin-5f.npz \
+  --at 0,0.205,0.228,0.022,0.006 \
+  --at 0,0.185,0.205,0.018,0.005,1 \
+  --at 0.062,-0.078,0.490,0.022,0.005 \
+  --at 0,0.215,0.240,0.020,0.006,1 \
+  --at 0.184,-0.079,0.424,0.016,0.004,1 \
+  --at 0.019,-0.115,0.074,0.016,0.004
