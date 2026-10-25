@@ -91,6 +91,159 @@ def head_detail():
         if not closed:
             Ft.append(list(range(nseg))[::-1]); Ft.append([(n_ - 1) * nseg + j for j in range(nseg)])
         return Vt, Ft
+    # ---- appeal study (creature-appeal.md floor): local head edits before the eyes are seated and the lids built.
+    # Topology and every groom binding are unchanged; strands follow the moved skin through their triangle frames.
+    APLOG = {}
+    def appeal_edits():
+        if not g('appeal', 0): return
+        me_ = body.data; Mw = np.array(body.matrix_world); Mi = np.linalg.inv(Mw)
+        BV0 = np.array([v.co[:] for v in me_.vertices]); BV = BV0 @ Mw[:3, :3].T + Mw[:3, 3]; NV = len(BV)
+        gn_ = [x.name for x in body.vertex_groups]; Wt_ = np.zeros((NV, len(gn_)), np.float32)
+        for v in me_.vertices:
+            for gg in v.groups: Wt_[v.index, gg.group] = gg.weight
+        dom = np.array(gn_)[Wt_.argmax(1)]; headm = np.isin(dom, ['head_01', 'jaw_01'])
+        def sst(e0, e1, x): t = np.clip((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t)
+        NB = BV.copy()
+        eyes = {}
+        for side in ('l', 'r'):
+            eo = bpy.data.objects.get('eye_' + side)
+            if eo is None: continue
+            Me = np.array(eo.matrix_world); EV = np.array([v.co[:] for v in eo.data.vertices]) @ Me[:3, :3].T + Me[:3, 3]
+            c = EV.mean(0); r = float(np.linalg.norm(EV - c, axis=1).mean()); eyes[side] = (c, r)
+        def rotz(p, piv, th):
+            q = p - piv; cs, sn = math.cos(th), math.sin(th)
+            return piv + np.stack([q[..., 0] * cs - q[..., 1] * sn, q[..., 0] * sn + q[..., 1] * cs, q[..., 2]], -1)
+        turn = math.radians(g('ap_turn_deg', 0.0)); sc = g('ap_eye_scale', 1.0); lift = g('ap_eye_drop_m', 0.0)
+        newc = {}
+        for side, (c, r) in eyes.items():
+            th = -math.copysign(turn, c[0]); piv = np.array([0.0, c[1] + g('ap_pivot_back_m', 0.0), c[2]])
+            d = np.linalg.norm(BV - c, axis=1); wv = (1 - sst(r * g('ap_in', 1.25), r * g('ap_out', 2.6), d)) * headm
+            R_ = rotz(BV, piv, th); c2 = rotz(c, piv, th) + np.array([0, 0, -lift])
+            moved = BV + (R_ - BV) * wv[:, None] + np.array([0, 0, -lift]) * wv[:, None]
+            # scale within the face surface only: the component along the eye's outward axis is left alone, so the
+            # face does not swell round the larger eye (axis = the opening's horizontal direction after the turn)
+            if g('ap_scale_planar', 1):
+                a0 = math.radians(g('ap_axis0_deg', 43.0)) - abs(th)
+                o_ = np.array([math.copysign(math.sin(a0), c2[0]), -math.cos(a0), 0.0])
+                q_ = moved - c2; qn = q_ - np.outer(q_ @ o_, o_)
+                moved = moved + qn * ((sc - 1) * wv)[:, None]
+            else:
+                moved = moved + (moved - c2) * ((sc - 1) * wv)[:, None]
+            NB = NB + (moved - BV) * (wv > 0)[:, None]
+            newc[side] = (c2, r * sc, th, piv)
+            for on in ('eye_' + side, 'surface_cornea_eye_' + side):
+                ob = bpy.data.objects.get(on)
+                if ob is None: continue
+                Mo = np.array(ob.matrix_world); P_ = np.array([v.co[:] for v in ob.data.vertices]) @ Mo[:3, :3].T + Mo[:3, 3]
+                P_ = rotz(P_, piv, th) + np.array([0, 0, -lift]); P_ = c2 + (P_ - c2) * sc
+                Pl = (P_ - Mo[:3, 3]) @ np.linalg.inv(Mo[:3, :3]).T
+                for v, x in zip(ob.data.vertices, Pl): v.co = x.tolist()
+        ey = np.mean([v[0][1] for v in newc.values()]) if newc else None; ez = np.mean([v[0][2] for v in newc.values()]) if newc else None
+        # muzzle: everything ahead of the eyes slides back toward the eye plane by (1 - k) of its distance
+        k = g('ap_muzzle_k', 1.0)
+        if k != 1.0 and ey is not None:
+            ahead = headm & (NB[:, 1] < ey); NB[ahead, 1] = NB[ahead, 1] + (1 - k) * (ey - NB[ahead, 1])
+        # forehead dome: the brow between and above the eyes swells along the vertex normal
+        dm = g('ap_dome_m', 0.0)
+        if dm and ez is not None:
+            N_ = np.array([v.normal[:] for v in me_.vertices]) @ Mw[:3, :3].T; N_ /= np.maximum(np.linalg.norm(N_, axis=1), 1e-9)[:, None]
+            crown = BV[headm, 2].max(); cen = np.array([0.0, ey + g('ap_dome_back_m', 0.02), (ez + crown) / 2])
+            dd = np.linalg.norm((NB - cen) * np.array([1.0, 1.0, 1.3]), axis=1); wdm = (1 - sst(0.0, g('ap_dome_r_m', 0.05), dd)) * headm * (N_[:, 2] > -0.2)
+            NB = NB + N_ * (dm * wdm)[:, None]
+        dl = (NB - BV) @ Mi[:3, :3].T
+        if me_.shape_keys:
+            for kb in me_.shape_keys.key_blocks:
+                kc = np.array([d_.co[:] for d_ in kb.data]) + dl
+                for d_, c_ in zip(kb.data, kc): d_.co = c_.tolist()
+        for v_, c_ in zip(me_.vertices, BV0 + dl): v_.co = c_.tolist()
+        me_.update(); bpy.context.view_layer.update()
+        APLOG['edits'] = dict(turn_deg=g('ap_turn_deg', 0.0), eye_scale=sc, muzzle_k=k, dome_m=dm, moved_vertices=int((np.linalg.norm(NB - BV, axis=1) > 1e-5).sum()),
+                              eye_centres={s: v[0].round(4).tolist() for s, v in newc.items()})
+        # light eye area: coat strands rooted round each eye opening blend toward a light grey
+        lr = g('ap_light_ring', 0.0)
+        if lr:
+            for o_ in objs:
+                if o_.type != 'CURVES' or not o_.name.startswith('Luceras interpolated') or 'coat_color' not in o_.data.attributes: continue
+                d_ = o_.data; ia = arr(d_.attributes['bind_ia'].data, 'value', 1, np.int32); rp = NB[ia]
+                col = arr(d_.attributes['coat_color'].data, 'color', 4); wsum = np.zeros(len(ia))
+                for side, (c2, r2, th, piv) in newc.items():
+                    dd = np.linalg.norm(rp - c2, axis=1); wsum = np.maximum(wsum, 1 - sst(r2 * g('ap_ring_in', 1.0), r2 * g('ap_ring_out', 1.9), dd))
+                tgt = np.array(g('ap_ring_rgb', [0.32, 0.31, 0.31]), np.float32)
+                col[:, :3] = col[:, :3] * (1 - lr * wsum[:, None]) + tgt[None, :] * (lr * wsum[:, None])
+                d_.attributes['coat_color'].data.foreach_set('color', col.astype(np.float32).ravel()); APLOG['light_ring_strands'] = int((wsum > 0.05).sum())
+
+    def appeal_eye_material():
+        """Round pupil with a highlight, iris ring all round: a procedural iris in the space of an empty that looks
+        down each eye's opening axis (bone-parented, so it follows the head)."""
+        if not g('ap_round_pupil', 0): return
+        for side, (c2, r, a, upv, rtv, TE) in EYEOPEN.items():
+            eo = bpy.data.objects.get('eye_' + side)
+            if eo is None: continue
+            em = bpy.data.objects.new('ap_eye_frame_' + side, None); s.collection.objects.link(em)
+            em.parent = rig; em.parent_type = 'BONE'; em.parent_bone = 'head_01'; bpy.context.view_layer.update()
+            aim = a.copy()
+            if g('ap_aim_fwd', 0.0):    # aim the iris a little toward the snout line
+                fw = np.array([0.0, -1.0, 0.0]); aim = aim + fw * g('ap_aim_fwd', 0.0); aim /= np.linalg.norm(aim)
+            z_ = aim; y_ = np.array([0.0, 0.0, 1.0]) - z_ * z_[2]; y_ /= np.linalg.norm(y_); x_ = np.cross(y_, z_)
+            M4 = Matrix(((x_[0], y_[0], z_[0], c2[0]), (x_[1], y_[1], z_[1], c2[1]), (x_[2], y_[2], z_[2], c2[2]), (0, 0, 0, 1)))
+            em.matrix_world = M4
+            m_ = bpy.data.materials.new('Appeal round eye ' + side); m_.use_nodes = True; nt = m_.node_tree; N = nt.nodes; L_ = nt.links
+            bs_ = N.get('Principled BSDF'); bs_.inputs['Roughness'].default_value = 0.25
+            tc = N.new('ShaderNodeTexCoord'); tc.object = em
+            nrm = N.new('ShaderNodeVectorMath'); nrm.operation = 'NORMALIZE'; L_.new(tc.outputs['Object'], nrm.inputs[0])
+            sep = N.new('ShaderNodeSeparateXYZ'); L_.new(nrm.outputs['Vector'], sep.inputs[0])
+            ac = N.new('ShaderNodeMath'); ac.operation = 'ARCCOSINE'; L_.new(sep.outputs['Z'], ac.inputs[0])
+            ti = math.radians(g('ap_iris_deg', 34.0)); tp = ti * g('ap_pupil_frac', 0.42)
+            def mr(fmin, fmax, tmin, tmax, src):
+                n_ = N.new('ShaderNodeMapRange'); n_.clamp = True; n_.inputs['From Min'].default_value = fmin; n_.inputs['From Max'].default_value = fmax
+                n_.inputs['To Min'].default_value = tmin; n_.inputs['To Max'].default_value = tmax; L_.new(src, n_.inputs['Value']); return n_.outputs['Result']
+            pupil = mr(tp - 0.015, tp + 0.015, 1.0, 0.0, ac.outputs[0])            # 1 inside the pupil
+            rad = mr(tp, ti, 0.0, 1.0, ac.outputs[0])                              # 0 at the pupil edge, 1 at the iris edge
+            limb = mr(ti - 0.09, ti - 0.01, 0.0, 1.0, ac.outputs[0])               # limbal ring
+            nz = N.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 60.0; nz.inputs['Detail'].default_value = 2.0
+            L_.new(tc.outputs['Object'], nz.inputs['Vector'])
+            ramp = N.new('ShaderNodeValToRGB'); cr = ramp.color_ramp
+            cr.elements[0].position = 0.0; cr.elements[0].color = tuple(g('ap_iris_inner', [0.16, 0.07, 0.015])) + (1,)
+            cr.elements[1].position = 1.0; cr.elements[1].color = tuple(g('ap_iris_outer', [0.30, 0.15, 0.04])) + (1,)
+            e2 = cr.elements.new(0.55); e2.color = tuple(g('ap_iris_mid', [0.36, 0.19, 0.05])) + (1,)
+            mixf = N.new('ShaderNodeMath'); mixf.operation = 'MULTIPLY_ADD'; L_.new(nz.outputs['Fac'], mixf.inputs[0]); mixf.inputs[1].default_value = 0.35; L_.new(rad, mixf.inputs[2])
+            L_.new(mixf.outputs[0], ramp.inputs['Fac'])
+            dark = N.new('ShaderNodeMixRGB'); L_.new(limb, dark.inputs['Fac']); L_.new(ramp.outputs['Color'], dark.inputs['Color1']); dark.inputs['Color2'].default_value = (0.05, 0.025, 0.01, 1)
+            pm = N.new('ShaderNodeMixRGB'); L_.new(pupil, pm.inputs['Fac']); L_.new(dark.outputs['Color'], pm.inputs['Color1']); pm.inputs['Color2'].default_value = (0.004, 0.004, 0.005, 1)
+            L_.new(pm.outputs['Color'], bs_.inputs['Base Color'])
+            # highlight: a small bright spot up and toward the front of the iris, emissive so it reads in every render
+            hd = np.array(g('ap_hl_dir', [-0.35, 0.45, 0.82])); hd = hd / np.linalg.norm(hd)
+            if side == 'r': hd = hd * np.array([-1, 1, 1])
+            dp = N.new('ShaderNodeVectorMath'); dp.operation = 'DOT_PRODUCT'; L_.new(nrm.outputs['Vector'], dp.inputs[0]); dp.inputs[1].default_value = hd.tolist()
+            hl = mr(math.cos(math.radians(g('ap_hl_deg', 5.0))), math.cos(math.radians(g('ap_hl_deg', 5.0) * 0.6)), 0.0, 1.0, dp.outputs['Value'])
+            bs_.inputs['Emission Color'].default_value = (1, 1, 1, 1); L_.new(hl, bs_.inputs['Emission Strength'])
+            eo.data.materials.clear(); eo.data.materials.append(m_)
+        APLOG['round_pupil'] = dict(iris_deg=g('ap_iris_deg', 34.0), pupil_frac_of_iris=g('ap_pupil_frac', 0.42), highlight_deg=g('ap_hl_deg', 5.0))
+
+    def appeal_measure():
+        """creature-appeal.md floor items 1, 2, 3, 5 (geometry) at rest; items 4, 6, 7, 8 are read on the renders."""
+        me_ = body.data; dg = bpy.context.evaluated_depsgraph_get(); e = body.evaluated_get(dg); m = e.to_mesh(); Wb = np.array(e.matrix_world)
+        BV = np.array([v.co[:] for v in m.vertices]) @ Wb[:3, :3].T + Wb[:3, 3]; e.to_mesh_clear()
+        gn_ = [x.name for x in body.vertex_groups]; dom = np.empty(len(BV), object)
+        best = np.full(len(BV), -1.0)
+        for v in me_.vertices:
+            bw = -1; bn = ''
+            for gg in v.groups:
+                if gg.weight > bw: bw = gg.weight; bn = gn_[gg.group]
+            dom[v.index] = bn
+        hm = np.isin(dom, ['head_01', 'jaw_01']); H = BV[hm]
+        crown, jaw = float(H[:, 2].max()), float(H[:, 2].min()); hh = crown - jaw; tip = H[np.argmin(H[:, 1])]
+        out = dict(head_height_mm=round(hh * 1000, 1), crown_z=round(crown, 4), jaw_z=round(jaw, 4))
+        for side, (c2, r, a, upv, rtv, TE) in EYEOPEN.items():
+            rim = np.array(RIMPATH.get(side, [])); oh = float(rim[:, 2].max() - rim[:, 2].min()) if len(rim) else None
+            ax = math.degrees(math.acos(max(-1, min(1, -a[1] / max(1e-9, math.hypot(a[0], a[1]))))))
+            ec = rim.mean(0) if len(rim) else c2
+            out['eye_' + side] = dict(opening_height_mm=round(oh * 1000, 1) if oh else None, item1_eye_pct_of_head=round(100 * oh / hh, 1) if oh else None,
+                                      item2_axis_off_snout_deg=round(ax, 1), item3_eye_height_frac=round(float((ec[2] - jaw) / hh), 3),
+                                      item5_snout_mm=round(float(np.linalg.norm(ec - tip)) * 1000, 1), item5_eye_to_crown_mm=round((crown - float(ec[2])) * 1000, 1),
+                                      item5_ratio=round(float(np.linalg.norm(ec - tip)) / max(1e-9, crown - float(ec[2])), 2))
+        APLOG['measure'] = out
+    appeal_edits()
     from mathutils.bvhtree import BVHTree
     dg_ = bpy.context.evaluated_depsgraph_get(); BTH = [BVHTree.FromObject(body, dg_)]
     Mbw = np.array(body.matrix_world); Mbi = np.linalg.inv(Mbw)
@@ -174,6 +327,7 @@ def head_detail():
             dth = dir_(TE[i] + 0.02, ph) - d; dth /= np.linalg.norm(dth)
             path.append(c2 + d * (rs + rh * 0.35 + bos / 2)); sa.append(dth); sb.append(d)
         Vt, Ft = tube(path, rw, rh + bos / 2, sa, sb, True, 10); add_obj('head_lid_rim_' + side, Vt, Ft, lidm)
+        RIMPATH[side] = [np.array(p_) for p_ in path]
         rim_top = float(np.median([(p_ - c2) @ a + (rh + bos / 2) * math.cos(t_) for p_, t_ in zip(path, TE)]))
         # upper lid shell: rows from under the skin (TB + tuck) to the rim (TE), only where the lid overlaps
         sel = np.where((TBs - TE) > math.radians(0.8))[0]; rows = 6; Vs, Fs, Cs = [], [], []
@@ -206,7 +360,7 @@ def head_detail():
         return dict(**prot, lid_build_out_vertices=BUILD.get(side, 0), opening_axis=a.round(3).tolist(), exposed_frac=round(float(ex_.mean()), 3),
                     edge_deg_top=round(math.degrees(TBs[top]), 1), lid_edge_deg_top=round(math.degrees(TE[top]), 1),
                     edge_deg_min=round(math.degrees(TBs.min()), 1), edge_deg_max=round(math.degrees(TBs.max()), 1))
-    EYEOPEN = {}; BUILD = {}
+    EYEOPEN = {}; BUILD = {}; RIMPATH = {}
     def hide_strands_in_openings():
         """Strands whose points reach into the visible eye opening (deeper than lid_fur_margin_m past the lid edge) get
         zero radius, so fur may lie over the lid edge but never hangs in front of the iris. Whiskers are left alone."""
@@ -425,6 +579,8 @@ def head_detail():
             mt = nt_.nodes.new('ShaderNodeMath'); mt.operation = 'MULTIPLY_ADD'; mt.inputs[1].default_value = 0.55; mt.inputs[2].default_value = 0.16
             nt_.links.new(gm.outputs['Result'], mt.inputs[0]); nt_.links.new(mt.outputs[0], bs_.inputs['Metallic'])
         log['horn_' + hn] = 'ridges and glints'
+    appeal_eye_material(); appeal_measure(); log['appeal'] = APLOG
+    print('APPEAL', json.dumps(APLOG), flush=True)
     print('HEAD detail', json.dumps(log), flush=True)
 
 
