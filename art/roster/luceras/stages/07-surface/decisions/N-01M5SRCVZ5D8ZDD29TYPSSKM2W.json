@@ -1,0 +1,18 @@
+{
+  "id": "N-01M5SRCVZ5D8ZDD29TYPSSKM2W",
+  "alias": "qesf",
+  "stage": "07-surface",
+  "who": "nick",
+  "words": "much better (check 8: coat color pass; no request for more leg white)",
+  "date": "2026-10-25",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5SRCVM6AF6S6FVVG6ZD9W55",
+    "defect": "D-01M5QHWB9AY0G54AC64Z83K5XR",
+    "evidence": [
+      "116c2cfcca906a921c6bc40c1530c4c2429d1ce81d5e898cc0adea6f87cdad1c"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-25T14:45:52Z"
+}

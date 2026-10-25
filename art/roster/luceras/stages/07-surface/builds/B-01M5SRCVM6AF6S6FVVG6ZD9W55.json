@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5SRCVM6AF6S6FVVG6ZD9W55",
+  "alias": "qvqc",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Coat color polish: remove dark leg stripes, soften neck, shared fur and skin pattern",
+  "scope": "luceras-surface/colorpass1",
+  "defect": "D-01M5QHWB9AY0G54AC64Z83K5XR",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-25T14:45:52Z",
+  "briefSha256": "4903531d8a804cf4ed5289905f9c2e3b279eb300349544811056907885ebc585"
+}

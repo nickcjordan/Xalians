@@ -6,7 +6,10 @@
   "camera": "side",
   "region": "legs, neck, body coat",
   "origin": "nick",
-  "attempts": [],
-  "status": "open",
-  "createdAt": "2026-10-24T18:13:31Z"
+  "attempts": [
+    "B-01M5SRCVM6AF6S6FVVG6ZD9W55"
+  ],
+  "status": "closed",
+  "createdAt": "2026-10-24T18:13:31Z",
+  "closedAt": "2026-10-25T14:45:52Z"
 }
