@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5T01QY450MX171K184PWH0V",
+  "alias": "hzy8",
+  "stage": "09-animate",
+  "kind": "run",
+  "goal": "Final furred sprites, idle and signature, with approved coat color",
+  "scope": "luceras-sprites/pass2",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-25T16:59:36Z",
+  "briefSha256": "b09536597849f3619b3879dcdeb9fb272c4ef60aa8507089fae4bc16314caace"
+}

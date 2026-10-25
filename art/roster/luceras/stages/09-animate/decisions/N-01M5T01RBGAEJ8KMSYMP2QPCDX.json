@@ -1,0 +1,17 @@
+{
+  "id": "N-01M5T01RBGAEJ8KMSYMP2QPCDX",
+  "alias": "3sv3",
+  "stage": "09-animate",
+  "who": "nick",
+  "words": "I think it all looks great (check 9: final sprites); next topic is a design call on cuteness and appeal across creatures, no changes yet",
+  "date": "2026-10-25",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M5T01QY450MX171K184PWH0V",
+    "evidence": [
+      "bc02ca53ab298e3365cedcce5377f60a091bb5e31a82189a570c5aac59140a36"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-25T16:59:37Z"
+}
