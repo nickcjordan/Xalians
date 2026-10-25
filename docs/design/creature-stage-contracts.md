@@ -40,6 +40,7 @@ Stage <n> <name>, creature <key>, build <alias>
 Goal, in Nick's words: "<quote, date>" (or: orchestrator's goal, stated)
 Scope: <part or stage>; includes <list>; depends on <parts>
 Anatomy spec (any part with a shape): what the part is as a structure, read from the sheet in every view it appears (e.g. a paw: foot body, four digits, knuckle dome above a low flat foot top, toe curling to the ground, clefts between digits), with numbers as section profiles (lengthwise and crosswise) and ratios to its neighbors; for a part with bones, the skeleton the skin covers (each bone's start, end and radius) so the build grows one skin from the bones outward instead of joining separately modeled surfaces
+Appeal (any build that shows the head): the floor in docs/design/creature-appeal.md, items by stage, with measured values reported; the reader test at sprite size before the build goes to Nick
 Views: the build is judged on the view board, every standard camera together plus the section profiles; a change that reads right in one view and wrong in another is not done
 Defect targeted (if any): <alias>, <plain description>, <camera>, <region image>
 Holds:
@@ -58,7 +59,7 @@ Rules: no new tools; no self-grading; previews before any new method; stop and r
 ```
 Stage <n> <name>, creature <key>, build <alias>
 You see: the outputs (images, meshes, viewer page), the view board with every camera side by side, and this checklist. A part judged from fewer cameras than the board is not reviewed. You do not see the builder's report.
-Checklist: <the stage's rows from section 1, as numbered yes-or-no items>
+Checklist: <the stage's rows from section 1, as numbered yes-or-no items>; for any stage that shows the head, the appeal floor items for that stage (docs/design/creature-appeal.md)
 Return: pass, or a list of named defects, each with a camera, a 2D region and one sentence; no scores
 ```
 
