@@ -81,7 +81,6 @@ PAGE = r'''<!doctype html>
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 const MANIFEST = __MANIFEST__;
 const GLB = 'data:model/gltf-binary;base64,__GLB__';
@@ -134,9 +133,14 @@ function resize() {
 window.addEventListener('resize', () => { resize(); });
 
 const loader = new GLTFLoader();
-loader.setMeshoptDecoder(MeshoptDecoder);
+// the inlined glb is the uncompressed copy: no meshopt decoder (its WebAssembly is blocked under a strict CSP).
+// Textures load through <img> from blob: URLs rather than fetch(): GLTFLoader picks ImageBitmapLoader (a fetch) when
+// createImageBitmap exists, and hosts that limit connect-src block that.
+window.createImageBitmap = undefined;
 let mixer, actions = {}, baked = new Map(), plain;
-loader.load(GLB, (gltf) => {
+// parse the inlined bytes directly: hosts that block fetch() of data: URIs (the artifact sandbox) throw a TypeError
+const glbBytes = Uint8Array.from(atob(GLB.slice(GLB.indexOf(',') + 1)), (c) => c.charCodeAt(0)).buffer;
+loader.parse(glbBytes, '', (gltf) => { try {
   const root = gltf.scene;
   scene.add(root);
   plain = new THREE.MeshStandardMaterial({ color: 0xb9bcc2, roughness: 0.85, metalness: 0 });
@@ -171,7 +175,9 @@ loader.load(GLB, (gltf) => {
   resize(); sideView();
   statusEl.textContent = 'idle';
   V.ready = true;
-}, undefined, (err) => { V.errors.push(String(err)); document.getElementById('error').textContent = 'Could not load the glb: ' + err; });
+} catch (err) { fail(err); } }, (err) => fail(err));
+function fail(err) { V.errors.push(String(err)); document.getElementById('error').textContent = 'Could not load the model: ' + (err && err.stack ? err.stack : err); }
+window.addEventListener('unhandledrejection', (e) => fail(e.reason));
 
 function setPressed(on) { document.getElementById('stalk').setAttribute('aria-pressed', on ? 'true' : 'false'); }
 function startStalk() {
@@ -230,8 +236,9 @@ renderer.setAnimationLoop(() => {
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('asset', type=Path)
+    p.add_argument('--glb', type=Path, default=None, help='glb to inline (default <asset>/akinza.glb); the uncompressed copy needs no meshopt decoder')
     a = p.parse_args()
-    glb = (a.asset/'akinza.glb').read_bytes()
+    glb = (a.glb or a.asset/'akinza.glb').read_bytes()
     man = json.loads((a.asset/'manifest.json').read_text())
     html = PAGE.replace('__THREE__', THREE).replace('__MANIFEST__', json.dumps(man)).replace('__GLB__', base64.b64encode(glb).decode())
     (a.asset/'viewer.html').write_text(html, encoding='utf-8')
