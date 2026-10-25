@@ -72,6 +72,14 @@ Deformation critic 4 (audit-17), with what audits 18 to 24 changed: the tail's d
 
 The next step for the face is the one in lesson 20: rebuild the lower face around the target mouth instead of carving it further.
 
+## Lower face rebuild (2026-10-25)
+
+Nick: "front view for eyes is what we want but the face still needs work". Following lesson 20, the repair `mouthrebuild` (run last) drops every mouth, tongue and chin part and authors a lower face of its own over the reconstruction's, in final coordinates measured on metric overlays (front and side, one scale): an upper muzzle mass, a lower jaw mass shaped as the sheet's U, cheeks behind the corners, one smooth D carved to the corners, a side wedge through the jaw walls so the profile opens, a carve at each corner that rounds away the wall the two carves leave, the pads added after the carve, the tongue tilted so its tip lies on the lower lip and its back rises, a carve rounding the jaw's flat underside. The nose was rebuilt as a wider button with its point toward the pads' notch, and a fill on the muzzle top behind it. Builds sculpt-54 to 70; sculpt-69 kept (sculpt-70's bigger muzzle fill read as a separate block). Blind critics 8 to 10: 4, 4 and 5 of 10 for the lower face against the sheet (critic 10 on sculpt-68), each judging it better than sculpt-53 from the front and three-quarter. Audit-25 (jaw weight line moved to the new opening): every count as audit-24 except mouth-closed, 135 intersecting pairs, the tongue passing into the inside of the upper lip as the jaw closes; a production rig needs a tongue bone.
+
+Lessons: two carves that meet leave a wall that floats free once anything else moves (the blockout refuses the islands, which found them); a lip roll swept along a carved edge floats as a rod wherever the side opening passes it, so the jaw's own edge makes the lip; a chin mass plus corner carves made a peg, one U-shaped jaw mass made a chin.
+
+Open: the snout in profile is a longer tube than the sheet's; the nose is not yet a separate triangular button (no crease, nostrils facing forward); the tongue has no center groove; the upper lip follows the front view's height, 1.5 cm above the side view's (the same rule as the eyes).
+
 ## Tools added in this round
 
 - `parts/spiral.py`: `twist` (turns tighten toward the tip), `depthTip` (ridge depth growing toward the tip) and `fade` (how far below the tip the ridges fade).

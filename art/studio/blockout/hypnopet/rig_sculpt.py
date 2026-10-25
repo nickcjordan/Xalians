@@ -77,8 +77,9 @@ def bones():
         # chin, under the deeper mouth of sculpt-37
         # (lines and tip moved by sculpt.py's lower-face map with the sculpt, sculpt-48)
         dict(bone('jaw', [0, -0.162, 0.388], [0, -0.232, 0.3314], 'head', chain='jaw', connect=False),
-             weightBelow=[[-0.40, 0.355], [-0.255, 0.363], [-0.240, 0.3701], [-0.229, 0.3754], [-0.215, 0.3736],
-                          [-0.200, 0.3701], [-0.150, 0.3604], [0.20, 0.355]],
+             # (sculpt-69: through the middle of the rebuilt opening, rising to its corner at y -0.226)
+             weightBelow=[[-0.40, 0.360], [-0.255, 0.362], [-0.237, 0.370], [-0.226, 0.382], [-0.212, 0.379],
+                          [-0.200, 0.372], [-0.150, 0.3604], [0.20, 0.355]],
              weightAbove=[[-0.40, 0.295], [-0.235, 0.312], [-0.200, 0.3278], [-0.160, 0.3428], [0.20, 0.35]],
              weightRamp=0.007),
         bone('thigh', H['hip'], H['knee'], 'pelvis', 'hind', True, connect=False),

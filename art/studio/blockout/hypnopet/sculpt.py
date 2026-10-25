@@ -236,13 +236,19 @@ def nose(spec):
     softens the old nose. Critic 4 (sculpt-36): now 20 percent narrow and a round button against the sheet's broad
     inverted triangle with flared nostril wings; the button is 2.8 cm across with two wings at its lower corners."""
     P = spec['parts']
+    # sculpt-65 (critic 8, sculpt-62: 2.2 cm and round with the nostrils facing forward, a pig snout from the front;
+    # the sheet's is a rounded inverted triangle 3.1 cm across, its point dropping to the pads' notch, the nostrils
+    # under its lower corners)
+    P.append({'part': 'nose', 'kind': 'mass', 'blend': 0.003, 'params': {
+        'center': [0, -0.2755, 0.4000], 'radii': [0.0150, 0.0108, 0.0095], 'exponent': 2.6}})
     P.append({'part': 'nose', 'kind': 'mass', 'blend': 0.006, 'params': {
-        'center': [0, -0.2715, 0.3985], 'radii': [0.0142, 0.0108, 0.0100], 'exponent': 2.2}})
+        'center': [0, -0.2730, 0.3900], 'radii': [0.0070, 0.0085, 0.0080], 'exponent': 2.0}})
     # nostril wings flaring at the lower corners, so the button reads as the sheet's rounded inverted triangle
     P.append({'part': 'nose', 'kind': 'mass', 'mirror': 'x', 'blend': 0.004, 'params': {
-        'center': [0.0085, -0.2775, 0.3935], 'radii': [0.0065, 0.0055, 0.0050], 'exponent': 2.0}})
+        'center': [0.0090, -0.2780, 0.3940], 'radii': [0.0060, 0.0055, 0.0050], 'exponent': 2.0}})
+    # nostrils under the corners, facing down and out
     P.append({'part': 'nose', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.002, 'params': {
-        'center': [0.0062, -0.2835, 0.3925], 'radii': [0.0034, 0.0026, 0.0028], 'exponent': 2.0}})
+        'center': [0.0075, -0.2815, 0.3895], 'radii': [0.0040, 0.0026, 0.0018], 'exponent': 2.0}})
     return spec
 
 
@@ -275,6 +281,63 @@ def eyes(spec):
                 p['pivot'] = c
             else:
                 p['params']['radii'] = [0.0379]*3
+    return spec
+
+
+def mouthrebuild(spec):
+    """Lower face rebuilt around the sheet's mouth (Nick, 2026-10-25: "the face still needs work"; lesson 20: five
+    rounds of carving the reconstruction's muzzle never reached the sheet's open smile). Runs last: it drops every
+    mouth, tongue and chin part the earlier repairs authored and replaces them, in the final (post-lowerface)
+    coordinates, with a muzzle of its own over the reconstruction's, so no carve meets the reconstruction's walls.
+
+    Anatomy spec, measured on metric overlays of sculpt-53 on flesh-front and flesh-side at one scale (ovf53, ovs53):
+    two round muzzle pads under the nose spanning x 0.037 each side, their undersides at z 0.376 meeting at a notch at
+    0.381, their fronts 0.6 cm behind the nose tip (y -0.276); the opening a wide D, its corners at x 0.038 turned up
+    to z 0.389 into the cheeks, its bottom a round U at z 0.344, so 3.7 cm open at the center; a broad tongue (3.6 cm
+    across, z 0.344 to 0.370) lying on the floor of the mouth with its tip on the lower lip; a thin rolled lower lip
+    under it whose front stands at y -0.252; the chin under the lip down to z 0.322. In profile the opening is a
+    wedge from the pads back to the corner under the front of the eye (y -0.231)."""
+    P = [q for q in spec['parts'] if q['part'] not in ('mouth', 'tongue', 'chin')]
+    # the muzzle and the lower jaw as masses of their own, covering the reconstruction's lower face
+    P.append({'part': 'mouth', 'kind': 'mass', 'blend': 0.016, 'params': {
+        'center': [0, -0.252, 0.381], 'radii': [0.032, 0.026, 0.019], 'exponent': 2.0}})
+    P.append({'part': 'chin', 'kind': 'mass', 'blend': 0.016, 'params': {
+        'center': [0, -0.230, 0.352], 'radii': [0.034, 0.019, 0.017], 'exponent': 2.0}})
+    # the muzzle's top behind the nose, so the bridge climbs straight from the nose (critic 10, sculpt-68: a saddle
+    # 8 to 10 mm deep in front of the eye made a duck snout in profile)
+    P.append({'part': 'mouth', 'kind': 'mass', 'blend': 0.014, 'params': {
+        'center': [0, -0.248, 0.410], 'radii': [0.020, 0.022, 0.014], 'exponent': 2.0}})
+    # cheeks pushed up by the smile beside each corner
+    P.append({'part': 'mouth', 'kind': 'mass', 'mirror': 'x', 'blend': 0.014, 'params': {
+        'center': [0.046, -0.218, 0.395], 'radii': [0.016, 0.015, 0.013], 'exponent': 2.0}})
+    # the opening: one smooth D carved back to the corners, its top under the pads
+    half = [[0.0, 0.3810], [0.008, 0.3775], [0.016, 0.3760], [0.024, 0.3775], [0.031, 0.3805], [0.0350, 0.3840],
+            [0.0368, 0.3855], [0.0375, 0.3820], [0.0358, 0.3745], [0.0322, 0.3645], [0.0262, 0.3525],
+            [0.0130, 0.3430], [0.0, 0.3415]]
+    right = [[-u, v] for u, v in reversed(half[1:-1])]
+    P.append({'part': 'mouth', 'kind': 'stencil', 'op': 'carve', 'blend': 0.004, 'params': {
+        'plane': 'xz', 'outline': half+right, 'depth': [-0.32, -0.205], 'round': 0.008, 'smooth': 240}})
+    # the side opening: a wedge from under the pads back to the corner, through the jaw's side walls, so the
+    # profile shows the open jaw as the sheet's side view does
+    P.append({'part': 'mouth', 'kind': 'stencil', 'op': 'carve', 'blend': 0.004, 'params': {
+        'plane': 'yz', 'outline': [[-0.32, 0.370], [-0.266, 0.368], [-0.250, 0.374], [-0.237, 0.3820], [-0.2270, 0.3870],
+                                   [-0.2260, 0.3790], [-0.2360, 0.3580], [-0.2500, 0.3400], [-0.32, 0.330]],
+        'depth': [-0.050, 0.050], 'round': 0.005, 'smooth': 200}})
+    # the jaw's flat underside rounded up into the throat (critic 9: a box chin hanging 1.3 cm low)
+    P.append({'part': 'chin', 'kind': 'mass', 'op': 'carve', 'blend': 0.010, 'params': {
+        'center': [0, -0.246, 0.306], 'radii': [0.034, 0.030, 0.014], 'exponent': 2.0}})
+    # the thin wall left between the D's corner and the side wedge, rounded away (it stood up as a tusk)
+    P.append({'part': 'mouth', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.003, 'params': {
+        'center': [0.0395, -0.2450, 0.3825], 'radii': [0.0085, 0.0190, 0.0075], 'exponent': 2.0}})
+    # the pads, added after the carve so their round undersides make the opening's top edge
+    P.append({'part': 'mouth', 'kind': 'mass', 'op': 'add-after', 'mirror': 'x', 'blend': 0.008, 'params': {
+        'center': [0.0155, -0.262, 0.3870], 'radii': [0.0195, 0.0160, 0.0140], 'exponent': 2.0}})
+    # the tongue on the floor of the mouth, its tip on the lower lip, and its root behind
+    P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
+        'center': [0, -0.232, 0.3570], 'radii': [0.0200, 0.0220, 0.0090], 'exponent': 2.0, 'rotation': [30, 0, 0]}})
+    P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
+        'center': [0, -0.222, 0.3480], 'radii': [0.0150, 0.0180, 0.0080], 'exponent': 2.0}})
+    spec['parts'] = P
     return spec
 
 
@@ -470,7 +533,7 @@ def tail(spec):
     return spec
 
 
-REPAIRS = {'lowerface': lowerface, 'chest': chest, 'smooth': smooth, 'toes': toes, 'lids': lids, 'bridge': bridge, 'details': details, 'tail': tail, 'proportions': proportions, 'horn': horn, 'crown': crown, 'skin': skin, 'face': face, 'mouth': mouth, 'nose': nose, 'eyes': eyes}
+REPAIRS = {'mouthrebuild': mouthrebuild, 'lowerface': lowerface, 'chest': chest, 'smooth': smooth, 'toes': toes, 'lids': lids, 'bridge': bridge, 'details': details, 'tail': tail, 'proportions': proportions, 'horn': horn, 'crown': crown, 'skin': skin, 'face': face, 'mouth': mouth, 'nose': nose, 'eyes': eyes}
 
 
 def build(base, names):
