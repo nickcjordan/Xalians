@@ -18,7 +18,17 @@ Every species clears the **floor** below. A species may go above it; a therapy c
 | 4 | Pupils are round at rest; slit or horizontal pupils are an expression state (alarm, attack), not the resting look | 75%: Toothless works this way, and the Luceras horizontal pupil reads as sinister; this reverses Nick's earlier "amber goat" pick, so he confirms it on Luceras | Luceras head pass 1; check 6 on the checks page |
 | 5 | Appeal is gated at the sheet stage first, so it is designed in, not patched in after the sculpt | 85%: Luceras met its sheet and still lacked appeal, because the build drifted from the sheet's round, forward eyes | Luceras sheet against headpass1 render |
 
-## The floor (measured, every species)
+## Calibration finding (2026-10-25, Luceras appeal study 1)
+
+The first numbers below were set before they were measured on references, and they fail that check:
+- Nick's own Luceras sheet reads appealing, yet it measures under item 1 (eyes about 14 to 15 percent), over item 3 and over item 5.
+- Three Luceras head options that cleared every number did not beat the current head with a blind reader at side-sprite size.
+- The reader's reasons were whole-body: a small head on a long, spindly, hunched body, a dark horn dominating the head, and an eye that is barely visible in profile.
+- Turning the eyes forward (item 2) shrinks what a pure side sprite shows of them.
+
+So the numbers are provisional until they are calibrated on references that read appealing (the Luceras sheet, Akinza, Toothless) and on references that read unfriendly, measured in the product view (side sprites). Two items are missing and are being added: head-to-body proportion and limb sturdiness, and the eye as seen in profile (how much iris and highlight a side sprite shows). The reader test is the gate; the numbers are guides that must agree with it.
+
+## The floor (provisional, every species)
 
 Measured on the rest pose, head in profile and from straight ahead. Ratios use the skull's own height (crown to jaw line, excluding horns, ears and crests).
 
