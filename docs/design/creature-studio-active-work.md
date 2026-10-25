@@ -40,4 +40,4 @@ Nick, 2026-10-12: "I dont want you to do anything with Akinza, that model is bei
 
 ## Next unfinished action
 
-Nick reviews the overnight round (2026-10-24, the review page linked from the session's last message). Then: rebuild Hypnopet's lower face around the sheet's mouth (the open item every sculpt critic has named; carving alone has not got there), then the feet, then a final sculpt critic and deformation audit before the surface (fur) stage, which waits for Nick's go on the bare body.
+Nick reviewed the overnight round on 2026-10-25: "front view for eyes is what we want but the face still needs work". Now: rebuild Hypnopet's lower face around the sheet's mouth (the open item every sculpt critic has named; carving alone has not got there), then the feet, then a final sculpt critic and deformation audit before the surface (fur) stage, which waits for Nick's go on the bare body.

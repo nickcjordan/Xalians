@@ -66,7 +66,7 @@ Critic 7 (sculpt-52, ranked for sprites), with what sculpt-53 changed:
 9. **Tail** reads as a thumb.
 10. Close-up only: the lower lid gap, the nose's shape, small face lumps, the wrists.
 
-Sheet disagreements for Nick: the eye in profile (the largest difference in the side sprite; the side view and the front view of the sheet draw different eyes), the face height, the tail height.
+Sheet disagreements: the eye in profile, ruled by Nick on 2026-10-25: "front view for eyes is what we want but the face still needs work" (the front view wins; the eyes keep their 20 degree gaze and the side sprite's lens-shaped eye is accepted). Still unruled: the face height, the tail height.
 
 Deformation critic 4 (audit-17), with what audits 18 to 24 changed: the tail's drag on the rump, the grooming paw, the throat V and the far ear in the look were fixed. Open: the crouch's folded hind leg reads as a bracket in the side view; no scapula, so the shoulder does not slide; a ring crease on the stride's forearm; a slot of lip lining when the jaw opens past the rest pose; shallow grooves across the skull in the look; ear joints 2 to 4 on the back rim of the blade rather than its center.
 
