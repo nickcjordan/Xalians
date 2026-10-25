@@ -224,7 +224,7 @@ def bridge(spec):
     read as a rodent's wedge; the fill now ends 1.5 cm above the nose."""
     spec['parts'].append({'part': 'bridge', 'kind': 'sweep', 'blend': 0.012, 'params': {
         'points': [{'p': [0, -0.222, 0.452], 'r': 0.012}, {'p': [0, -0.230, 0.435], 'r': 0.018},
-                   {'p': [0, -0.234, 0.422], 'r': 0.015}]}})
+                   {'p': [0, -0.240, 0.428], 'r': 0.018}, {'p': [0, -0.249, 0.416], 'r': 0.013}]}})
     return spec
 
 
@@ -238,17 +238,27 @@ def nose(spec):
     P = spec['parts']
     # sculpt-65 (critic 8, sculpt-62: 2.2 cm and round with the nostrils facing forward, a pig snout from the front;
     # the sheet's is a rounded inverted triangle 3.1 cm across, its point dropping to the pads' notch, the nostrils
-    # under its lower corners)
-    P.append({'part': 'nose', 'kind': 'mass', 'blend': 0.003, 'params': {
-        'center': [0, -0.2755, 0.4000], 'radii': [0.0150, 0.0108, 0.0095], 'exponent': 2.6}})
-    P.append({'part': 'nose', 'kind': 'mass', 'blend': 0.006, 'params': {
-        'center': [0, -0.2730, 0.3900], 'radii': [0.0070, 0.0085, 0.0080], 'exponent': 2.0}})
-    # nostril wings flaring at the lower corners, so the button reads as the sheet's rounded inverted triangle
-    P.append({'part': 'nose', 'kind': 'mass', 'mirror': 'x', 'blend': 0.004, 'params': {
-        'center': [0.0090, -0.2780, 0.3940], 'radii': [0.0060, 0.0055, 0.0050], 'exponent': 2.0}})
-    # nostrils under the corners, facing down and out
-    P.append({'part': 'nose', 'kind': 'mass', 'op': 'carve', 'mirror': 'x', 'blend': 0.002, 'params': {
-        'center': [0.0075, -0.2815, 0.3895], 'radii': [0.0040, 0.0026, 0.0018], 'exponent': 2.0}})
+    # under its lower corners). Sculpt-71 (critic 10, sculpt-68: no crease separates it from the muzzle, so it read
+    # as the squared end of a tube): the button is added after the carves into a socket 1.5 mm bigger than itself,
+    # which leaves a crease around its base, and the nostrils are cut into it afterwards (carve-after)
+    # sculpt-74: a rounded inverted triangle from three lobes and a point (one superellipsoid read as a pig's
+    # oval at exponent 2.6 and a box at 3)
+    # sculpt-75 (critic 11: in profile a small pointed knob, 1.2 cm tall, against the sheet's round 2 cm ball; in
+    # three-quarter separate bulges): the middle lobe is the ball, the lobes merge with a wider blend
+    lobes = [{'center': [0.0090, -0.2745, 0.4010], 'radii': [0.0085, 0.0105, 0.0075], 'exponent': 2.0},
+             {'center': [-0.0090, -0.2745, 0.4010], 'radii': [0.0085, 0.0105, 0.0075], 'exponent': 2.0},
+             {'center': [0, -0.2775, 0.3940], 'radii': [0.0110, 0.0105, 0.0105], 'exponent': 2.0},
+             {'center': [0, -0.2760, 0.3880], 'radii': [0.0055, 0.0085, 0.0065], 'exponent': 2.0}]
+
+    def grown(m, d):
+        return {**m, 'radii': [r+d for r in m['radii']]}
+    for m in lobes:
+        P.append({'part': 'nose', 'kind': 'mass', 'op': 'carve', 'blend': 0.003, 'params': grown(m, 0.0015)})
+    for m in lobes:
+        P.append({'part': 'nose', 'kind': 'mass', 'op': 'add-after', 'blend': 0.009, 'params': m})
+    # nostrils under the lower corners of the triangle, facing down and out
+    P.append({'part': 'nose', 'kind': 'mass', 'op': 'carve-after', 'mirror': 'x', 'blend': 0.0015, 'params': {
+        'center': [0.0080, -0.2810, 0.3870], 'radii': [0.0048, 0.0034, 0.0024], 'exponent': 2.0}})
     return spec
 
 
@@ -303,10 +313,6 @@ def mouthrebuild(spec):
         'center': [0, -0.252, 0.381], 'radii': [0.032, 0.026, 0.019], 'exponent': 2.0}})
     P.append({'part': 'chin', 'kind': 'mass', 'blend': 0.016, 'params': {
         'center': [0, -0.230, 0.352], 'radii': [0.034, 0.019, 0.017], 'exponent': 2.0}})
-    # the muzzle's top behind the nose, so the bridge climbs straight from the nose (critic 10, sculpt-68: a saddle
-    # 8 to 10 mm deep in front of the eye made a duck snout in profile)
-    P.append({'part': 'mouth', 'kind': 'mass', 'blend': 0.014, 'params': {
-        'center': [0, -0.248, 0.410], 'radii': [0.020, 0.022, 0.014], 'exponent': 2.0}})
     # cheeks pushed up by the smile beside each corner
     P.append({'part': 'mouth', 'kind': 'mass', 'mirror': 'x', 'blend': 0.014, 'params': {
         'center': [0.046, -0.218, 0.395], 'radii': [0.016, 0.015, 0.013], 'exponent': 2.0}})
@@ -331,12 +337,15 @@ def mouthrebuild(spec):
         'center': [0.0395, -0.2450, 0.3825], 'radii': [0.0085, 0.0190, 0.0075], 'exponent': 2.0}})
     # the pads, added after the carve so their round undersides make the opening's top edge
     P.append({'part': 'mouth', 'kind': 'mass', 'op': 'add-after', 'mirror': 'x', 'blend': 0.008, 'params': {
-        'center': [0.0155, -0.262, 0.3870], 'radii': [0.0195, 0.0160, 0.0140], 'exponent': 2.0}})
+        'center': [0.0155, -0.260, 0.3870], 'radii': [0.0195, 0.0190, 0.0140], 'exponent': 2.0}})
     # the tongue on the floor of the mouth, its tip on the lower lip, and its root behind
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
-        'center': [0, -0.232, 0.3570], 'radii': [0.0200, 0.0220, 0.0090], 'exponent': 2.0, 'rotation': [30, 0, 0]}})
+        'center': [0, -0.235, 0.3570], 'radii': [0.0200, 0.0220, 0.0090], 'exponent': 2.0, 'rotation': [30, 0, 0]}})
     P.append({'part': 'tongue', 'kind': 'mass', 'op': 'add-after', 'blend': 0.006, 'params': {
-        'center': [0, -0.222, 0.3480], 'radii': [0.0150, 0.0180, 0.0080], 'exponent': 2.0}})
+        'center': [0, -0.222, 0.3440], 'radii': [0.0150, 0.0180, 0.0080], 'exponent': 2.0}})
+    # the tongue's center groove, cut into it after it is added (critic 11)
+    P.append({'part': 'tongue', 'kind': 'mass', 'op': 'carve-after', 'blend': 0.002, 'params': {
+        'center': [0, -0.243, 0.3640], 'radii': [0.0018, 0.0150, 0.0035], 'exponent': 2.0, 'rotation': [30, 0, 0]}})
     spec['parts'] = P
     return spec
 

@@ -14,7 +14,7 @@ from .common import BIG, smin, smax  # noqa: F401  (re-exported)
 from .field import build_field, ownership, project_to_surface, sample_region, union_at  # noqa: F401
 
 KINDS = {'mass': mass, 'sweep': sweep, 'shell': shell, 'grid': grid, 'spiral': spiral, 'stencil': stencil}
-OPS = ('add', 'carve', 'add-after')
+OPS = ('add', 'carve', 'add-after', 'carve-after')
 
 
 class Instance:

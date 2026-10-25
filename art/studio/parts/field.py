@@ -52,10 +52,12 @@ def _skin(insts):
 
 
 def _ordered(insts):
-    """Skin instances in evaluation order: every add (spec order), then every carve, then every add-after."""
+    """Skin instances in evaluation order: every add (spec order), then every carve, then every add-after, then
+    every carve-after (a groove or hole cut into an add-after part, such as a crease around a nose button or its
+    nostrils)."""
     insts = _skin(insts)
     return ([i for i in insts if i.op == 'add'], [i for i in insts if i.op == 'carve'],
-            [i for i in insts if i.op == 'add-after'])
+            [i for i in insts if i.op == 'add-after'], [i for i in insts if i.op == 'carve-after'])
 
 
 def build_field(insts, voxel, stride=4):
@@ -68,7 +70,7 @@ def build_field(insts, voxel, stride=4):
         raise ValueError('no skin instances to build')
     bnds = [i.bounds() for i in insts]
     kmax = max(i.blend for i in insts)
-    grown = [b for i, b in zip(insts, bnds) if i.op != 'carve'] or bnds       # a carve never makes the skin bigger
+    grown = [b for i, b in zip(insts, bnds) if i.op not in ('carve', 'carve-after')] or bnds       # a carve never makes the skin bigger
     glo = np.min([b[0] for b in grown], axis=0)-kmax-6*voxel
     ghi = np.max([b[1] for b in grown], axis=0)+kmax+6*voxel
     origin = np.floor(glo/voxel)*voxel          # snapped to the world lattice: a rebuild samples unchanged parts at identical points
@@ -89,7 +91,7 @@ def build_field(insts, voxel, stride=4):
         exact += n
         # outside the padded box the instance is farther than its blend radius, so it contributes nothing
         sl = tuple(slice(a, b) for a, b in zip(i0, i1))
-        if inst.op == 'carve':
+        if inst.op in ('carve', 'carve-after'):
             field[sl] = smax(field[sl], -block, inst.blend).astype(np.float32)
         else:
             field[sl] = smin(field[sl], block, inst.blend).astype(np.float32)
@@ -115,7 +117,7 @@ def ownership(insts, keys, pts):
         pad = inst.blend*2
         return np.all((pts >= lo-pad) & (pts <= hi+pad), axis=1)
 
-    adds, carves, afters = _ordered(insts)
+    adds, carves, afters, after_carves = _ordered(insts)
     for inst in adds:
         near = near_mask(inst)
         if near.any():
@@ -135,6 +137,13 @@ def ownership(insts, keys, pts):
         if near.any():
             k = keys.index(inst.key)
             per_key[k, near] = np.minimum(per_key[k, near], inst.sdf(pts[near]))
+    for inst in after_carves:
+        near = near_mask(inst)
+        if near.any():
+            d = inst.sdf(pts[near])
+            per_key[:, near] = smax(per_key[:, near], -d[None, :], inst.blend)
+            k = keys.index(inst.key)
+            per_key[k, near] = np.minimum(per_key[k, near], np.abs(d)-0.5*inst.blend)
     order = np.argsort(per_key, axis=0)
     which = order[0].astype(np.int32)
     best = np.take_along_axis(per_key, order[:1], axis=0)[0]
@@ -156,7 +165,7 @@ def union_at(insts, pts):
             pad = inst.blend+0.02
             near = np.all((pts >= lo-pad) & (pts <= hi+pad), axis=1)
             if near.any():
-                if inst.op == 'carve':
+                if inst.op in ('carve', 'carve-after'):
                     out[near] = smax(out[near], -inst.sdf(pts[near]), inst.blend)
                 else:
                     out[near] = smin(out[near], inst.sdf(pts[near]), inst.blend)

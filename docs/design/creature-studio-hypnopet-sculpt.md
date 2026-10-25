@@ -80,9 +80,14 @@ Lessons: two carves that meet leave a wall that floats free once anything else m
 
 Open: the snout in profile is a longer tube than the sheet's; the nose is not yet a separate triangular button (no crease, nostrils facing forward); the tongue has no center groove; the upper lip follows the front view's height, 1.5 cm above the side view's (the same rule as the eyes).
 
+## Face pass 2 (2026-10-25)
+
+Nick on sculpt-69: "that is much better". Builds sculpt-71 to 80, sculpt-80 kept. The nose is a rounded inverted triangle of three lobes and a point, added after a carve 1.5 mm bigger than itself (a crease around its base), with nostril slits cut into it by a new op, `carve-after` (`parts/field.py`: carves applied after the add-afters, tested in `test_parts.py`); one superellipsoid read as a pig's oval at exponent 2.6 and a box at 3. The bridge sweep runs on toward the nose and stops short of its socket (reaching into it left a floating sliver the blockout refused); a separate fill mass behind the nose read as a block (sculpt-70). The tongue has a center groove (carve-after). Critics 11 and 12: 5 and 4 of 10, both about the same as sculpt-69 overall; flat for four rounds, so handed to Nick. Audit-27: unchanged except mouth-closed, 337 pairs inside the mouth (the tongue into the upper lip; a tongue bone is needed). Open: the snout reads longer than the pick in three-quarter and the sheet's nose is a rounder ball in profile (shortening means moving the whole lower face back, not done without asking); one critic read the pads as a moustache; small nubs under the tongue.
+
 ## Tools added in this round
 
 - `parts/spiral.py`: `twist` (turns tighten toward the tip), `depthTip` (ridge depth growing toward the tip) and `fade` (how far below the tip the ridges fade).
+- `parts/field.py`: the `carve-after` op (a groove or hole cut into an add-after part).
 - `parts/stencil.py`: `smooth` (the outline points are control points of a closed spline, so a carved opening has no corners).
 - `blockout/hypnopet/sculpt.py` `lowerface`: a grid warp and the authored parts in it moved by one map, so carved openings keep their walls.
 - `readiness/rig_test.py`: weight cleanup (nearest-chain margin, sided chains fade at the midline, `weightBelow` and `weightAbove` side-view lines with a ramp), Laplacian weight smoothing, `--dense` (pose and render the build skin with the proxy's weights carried over), the shaft check (`shaftsOutsideSkin`: a bone can leave the skin between two joints that are inside it).

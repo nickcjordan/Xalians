@@ -265,6 +265,16 @@ class CarveTests(unittest.TestCase):
         edge = np.array([[0, -0.15+0.035, 0]])
         self.assertAlmostEqual(float(union_at([self.ball, self.socket, self.eye], edge)[0]), 0.0, delta=0.01)
 
+    def test_carve_after_cuts_into_an_add_after_part(self):
+        pupil = with_op(inst('mass', {'radii': [0.01, 0.01, 0.01], 'center': [0, -0.15-0.035, 0]}, part='pupil',
+                             blend=0.002), 'carve-after')
+        probe = np.array([[0, -0.15-0.03, 0]])
+        self.assertLess(union_at([self.ball, self.socket, self.eye], probe)[0], 0)
+        # a plain carve is applied before the add-after and cannot reach it; a carve-after can
+        as_carve = with_op(inst('mass', pupil.params, part='pupil', blend=0.002), 'carve')
+        self.assertLess(union_at([self.ball, self.socket, self.eye, as_carve], probe)[0], 0)
+        self.assertGreater(union_at([self.ball, self.socket, self.eye, pupil], probe)[0], 0)
+
     def test_grid_field_matches_the_direct_evaluation(self):
         insts = [self.ball, self.socket, self.eye]
         origin, f, _ = build_field(insts, 0.01)
