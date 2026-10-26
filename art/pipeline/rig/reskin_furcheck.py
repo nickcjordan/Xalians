@@ -119,7 +119,7 @@ def head_detail():
         w = np.maximum(whead, wn) * (u > -0.05)
         NB = J + (BV - J) * (1 + (hs - 1) * w)[:, None]
         # the skin round each horn base moves rigidly with the horn (the horn is not scaled, so its socket must not grow)
-        for hn in ('horn_l', 'horn_r'):
+        for hn in (() if g('ap_horn_with_head', 0) else ('horn_l', 'horn_r')):
             ho = bpy.data.objects.get(hn)
             if ho is None: continue
             Mo = np.array(ho.matrix_world); HP_ = np.array([v.co[:] for v in ho.data.vertices]) @ Mo[:3, :3].T + Mo[:3, 3]
@@ -135,7 +135,30 @@ def head_detail():
             if ob is None: continue
             Mo = np.array(ob.matrix_world); P_ = np.array([v.co[:] for v in ob.data.vertices]) @ Mo[:3, :3].T + Mo[:3, 3]
             if on.startswith('horn'):
-                base = P_[np.argmin(np.linalg.norm(P_ - J, axis=1))]; P_ = P_ + (base - J) * (hs - 1)
+                if g('ap_horn_with_head', 0): P_ = J + (P_ - J) * hs; hs_t = 1.0
+                base = P_[np.argmin(np.linalg.norm(P_ - J, axis=1))]
+                hsc = g('ap_horn_scale', 1.0); sw = math.radians(g('ap_horn_sweep_deg', 0.0))
+                if hsc != 1.0 or sw:
+                    # the root ring keeps its size and angle (it fits the skin socket); scale and sweep grow along the horn
+                    # the root ring is where the horn meets the skin: scale and sweep pivot on its centre and grow from
+                    # one ring radius out, so the ring keeps fitting its socket; buried vertices never move
+                    if 'SKBVH' not in APLOG:
+                        from mathutils.bvhtree import BVHTree as _B
+                        APLOG['SKBVH'] = _B.FromPolygons([Vector(v) for v in NB.tolist()], [list(pp.vertices) for pp in me_.polygons])
+                    bt_ = APLOG['SKBVH']; dep = np.zeros(len(P_))
+                    for k_, pp in enumerate(P_):
+                        loc, nrm_, _, _ = bt_.find_nearest(Vector(pp.tolist()))
+                        if loc is not None: dep[k_] = (pp - np.array(loc[:])) @ np.array(nrm_[:])
+                    ring = P_[np.abs(dep) < g('ap_horn_ring_m', 0.003)]
+                    if len(ring) > 8: base = ring.mean(0)
+                    r0 = float(np.linalg.norm(ring - base, axis=1).max()) if len(ring) > 8 else 0.02
+                    dd_ = np.linalg.norm(P_ - base, axis=1); tt = sst(r0 * g('ap_horn_ring_from', 1.1), r0 * g('ap_horn_ring_to', 2.5), dd_) * sst(-0.002, 0.004, dep)
+                    APLOG.setdefault('horn_ring', {})[on] = dict(ring_vertices=int(len(ring)), ring_radius_mm=round(r0 * 1000, 1))
+                    sc_v = 1 + (hsc - 1) * tt; ang = sw * tt
+                    q_ = (P_ - base) * sc_v[:, None]; cs_, sn_ = np.cos(ang), np.sin(ang)
+                    # sweep back: rotate about the left-right (X) axis; the creature faces -Y, so tips go toward +Y
+                    q_ = np.stack([q_[:, 0], q_[:, 1] * cs_ + q_[:, 2] * sn_, -q_[:, 1] * sn_ + q_[:, 2] * cs_], 1); P_ = base + q_
+                if not g('ap_horn_with_head', 0): P_ = P_ + (base - J) * (hs - 1)
             else:
                 P_ = J + (P_ - J) * hs
             Pl = (P_ - Mo[:3, 3]) @ np.linalg.inv(Mo[:3, :3]).T
@@ -145,7 +168,23 @@ def head_detail():
             R0 = J + (bw(f'ear_{side}_01') - J) * hs; T0 = J + (bw(f'ear_{side}_02', 'tail_local') - J) * hs
             A_ = (T0 - R0) / np.linalg.norm(T0 - R0); we = np.clip(W_[f'ear_{side}_01'] + W_[f'ear_{side}_02'], 0, 1)
             q = NB - R0; qa = np.outer(q @ A_, A_); qp = q - qa
-            NB = np.where((we > 0)[:, None], R0 + qa * (1 + (es_l - 1) * we)[:, None] + qp * (1 + (es_w - 1) * we)[:, None], NB)
+            tl_ = np.clip((q @ A_) / max(np.linalg.norm(T0 - R0), 1e-9), 0, 1.2); tip_ = g('ap_ear_tip_w', 1.0)
+            taper = 1 - (1 - tip_) * sst(0.45, 1.0, tl_)
+            NB = np.where((we > 0)[:, None], R0 + qa * (1 + (es_l - 1) * we)[:, None] + qp * ((1 + (es_w - 1) * we) * (1 - (1 - taper) * we))[:, None], NB)
+        for side in ('l', 'r'):
+            for bi, gk in (('02', 'ap_fore_girth_02'), ('03', 'ap_fore_girth_03')):
+                gf = g(gk, 1.0)
+                if gf == 1.0: continue
+                bn = f'leg_f{side}_{bi}'; gidx = body.vertex_groups.get(bn)
+                if gidx is None: continue
+                wv = np.zeros(NV)
+                for v in me_.vertices:
+                    for gg in v.groups:
+                        if gg.group == gidx.index: wv[v.index] = gg.weight
+                h_ = bw(bn); t_ = bw(bn, 'tail_local'); ax2 = t_ - h_; uu = ((NB - h_) @ ax2) / (ax2 @ ax2)
+                ease = sst(0.0, 0.25, uu) * (1 - sst(0.75, 1.0, uu)); wf = wv * ease
+                foot = h_ + np.clip(uu, 0, 1)[:, None] * ax2; NB = foot + (NB - foot) * (1 + (gf - 1) * wf)[:, None]
+                APLOG.setdefault('fore_girth', {})[bn] = dict(factor=gf, vertices=int((wf > 0.05).sum()))
         dl = (NB - BV) @ Mi[:3, :3].T
         if me_.shape_keys:
             for kb in me_.shape_keys.key_blocks:
@@ -218,6 +257,23 @@ def head_detail():
                     sl = slice(offs[ci], offs[ci] + cnt[ci]); H_[sl] *= etl; X_[sl] *= etl; Y_[sl] *= etl
                 for nme, v in (('bind_height', H_), ('bind_offset_x', X_), ('bind_offset_y', Y_)): d_.attributes[nme].data.foreach_set('value', v.astype(np.float32))
                 APLOG['ear_tuft_strands'] = int(len(si))
+        for key, mult in (('ap_cheek_fur', 'cheek'), ('ap_ruff_fur', 'ruff')):
+            fl = g(key, 1.0)
+            if fl == 1.0 or not newc: continue
+            ey = np.mean([v[0][1] for v in newc.values()]); ez = np.mean([v[0][2] for v in newc.values()]); ex = np.mean([abs(v[0][0]) for v in newc.values()])
+            sd = dom[ids_[np.arange(len(ids_)), bar_.argmax(1)]]
+            if mult == 'cheek':
+                m_ = np.isin(sd, ['head_01', 'jaw_01']) & (np.abs(rp[:, 0]) > ex * 0.7) & (rp[:, 2] < ez - 0.005) & (rp[:, 1] > ey - 0.02)
+            else:
+                lum_ = col[:, :3] @ np.array([0.2126, 0.7152, 0.0722]); sds = sd.astype(str)
+                m_ = ~np.isin(sd, ['head_01', 'ear_l_01', 'ear_l_02', 'ear_r_01', 'ear_r_02']) & ~np.char.startswith(sds, 'leg_') & ~np.char.startswith(sds, 'tail_')                      & (lum_ > 0.3) & (rp[:, 2] < ez - 0.03) & (rp[:, 2] > g('ap_ruff_zmin', 0.3)) & (rp[:, 1] < g('ap_ruff_ymax', -0.08))
+            si = np.where(m_)[0]
+            if not len(si): continue
+            H_ = arr(d_.attributes['bind_height'].data, 'value', 1); X_ = arr(d_.attributes['bind_offset_x'].data, 'value', 1); Y_ = arr(d_.attributes['bind_offset_y'].data, 'value', 1)
+            for ci in si:
+                sl = slice(offs[ci], offs[ci] + cnt[ci]); H_[sl] *= fl; X_[sl] *= fl; Y_[sl] *= fl
+            for nme, v in (('bind_height', H_), ('bind_offset_x', X_), ('bind_offset_y', Y_)): d_.attributes[nme].data.foreach_set('value', v.astype(np.float32))
+            APLOG[mult + '_fur_strands'] = int(len(si))
         d_.attributes['coat_color'].data.foreach_set('color', col.astype(np.float32).ravel())
     def appeal_edits():
         if not g('appeal', 0): return
@@ -267,7 +323,8 @@ def head_detail():
         # muzzle: everything ahead of the eyes slides back toward the eye plane by (1 - k) of its distance
         k = g('ap_muzzle_k', 1.0)
         if k != 1.0 and ey is not None:
-            ahead = headm & (NB[:, 1] < ey); NB[ahead, 1] = NB[ahead, 1] + (1 - k) * (ey - NB[ahead, 1])
+            ahead = headm & (NB[:, 1] < ey); wz = 1 - sst(ez - g('ap_muzzle_z_lo', 0.01), ez + g('ap_muzzle_z_hi', 0.012), NB[:, 2])   # the muzzle only, not the forehead
+            NB[ahead, 1] = NB[ahead, 1] + (1 - k) * (ey - NB[ahead, 1]) * wz[ahead]
         # forehead dome: the brow between and above the eyes swells along the vertex normal
         dm = g('ap_dome_m', 0.0)
         if dm and ez is not None:
@@ -275,6 +332,13 @@ def head_detail():
             crown = BV[headm, 2].max(); cen = np.array([0.0, ey + g('ap_dome_back_m', 0.02), (ez + crown) / 2])
             dd = np.linalg.norm((NB - cen) * np.array([1.0, 1.0, 1.3]), axis=1); wdm = (1 - sst(0.0, g('ap_dome_r_m', 0.05), dd)) * headm * (N_[:, 2] > -0.2)
             NB = NB + N_ * (dm * wdm)[:, None]
+        ck = g('ap_cheek_m', 0.0)
+        if ck and newc:
+            N_ = np.array([v.normal[:] for v in me_.vertices]) @ Mw[:3, :3].T; N_ /= np.maximum(np.linalg.norm(N_, axis=1), 1e-9)[:, None]
+            for side, (c2, r2, th, piv) in newc.items():
+                for off, rad_ in ((np.array([math.copysign(0.004, c2[0]), -0.012, -0.03]), 0.028), (np.array([-c2[0] * 0.6, -0.045, -0.035]), 0.018)):
+                    cc = c2 + off; dd = np.linalg.norm(NB - cc, axis=1); wck = (1 - sst(0.0, rad_, dd)) * headm
+                    NB = NB + N_ * (ck * wck)[:, None]
         dl = (NB - BV) @ Mi[:3, :3].T
         if me_.shape_keys:
             for kb in me_.shape_keys.key_blocks:
@@ -691,7 +755,7 @@ def head_detail():
         lines = [ph_pts]
         mw_ = g('mouth_w_m', 0.009); md_ = g('mouth_drop_m', 0.0025)
         for sx in (-1, 1):
-            q = [on_skin(tip[0] + sx * mw_ * u, zm - md_ * math.sin(u * math.pi * 0.75)) for u in np.linspace(0, 1, 9)]
+            q = [on_skin(tip[0] + sx * mw_ * u, zm - md_ * math.sin(u * math.pi * 0.75) + g('mouth_up_m', 0.0) * u ** 2) for u in np.linspace(0, 1, 9)]
             lines.append([p for p in q if p is not None])
         for li, pts in enumerate(lines):
             if len(pts) < 2: continue
@@ -760,7 +824,7 @@ def head_detail():
             mt = nt_.nodes.new('ShaderNodeMath'); mt.operation = 'MULTIPLY_ADD'; mt.inputs[1].default_value = 0.55; mt.inputs[2].default_value = 0.16
             nt_.links.new(gm.outputs['Result'], mt.inputs[0]); nt_.links.new(mt.outputs[0], bs_.inputs['Metallic'])
         log['horn_' + hn] = 'ridges and glints'
-    appeal_eye_material(); appeal_measure(); log['appeal'] = APLOG
+    APLOG.pop('SKBVH', None); appeal_eye_material(); appeal_measure(); log['appeal'] = APLOG
     print('APPEAL', json.dumps(APLOG), flush=True)
     print('HEAD detail', json.dumps(log), flush=True)
 
@@ -963,6 +1027,25 @@ def pose(kind, f):
         rig.animation_data.action = bpy.data.actions['idle' if kind == 'idle' else 'sig.horns-first-descent']; s.frame_set(f)
     ac = rig.animation_data.action
     if hasattr(rig.animation_data, 'action_slot') and rig.animation_data.action_slot is None and len(ac.slots): rig.animation_data.action_slot = ac.slots[0]
+    bpy.context.view_layer.update()
+    apply_carriage(kind, f)
+    if kind == 'sig':
+        # appeal build: the larger head lowers the horn at the hit; a root height offset on the contact frames restores
+        # the approved horn-to-target contact (render-time, reported, not baked into the clip)
+        dz = (json.loads(os.environ.get('FC_HEAD_PARAMS', '{}')).get('sig_root_dz') or {}).get(str(f), 0.0)
+        if dz: rig.location = (rig.location[0], rig.location[1], rig.location[2] + dz); bpy.context.view_layer.update()
+
+
+def apply_carriage(kind, f):
+    # appeal build: rest and idle head and neck carriage as local pitch offsets (bone X axis) on top of the pose
+    hp = json.loads(os.environ.get('FC_HEAD_PARAMS', '{}')); car = hp.get('carriage') or {}
+    if not car: return
+    if not ((kind == 'review' and f == 'rest') or kind == 'idle'): return
+    from mathutils import Quaternion
+    for bn, deg in car.items():
+        pb = rig.pose.bones.get(bn)
+        if pb is None: continue
+        pb.rotation_mode = 'QUATERNION'; pb.rotation_quaternion = pb.rotation_quaternion @ Quaternion((1, 0, 0), math.radians(deg))
     bpy.context.view_layer.update()
 
 
