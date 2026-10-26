@@ -228,6 +228,15 @@ def head_detail():
                 for nme, v in (('bind_height', H_), ('bind_offset_x', X_), ('bind_offset_y', Y_)): d_.attributes[nme].data.foreach_set('value', v.astype(np.float32))
                 col[si, :3] *= g('ap_brow_dark', 0.9)
             APLOG['brow_strands'] = int(len(si))
+        esk = g('ap_eye_skin', 0.0)
+        if esk and newc:
+            sa_ = gbody.data.attributes.get('coat_color')
+            if sa_ is not None and sa_.domain == 'POINT':
+                sc_ = arr(sa_.data, 'color', 4); tg_ = np.array(g('ap_eye_skin_rgb', g('ap_ring_rgb', [0.3, 0.3, 0.3])), np.float32); wmax = np.zeros(len(NB))
+                for side, (c2, r2, th, piv) in newc.items():
+                    dd = np.linalg.norm(NB - c2, axis=1); wmax = np.maximum(wmax, 1 - sst(r2 * g('ap_eye_skin_in', 1.3), r2 * g('ap_eye_skin_out', 2.0), dd))
+                wmax *= esk; sc_[:, :3] = sc_[:, :3] * (1 - wmax[:, None]) + tg_[None, :] * wmax[:, None]
+                sa_.data.foreach_set('color', sc_.astype(np.float32).ravel()); APLOG['eye_skin_vertices'] = int((wmax > 0.05).sum())
         # pale inner ears: strands and skin on the ear's forward-facing (inner) side
         ep = g('ap_ear_pale', 0.0)
         if ep:
@@ -495,7 +504,7 @@ def head_detail():
                     t = math.radians(tdeg); d = a * math.cos(t) + pd * math.sin(t)
                     if covered(c2 + d * r * 1.02, d): tb = t; break
                 TB[i] = tb
-            TBs = np.array([np.mean(TB[[(i + j) % nph for j in range(-2, 3)]]) for i in range(nph)])
+            _sw = int(g('lid_edge_smooth', 2)); TBs = np.array([np.mean(TB[[(i + j) % nph for j in range(-_sw, _sw + 1)]]) for i in range(nph)])
             return ex_, a, upv, rtv, nph, PH, TBs
         ex_, a, upv, rtv, nph, PH, TBs = opening()
         bo = g('lid_build_out_m', 0.0); BUILD[side] = 0
@@ -537,9 +546,27 @@ def head_detail():
             x = np.clip((th - tb) / band, 0, 1); wgt = (1 - x * x * (3 - 2 * x)) * (th >= tb - math.radians(1.0)) * (nq < r * 1.45) * (nq > r * 0.85)
             dth = pull * wgt
             perp = u - np.outer(u @ a, a); perp /= np.maximum(np.linalg.norm(perp, axis=1, keepdims=True), 1e-9)
-            th2 = np.maximum(th - dth, 0.0); u2 = np.outer(np.cos(th2), a) + perp * np.sin(th2)[:, None]
+            th2 = np.maximum(th - dth, 0.0)
+            if g('lid_clean_edge', 0):
+                # one smooth lid edge: the target edge angle is interpolated (not indexed) round the opening and
+                # smoothed, and no pulled vertex may cross it, so the skin ends on a clean curve instead of a sawtooth
+                PHx = np.r_[PH - 2 * math.pi, PH, PH + 2 * math.pi]; pull_e = lpu * np.clip(np.sin(PH), 0, 1) ** 1.2 + lpl * np.clip(-np.sin(PH), 0, 1) ** 1.2 + lpc * np.abs(np.cos(PH)) ** 4
+                E_ = TBs - pull_e; k_ = int(g('lid_clean_smooth', 6)); E_ = np.array([np.mean(E_[[(i + j) % nph for j in range(-k_, k_ + 1)]]) for i in range(nph)])
+                edge = np.interp(ph, PHx, np.r_[E_, E_, E_])
+                th2 = np.where(dth > 1e-4, np.maximum(th2, edge), th2)
+            u2 = np.outer(np.cos(th2), a) + perp * np.sin(th2)[:, None]
             rr_ = np.where(dth > 1e-4, np.maximum(nq, r * 1.0 + g('lid_pull_lift_m', 0.0012)), nq)
             NBp = np.where((dth > 1e-4)[:, None], c2 + u2 * rr_[:, None], BV_)
+            if g('lid_clean_edge', 0) and g('lid_clean_relax', 3):
+                # relax the moved ring along the eye sphere (tangential Laplacian), then re-clamp to the edge
+                Ed = np.array([e.vertices[:] for e in me_.edges]); mv = dth > 1e-4; cnt_ = np.bincount(Ed.ravel(), minlength=len(BV_)).astype(float)
+                for _ in range(int(g('lid_clean_relax', 3))):
+                    sm = np.zeros_like(NBp); np.add.at(sm, Ed[:, 0], NBp[Ed[:, 1]]); np.add.at(sm, Ed[:, 1], NBp[Ed[:, 0]])
+                    avg = sm / np.maximum(cnt_, 1)[:, None]; NBp = np.where(mv[:, None], 0.5 * NBp + 0.5 * avg, NBp)
+                    q2 = NBp - c2; n2 = np.linalg.norm(q2, axis=1); u3 = q2 / np.maximum(n2[:, None], 1e-9)
+                    t3 = np.arccos(np.clip(u3 @ a, -1, 1)); p3 = u3 - np.outer(u3 @ a, a); p3 /= np.maximum(np.linalg.norm(p3, axis=1, keepdims=True), 1e-9)
+                    t3 = np.where(mv, np.maximum(t3, edge), t3); r3 = np.where(mv, np.maximum(n2, r + g('lid_pull_lift_m', 0.0012)), n2)
+                    NBp = np.where(mv[:, None], c2 + (np.outer(np.cos(t3), a) + p3 * np.sin(t3)[:, None]) * r3[:, None], NBp)
             dl = (NBp - BV_) @ Mbi_[:3, :3].T
             if me_.shape_keys:
                 for kb in me_.shape_keys.key_blocks:
@@ -570,6 +597,18 @@ def head_detail():
             dth = dir_(TE[i] + 0.02, ph) - d; dth /= np.linalg.norm(dth)
             path.append(c2 + d * (rs + rh * 0.35 + bos / 2)); sa.append(dth); sb.append(d)
         Vt, Ft = tube(path, rw, rh + bos / 2, sa, sb, True, 10); add_obj('head_lid_rim_' + side, Vt, Ft, lidm)
+        bw_ = g('lid_band_m', 0.0)
+        if bw_:
+            # lid band: a soft coat-grey lid that covers the ragged skin edge round the opening, outside the thin line
+            bm_ = bpy.data.materials.get('Head lid band') or bpy.data.materials.new('Head lid band'); bm_.use_nodes = True
+            bb_ = bm_.node_tree.nodes.get('Principled BSDF'); bb_.inputs['Base Color'].default_value = list(g('lid_band_rgb', [0.12, 0.115, 0.11])) + [1]; bb_.inputs['Roughness'].default_value = 0.85
+            try: bb_.inputs['Specular IOR Level'].default_value = 0.2
+            except Exception: pass
+            pb_, sa2, sb2 = [], [], []
+            for i, ph in enumerate(PH):
+                t_ = TE[i] + (bw_ * 0.5 - g('lid_band_overlap_m', 0.0006)) / r; d = dir_(t_, ph); dth = dir_(t_ + 0.02, ph) - d; dth /= np.linalg.norm(dth)
+                pb_.append(c2 + d * (shell_r(d) + g('lid_band_lift_m', 0.0008) + bos)); sa2.append(dth); sb2.append(d)
+            Vt2, Ft2 = tube(pb_, bw_ * 0.5, g('lid_band_h_m', 0.0012), sa2, sb2, True, 10); add_obj('head_lid_band_' + side, Vt2, Ft2, bm_)
         RIMPATH[side] = [np.array(p_) for p_ in path]
         rim_top = float(np.median([(p_ - c2) @ a + (rh + bos / 2) * math.cos(t_) for p_, t_ in zip(path, TE)]))
         # upper lid shell: rows from under the skin (TB + tuck) to the rim (TE), only where the lid overlaps
@@ -1005,13 +1044,21 @@ s.cycles.samples = int(os.environ.get('FUR_SAMPLES', '40')); s.cycles.use_denois
 try: s.cycles.denoiser = 'OPENIMAGEDENOISE'
 except Exception: pass
 s.view_settings.view_transform = 'Standard'
+if os.environ.get('FC_STUDIO'):
+    # N-vf3n shared studio light (art/pipeline/render/studio_light.py); the side camera sits on the creature's -X side
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'render')); import studio_light
+    _sl = studio_light.apply(s, creature_center=(0.0, -0.1, 0.42), facing=(0.0, -1.0, 0.0), camera_side=(-1.0, 0.0, 0.0), overrides=json.loads(os.environ['FC_STUDIO']))
+    print('STUDIO', json.dumps(_sl), flush=True)
+for _hp in filter(None, os.environ.get('FC_HIDE', '').split(',')):
+    for o in s.objects:
+        if o.name.startswith(_hp): o.hide_render = True
 clay = bpy.data.materials.new('furcheck_clay'); clay.use_nodes = True
 bs = clay.node_tree.nodes.get('Principled BSDF'); bs.inputs['Base Color'].default_value = (0.62, 0.62, 0.62, 1); bs.inputs['Roughness'].default_value = 0.8
 skin_mats = list(body.data.materials)
 
 
 def set_clay(on):
-    for o in curves: o.hide_render = on or o.name == 'Plume spine curve'
+    for o in curves: o.hide_render = on or o.name == 'Plume spine curve' or o.name.startswith(tuple(filter(None, os.environ.get('FC_HIDE', '').split(','))) or ('__nohide__',))
     for i in range(len(body.data.materials)): body.data.materials[i] = clay if on else skin_mats[i]
 
 
@@ -1020,7 +1067,7 @@ roots = [sp.get('_root', 0.0) for sp in specs]
 
 
 def pose(kind, f):
-    rig.location = (0, 0, 0)
+    rig.location = (0, 0, 0); rig.rotation_euler = (0, 0, 0)
     if kind == 'review':
         rig.animation_data.action = bpy.data.actions['review.poses']; s.frame_set(1 + 10 * POSE_ORDER.index(f))
     else:
@@ -1029,6 +1076,18 @@ def pose(kind, f):
     if hasattr(rig.animation_data, 'action_slot') and rig.animation_data.action_slot is None and len(ac.slots): rig.animation_data.action_slot = ac.slots[0]
     bpy.context.view_layer.update()
     apply_carriage(kind, f)
+    if os.environ.get('FC_DEBUG_FEET'):
+        W_ = rig.matrix_world
+        dg_ = bpy.context.evaluated_depsgraph_get(); mins = {}
+        for o_ in s.objects:
+            if o_.type in ('MESH', 'CURVES') and not o_.hide_render and not o_.name.startswith(('lookdev', 'Plume spine')):
+                e_ = o_.evaluated_get(dg_)
+                try:
+                    P_ = np.array([e_.matrix_world @ Vector(c) for c in e_.bound_box]); mins[o_.name] = round(float(P_[:, 2].min()), 4)
+                except Exception: pass
+        eb_ = body.evaluated_get(dg_); m_ = eb_.to_mesh(); Wb_ = np.array(eb_.matrix_world); BVv = np.array([v.co[:] for v in m_.vertices]) @ Wb_[:3, :3].T + Wb_[:3, 3]; eb_.to_mesh_clear()
+        print('FEETV', {k: round(float(BVv[np.char.startswith(_DOM.astype(str), k), 2].min()), 4) for k in ('leg_fl', 'leg_fr', 'leg_hl', 'leg_hr')}, flush=True)
+        print('FEET', kind, f, {bn: [round(x, 4) for x in (W_ @ rig.pose.bones[bn].tail)] for bn in ('leg_fl_03', 'leg_hl_03', 'leg_hl_02')}, [round(x, 3) for x in rig.matrix_world.to_euler()], flush=True)
     if kind == 'sig':
         # appeal build: the larger head lowers the horn at the hit; a root height offset on the contact frames restores
         # the approved horn-to-target contact (render-time, reported, not baked into the clip)
@@ -1042,6 +1101,13 @@ def apply_carriage(kind, f):
     if not car: return
     if not ((kind == 'review' and f == 'rest') or kind == 'idle'): return
     from mathutils import Quaternion
+    sp = hp.get('stance_pitch_deg', 0.0)
+    if sp:
+        # pitch the whole pose about the hind paws through the root pose bone (not the object: the fur is placed in
+        # object space from the deformed body, so an object rotation would be applied to the strands twice)
+        pv = Vector(hp['stance_pivot']); R_ = Matrix.Rotation(math.radians(sp), 4, 'X'); T_ = Matrix.Translation(pv) @ R_ @ Matrix.Translation(-pv)
+        Ri = rig.matrix_world.inverted(); Ta = Ri @ T_ @ rig.matrix_world
+        pr = rig.pose.bones['root']; pr.matrix = Ta @ pr.matrix; bpy.context.view_layer.update()
     for bn, deg in car.items():
         pb = rig.pose.bones.get(bn)
         if pb is None: continue
@@ -1196,7 +1262,9 @@ for kind, f in FRAMES:
     if PLUME_CHECK: print('PLUME', tag, plume_root_error(), flush=True)
     vlist = VIEWS + [v for v in EXTRA.get(tag, []) if v not in VIEWS]
     for vname in vlist:
-        if vname == 'side': cam_side('side', f, kind)
+        if vname == 'side':
+            cam_side('side', f, kind)
+            if os.environ.get('FC_DEBUG_FEET'): print('CAM', s.camera.name, s.camera.parent, [round(x, 4) for x in s.camera.matrix_world.to_euler()], s.camera.data.ortho_scale, flush=True)
         else: cam_oblique(vname)
         for clay_on in ((False,) if os.environ.get('FC_NOCLAY') == '1' else (False, True)):
             set_clay(clay_on); bpy.context.view_layer.update()
