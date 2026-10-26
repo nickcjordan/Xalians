@@ -1,0 +1,71 @@
+{
+  "id": "B-01M5W3JK94DR655CJAP4WGAVY6",
+  "alias": "qn2t",
+  "stage": "07-surface",
+  "kind": "image",
+  "goal": "T2: 07-surface appeal",
+  "scope": "appeal",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "beece6e6d5da56162ba50fea5bca7dcef653e2a66576de7865122c94f58fa363"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 28665,
+    "wallMinutes": 1.18,
+    "image": {
+      "stage": "07-surface",
+      "element": "appeal",
+      "label": "T2",
+      "summary": "Variant T2, FACE PLUS BODY PROPORTIONS. Everything from this face brief: pointed larger ears with pale inner fur, soft a",
+      "promptSha256": "1dbfd8b67fc14fe58557482e49ba739e485e45e861649313c5a90aa538ecb154",
+      "inputs": [
+        {
+          "name": "current_side.png",
+          "hash": "eee01f9621165581166c7982a1bb3b93a2c427d38b20fb0b0182b5e4b8001e0f"
+        },
+        {
+          "name": "current_face.png",
+          "hash": "6ae578cd46d61ba673d3961361635432fe4aad96048edd34cf856cb5dab043f8"
+        },
+        {
+          "name": "sheet_side.png",
+          "hash": "73ca7d3ad864d66d0f3435a2c12fe9eb79cecd3ebfd1070dc7ede4dbb95d797c"
+        },
+        {
+          "name": "sheet_head.png",
+          "hash": "63924e1de2c71b427b64b336b32e52b06ce483378c5961498b16fd976b4b16a3"
+        },
+        {
+          "name": "akinza_appeal_ref.png",
+          "hash": "12986b4f3abe14c37c58a65decbf2bc5d2196291de052858a39bf3d1d61743bb"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-qn2t",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "beece6e6d5da56162ba50fea5bca7dcef653e2a66576de7865122c94f58fa363"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-26T12:39:43Z",
+  "briefSha256": "226f6288ba5e2bf9c731bd44f5a276a98be8576daf639bc003b83b2c1fa3941d",
+  "checks": [],
+  "reportedAt": "2026-10-26T12:40:54Z"
+}

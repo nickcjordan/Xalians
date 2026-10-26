@@ -1,0 +1,71 @@
+{
+  "id": "B-01M5W3PY687V15B89A7KH4RYRK",
+  "alias": "5sh4",
+  "stage": "07-surface",
+  "kind": "image",
+  "goal": "T4: 07-surface appeal",
+  "scope": "appeal",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "a350b5aa8f08e435d4b8f94dc888cbbbee029527856d0a88dcb811fb0f4697b9"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 22288,
+    "wallMinutes": 1.29,
+    "image": {
+      "stage": "07-surface",
+      "element": "appeal",
+      "label": "T4",
+      "summary": "Variant T4, YOUNG AND SOFT. Push toward a juvenile read while staying realistic: everything from T3 (larger pointed ears",
+      "promptSha256": "6ae330821a4a4e376dca0ea964b3cf4d9f14626d34b99bbfa66b08a440c9d940",
+      "inputs": [
+        {
+          "name": "current_side.png",
+          "hash": "eee01f9621165581166c7982a1bb3b93a2c427d38b20fb0b0182b5e4b8001e0f"
+        },
+        {
+          "name": "current_face.png",
+          "hash": "6ae578cd46d61ba673d3961361635432fe4aad96048edd34cf856cb5dab043f8"
+        },
+        {
+          "name": "sheet_side.png",
+          "hash": "73ca7d3ad864d66d0f3435a2c12fe9eb79cecd3ebfd1070dc7ede4dbb95d797c"
+        },
+        {
+          "name": "sheet_head.png",
+          "hash": "63924e1de2c71b427b64b336b32e52b06ce483378c5961498b16fd976b4b16a3"
+        },
+        {
+          "name": "akinza_appeal_ref.png",
+          "hash": "12986b4f3abe14c37c58a65decbf2bc5d2196291de052858a39bf3d1d61743bb"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-5sh4",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "a350b5aa8f08e435d4b8f94dc888cbbbee029527856d0a88dcb811fb0f4697b9"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-26T12:42:05Z",
+  "briefSha256": "703ed1335a380513b2a330705629634b92192ffd6a8afbbc7008b0b4be3f18d2",
+  "checks": [],
+  "reportedAt": "2026-10-26T12:43:23Z"
+}

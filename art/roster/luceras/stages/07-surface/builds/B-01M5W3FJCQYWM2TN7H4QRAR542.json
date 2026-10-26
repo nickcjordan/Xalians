@@ -1,0 +1,71 @@
+{
+  "id": "B-01M5W3FJCQYWM2TN7H4QRAR542",
+  "alias": "nngd",
+  "stage": "07-surface",
+  "kind": "image",
+  "goal": "T1: 07-surface appeal",
+  "scope": "appeal",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "output.png",
+      "hash": "eb094152c2abcd0221e24d466b6da7926c63b27feb34bee93df1471972df411b"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "blockedBy": "nothing",
+    "codexTokens": 18795,
+    "wallMinutes": 1.65,
+    "image": {
+      "stage": "07-surface",
+      "element": "appeal",
+      "label": "T1",
+      "summary": "Variant T1, FACE ONLY. Keep the body, legs, neck, horns, tail and proportions exactly as in current_side.png. Change onl",
+      "promptSha256": "03d43ca0ac9f9c43c7fbf87def3edd9f18c5c613835e51d4634dc2d9eeb637ae",
+      "inputs": [
+        {
+          "name": "current_side.png",
+          "hash": "eee01f9621165581166c7982a1bb3b93a2c427d38b20fb0b0182b5e4b8001e0f"
+        },
+        {
+          "name": "current_face.png",
+          "hash": "6ae578cd46d61ba673d3961361635432fe4aad96048edd34cf856cb5dab043f8"
+        },
+        {
+          "name": "sheet_side.png",
+          "hash": "73ca7d3ad864d66d0f3435a2c12fe9eb79cecd3ebfd1070dc7ede4dbb95d797c"
+        },
+        {
+          "name": "sheet_head.png",
+          "hash": "63924e1de2c71b427b64b336b32e52b06ce483378c5961498b16fd976b4b16a3"
+        },
+        {
+          "name": "akinza_appeal_ref.png",
+          "hash": "12986b4f3abe14c37c58a65decbf2bc5d2196291de052858a39bf3d1d61743bb"
+        }
+      ],
+      "tool": "codex image_gen (Nick's subscription)",
+      "model": "config default",
+      "governs": [],
+      "notFor": [],
+      "runDir": "C:\\dev\\art-data\\pipeline\\codex-runs\\B-nngd",
+      "exitStatus": 0
+    },
+    "outputs": [
+      {
+        "name": "output.png",
+        "hash": "eb094152c2abcd0221e24d466b6da7926c63b27feb34bee93df1471972df411b"
+      }
+    ]
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-10-26T12:38:04Z",
+  "briefSha256": "e6a778192f81331d277533d32e94b99f6f80f7994ca7a733e247de73943a293c",
+  "checks": [],
+  "reportedAt": "2026-10-26T12:39:43Z"
+}

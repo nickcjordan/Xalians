@@ -1,0 +1,17 @@
+{
+  "id": "N-01M5W8RSCN7D5YRDE39Z67D2KD",
+  "alias": "g7s6",
+  "stage": "07-surface",
+  "who": "nick",
+  "words": "t4 looks good to me... keep the hind legs as they are (deliberate kangaroo-like design), but otherwise make the other changes. I don't want you going into too much effort remodeling the skeleton and the body... adjustments we can make, but I don't want you to drift too far from the original design around things like the anatomy.",
+  "date": "2026-10-26",
+  "kind": "pick",
+  "binds": {
+    "build": "B-01M5W3PY687V15B89A7KH4RYRK",
+    "evidence": [
+      "a350b5aa8f08e435d4b8f94dc888cbbbee029527856d0a88dcb811fb0f4697b9"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-10-26T14:10:29Z"
+}
