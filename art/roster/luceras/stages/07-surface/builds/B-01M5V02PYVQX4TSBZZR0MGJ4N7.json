@@ -1,0 +1,19 @@
+{
+  "id": "B-01M5V02PYVQX4TSBZZR0MGJ4N7",
+  "alias": "78n2",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Appeal face redesign f3: dilated pupils, relaxed lid, clear cornea, face fur, ear and head scale",
+  "scope": "luceras-surface/appealface1 f3",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-10-26T02:19:23Z",
+  "briefSha256": "48cef537c90fe92002088b7c7e1a6a7664a415358f55825e8a109acffb947b78"
+}
