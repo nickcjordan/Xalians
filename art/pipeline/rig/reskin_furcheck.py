@@ -94,6 +94,131 @@ def head_detail():
     # ---- appeal study (creature-appeal.md floor): local head edits before the eyes are seated and the lids built.
     # Topology and every groom binding are unchanged; strands follow the moved skin through their triangle frames.
     APLOG = {}
+    def appeal_scale():
+        """Appeal face 1: uniform head scale about the head joint (eased over the neck_02 span, horns keep their size and
+        ride on the skull), then a length-biased ear scale about each ear root. Vertex moves only; every shape key moves by
+        the same delta; strands follow their triangles."""
+        hs = g('ap_head_scale', 1.0); es_l, es_w = g('ap_ear_len', 1.0), g('ap_ear_wid', 1.0)
+        if hs == 1.0 and es_l == 1.0 and es_w == 1.0: return
+        me_ = body.data; Mw = np.array(body.matrix_world); Mi = np.linalg.inv(Mw); Rw_ = np.array(rig.matrix_world)
+        BV0 = np.array([v.co[:] for v in me_.vertices]); BV = BV0 @ Mw[:3, :3].T + Mw[:3, 3]; NV = len(BV)
+        gi_ = {x.name: x.index for x in body.vertex_groups}; W_ = {}
+        for nme in ('head_01', 'jaw_01', 'ear_l_01', 'ear_l_02', 'ear_r_01', 'ear_r_02', 'neck_02'):
+            W_[nme] = np.zeros(NV)
+        for v in me_.vertices:
+            for gg in v.groups:
+                nm_ = body.vertex_groups[gg.group].name
+                if nm_ in W_: W_[nm_][v.index] = gg.weight
+        def bw(nme, end='head_local'): return (Rw_ @ np.r_[getattr(rig.data.bones[nme], end), 1])[:3]
+        J = bw('head_01'); N0 = bw('neck_02')
+        def sst(e0, e1, x): t = np.clip((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t)
+        ax_ = J - N0; u = ((BV - N0) @ ax_) / (ax_ @ ax_)
+        whead = np.clip(W_['head_01'] + W_['jaw_01'] + W_['ear_l_01'] + W_['ear_l_02'] + W_['ear_r_01'] + W_['ear_r_02'], 0, 1)
+        # the neck eases in along neck_02 (0 at its root, 1 at the head joint); the head itself is fully scaled
+        wn = sst(0.0, 1.0, u) * np.clip(W_['neck_02'] + whead, 0, 1)
+        w = np.maximum(whead, wn) * (u > -0.05)
+        NB = J + (BV - J) * (1 + (hs - 1) * w)[:, None]
+        # the skin round each horn base moves rigidly with the horn (the horn is not scaled, so its socket must not grow)
+        for hn in ('horn_l', 'horn_r'):
+            ho = bpy.data.objects.get(hn)
+            if ho is None: continue
+            Mo = np.array(ho.matrix_world); HP_ = np.array([v.co[:] for v in ho.data.vertices]) @ Mo[:3, :3].T + Mo[:3, 3]
+            base = HP_[np.argmin(np.linalg.norm(HP_ - J, axis=1))]
+            near = HP_[np.linalg.norm(HP_ - base, axis=1) < g('ap_horn_base_r', 0.035)]; bc = near.mean(0); br = float(np.linalg.norm(near - bc, axis=1).max())
+            t_ = (base - J) * (hs - 1); dv = np.linalg.norm(BV - bc, axis=1)
+            wh = (1 - sst(br * 1.05, br * g('ap_horn_soft', 1.8), dv)) * (w > 0)
+            NB = NB * (1 - wh[:, None]) + (BV + t_) * wh[:, None]
+            APLOG.setdefault('horn_base_rigid_vertices', {})[hn] = int((wh > 0.5).sum())
+        # eyes and corneas scale with the head; horns ride on the skull without scaling (translated by their base's move)
+        for on in ('eye_l', 'eye_r', 'surface_cornea_eye_l', 'surface_cornea_eye_r', 'horn_l', 'horn_r'):
+            ob = bpy.data.objects.get(on)
+            if ob is None: continue
+            Mo = np.array(ob.matrix_world); P_ = np.array([v.co[:] for v in ob.data.vertices]) @ Mo[:3, :3].T + Mo[:3, 3]
+            if on.startswith('horn'):
+                base = P_[np.argmin(np.linalg.norm(P_ - J, axis=1))]; P_ = P_ + (base - J) * (hs - 1)
+            else:
+                P_ = J + (P_ - J) * hs
+            Pl = (P_ - Mo[:3, 3]) @ np.linalg.inv(Mo[:3, :3]).T
+            for v, x in zip(ob.data.vertices, Pl): v.co = x.tolist()
+        # ears: about the (scaled) root, es_l along the ear, es_w across, weighted by the ear groups
+        for side in ('l', 'r'):
+            R0 = J + (bw(f'ear_{side}_01') - J) * hs; T0 = J + (bw(f'ear_{side}_02', 'tail_local') - J) * hs
+            A_ = (T0 - R0) / np.linalg.norm(T0 - R0); we = np.clip(W_[f'ear_{side}_01'] + W_[f'ear_{side}_02'], 0, 1)
+            q = NB - R0; qa = np.outer(q @ A_, A_); qp = q - qa
+            NB = np.where((we > 0)[:, None], R0 + qa * (1 + (es_l - 1) * we)[:, None] + qp * (1 + (es_w - 1) * we)[:, None], NB)
+        dl = (NB - BV) @ Mi[:3, :3].T
+        if me_.shape_keys:
+            for kb in me_.shape_keys.key_blocks:
+                kc = np.array([d_.co[:] for d_ in kb.data]) + dl
+                for d_, c_ in zip(kb.data, kc): d_.co = c_.tolist()
+        for v_, c_ in zip(me_.vertices, BV0 + dl): v_.co = c_.tolist()
+        me_.update(); bpy.context.view_layer.update()
+        APLOG['scale'] = dict(head=hs, ear_len=es_l, ear_wid=es_w, head_vertices=int((w > 0.99).sum()), neck_blend_vertices=int(((w > 0.01) & (w < 0.99)).sum()))
+
+    def appeal_face_fur(NB, newc, dom):
+        """Brow fur (existing strands above each eye: longer, tilted up and out, a little darker), pale inner ears (skin and
+        strands), and the soft light ring weighted below and behind the eye."""
+        co_ = next((o for o in objs if o.type == 'CURVES' and o.name.startswith('Luceras interpolated')), None)
+        if co_ is None: return
+        d_ = co_.data; ids_ = np.stack([arr(d_.attributes['bind_i' + c].data, 'value', 1, np.int32) for c in 'abc'], 1)
+        bar_ = np.stack([arr(d_.attributes['bind_' + c].data, 'value', 1) for c in 'abc'], 1)
+        rp = (NB[ids_] * bar_[:, :, None]).sum(1); col = arr(d_.attributes['coat_color'].data, 'color', 4)
+        offs = arr(d_.curves, 'first_point_index', 1, np.int32); cnt = arr(d_.curves, 'points_length', 1, np.int32)
+        def sst(e0, e1, x): t = np.clip((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t)
+        bl = g('ap_brow_len', 1.0)
+        if bl != 1.0 and newc:
+            H_ = arr(d_.attributes['bind_height'].data, 'value', 1); X_ = arr(d_.attributes['bind_offset_x'].data, 'value', 1); Y_ = arr(d_.attributes['bind_offset_y'].data, 'value', 1)
+            sel = np.zeros(len(rp), bool)
+            for side, (c2, r2, th, piv) in newc.items():
+                q = rp - c2; top = r2 * g('ap_brow_top_frac', 0.75)
+                m_ = (q[:, 2] > top + g('ap_brow_from_m', 0.004)) & (q[:, 2] < top + g('ap_brow_to_m', 0.014)) & (np.linalg.norm(q[:, :2], axis=1) < r2 * 1.3)
+                sel |= m_
+            si = np.where(sel)[0]
+            if len(si):
+                tri = NB[ids_[si]]; e_ = tri[:, 1] - tri[:, 0]; f_ = tri[:, 2] - tri[:, 0]
+                nrm = np.cross(e_, f_); nrm /= np.linalg.norm(nrm, axis=1, keepdims=True); tan = e_ / np.linalg.norm(e_, axis=1, keepdims=True); bit = np.cross(nrm, tan)
+                upo = np.array([0.0, 0.0, 1.0])[None, :] + np.c_[np.sign(rp[si, 0]) * 0.4, np.zeros(len(si)), np.zeros(len(si))]
+                tl = math.tan(math.radians(g('ap_brow_tilt_deg', 20.0)))
+                for k, ci in enumerate(si):
+                    a0, n_ = offs[ci], cnt[ci]; sl = slice(a0, a0 + n_)
+                    P = np.c_[H_[sl], X_[sl], Y_[sl]] * bl                                  # frame-local, longer
+                    L_ = np.linalg.norm(P[-1]); s_ = np.linspace(0, 1, n_)
+                    du = np.array([upo[k] @ nrm[k], upo[k] @ tan[k], upo[k] @ bit[k]]); du /= max(np.linalg.norm(du), 1e-9)
+                    P = P + np.outer(s_, du) * L_ * tl
+                    H_[sl], X_[sl], Y_[sl] = P[:, 0], P[:, 1], P[:, 2]
+                for nme, v in (('bind_height', H_), ('bind_offset_x', X_), ('bind_offset_y', Y_)): d_.attributes[nme].data.foreach_set('value', v.astype(np.float32))
+                col[si, :3] *= g('ap_brow_dark', 0.9)
+            APLOG['brow_strands'] = int(len(si))
+        # pale inner ears: strands and skin on the ear's forward-facing (inner) side
+        ep = g('ap_ear_pale', 0.0)
+        if ep:
+            me_ = body.data; Mw = np.array(body.matrix_world)
+            N_ = np.array([v.normal[:] for v in me_.vertices]) @ Mw[:3, :3].T; N_ /= np.maximum(np.linalg.norm(N_, axis=1), 1e-9)[:, None]
+            earv = np.char.startswith(dom.astype(str), 'ear_')
+            inner = earv * sst(g('ap_ear_in_lo', 0.0), g('ap_ear_in_hi', 0.5), -N_[:, 1])  # faces forward (the creature faces -Y)
+            APLOG['ear_inner_vertices'] = int((inner > 0.5).sum()); APLOG['ear_vertices'] = int(earv.sum())
+            pale = np.array(g('ap_ear_rgb', [0.55, 0.52, 0.50]), np.float32)
+            ws_ = (inner[ids_] * bar_).sum(1) * ep
+            col[:, :3] = col[:, :3] * (1 - ws_[:, None]) + pale[None, :] * ws_[:, None]
+            # the scene body takes its colour attributes from the groom body after this step, so edit the groom body's
+            sa = gbody.data.attributes.get('coat_color')
+            if sa is not None and sa.domain == 'POINT':
+                sc_ = arr(sa.data, 'color', 4); wv_ = inner * ep; sc_[:, :3] = sc_[:, :3] * (1 - wv_[:, None]) + pale[None, :] * wv_[:, None]
+                sa.data.foreach_set('color', sc_.astype(np.float32).ravel())
+            sg = gbody.data.attributes.get('skin_gain')
+            if sg is not None and sg.domain == 'POINT' and g('ap_ear_skin_gain', None) is not None:
+                gv = arr(sg.data, 'value', 1); APLOG['skin_gain_range'] = [round(float(gv.min()), 3), round(float(np.median(gv)), 3), round(float(gv.max()), 3)]
+                gv = gv * (1 - inner * ep) + g('ap_ear_skin_gain', 1.0) * inner * ep; sg.data.foreach_set('value', gv.astype(np.float32))
+            APLOG['ear_pale_strands'] = int((ws_ > 0.1).sum())
+            etl = g('ap_ear_tuft_len', 1.0)
+            if etl != 1.0:
+                H_ = arr(d_.attributes['bind_height'].data, 'value', 1); X_ = arr(d_.attributes['bind_offset_x'].data, 'value', 1); Y_ = arr(d_.attributes['bind_offset_y'].data, 'value', 1)
+                si = np.where(ws_ > 0.3 * ep)[0]
+                for ci in si:
+                    sl = slice(offs[ci], offs[ci] + cnt[ci]); H_[sl] *= etl; X_[sl] *= etl; Y_[sl] *= etl
+                for nme, v in (('bind_height', H_), ('bind_offset_x', X_), ('bind_offset_y', Y_)): d_.attributes[nme].data.foreach_set('value', v.astype(np.float32))
+                APLOG['ear_tuft_strands'] = int(len(si))
+        d_.attributes['coat_color'].data.foreach_set('color', col.astype(np.float32).ravel())
     def appeal_edits():
         if not g('appeal', 0): return
         me_ = body.data; Mw = np.array(body.matrix_world); Mi = np.linalg.inv(Mw)
@@ -167,10 +292,12 @@ def head_detail():
                 d_ = o_.data; ia = arr(d_.attributes['bind_ia'].data, 'value', 1, np.int32); rp = NB[ia]
                 col = arr(d_.attributes['coat_color'].data, 'color', 4); wsum = np.zeros(len(ia))
                 for side, (c2, r2, th, piv) in newc.items():
-                    dd = np.linalg.norm(rp - c2, axis=1); wsum = np.maximum(wsum, 1 - sst(r2 * g('ap_ring_in', 1.0), r2 * g('ap_ring_out', 1.9), dd))
+                    dd = np.linalg.norm(rp - c2, axis=1); qz = (rp[:, 2] - c2[2]) / max(r2, 1e-9)
+                    wsum = np.maximum(wsum, (1 - sst(r2 * g('ap_ring_in', 1.0), r2 * g('ap_ring_out', 1.9), dd)) * (1 - g('ap_ring_top_cut', 0.0) * np.clip(qz, 0, 1)))
                 tgt = np.array(g('ap_ring_rgb', [0.32, 0.31, 0.31]), np.float32)
                 col[:, :3] = col[:, :3] * (1 - lr * wsum[:, None]) + tgt[None, :] * (lr * wsum[:, None])
                 d_.attributes['coat_color'].data.foreach_set('color', col.astype(np.float32).ravel()); APLOG['light_ring_strands'] = int((wsum > 0.05).sum())
+        appeal_face_fur(NB, newc, dom)
 
     def appeal_eye_material():
         """Round pupil with a highlight, iris ring all round: a procedural iris in the space of an empty that looks
@@ -184,11 +311,14 @@ def head_detail():
             aim = a.copy()
             if g('ap_aim_fwd', 0.0):    # aim the iris a little toward the snout line
                 fw = np.array([0.0, -1.0, 0.0]); aim = aim + fw * g('ap_aim_fwd', 0.0); aim /= np.linalg.norm(aim)
+            if g('ap_aim_up', 0.0): aim = aim + np.array([0.0, 0.0, g('ap_aim_up', 0.0)]); aim /= np.linalg.norm(aim)
             z_ = aim; y_ = np.array([0.0, 0.0, 1.0]) - z_ * z_[2]; y_ /= np.linalg.norm(y_); x_ = np.cross(y_, z_)
             M4 = Matrix(((x_[0], y_[0], z_[0], c2[0]), (x_[1], y_[1], z_[1], c2[1]), (x_[2], y_[2], z_[2], c2[2]), (0, 0, 0, 1)))
             em.matrix_world = M4
             m_ = bpy.data.materials.new('Appeal round eye ' + side); m_.use_nodes = True; nt = m_.node_tree; N = nt.nodes; L_ = nt.links
-            bs_ = N.get('Principled BSDF'); bs_.inputs['Roughness'].default_value = 0.25
+            bs_ = N.get('Principled BSDF'); bs_.inputs['Roughness'].default_value = 0.6
+            try: bs_.inputs['Specular IOR Level'].default_value = g('ap_iris_spec', 0.0)   # the cornea carries the gloss, not the iris
+            except Exception: pass
             tc = N.new('ShaderNodeTexCoord'); tc.object = em
             nrm = N.new('ShaderNodeVectorMath'); nrm.operation = 'NORMALIZE'; L_.new(tc.outputs['Object'], nrm.inputs[0])
             sep = N.new('ShaderNodeSeparateXYZ'); L_.new(nrm.outputs['Vector'], sep.inputs[0])
@@ -200,24 +330,44 @@ def head_detail():
             pupil = mr(tp - 0.015, tp + 0.015, 1.0, 0.0, ac.outputs[0])            # 1 inside the pupil
             rad = mr(tp, ti, 0.0, 1.0, ac.outputs[0])                              # 0 at the pupil edge, 1 at the iris edge
             limb = mr(ti - 0.09, ti - 0.01, 0.0, 1.0, ac.outputs[0])               # limbal ring
-            nz = N.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 60.0; nz.inputs['Detail'].default_value = 2.0
-            L_.new(tc.outputs['Object'], nz.inputs['Vector'])
+            # radial iris fibres: noise stretched along the radius (angle round the axis x 14, polar angle x 2)
+            phi = N.new('ShaderNodeMath'); phi.operation = 'ARCTAN2'; L_.new(sep.outputs['Y'], phi.inputs[0]); L_.new(sep.outputs['X'], phi.inputs[1])
+            cxyz = N.new('ShaderNodeCombineXYZ')
+            m1 = N.new('ShaderNodeMath'); m1.operation = 'MULTIPLY'; m1.inputs[1].default_value = g('ap_fibre_ang', 14.0); L_.new(phi.outputs[0], m1.inputs[0]); L_.new(m1.outputs[0], cxyz.inputs['X'])
+            m2 = N.new('ShaderNodeMath'); m2.operation = 'MULTIPLY'; m2.inputs[1].default_value = g('ap_fibre_rad', 2.0); L_.new(ac.outputs[0], m2.inputs[0]); L_.new(m2.outputs[0], cxyz.inputs['Y'])
+            nz = N.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = g('ap_fibre_scale', 3.0); nz.inputs['Detail'].default_value = 6.0; nz.inputs['Roughness'].default_value = 0.65
+            L_.new(cxyz.outputs['Vector'], nz.inputs['Vector'])
             ramp = N.new('ShaderNodeValToRGB'); cr = ramp.color_ramp
             cr.elements[0].position = 0.0; cr.elements[0].color = tuple(g('ap_iris_inner', [0.16, 0.07, 0.015])) + (1,)
             cr.elements[1].position = 1.0; cr.elements[1].color = tuple(g('ap_iris_outer', [0.30, 0.15, 0.04])) + (1,)
             e2 = cr.elements.new(0.55); e2.color = tuple(g('ap_iris_mid', [0.36, 0.19, 0.05])) + (1,)
-            mixf = N.new('ShaderNodeMath'); mixf.operation = 'MULTIPLY_ADD'; L_.new(nz.outputs['Fac'], mixf.inputs[0]); mixf.inputs[1].default_value = 0.35; L_.new(rad, mixf.inputs[2])
+            mixf = N.new('ShaderNodeMath'); mixf.operation = 'MULTIPLY_ADD'; L_.new(nz.outputs['Fac'], mixf.inputs[0]); mixf.inputs[1].default_value = g('ap_fibre_amt', 0.6); L_.new(rad, mixf.inputs[2])
             L_.new(mixf.outputs[0], ramp.inputs['Fac'])
             dark = N.new('ShaderNodeMixRGB'); L_.new(limb, dark.inputs['Fac']); L_.new(ramp.outputs['Color'], dark.inputs['Color1']); dark.inputs['Color2'].default_value = (0.05, 0.025, 0.01, 1)
             pm = N.new('ShaderNodeMixRGB'); L_.new(pupil, pm.inputs['Fac']); L_.new(dark.outputs['Color'], pm.inputs['Color1']); pm.inputs['Color2'].default_value = (0.004, 0.004, 0.005, 1)
             L_.new(pm.outputs['Color'], bs_.inputs['Base Color'])
             # highlight: a small bright spot up and toward the front of the iris, emissive so it reads in every render
-            hd = np.array(g('ap_hl_dir', [-0.35, 0.45, 0.82])); hd = hd / np.linalg.norm(hd)
-            if side == 'r': hd = hd * np.array([-1, 1, 1])
+            # one small crisp highlight at the viewer's upper left (front camera looks along +Y, its left is -X)
+            hw = z_ * g('ap_hl_axis_mix', 0.0) + np.array([0.0, -1.0, 0.0]) * g('ap_hl_fwd', 0.85) + np.array([0.0, 0.0, g('ap_hl_up', 0.4)]) + np.array([-g('ap_hl_left', 0.25), 0.0, 0.0]); hw /= np.linalg.norm(hw)   # same world direction for both eyes (toward a light at the front, upper left)
+            hd = np.array([hw @ x_, hw @ y_, hw @ z_])
             dp = N.new('ShaderNodeVectorMath'); dp.operation = 'DOT_PRODUCT'; L_.new(nrm.outputs['Vector'], dp.inputs[0]); dp.inputs[1].default_value = hd.tolist()
-            hl = mr(math.cos(math.radians(g('ap_hl_deg', 5.0))), math.cos(math.radians(g('ap_hl_deg', 5.0) * 0.6)), 0.0, 1.0, dp.outputs['Value'])
+            hl = mr(math.cos(math.radians(g('ap_hl_deg', 5.0))), math.cos(math.radians(g('ap_hl_deg', 5.0) * g('ap_hl_edge', 0.6))), 0.0, g('ap_hl_gain', 1.0), dp.outputs['Value'])
             bs_.inputs['Emission Color'].default_value = (1, 1, 1, 1); L_.new(hl, bs_.inputs['Emission Strength'])
             eo.data.materials.clear(); eo.data.materials.append(m_)
+            if g('ap_clear_cornea', 0):
+                co2 = bpy.data.objects.get('surface_cornea_eye_' + side)
+                for cm in (co2.data.materials if co2 else []):
+                    if cm is None or not cm.use_nodes: continue
+                    APLOG.setdefault('cornea_nodes', {})[cm.name] = sorted({n_.bl_idname for n_ in cm.node_tree.nodes})
+                    for n_ in cm.node_tree.nodes:
+                        if n_.bl_idname in ('ShaderNodeBsdfGlass', 'ShaderNodeBsdfGlossy', 'ShaderNodeBsdfAnisotropic') and 'Roughness' in n_.inputs:
+                            n_.inputs['Roughness'].default_value = g('ap_cornea_rough', 0.02)
+                        if n_.bl_idname == 'ShaderNodeBsdfPrincipled':
+                            n_.inputs['Roughness'].default_value = g('ap_cornea_rough', 0.02)
+                            try: n_.inputs['Specular IOR Level'].default_value = g('ap_cornea_spec', 0.3)
+                            except Exception: pass
+                            try: n_.inputs['Coat Weight'].default_value = 0.0
+                            except Exception: pass
         APLOG['round_pupil'] = dict(iris_deg=g('ap_iris_deg', 34.0), pupil_frac_of_iris=g('ap_pupil_frac', 0.42), highlight_deg=g('ap_hl_deg', 5.0))
 
     def appeal_measure():
@@ -243,7 +393,7 @@ def head_detail():
                                       item5_snout_mm=round(float(np.linalg.norm(ec - tip)) * 1000, 1), item5_eye_to_crown_mm=round((crown - float(ec[2])) * 1000, 1),
                                       item5_ratio=round(float(np.linalg.norm(ec - tip)) / max(1e-9, crown - float(ec[2])), 2))
         APLOG['measure'] = out
-    appeal_edits()
+    appeal_scale(); appeal_edits()
     from mathutils.bvhtree import BVHTree
     dg_ = bpy.context.evaluated_depsgraph_get(); BTH = [BVHTree.FromObject(body, dg_)]
     Mbw = np.array(body.matrix_world); Mbi = np.linalg.inv(Mbw)
@@ -307,6 +457,35 @@ def head_detail():
             me_.update(); bpy.context.view_layer.update()
             BTH[0] = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get()); BUILD[side] = int(msk.sum())
             ex_, a, upv, rtv, nph, PH, TBs = opening()
+        a_pre = a.copy()
+        lpu, lpl, lpc = math.radians(g('lid_pull_up_deg', 0.0)), math.radians(g('lid_pull_low_deg', 0.0)), math.radians(g('lid_pull_corner_deg', 0.0))
+        if lpu or lpl or lpc:
+            # furred lids: the skin round the opening slides over the eye (along the eye sphere, toward its axis), so
+            # the coat runs right to the lid line instead of a bare lid shell; strands follow their triangles
+            Mbw_ = np.array(body.matrix_world); Mbi_ = np.linalg.inv(Mbw_); me_ = body.data
+            BV0_ = np.array([v.co[:] for v in me_.vertices]); BV_ = BV0_ @ Mbw_[:3, :3].T + Mbw_[:3, 3]
+            q = BV_ - c2; nq = np.linalg.norm(q, axis=1); u = q / np.maximum(nq[:, None], 1e-9)
+            th = np.arccos(np.clip(u @ a, -1, 1)); ph = np.mod(np.arctan2(u @ upv, u @ rtv), 2 * math.pi)
+            tb = TBs[np.round(ph / (2 * math.pi) * nph).astype(int) % nph]
+            band = math.radians(g('lid_pull_band_deg', 14.0))
+            sp = np.sin(ph); cp = np.abs(np.cos(ph))
+            pull = lpu * np.clip(sp, 0, 1) ** 1.2 + lpl * np.clip(-sp, 0, 1) ** 1.2 + lpc * cp ** 4
+            x = np.clip((th - tb) / band, 0, 1); wgt = (1 - x * x * (3 - 2 * x)) * (th >= tb - math.radians(1.0)) * (nq < r * 1.45) * (nq > r * 0.85)
+            dth = pull * wgt
+            perp = u - np.outer(u @ a, a); perp /= np.maximum(np.linalg.norm(perp, axis=1, keepdims=True), 1e-9)
+            th2 = np.maximum(th - dth, 0.0); u2 = np.outer(np.cos(th2), a) + perp * np.sin(th2)[:, None]
+            rr_ = np.where(dth > 1e-4, np.maximum(nq, r * 1.0 + g('lid_pull_lift_m', 0.0012)), nq)
+            NBp = np.where((dth > 1e-4)[:, None], c2 + u2 * rr_[:, None], BV_)
+            dl = (NBp - BV_) @ Mbi_[:3, :3].T
+            if me_.shape_keys:
+                for kb in me_.shape_keys.key_blocks:
+                    kc = np.array([d_.co[:] for d_ in kb.data]) + dl
+                    for d_, c_ in zip(kb.data, kc): d_.co = c_.tolist()
+            for v_, c_ in zip(me_.vertices, BV0_ + dl): v_.co = c_.tolist()
+            me_.update(); bpy.context.view_layer.update()
+            BTH[0] = BVHTree.FromObject(body, bpy.context.evaluated_depsgraph_get())
+            ex_, a, upv, rtv, nph, PH, TBs = opening()
+            APLOG.setdefault('lid_pull_vertices', {})[side] = int((dth > 1e-4).sum())
         ov = math.radians(g('lid_overlap_deg', 9.0)); ovl = math.radians(g('lower_lid_overlap_deg', 1.5))
         wup = np.clip(np.sin(PH), 0, 1) ** g('lid_overlap_pow', 1.4); wlo = np.clip(-np.sin(PH), 0, 1) ** 1.4
         TE = TBs - ov * wup - ovl * wlo
@@ -347,7 +526,7 @@ def head_detail():
             ob_ = add_obj('head_upper_lid_' + side, Vs, Fs, lidskin)
             at_ = ob_.data.attributes.new('lid_u', 'FLOAT', 'POINT'); at_.data.foreach_set('value', np.array(Cs, np.float32))
         top = int(np.argmax(np.sin(PH)))
-        EYEOPEN[side] = (c2, r, a, upv, rtv, TE)
+        EYEOPEN[side] = (c2, r, a_pre if g('ap_iris_axis_prepull', 0) else a, upv, rtv, TE)
         # cornea apex against the surrounding skin, along the opening axis (positive = the eye stands proud of the skin)
         skin_h = []
         for i in range(0, nph, 3):
@@ -367,6 +546,8 @@ def head_detail():
         out = {}; mg = g('lid_fur_margin_m', 0.0015)
         for o_ in objs:
             if o_.type != 'CURVES' or 'whisker' in o_.name.lower() or o_.name.startswith('Plume'): continue
+            if g('ap_hide_eyelid_fur', 0) and o_.name.startswith('Eyelid'):
+                rr = arr(o_.data.attributes['radius'].data, 'value', 1); o_.data.attributes['radius'].data.foreach_set('value', np.zeros_like(rr)); out[o_.name] = 'all'; continue
             d_ = o_.data; P_ = arr(d_.attributes['position'].data, 'vector', 3); W_ = np.array(body.matrix_world)
             # judge the strands where the scene puts them: evaluate the surface-frame deformation on this scene's body
             # (the strands follow the head-detail vertex edits), with the curve-deleting modifiers switched off so the
