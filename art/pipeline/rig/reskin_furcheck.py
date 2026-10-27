@@ -266,6 +266,17 @@ def head_detail():
                     sl = slice(offs[ci], offs[ci] + cnt[ci]); H_[sl] *= etl; X_[sl] *= etl; Y_[sl] *= etl
                 for nme, v in (('bind_height', H_), ('bind_offset_x', X_), ('bind_offset_y', Y_)): d_.attributes[nme].data.foreach_set('value', v.astype(np.float32))
                 APLOG['ear_tuft_strands'] = int(len(si))
+        rfl = g('ap_ring_fur_len', 1.0)
+        if rfl != 1.0 and newc:
+            H_ = arr(d_.attributes['bind_height'].data, 'value', 1); X_ = arr(d_.attributes['bind_offset_x'].data, 'value', 1); Y_ = arr(d_.attributes['bind_offset_y'].data, 'value', 1)
+            wr = np.zeros(len(rp))
+            for side, (c2, r2, th, piv) in newc.items():
+                dd = np.linalg.norm(rp - c2, axis=1) / r2; wr = np.maximum(wr, (1 - sst(1.6, 2.2, dd)) * (dd > 0.9))
+            si = np.where(wr > 0.02)[0]
+            for ci in si:
+                f_ = 1 + (rfl - 1) * wr[ci]; sl = slice(offs[ci], offs[ci] + cnt[ci]); H_[sl] *= f_ * g('ap_ring_fur_lift', 0.7); X_[sl] *= f_; Y_[sl] *= f_
+            for nme, v in (('bind_height', H_), ('bind_offset_x', X_), ('bind_offset_y', Y_)): d_.attributes[nme].data.foreach_set('value', v.astype(np.float32))
+            APLOG['ring_fur_strands'] = int(len(si))
         for key, mult in (('ap_cheek_fur', 'cheek'), ('ap_ruff_fur', 'ruff')):
             fl = g(key, 1.0)
             if fl == 1.0 or not newc: continue
@@ -728,7 +739,69 @@ def head_detail():
                 Fr.append([i * nvr + j, i * nvr + (j + 1) % nvr, ((i + 1) % nu) * nvr + (j + 1) % nvr, ((i + 1) % nu) * nvr + j])
         add_obj('head_lid_rim_' + side, Vr, Fr, lidm)
         log['eye_' + side] = dict(radius_mm=round(r * 1000, 2), seated_mm=round(depth * 1000, 2))
+    if g('ap_eyelid_coat_match', 0):
+        # the eyelid fur ring (Eyelid short rim / ring guides) takes the coat's own strand attributes and material, so it
+        # restores the face-fur density round the eye without the dark lash fringe its slate rim material made
+        from mathutils.kdtree import KDTree as _KD
+        co_ = next(o for o in objs if o.type == 'CURVES' and o.name.startswith('Luceras interpolated'))
+        cd_ = co_.data; Mw_ = np.array(body.matrix_world); BV_ = np.array([v.co[:] for v in body.data.vertices]) @ Mw_[:3, :3].T + Mw_[:3, 3]
+        def roots(d_):
+            ids_ = np.stack([arr(d_.attributes['bind_i' + c].data, 'value', 1, np.int32) for c in 'abc'], 1); bar_ = np.stack([arr(d_.attributes['bind_' + c].data, 'value', 1) for c in 'abc'], 1)
+            return (BV_[ids_] * bar_[:, :, None]).sum(1)
+        cr = roots(cd_); near = np.where(np.min(np.stack([np.linalg.norm(cr - EYEOPEN[s_][0], axis=1) for s_ in EYEOPEN]), 0) < 0.08)[0]
+        kd = _KD(len(near))
+        for j, i in enumerate(near): kd.insert(cr[i].tolist(), j)
+        kd.balance(); n_done = 0
+        for o_ in objs:
+            if o_.type != 'CURVES' or not o_.name.startswith('Eyelid'): continue
+            d_ = o_.data; er = roots(d_); src = np.array([near[kd.find(p_.tolist())[1]] for p_ in er])
+            for a_ in cd_.attributes:
+                if a_.name.startswith('.') or a_.domain != 'CURVE' or a_.name.startswith('bind_'): continue
+                k_ = {'FLOAT_COLOR': 'color', 'FLOAT_VECTOR': 'vector'}.get(a_.data_type, 'value'); w_ = {'FLOAT_COLOR': 4, 'FLOAT_VECTOR': 3}.get(a_.data_type, 1)
+                if a_.data_type not in ('FLOAT', 'FLOAT_COLOR', 'FLOAT_VECTOR'): continue
+                v_ = arr(a_.data, k_, w_)[src]
+                dst = d_.attributes.get(a_.name)
+                if dst is not None and (dst.domain != 'CURVE' or dst.data_type != a_.data_type): d_.attributes.remove(dst); dst = None
+                if dst is None: dst = d_.attributes.new(a_.name, a_.data_type, 'CURVE')
+                dst.data.foreach_set(k_, v_.astype(np.float32).ravel())
+            d_.materials.clear(); [d_.materials.append(m_) for m_ in cd_.materials]
+            ls = g('ap_eyelid_len', 1.0)
+            if ls != 1.0:
+                for nme in ('bind_height', 'bind_offset_x', 'bind_offset_y'):
+                    if nme in d_.attributes:
+                        v_ = arr(d_.attributes[nme].data, 'value', 1) * ls; d_.attributes[nme].data.foreach_set('value', v_.astype(np.float32))
+            n_done += len(er)
+        log['eyelid_coat_match_strands'] = n_done
     if EYEOPEN and g('hide_opening_fur', 1): log['strands_hidden_in_eye_openings'] = hide_strands_in_openings()
+    def fur_density():
+        """Visible strand roots per cm2 of skin: rings round each eye (radial distance from the eye centre in eye radii)
+        and a cheek patch, per curve object, at rest. Roots come from each strand's bound triangle on the current body."""
+        me_ = body.data; Mw = np.array(body.matrix_world); BV = np.array([v.co[:] for v in me_.vertices]) @ Mw[:3, :3].T + Mw[:3, 3]
+        me_.calc_loop_triangles(); LT = np.array([t.vertices[:] for t in me_.loop_triangles]); T = BV[LT]
+        area = np.linalg.norm(np.cross(T[:, 1] - T[:, 0], T[:, 2] - T[:, 0]), axis=1) / 2; cen = T.mean(1)
+        res = {}
+        for side, (c2, r, a_, upv, rtv, TE) in EYEOPEN.items():
+            bands = {'1.0-1.3r': (1.0, 1.3), '1.3-1.6r': (1.3, 1.6), '1.6-2.0r': (1.6, 2.0)}
+            ck = c2 + np.array([0.0, 0.015, -r * 2.6]); dc = np.linalg.norm(cen - ck, axis=1); dci = np.linalg.norm(cen - c2, axis=1)
+            regs = {k: (dci >= lo * r) & (dci < hi * r) for k, (lo, hi) in bands.items()}; regs['cheek'] = dc < r * 0.8
+            out = {k: dict(area_cm2=round(float(area[m].sum()) * 1e4, 2)) for k, m in regs.items()}
+            for o_ in objs:
+                if o_.type != 'CURVES' or o_.name.startswith('Plume') or 'bind_ia' not in o_.data.attributes or 'whisker' in o_.name.lower(): continue
+                d_ = o_.data; ids_ = np.stack([arr(d_.attributes['bind_i' + c].data, 'value', 1, np.int32) for c in 'abc'], 1)
+                bar_ = np.stack([arr(d_.attributes['bind_' + c].data, 'value', 1) for c in 'abc'], 1); rp = (BV[ids_] * bar_[:, :, None]).sum(1)
+                offs = arr(d_.curves, 'first_point_index', 1, np.int32); rad = arr(d_.attributes['radius'].data, 'value', 1)[offs] if 'radius' in d_.attributes else np.ones(len(offs))
+                vis = (rad > 0) & (not o_.hide_render); ln = None
+                for k in regs:
+                    if k == 'cheek': m = np.linalg.norm(rp - ck, axis=1) < r * 0.8
+                    else:
+                        lo, hi = bands[k]; dd = np.linalg.norm(rp - c2, axis=1); m = (dd >= lo * r) & (dd < hi * r)
+                    n_vis = int((m & vis).sum()); n_all = int(m.sum())
+                    if n_all: out[k][o_.name] = dict(visible=n_vis, all=n_all)
+            for k in out:
+                tv = sum(v['visible'] for kk, v in out[k].items() if isinstance(v, dict)); out[k]['visible_per_cm2'] = round(tv / max(out[k]['area_cm2'], 1e-6), 1)
+            res[side] = out
+        return res
+    if os.environ.get('FC_FURDENS'): print('FURDENS', json.dumps(fur_density()), flush=True)
     ig = g('iris_gain', 1.0)
     if ig != 1.0:
         # iris value: the sheet's amber iris is about 1.8x brighter (sRGB) than the groom eye material renders; scale
@@ -1068,14 +1141,21 @@ roots = [sp.get('_root', 0.0) for sp in specs]
 
 def pose(kind, f):
     rig.location = (0, 0, 0); rig.rotation_euler = (0, 0, 0)
+    # clear every pose channel first: offsets added on top of a pose (carriage, root pitch) must not accumulate on
+    # channels the action does not key
+    for pb_ in rig.pose.bones:
+        pb_.rotation_mode = 'QUATERNION'; pb_.rotation_quaternion = (1, 0, 0, 0); pb_.location = (0, 0, 0); pb_.scale = (1, 1, 1)
     if kind == 'review':
         rig.animation_data.action = bpy.data.actions['review.poses']; s.frame_set(1 + 10 * POSE_ORDER.index(f))
+    elif kind in ('tin', 'tout'):
+        rig.animation_data.action = bpy.data.actions['sig.horns-first-descent']; s.frame_set(0 if kind == 'tin' else 59)
     else:
         rig.animation_data.action = bpy.data.actions['idle' if kind == 'idle' else 'sig.horns-first-descent']; s.frame_set(f)
     ac = rig.animation_data.action
     if hasattr(rig.animation_data, 'action_slot') and rig.animation_data.action_slot is None and len(ac.slots): rig.animation_data.action_slot = ac.slots[0]
     bpy.context.view_layer.update()
-    apply_carriage(kind, f)
+    if kind in ('tin', 'tout'): apply_carriage(kind, f, trans_weight(kind, f))
+    else: apply_carriage(kind, f)
     if os.environ.get('FC_DEBUG_FEET'):
         W_ = rig.matrix_world
         dg_ = bpy.context.evaluated_depsgraph_get(); mins = {}
@@ -1095,13 +1175,26 @@ def pose(kind, f):
         if dz: rig.location = (rig.location[0], rig.location[1], rig.location[2] + dz); bpy.context.view_layer.update()
 
 
-def apply_carriage(kind, f):
+TRANS_N = 7
+
+
+def trans_weight(kind, f):
+    """Idle-to-signature transition (appeal build 4): 'tin' frames 0..TRANS_N ease the idle carriage out onto the
+    signature's first frame; 'tout' frames 0..TRANS_N ease it back in from the signature's last frame. Returns the share
+    of the idle carriage (1 = full idle carriage, 0 = the approved signature pose)."""
+    t = min(max(f / TRANS_N, 0.0), 1.0); sm = t * t * (3 - 2 * t)
+    return 1.0 - sm if kind == 'tin' else sm
+
+
+def apply_carriage(kind, f, scale=None):
     # appeal build: rest and idle head and neck carriage as local pitch offsets (bone X axis) on top of the pose
     hp = json.loads(os.environ.get('FC_HEAD_PARAMS', '{}')); car = hp.get('carriage') or {}
     if not car: return
-    if not ((kind == 'review' and f == 'rest') or kind == 'idle'): return
+    if scale is None:
+        if not ((kind == 'review' and f == 'rest') or kind == 'idle'): return
+        scale = 1.0
     from mathutils import Quaternion
-    sp = hp.get('stance_pitch_deg', 0.0)
+    sp = hp.get('stance_pitch_deg', 0.0) * scale
     if sp:
         # pitch the whole pose about the hind paws through the root pose bone (not the object: the fur is placed in
         # object space from the deformed body, so an object rotation would be applied to the strands twice)
@@ -1111,7 +1204,7 @@ def apply_carriage(kind, f):
     for bn, deg in car.items():
         pb = rig.pose.bones.get(bn)
         if pb is None: continue
-        pb.rotation_mode = 'QUATERNION'; pb.rotation_quaternion = pb.rotation_quaternion @ Quaternion((1, 0, 0), math.radians(deg))
+        pb.rotation_mode = 'QUATERNION'; pb.rotation_quaternion = pb.rotation_quaternion @ Quaternion((1, 0, 0), math.radians(deg * scale))
     bpy.context.view_layer.update()
 
 
@@ -1145,12 +1238,13 @@ def cam_side(name, f, kind):
 
 
 GROUND = [o for o in s.objects if o.name.startswith('lookdev_ground')]
+STUDIO_NO_GROUND = bool(os.environ.get('FC_STUDIO')) and bool(_sl['settings'].get('hide_ground')) if os.environ.get('FC_STUDIO') else False
 
 
 def cam_oblique(view):
     # oblique and front/back views: fitted to the body (or to the chest), ground hidden when the camera is below it
     az, el, what = OBLIQUE[view]
-    for o in GROUND: o.hide_render = el < 0
+    for o in GROUND: o.hide_render = el < 0 and not STUDIO_NO_GROUND
     lo, hi = body_bounds(CHEST if what == 'chest' else HEADM if what in ('head', 'face') else None); pad = 0.06 if what == 'chest' else 0.09 if what == 'head' else 0.004 if what == 'face' else 0.03
     cam = lookdev.place_camera('furcheck_' + view, (Vector((lo - pad).tolist()), Vector((hi + pad).tolist())), az, el, 0.05)
     s.render.resolution_x = 960; s.render.resolution_y = 960; s.camera = cam; bpy.context.view_layer.update(); return cam

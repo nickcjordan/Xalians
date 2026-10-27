@@ -16,26 +16,29 @@ standard views; the side view is the reference. Existing lights are hidden from 
 
 Settings (STUDIO, all overridable; calibrated on Luceras appeal build 3 against the sheet: rendered flank 72.8 vs sheet
 72.2, bib 207 vs 206, face 122 vs 105 (T4 121), background 186 vs 193 sRGB luminance):
-  key_temp_k 4800, key_power_w 350, key_size_m 2.0, key elevation 50 deg, key azimuth 35 deg toward the front from the
+  key_temp_k 4800, key_power_w 470, key_size_m 4.5 (a large soft source; build 5), key elevation 50 deg, key azimuth 35 deg toward the front from the
   camera axis; fill_temp_k 7500, fill_ratio 0.12 of key power (a larger, softer source, so it lands near a quarter of the key's
   illuminance on the shadow side), fill_size_m 4.0, elevation 10 deg, azimuth 55 deg
-  toward the rear; rim_temp_k 6500, rim_power_w 160, rim_size_m 1.5, from behind the creature (opposite the camera),
+  toward the rear; rim_temp_k 6500, rim_power_w 80 (halved in build 5: the rim from behind and above was what lit the bright, wet-looking
+  strand glints on the back and haunch; back glint share 0.050 -> 0.020, sheet 0.014), rim_size_m 1.5, from behind the creature (opposite the camera),
   elevation 55 deg; background_srgb 0.69 (renders near 186-195 sRGB after the look), background_strength 1.0 (camera rays only; the world
   lights the creature at world_light_strength 0.04); exposure -0.15, view 'Standard', look 'High Contrast' (the value
   contrast: white fur clean light, grey coat mid-tone); white_balance_k 5400 (view white balance: the warm key keeps
   its direction and modelling while the grey coat renders near neutral like the sheet, mid-tone R-B 7 vs the sheet's 7);
-  background_tint (1, 1, 1) linear (the world renders near neutral under that white balance; the ground plane, which
-  is the background of the side view, reads slightly cool, 182/189/193). Close head views hide the ground plane.
+  background_srgb 0.70 with background_tint (1.20, 1.0, 0.885) linear: under the look and that white balance the
+  background renders neutral light grey near 193/193/193 sRGB in every view (calibrated on Luceras appeal build 4);
+  hide_ground True (the lookdev ground plane is made invisible to camera rays in every view, so every view shares the
+  same plain background, while it still bounces light onto the belly and legs as before).
 """
 import math
 import bpy
 from mathutils import Vector
 
-STUDIO = dict(key_temp_k=4800.0, key_power_w=350.0, key_size_m=2.0, key_elev_deg=50.0, key_az_deg=35.0, key_dist_m=3.2,
+STUDIO = dict(key_temp_k=4800.0, key_power_w=470.0, key_size_m=4.5, key_elev_deg=50.0, key_az_deg=35.0, key_dist_m=3.2,
               fill_temp_k=7500.0, fill_ratio=0.12, fill_size_m=4.0, fill_elev_deg=10.0, fill_az_deg=-55.0, fill_dist_m=3.5,
-              rim_temp_k=6500.0, rim_power_w=160.0, rim_size_m=1.5, rim_elev_deg=55.0, rim_az_deg=150.0, rim_dist_m=3.0,
-              background_srgb=0.69, background_strength=1.0, world_light_rgb=(0.35, 0.35, 0.36), world_light_strength=0.04,
-              exposure=-0.15, view='Standard', look='High Contrast', ground_srgb=None, white_balance_k=5400.0, background_tint=(1.0, 1.0, 1.0))
+              rim_temp_k=6500.0, rim_power_w=80.0, rim_size_m=1.5, rim_elev_deg=55.0, rim_az_deg=150.0, rim_dist_m=3.0,
+              background_srgb=0.70, background_strength=1.0, world_light_rgb=(0.35, 0.35, 0.36), world_light_strength=0.04,
+              exposure=-0.15, view='Standard', look='High Contrast', ground_srgb=None, white_balance_k=5400.0, background_tint=(1.20, 1.0, 0.885), hide_ground=True)
 
 
 def kelvin_rgb(k):
@@ -85,6 +88,9 @@ def apply(scene, creature_center=(0.0, 0.0, 0.45), facing=(0.0, -1.0, 0.0), came
     lp = nt.nodes.new('ShaderNodeLightPath'); mx = nt.nodes.new('ShaderNodeMixShader'); out = nt.nodes.new('ShaderNodeOutputWorld')
     nt.links.new(lp.outputs['Is Camera Ray'], mx.inputs['Fac']); nt.links.new(bg_lit.outputs[0], mx.inputs[1]); nt.links.new(bg_cam.outputs[0], mx.inputs[2]); nt.links.new(mx.outputs[0], out.inputs['Surface'])
     scene.world = w
+    if S.get('hide_ground'):
+        for o in scene.objects:
+            if o.name.startswith('lookdev_ground'): o.visible_camera = False   # still bounces light, never seen
     vs = scene.view_settings; vs.view_transform = S['view']
     try: vs.look = S['look']
     except Exception: pass
