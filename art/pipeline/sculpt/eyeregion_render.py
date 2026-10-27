@@ -81,11 +81,14 @@ def cam_side():
     bpy.context.view_layer.update(); return cam
 
 
+CORNER = False
 def cam_eye(side):
     """Close camera on one eye along the bisector of the eye's opening axis and the front, 960 px, about 70 mm wide."""
     eo = bpy.data.objects['eye_' + side]; dg = bpy.context.evaluated_depsgraph_get(); e = eo.evaluated_get(dg); m = e.to_mesh()
     V = arr(m.vertices, 'co') @ np.array(e.matrix_world)[:3, :3].T + np.array(e.matrix_world)[:3, 3]; e.to_mesh_clear(); c = V.mean(0)
     sx = 1.0 if c[0] > 0 else -1.0; d = np.array([sx * 0.55, -1.0, 0.12]); d /= np.linalg.norm(d)
+    if CORNER:   # inner corner and under-eye, seen from the front and a little below
+        c = c + np.array([-sx * 0.022, -0.03, -0.018]); d = np.array([sx * 0.15, -1.0, -0.15]); d /= np.linalg.norm(d)
     data = bpy.data.cameras.get('eye_cam') or bpy.data.cameras.new('eye_cam'); data.type = 'ORTHO'; data.ortho_scale = 0.095; data.clip_start = 0.01
     cam = bpy.data.objects.get('eye_cam') or bpy.data.objects.new('eye_cam', data)
     if cam.name not in s.collection.objects: s.collection.objects.link(cam)
@@ -93,6 +96,9 @@ def cam_eye(side):
     s.render.resolution_x = 960; s.render.resolution_y = 960; s.camera = cam; bpy.context.view_layer.update(); return cam
 
 
+for _h in filter(None, os.environ.get('ER_HIDE', '').split(',')):
+    for o in s.objects:
+        if o.name.startswith(_h): o.hide_render = True
 curves = [o for o in s.objects if o.type == 'CURVES']
 fur_vis = {o.name: o.hide_render for o in curves}
 clay = bpy.data.materials.get('furcheck_clay') or bpy.data.materials.new('furcheck_clay'); clay.use_nodes = True
@@ -124,7 +130,8 @@ TAG = 'rest' if POSE == 'rest' else POSE.replace(':', '_f')
 modes = {'clay': (True,), 'fur': (False,), 'both': (False, True)}[MODE]
 for v in VIEWS:
     if v == 'side': cam_side()
-    elif v.startswith('eye_'): cam_eye(v[-1])
+    elif v.startswith('eye_'): CORNER = False; cam_eye(v[-1])
+    elif v.startswith('corner_'): CORNER = True; cam_eye(v[-1])
     else: cam_oblique(v)
     for c_ in modes:
         set_clay(c_); bpy.context.view_layer.update()

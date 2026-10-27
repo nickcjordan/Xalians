@@ -295,6 +295,19 @@ for side, F in EYES.items():
     F['c_old'] = c; F['c'] = c2; F['P0'] = P0; F['con'] = con; F['free'] = reg & ~con; F['reg'] = reg
     LOG['eye_' + side].update(region_vertices=int(reg.sum()), zone_vertices=int(zone.sum()), lid_band_vertices=int(con.sum()), snapped=int(snap.sum()))
 
+# ---- region edge: past the lid bands the rebuilt skin eases back onto the untouched head over edge_blend_m, so the
+#      region's border (the medial strip by the blaze above all) has no crease
+if g('edge_blend_m', 0.0) > 0:
+    regall = np.zeros(NV, bool); bandall = np.zeros(NV, bool)
+    for F in EYES.values(): regall |= F['reg']; bandall |= F['con']
+    ring2 = np.zeros(NV, bool); me2 = regall[E[:, 0]] != regall[E[:, 1]]; ring2[E[me2].ravel()] = True; ring2 &= ~regall
+    rid2 = np.where(ring2)[0]; kd2 = KDTree(len(rid2))
+    for j, i in enumerate(rid2): kd2.insert(VW[i].tolist(), j)
+    kd2.balance(); ids2 = np.where(regall & ~bandall)[0]
+    de2 = np.array([kd2.find(VW[i].tolist())[2] for i in ids2]); w2_ = sst(0.0, g('edge_blend_m', 0.006), de2)
+    NEW[ids2] = VW[ids2] + (NEW[ids2] - VW[ids2]) * w2_[:, None]
+    LOG['edge_blend_vertices'] = int((w2_ < 0.99).sum())
+
 # ---- Taubin smoothing of the free skin (past the lid bands): even triangles, no streaks or creases; the lid bands,
 #      the margin ring and everything outside the region stay fixed
 fr_all = np.zeros(NV, bool)
@@ -303,6 +316,15 @@ for F in EYES.values():
     # the lid bands are smoothed too, all but the margin ring and the first lid row (sarc under band_keep_m)
     fr_all |= F['con'] & (np.nan_to_num(SVAL, nan=-1.0) > g('band_keep_m', 0.0012))
 Ef = E[fr_all[E[:, 0]] | fr_all[E[:, 1]]]; cf = np.bincount(Ef.ravel(), minlength=NV).astype(float); fid = np.where(fr_all)[0]
+# tangential relax first: each free vertex slides along the skin toward its neighbours' centre (the normal part of
+# the move is dropped), which evens out the sliver triangles the corner remap leaves without changing the shape
+for it_ in range(int(g('tang_iters', 0))):
+    Tn_ = NEW[LT]; fn_ = np.cross(Tn_[:, 1] - Tn_[:, 0], Tn_[:, 2] - Tn_[:, 0]); vn_ = np.zeros((NV, 3))
+    for j_ in range(3): np.add.at(vn_, LT[:, j_], fn_)
+    vn_ = vn_[fid] / np.maximum(np.linalg.norm(vn_[fid], axis=1, keepdims=True), 1e-15)
+    sm = np.zeros((NV, 3)); np.add.at(sm, Ef[:, 0], NEW[Ef[:, 1]]); np.add.at(sm, Ef[:, 1], NEW[Ef[:, 0]])
+    mv_ = sm[fid] / np.maximum(cf[fid, None], 1) - NEW[fid]; mv_ = mv_ - vn_ * np.einsum('ij,ij->i', mv_, vn_)[:, None]
+    NEW[fid] = NEW[fid] + g('tang_step', 0.5) * mv_
 for it_ in range(int(g('taubin_iters', 30))):
     for lam in (0.5, -0.53):
         sm = np.zeros((NV, 3)); np.add.at(sm, Ef[:, 0], NEW[Ef[:, 1]]); np.add.at(sm, Ef[:, 1], NEW[Ef[:, 0]])
@@ -316,6 +338,19 @@ me.update(); bpy.context.view_layer.update()
 moved = np.linalg.norm(NEW - VW, axis=1) > 1e-6
 VN = arr(me.vertices, 'normal').astype(np.float64) @ Mw[:3, :3].T
 LOG['moved_vertices'] = int(moved.sum())
+# fold check: region triangles whose normal turned more than 90 (fold) or 60 degrees (steep) from the b5 normal, by
+# sector round each eye (sector 0 = toward +x of the eye frame, counted anticlockwise in eighths) and margin distance
+def _tn(P_):
+    T_ = P_[LT]; n_ = np.cross(T_[:, 1] - T_[:, 0], T_[:, 2] - T_[:, 0]); return n_ / np.maximum(np.linalg.norm(n_, axis=1, keepdims=True), 1e-15)
+_d = np.einsum('ij,ij->i', _tn(VW), _tn(NEW)); FOLD = {}
+for side, F in EYES.items():
+    tm = F['reg'][LT].all(1); ph_t = PHV[LT[:, 0]]; sa_t = SVAL[LT[:, 0]]; out_ = {}
+    for sct in range(8):
+        m_ = tm & (((ph_t / (2 * math.pi) * 8).astype(int) % 8) == sct)
+        out_[sct] = dict(tris=int(m_.sum()), folded=int((m_ & (_d < 0)).sum()), steep=int((m_ & (_d < 0.5)).sum()),
+                         folded_s_mm=[round(float(x) * 1000, 1) for x in np.percentile(sa_t[m_ & (_d < 0)], [10, 50, 90])] if (m_ & (_d < 0)).sum() > 2 else None)
+    FOLD[side] = out_; F['medial_sectors'] = [k_ for k_ in range(8) if F['med'] * math.cos((k_ + 0.5) * math.pi / 4) > 0.3]
+LOG['fold_check'] = FOLD
 
 # ---- lid margin tube (thin, dark), replaces b5's lid rim and lid band tubes
 for nm in ('head_lid_rim_l', 'head_lid_rim_r', 'head_lid_band_l', 'head_lid_band_r', 'head_upper_lid_l', 'head_upper_lid_r'):
@@ -353,7 +388,7 @@ for side, F in EYES.items():
     F['margin_path'] = np.array(path)
 
 # ---- iris radius: the round-eye material's map ranges are rebuilt for the new iris angle
-ti_old = math.radians(g('iris_deg_old', 34.0)); tp_old = ti_old * g('pupil_frac', 0.5)
+ti_old = math.radians(g('iris_deg_old', 34.0)); tp_old = ti_old * g('pupil_frac_old', 0.5)
 ti = math.radians(g('iris_deg', 42.0)); tp = ti * g('pupil_frac', 0.5); nmr = 0
 for side in ('l', 'r'):
     m_ = bpy.data.materials.get('Appeal round eye ' + side)
@@ -424,6 +459,17 @@ if sca is not None and sca.domain == 'POINT' and g('skin_match', 0) == 2:
     # skin under the region's fur takes the colour of the coat strand nearest it on the old surface
     scol = arr(sca.data, 'color', 4); ccol = arr(cd.attributes['coat_color'].data, 'color', 4)
     for i in np.where(regv)[0]: scol[i, :3] = ccol[pat[kdp.find(VW[i].tolist())[1]], :3] * g('skin_k', 1.0)
+    if g('skin_k', 1.0) and g('skin_smooth', 0):
+        # smoothed: the mean of the colour_k nearest coat strands, the cheek grey floor, then a few neighbour passes
+        ridx = np.where(regv)[0]; kk = int(g('colour_k', 16))
+        for i in ridx: scol[i, :3] = ccol[pat[[x_[1] for x_ in kdp.find_n(VW[i].tolist(), kk)]], :3].mean(0)
+        lumd = ccol[donor, :3] @ np.array([0.2126, 0.7152, 0.0722]); gref = float(np.median(lumd[lumd < np.percentile(lumd, 60)]))
+        lum_ = scol[ridx, :3] @ np.array([0.2126, 0.7152, 0.0722]); low = lum_ < gref
+        scol[ridx[low], :3] *= (gref / np.maximum(lum_[low], 1e-6))[:, None]
+        Er = E[regv[E[:, 0]] & regv[E[:, 1]]]; cr_ = np.bincount(Er.ravel(), minlength=NV).astype(float)
+        for _ in range(int(g('skin_smooth', 0))):
+            sm = np.zeros((NV, 4)); np.add.at(sm, Er[:, 0], scol[Er[:, 1]]); np.add.at(sm, Er[:, 1], scol[Er[:, 0]])
+            m_ = cr_ > 0; scol[m_ & regv] = 0.5 * scol[m_ & regv] + 0.5 * sm[m_ & regv] / cr_[m_ & regv, None]
     sca.data.foreach_set('color', scol.astype(np.float32).ravel()); LOG['skin_colour_from_coat_vertices'] = int(regv.sum())
 
 
@@ -476,13 +522,13 @@ for side, F in EYES.items():
     sroot = (thr - interp_phi(F['TM'], phr)) * r
     rootOld = (VW[ids] * ba[:, :, None]).sum(1)
     for k in range(n_new):
-        j = kd.find(pb[k].tolist())[1]; di = donor[j]; pi_ = pat[kdp.find(rootOld[k].tolist())[1]]
+        j = kd.find(pb[k].tolist())[1]; di = donor[j]; pi_ = pat[[x_[1] for x_ in kdp.find_n(rootOld[k].tolist(), int(g('colour_k', 1)))]]
         a0, n_ = coffs[di], ccnt[di]; sl = slice(a0, a0 + n_)
         Pd = np.c_[CH[sl], CX[sl], CY[sl]]                          # donor shape in its own frame (h, tangent, bitangent)
         Ld = float(np.linalg.norm(np.diff(Pd, axis=0), axis=1).sum()); hz = np.c_[CX[sl], CY[sl]]
         ad = math.atan2(hz[-1, 1], hz[-1, 0])
         # donor's world direction at its root, projected onto this root's skin plane
-        new_curves.append((side, ids[k], ba[k], (di, pi_), Pd, Ld, ad, sroot[k], d_edge[k], w_edge[k], dflow[k], nW[k], tW[k], bW[k]))
+        new_curves.append((side, ids[k], ba[k], (di, pi_, phr[k], er[k]), Pd, Ld, ad, sroot[k], d_edge[k], w_edge[k], dflow[k], nW[k], tW[k], bW[k]))
     LOG['eye_' + side].update(new_strands=int(n_new), region_area_cm2=round(float(area.sum()) * 1e4, 2), rewound_triangles_share=round(float(sw.mean()), 3), inward_vs_eye_share=round(float(flip), 3))
 
 # donor world directions (root to tip, skin plane) for the edge blend
@@ -497,10 +543,10 @@ POS = np.zeros((Ntot * NPT, 3), np.float32); BH = np.zeros(Ntot * NPT, np.float3
 BIA = np.zeros(Ntot, np.int32); BIB = np.zeros_like(BIA); BIC = np.zeros_like(BIA); BA = np.zeros(Ntot, np.float32); BB = np.zeros_like(BA); BC = np.zeros_like(BA); SRC = np.zeros(Ntot, np.int64)
 Llid = g('lid_fur_len_m', 0.0018); Slen = g('len_ramp_m', 0.011)
 NLb = NL  # body-local new positions
-lens = []; TINT = np.ones(Ntot, np.float32)
+lens = []; TINT = np.ones(Ntot, np.float32); OVER = np.zeros(Ntot, bool); SRCK = []
 for k, (side, ti_, ba_, dpair, Pd, Ld, ad, sroot, dedge, we, dfl, nW, tW, bW) in enumerate(new_curves):
-    di, pi_ = dpair
-    ids_ = ti_; BIA[k], BIB[k], BIC[k] = ids_; BA[k], BB[k], BC[k] = ba_; SRC[k] = pi_ if g('pattern_donor', 1) else di
+    di, pi_, phk, erk = dpair
+    ids_ = ti_; BIA[k], BIB[k], BIC[k] = ids_; BA[k], BB[k], BC[k] = ba_; SRC[k] = pi_[0] if g('pattern_donor', 1) else di; SRCK.append(pi_)
     # frame in body-local space (what the node group uses)
     nL, tL, bL = tri_frame(NLb[ids_[0]], NLb[ids_[1]], NLb[ids_[2]])
     # target direction in world -> local frame components (body world matrix is a similarity; use its rotation)
@@ -508,12 +554,16 @@ for k, (side, ti_, ba_, dpair, Pd, Ld, ad, sroot, dedge, we, dfl, nW, tW, bW) in
     if we > 0:
         dd = donor_dir_world(di); dd = dd - nW * (dd @ nW); nd = np.linalg.norm(dd)
         if nd > 1e-9: dw = dw * (1 - we) + (dd / nd) * we; dw /= max(np.linalg.norm(dw), 1e-9)
-    dl_ = np.linalg.inv(Mw[:3, :3]) @ dw; ang = math.atan2(dl_ @ bL, dl_ @ tL)
     w_len = max(float(sst(0.0, Slen, np.array(sroot))), float(1 - sst(0.0, g('edge_len_m', 0.006), np.array(dedge))))
     L = Llid + (Ld - Llid) * w_len
+    # upper lid: the short coat on the lid lies down over the lid edge by over_m (the sheet's soft lidded edge)
+    if g('over_m', 0.0) > 0 and math.sin(phk) > g('over_sin', 0.35) and sroot < g('over_band_m', 0.0025):
+        dw = -erk * g('over_down', 1.0) + dw * g('over_keep', 0.35); dw = dw - nW * (dw @ nW); dw /= max(np.linalg.norm(dw), 1e-9)
+        L = sroot + g('over_m', 0.001); w_len = 0.0; OVER[k] = True
+    dl_ = np.linalg.inv(Mw[:3, :3]) @ dw; ang = math.atan2(dl_ @ bL, dl_ @ tL)
     rot = ang - ad; cs, sn = math.cos(rot), math.sin(rot)
     sc = L / max(Ld, 1e-9)
-    hflat = g('lid_flat', 0.3) + (1 - g('lid_flat', 0.3)) * w_len
+    hflat = (g('over_flat', 0.15) if OVER[k] else g('lid_flat', 0.3)) + (1 - g('lid_flat', 0.3)) * w_len
     Pn = np.c_[Pd[:, 0] * sc * hflat, (Pd[:, 1] * cs - Pd[:, 2] * sn) * sc, (Pd[:, 1] * sn + Pd[:, 2] * cs) * sc]
     rootL = (NLb[ids_] * ba_[:, None]).sum(0)
     pts = rootL + Pn[:, 0:1] * nL + Pn[:, 1:2] * tL + Pn[:, 2:3] * bL
@@ -528,8 +578,10 @@ PW = POS.astype(np.float64) @ Mw[:3, :3].T + Mw[:3, 3]
 for side, F in EYES.items():
     q = PW - F['c']; nq = np.linalg.norm(q, axis=1); u = q / nq[:, None]; th = np.arccos(np.clip(u @ F['z'], -1, 1)); ph = np.mod(np.arctan2(u @ F['y'], u @ F['x']), 2 * math.pi)
     inside = (th < interp_phi(F['TM'], ph) + g('fur_margin_m', 0.0004) / F['r']) & (nq < F['r'] + g('hover_m', 0.006))
-    bad |= inside.reshape(-1, NPT).any(1)
-keep = np.where(~bad)[0]; LOG['new_strands_dropped_at_opening'] = int(bad.sum())
+    deep = (th < interp_phi(F['TM'], ph) - (g('over_m', 0.0) + 0.0005) / F['r']) & (nq < F['r'] + g('hover_m', 0.006))
+    ins = inside.reshape(-1, NPT).any(1); dp_ = deep.reshape(-1, NPT).any(1)
+    bad |= np.where(OVER, dp_, ins)
+keep = np.where(~bad)[0]; LOG['new_strands_dropped_at_opening'] = int(bad.sum()); LOG['over_edge_strands'] = int((OVER & ~bad).sum())
 
 # revive: coat strands just outside the region that b5's opening rule switched off (radius 0) are bald patches now
 # that the Eyelid rings are gone; they get the radius profile of the nearest visible coat strand unless they would
@@ -567,7 +619,14 @@ for nm, v in (('bind_a', BA), ('bind_b', BB), ('bind_c', BC)): add_attr(nm, 'CUR
 for a_ in cd.attributes:
     if a_.name.startswith(('.', 'bind_')) or a_.domain != 'CURVE' or a_.data_type not in ('FLOAT', 'FLOAT_COLOR', 'FLOAT_VECTOR'): continue
     key = {'FLOAT_COLOR': 'color', 'FLOAT_VECTOR': 'vector'}.get(a_.data_type, 'value'); w_ = {'FLOAT_COLOR': 4, 'FLOAT_VECTOR': 3}.get(a_.data_type, 1)
-    vv_ = arr(a_.data, key, w_)[SRC[keep]].astype(np.float32)
+    av_ = arr(a_.data, key, w_)
+    # colour attributes: the mean of the colour_k nearest original coat strands (no hard-edged islands of the old
+    # pattern), with the grey kept at least at the cheek's value (no darker patch)
+    vv_ = np.array([av_[SRCK[i]].mean(0) for i in keep], np.float32) if g('colour_k', 1) > 1 else av_[SRC[keep]].astype(np.float32)
+    if a_.name == 'coat_color' and g('grey_floor', 0):
+        lum_ = vv_[:, :3] @ np.array([0.2126, 0.7152, 0.0722]); ref_ = av_[donor, :3] @ np.array([0.2126, 0.7152, 0.0722])
+        gref = float(np.median(ref_[ref_ < np.percentile(ref_, 60)])); low = lum_ < gref * g('grey_floor', 1.0)
+        vv_[low, :3] *= (gref * g('grey_floor', 1.0) / np.maximum(lum_[low], 1e-6))[:, None]; LOG['grey_floor'] = dict(ref=round(gref, 4), lifted=int(low.sum()))
     if a_.name == 'coat_color': vv_[:, :3] *= TINT[keep, None]
     add_attr(a_.name, 'CURVE', a_.data_type, vv_)
 for m_ in cd.materials: hc.materials.append(m_)
@@ -591,6 +650,31 @@ for side, F in EYES.items():
                               upper_cover_of_iris=round(float(up_cov), 3), lower_cover_of_iris=round(float(lo_cov), 3),
                               cornea_apex_above_margin_plane_mm=round((apex - float(np.median((mp - F['c']) @ F['z']))) * 1000, 2))
 LOG['head_height_mm'] = round(hh * 1000, 1)
+# side-view protrusion: in the side camera (looking along x), the visible cornea's front (most -y) against the skin
+# silhouette front at the same heights; positive = the cornea stands ahead of the face profile (the bulge)
+for side, F in EYES.items():
+    if F['CV'] is None: continue
+    q_ = F['CV'] - F['c']; u_ = q_ / np.linalg.norm(q_, axis=1, keepdims=True); th_ = np.arccos(np.clip(u_ @ F['z'], -1, 1)); ph_ = np.mod(np.arctan2(u_ @ F['y'], u_ @ F['x']), 2 * math.pi)
+    vis = F['CV'][th_ < interp_phi(F['TM'], ph_)]
+    sk = NEW[HEADM & (np.sign(NEW[:, 0]) == np.sign(F['c'][0]))]
+    # the lid line: the eye's own lids and the skin round them (0 to 12 mm past the margin)
+    # in the side view the lid line is the margin and the lid rim just past it (0 to 1.5 mm): the cornea's projected
+    # outline must not run ahead of it
+    lidsk = np.r_[F['margin_path'], NEW[F['reg'] & (np.nan_to_num(SVAL, nan=-1) >= 0) & (np.nan_to_num(SVAL, nan=-1) < 0.0015)]]
+    w2 = -1e9
+    for zc in np.linspace(vis[:, 2].min(), vis[:, 2].max(), 25):
+        cv = vis[np.abs(vis[:, 2] - zc) < 0.0008]; ss = lidsk[np.abs(lidsk[:, 2] - zc) < 0.0008]
+        if len(cv) and len(ss): w2 = max(w2, float(ss[:, 1].min() - cv[:, 1].min()))
+    LOG['eye_' + side]['side_view_cornea_ahead_of_lid_line_mm'] = round(w2 * 1000, 2)
+    # cornea apex against the lid rim (the lid skin 0.6 to 2 mm past the margin), heights along the iris axis
+    rim_ = NEW[F['reg'] & (np.nan_to_num(SVAL, nan=-1) > 0.0006) & (np.nan_to_num(SVAL, nan=-1) < 0.002)]
+    apex_ = float(((F['CV'] - F['c']) @ F['z']).max())
+    LOG['eye_' + side]['cornea_apex_above_lid_rim_mm'] = round((apex_ - float(np.median((rim_ - F['c']) @ F['z']))) * 1000, 2)
+    worst = -1e9
+    for zc in np.linspace(vis[:, 2].min(), vis[:, 2].max(), 25):
+        cv = vis[np.abs(vis[:, 2] - zc) < 0.0008]; ss = sk[np.abs(sk[:, 2] - zc) < 0.0008]
+        if len(cv) and len(ss): worst = max(worst, float(ss[:, 1].min() - cv[:, 1].min()))
+    LOG['eye_' + side]['side_view_cornea_ahead_of_profile_mm'] = round(worst * 1000, 2)
 
 rig.data.pose_position = 'POSE'; bpy.context.view_layer.update()
 REP.write_text(json.dumps(LOG, indent=1, default=lambda o: o.tolist() if hasattr(o, 'tolist') else str(o)))
