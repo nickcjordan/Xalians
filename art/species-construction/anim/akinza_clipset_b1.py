@@ -360,7 +360,11 @@ EVADE = dict(
     tail_lag=.7, tail_order={'a': 0., 'b': .4, 'c': .8},
     # E4: the lower two tails' lift sits at the root and fades toward the tip (their bones' own curve stays; an even lift
     # per bone straightened them into spikes at 5 to 7)
-    tail_deg={'a': (4., 6., 8., 10., 12.), 'b': (9., 6., 3., 1., -1.), 'c': (9., 6., 3., 1., -1.)},
+    tail_deg={'a': (4., 6., 8., 10., 12.), 'b': (9., 6., 2., -1., -3.), 'c': (10., 5., 0., -5., -9.)},
+    # the lower tail is nearly straight from the side at rest (5 degrees root to tip): in the air both lower tails also curl,
+    # their tips dipping (no lag), so they arc rather than spike
+    tail_curl=[0, 0, 0, 0, .5, 1., 1., .6, .2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    tail_curl_deg={'b': (0., -2., -4., -5., -6.), 'c': (0., -4., -7., -9., -11.)},
     tail_fade=(13, 16),
     idle_b=[(12, 'linear', 0.), (16, 'smooth', 1.)],
     idle_a=[(0, 'linear', 1.), (3, 'smooth', 0.)],
@@ -393,7 +397,8 @@ def evade_frame(rig, f):
     for t in rc.TAILS:
         for k in range(1, rc.TAIL_BONES+1):
             v = table(P['tails'], f-P['tail_order'][t]-P['tail_lag']*(k-1))
-            turn(pose, f'tail_{t}{k}', [P['tail_deg'][t][k-1]*v*fade, 0., 0.])
+            curl = P['tail_curl'][f]*P['tail_curl_deg'].get(t, (0.,)*rc.TAIL_BONES)[k-1]
+            turn(pose, f'tail_{t}{k}', [P['tail_deg'][t][k-1]*v*fade+curl, 0., 0.])
     specs = {}
     for sd in 'LR':
         dy, dz, pitch, pv = P['feet'][sd][f]
