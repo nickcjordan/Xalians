@@ -65,12 +65,12 @@ def sheet(frames, clip, spec, out, refs):
     tiles = []
     for k in range(n):
         im = Image.open(frames/clip/'side'/f'{k:04d}.png').convert('RGB')
-        im = im.crop((60, 0, 660, 720)).resize((W, 288), Image.LANCZOS)
-        t = Image.new('RGB', (W, 288+28), (20, 20, 20))
+        im = im.resize((W, W), Image.LANCZOS)                 # the whole frame: evade's tails reach the right edge's last 70 px
+        t = Image.new('RGB', (W, W+28), (20, 20, 20))
         t.paste(im, (0, 0))
         dr = ImageDraw.Draw(t)
         lab = f'f{k}' + (f'  {events[k]}' if k in events else '')
-        dr.text((6, 292), lab, fill=(250, 210, 90) if k in events else (235, 235, 235), font=font(18))
+        dr.text((6, W+4), lab, fill=(250, 210, 90) if k in events else (235, 235, 235), font=font(18))
         tiles.append(t)
     per_row = 9
     rows = [tiles[i:i+per_row] for i in range(0, len(tiles), per_row)]
