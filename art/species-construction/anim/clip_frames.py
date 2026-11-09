@@ -13,7 +13,11 @@ Views, one fixed framing each for every frame of every clip:
   side    the clip's review camera (azimuth 90, elevation 3, as motion_frames.py), fitted to --box, square
           --size px;
   sprite  the look-dev `sprite` camera: side_left (azimuth 90, elevation 0) framed by lookdev.place_camera to
-          --sprite-box (6 percent margin), --sprite px square.
+          --sprite-box (6 percent margin), --sprite px square;
+  front, threequarter  (clip set batch 1 setup checks) the side view's fit to --box from azimuth 0 or 45
+          (elevation 3 or 8), --size px square;
+  crop_<name>  --crops name:azimuth:elevation:joint:half: a close clay view centred on that posed joint, half size in
+          rig metres, --size px square.
 Writes <out>/<clip>/<view>/NNNN.png and <out>/<clip>/frames.json (render seconds per frame and view).
 
 --fur-checks (fur look): per frame, the root error through fur_bind (each rebuilt root against its barycentric
@@ -78,7 +82,10 @@ p.add_argument('--diag-frames', default=None, help='clip:frame list: classify th
                'their root is on and the region of skin they pass into (fur look, with --fur-checks)')
 p.add_argument('--alpha', action='store_true', help='film transparent, straight-alpha 8-bit RGBA PNG')
 p.add_argument('--sockets', action='store_true', help='per frame, the contract sockets in the sprite view: <out>/<clip>/sockets.json')
+p.add_argument('--crops', default=None, help='clay close views, name:azimuth:elevation:joint:half size (rig metres), comma separated; '
+               'each renders as view crop_<name> at --size px')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
+BOX_VIEWS = {'side': (90., 3.), 'front': (0., 3.), 'threequarter': (45., 8.)}     # fitted to --box, square --size px
 t0 = time.time()
 R = a.rig
 rig = json.loads((R/'rig.json').read_text())
@@ -205,8 +212,10 @@ def strand_lengths(pts):
 
 
 def frame_camera(view):
-    if view == 'side':
-        az, el = 90., 3.
+    if view.startswith('crop_'):
+        return crop_camera(view)
+    if view in BOX_VIEWS:
+        az, el = BOX_VIEWS[view]
         lo, hi = box[:3], box[3:]
         center = (lo+hi)/2
         ar, er = math.radians(az), math.radians(el)
@@ -243,12 +252,39 @@ def frame_camera(view):
         loc, rot_e, osc = cam.location.copy(), cam.rotation_euler.copy(), cam.data.ortho_scale
         render.place(cam, lights, (az, el, c, osc, size, size))
         cam.location, cam.rotation_euler = loc, rot_e            # place() aims at c; keep the framing's own aim
-    if view == 'side':
+    if view in BOX_VIEWS:
         cam.data.shift_x = (max(xs)+min(xs))/2/cam.data.ortho_scale
         cam.data.shift_y = (max(ys)+min(ys))/2/cam.data.ortho_scale
     else:
         lc = bpy.data.objects['lookdev_cam_sprite']
         cam.data.shift_x, cam.data.shift_y = lc.data.shift_x, lc.data.shift_y
+    bpy.context.view_layer.update()
+
+
+CROPS = {}
+for _c in (a.crops.split(',') if a.crops else []):
+    _n, _az, _el, _j, _h = _c.split(':')
+    CROPS['crop_'+_n] = (float(_az), float(_el), _j, float(_h))
+    if 'crop_'+_n not in views:
+        views.append('crop_'+_n)
+
+
+def crop_camera(view):
+    """A close square view (clay) on a posed joint: azimuth and elevation as the look-dev cameras, half size in rig metres."""
+    az, el, jn, half = CROPS[view]
+    b = next(b for b, _, h, t in rc.ANIM_BONES if h == jn or t == jn)
+    Rb, tb = LAST['T'][b]
+    c = Vector(tuple(from_m(Rb@np.array(J[jn], float)+tb)))
+    ar, er = math.radians(az), math.radians(el)
+    d = Vector((math.sin(ar)*math.cos(er), -math.cos(ar)*math.cos(er), math.sin(er)))
+    cam.location = c+d*10
+    cam.rotation_euler = (-d).to_track_quat('-Z', 'Y').to_euler()
+    cam.data.type = 'ORTHO'
+    cam.data.ortho_scale = 2*half/s
+    cam.data.shift_x = cam.data.shift_y = 0.
+    cam.data.clip_end = 100
+    sc.camera = cam
+    sc.render.resolution_x = sc.render.resolution_y = a.size
     bpy.context.view_layer.update()
 
 
