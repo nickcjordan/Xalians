@@ -13,7 +13,8 @@ tail pixel, the lowest pixel (the feet), and the pixels that changed since the p
 largest move of each landmark from frame 0, in px and in mm (side 2.354 and sprite 9.152 mm a pixel, clips4
 measure.json), and the changed pixels at the hand back (clip's last frame to idle frame 0) against idle's own 89 to 0.
 In the rig: the root's travel back (y) and up (z), the feet's lift, and the body's front (the front-most skin that is
-not arm or tail) against frame 0's back (the rear-most skin that is not tail), so `clear` can be read.
+not arm, tail or ear) against frame 0's back (the rear-most skin that is not tail or ear), and the same for the trunk
+alone (pelvis, spine and chest skin), so `clear` can be read.
 Writes <bake dir>/measure-render.json (or --out).
 """
 import argparse
@@ -93,6 +94,7 @@ ARMS = share([b for b in NAMES if rc.base_of(b) in ('upperarm', 'forearm', 'hand
 EARS = share([b for b in NAMES if b.startswith('ear_')]) > .2
 BODY_FRONT = np.flatnonzero(~TAILS & ~ARMS & ~EARS)
 BODY_BACK = np.flatnonzero(~TAILS & ~EARS)
+TRUNK = np.flatnonzero((share(['pelvis', 'spine', 'chest']) > .5) & ~TAILS & ~ARMS)
 FEET = np.flatnonzero(share(['foot.L', 'foot.R']) > .5)
 SHAPES = ac.load_shapes(a.bake)
 
@@ -140,15 +142,20 @@ for clip in a.clips.split(','):
         rows.append(dict(frame=fr['frame'], root_m=[round(float(x), 4) for x in fr['lift']],
                          feet_lowest_mm=round(float(P[FEET, 2].min())*1000, 1),
                          body_front_y_mm=round(float(P[BODY_FRONT, 1].min())*1000, 1),
-                         body_back_y_mm=round(float(P[BODY_BACK, 1].max())*1000, 1)))
+                         body_back_y_mm=round(float(P[BODY_BACK, 1].max())*1000, 1),
+                         trunk_front_y_mm=round(float(P[TRUNK, 1].min())*1000, 1), trunk_back_y_mm=round(float(P[TRUNK, 1].max())*1000, 1)))
     back0 = rows[0]['body_back_y_mm']
+    tback0 = rows[0]['trunk_back_y_mm']
     for r in rows:
         r['front_behind_frame0_back_mm'] = round(r['body_front_y_mm']-back0, 1)
+        r['trunk_front_behind_frame0_trunk_back_mm'] = round(r['trunk_front_y_mm']-tback0, 1)
     C['rig'] = dict(perFrame=rows, root_back_max_mm=round(max(r['root_m'][1] for r in rows)*1000, 1),
                     root_up_max_mm=round(max(r['root_m'][2] for r in rows)*1000, 1),
                     feet_lift_max_mm=max(r['feet_lowest_mm'] for r in rows),
                     first_frame_body_clear=next((r['frame'] for r in rows if r['front_behind_frame0_back_mm'] > 0), None),
-                    note='front_behind_frame0_back_mm > 0: the body (no arms, tails or ears) is wholly behind where its back was at frame 0')
+                    first_frame_trunk_clear=next((r['frame'] for r in rows if r['trunk_front_behind_frame0_trunk_back_mm'] > 0), None),
+                    note='front_behind_frame0_back_mm > 0: the body (no arms, tails or ears; the head included) is wholly behind where its '
+                         'back was at frame 0; trunk_...: the same for the trunk alone (pelvis, spine and chest skin)')
     out[clip] = C
     print(clip, json.dumps({v: {k: C['summary'][v][k] for k in ('snout', 'crown', 'ear_tip', 'tail_rear', 'lowest')} for v in MM})[:3000])
     print(clip, 'rig', {k: v for k, v in C['rig'].items() if k != 'perFrame'})

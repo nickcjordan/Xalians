@@ -27,7 +27,7 @@ on idle frame 89 under the hit).
 
 evade (18 frames, `clear` at frame 6): a dip (frames 1 and 2, arms back, ears pinning), a push from the toe pads
 (frame 3, heels up), a low flight backward (toes off at frame 4 to touchdown at 8, toes pointed, knees tucked, arms
-forward, body leaning back into the travel), touchdown and absorb 30 cm behind the start (frames 8 and 9), a push at
+forward, body leaning back into the travel), touchdown and absorb 33.5 cm behind the start (frames 8 and 9), a push at
 10, then a quick, low hop forward (toes off at 11, touchdown at 14) back onto the idle spot and a settle onto idle
 frame 89 at frame 17. Ears and tails follow
 through. The root travels back and returns: the clip stays in place over its length.
@@ -278,14 +278,16 @@ EVADE = dict(
     # absorb 9, push 10, toes off at 11, flight 11-13, touchdown 14 on the idle spot, settle 15-16 onto idle frame 89
     # at 17. The first timing landed the return hop at 15 and left two frames to settle: the last step into idle frame
     # 89 moved the knees 20 mm (velocity change at the hand back to idle 20 mm against idle's own 3 mm step)
-    root=[(0, 0, 0), (0, .004, -.030), (0, .010, -.055), (0, .045, .004), (0, .100, .045), (0, .160, .060), (0, .215, .060),
-          (0, .262, .040), (0, .292, .010), (0, .300, -.045), (0, .285, -.030), (0, .235, .030), (0, .160, .046),
-          (0, .080, .036), (0, .018, .004), (0, .003, -.007), (0, .0005, -.0006), (0, 0, 0)],
+    # check pass 3 (render measure): with 21.5 cm of travel at frame 6 the trunk (pelvis, spine and chest skin) first
+    # cleared where its back stood at frame 7; the flight back is now faster (about 7.7 cm a frame) so it clears at 6
+    root=[(0, 0, 0), (0, .004, -.030), (0, .010, -.055), (0, .050, .004), (0, .120, .045), (0, .198, .058), (0, .275, .055),
+          (0, .315, .035), (0, .335, .000), (0, .338, -.045), (0, .322, -.030), (0, .265, .030), (0, .175, .046),
+          (0, .085, .036), (0, .018, .004), (0, .003, -.007), (0, .0005, -.0006), (0, 0, 0)],
     # feet: (dy, dz, pitch, pivot); pivot t = toe pads (the heel rises), a = ankle (in the air). Flight targets sit
     # under the hips and high enough that the knees stay bent (the legs' reach is checked per frame: ankle error 0)
-    feet=[(0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 24, 't'), (.030, .010, 34, 't'), (.110, .062, 22, 'a'),
-          (.185, .070, 14, 'a'), (.255, .040, 8, 'a'), (.300, 0, 10, 't'), (.300, 0, 0, 't'), (.300, 0, 20, 't'),
-          (.275, .016, 26, 't'), (.170, .050, 14, 'a'), (.075, .040, 8, 'a'), (0, 0, 6, 't'), (0, 0, 0, 't'),
+    feet=[(0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 24, 't'), (.035, .010, 34, 't'), (.125, .060, 22, 'a'),
+          (.215, .066, 14, 'a'), (.290, .036, 8, 'a'), (.335, 0, 10, 't'), (.335, 0, 0, 't'), (.335, 0, 20, 't'),
+          (.305, .016, 26, 't'), (.190, .050, 14, 'a'), (.085, .040, 8, 'a'), (0, 0, 6, 't'), (0, 0, 0, 't'),
           (0, 0, 0, 't'), (0, 0, 0, 't')],
     planted=[1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],    # 1: both feet on the floor (the toe pads at least)
     # trunk pitch (degrees, + leans forward), split pelvis .4, spine .3, chest .3; the head keeps .6 of it off
