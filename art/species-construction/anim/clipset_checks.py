@@ -1,8 +1,8 @@
-"""Per-frame skin checks for the batch 1 clips (hurt, evade, guard, guard_in) and the guard setup check (numpy, no
+"""Per-frame skin checks for the batch 1 clips (hurt, evade, guard, guard_in, guard_out) and the guard setup check (numpy, no
 Blender). Numbers only; nothing here grades the look.
 
   python art/species-construction/anim/clipset_checks.py clips <rig dir> <rest skin npz> <bake dir> <approved bake dir>
-      [--clips hurt,evade,guard,guard_in]
+      [--clips hurt,evade,guard,guard_in,guard_out]
   python art/species-construction/anim/clipset_checks.py setup <rig dir> <rest skin npz> <bake dir> <out json>
       [--frames guard:0,guard:13]
 
@@ -24,7 +24,8 @@ as clip_checks.py, whose region, tail, ear and fold tests are repeated here. Per
   point (under 0 is into the floor); and the IK's ankle error against the ankle target the clip asked for.
 Per clip: the first frame against the approved idle frame 0 and the last against approved idle frame 89 (max vertex
 difference, mm); the step into the next clip frame (idle 0 after hurt and evade, guard 7 after guard_in) against the
-clip's own last step; guard's seam (frame 0 against the module's frame 27, and the velocity change across it against
+clip's own last step; guard_out's frame 0 against guard frame 0, its last frame against idle frame 89 and the hand
+back; guard's seam (frame 0 against the module's frame 27, and the velocity change across it against
 the largest anywhere else in the loop). Writes <bake dir>/checks-skin.json (clips) or <out json> (setup).
 """
 import argparse
@@ -49,7 +50,7 @@ p.add_argument('rig', type=Path)
 p.add_argument('rest', type=Path)
 p.add_argument('bake', type=Path)
 p.add_argument('approved', type=Path, help='clips: the approved bake dir (idle frames 0 and 89); setup: the out json')
-p.add_argument('--clips', default='hurt,evade,guard,guard_in')
+p.add_argument('--clips', default='hurt,evade,guard,guard_in,guard_out')
 p.add_argument('--frames', default='guard:0')
 a = p.parse_args()
 
@@ -352,6 +353,16 @@ for clip in a.clips.split(','):
         S['step_last_two_frames_max_mm'] = round(float(np.linalg.norm(Ps[n-1]-Ps[n-2], axis=1).max())*1000, 4)
         S['step_guard7_to_8_max_mm'] = round(float(np.linalg.norm(P8-P7, axis=1).max())*1000, 4)
         S['velocity_change_at_set_mm'] = round(float(np.linalg.norm((P8-P7)-(P7-Ps[n-1]), axis=1).max())*1000, 4)
+    if clip == 'guard_out':
+        g = json.loads((a.bake/'guard'/'poses.json').read_text())
+        Pg0, _ = posed(g[0]['pose'], g[0]['lift'], g[0])
+        Pg26, _ = posed(g[-1]['pose'], g[-1]['lift'], g[-1])
+        S['first_frame_vs_guard0_max_mm'] = round(float(np.linalg.norm(Ps[0]-Pg0, axis=1).max())*1000, 5)
+        S['step_guard26_to_first_max_mm'] = round(float(np.linalg.norm(Ps[0]-Pg26, axis=1).max())*1000, 4)
+        S['last_frame_vs_idle89_max_mm'] = round(float(np.linalg.norm(Ps[n-1]-P_idle89, axis=1).max())*1000, 5)
+        S['step_last_to_idle0_max_mm'] = round(float(np.linalg.norm(P_idle0-Ps[n-1], axis=1).max())*1000, 4)
+        S['step_last_two_frames_max_mm'] = round(float(np.linalg.norm(Ps[n-1]-Ps[n-2], axis=1).max())*1000, 4)
+        S['velocity_change_at_handback_mm'] = round(float(np.linalg.norm((P_idle0-Ps[n-1])-(Ps[n-1]-Ps[n-2]), axis=1).max())*1000, 4)
     report[clip] = dict(summary=S, frames=rows)
     print(clip, json.dumps({k: v for k, v in S.items() if k not in ('stretchMax',)})[:3000], flush=True)
 (a.bake/'checks-skin.json').write_text(json.dumps(report, indent=1))

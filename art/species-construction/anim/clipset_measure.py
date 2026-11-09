@@ -7,12 +7,14 @@ plus the travel of the body in the rig (numpy, PIL; no Blender). Numbers only.
 
 <frames dir>/<clip>/{side,sprite}/NNNN.png are the clip's clay frames; <idle frames dir>/idle/{side,sprite} the
 approved idle's (same framings). Per frame and view: the silhouette's box, the snout (the front-most pixel in the head
-band, the top 21 percent of the frame's figure height), the crown (the head band's top pixel), the ear tip (the head
+band, the top 130 px at 720 as the batch 1 critic's ear.py, scaled at 192), the crown (the head band's top pixel), the ear tip (the head
 band's pixel farthest from the snout) and its angle (0 straight up from the snout, 90 straight back), the rear-most
 tail pixel, the lowest pixel (the feet), and the pixels that changed since the previous frame. Per clip and view: the
 largest move of each landmark from frame 0, in px and in mm (side 2.354 and sprite 9.152 mm a pixel, clips4
 measure.json), and the changed pixels at the hand back (clip's last frame to idle frame 0) against idle's own 89 to 0.
-In the rig: the root's travel back (y) and up (z), the feet's lift, and the body's front (the front-most skin that is
+Per frame also the centroid's speed, the rear tail tip's path, guard's loop seam in changed pixels, and from the rig
+projected into both views: the muzzle's underside over the near paw's top (px and mm), the pelvis joint, the near knee's
+bend. In the rig: the root's travel back (y) and up (z), the feet's lift, and the body's front (the front-most skin that is
 not arm, tail or ear) against frame 0's back (the rear-most skin that is not tail or ear), and the same for the trunk
 alone (pelvis, spine and chest skin), so `clear` can be read.
 Writes <bake dir>/measure-render.json (or --out).
@@ -38,9 +40,13 @@ p.add_argument('idle', type=Path)
 p.add_argument('bake', type=Path)
 p.add_argument('rig', type=Path)
 p.add_argument('rest', type=Path)
-p.add_argument('--clips', default='hurt,evade')
+p.add_argument('--clips', default='hurt,evade,guard_in,guard,guard_out')
 p.add_argument('--out', type=Path, default=None)
+p.add_argument('--box', default='-0.5375,-0.5567,-0.987,0.6738,0.7639,0.932')
+p.add_argument('--sprite-box', default='-0.5675,-0.5867,-1.017,0.7038,0.7939,0.962')
 a = p.parse_args()
+a.box = [float(v) for v in a.box.split(',')]
+a.sprite_box = [float(v) for v in a.sprite_box.split(',')]
 MM = {'side': 2.354, 'sprite': 9.152}
 
 
@@ -97,9 +103,58 @@ BODY_BACK = np.flatnonzero(~TAILS & ~EARS)
 TRUNK = np.flatnonzero((share(['pelvis', 'spine', 'chest']) > .5) & ~TAILS & ~ARMS)
 FEET = np.flatnonzero(share(['foot.L', 'foot.R']) > .5)
 SHAPES = ac.load_shapes(a.bake)
+HANDL = np.flatnonzero(share(['hand.L']) > .5)
+HEADV = np.flatnonzero((share(['head', 'jaw']) > .9) & ~EARS)
+
+
+class Cam:
+    """The render cameras as clip_measure.py builds them (side: azimuth 90, elevation 3, fitted to the box, 720 px;
+    sprite: azimuth 90, elevation 0, the sprite box with a 6 percent margin, 192 px)."""
+    def __init__(self, box, az, el, size, fit, margin):
+        lo, hi = box[:3], box[3:]
+        ar, er = math.radians(az), math.radians(el)
+        dvec = np.array([math.sin(ar)*math.cos(er), -math.cos(ar)*math.cos(er), math.sin(er)])
+        f = -dvec
+        r = np.cross(f, [0, 0, 1.])
+        r /= np.linalg.norm(r)
+        u = np.cross(r, f)
+        corners = np.array([[hi[0] if k & 1 else lo[0], hi[1] if k & 2 else lo[1], hi[2] if k & 4 else lo[2]] for k in range(8)])
+        xs, ys = corners@r, corners@u
+        self.ortho = max(xs.max()-xs.min(), ys.max()-ys.min())*fit*(1+2*margin)
+        self.cx, self.cy = (xs.max()+xs.min())/2, (ys.max()+ys.min())/2
+        self.r, self.u, self.size = r, u, size
+        self.pps = size/self.ortho
+
+    def px(self, P_m):
+        X = np.atleast_2d(P_m)/s+off
+        return np.stack([(X@self.r-self.cx)*self.pps+self.size/2, self.size/2-(X@self.u-self.cy)*self.pps], 1)
+
+
+CAMS = {'side': Cam(np.array(a.box), 90., 3., 720, 1.08, 0.), 'sprite': Cam(np.array(a.sprite_box), 90., 0., 192, 1., .06)}
+
+
+def landmarks(P, fr):
+    """The near paw's top and the muzzle's underside (the lowest head and jaw skin within 6 cm of the head's front),
+    their vertical gap in mm and in px at both framings (positive: the muzzle above the paw), the pelvis joint projected,
+    and the near knee's bend."""
+    hv = P[HEADV]
+    front = hv[hv[:, 1] < hv[:, 1].min()+.06]
+    mu = front[np.argmin(front[:, 2])]
+    paw = P[HANDL][np.argmax(P[HANDL][:, 2])]
+    T = rc.bone_transforms(J, fr['pose'], bones=rc.ANIM_BONES, root_translate=tuple(rc.lift_vec(fr['lift'])))
+    jt = lambda b, j: T[b][0]@np.array(J[j])+T[b][1]
+    h, k_, an = jt('thigh.L', 'hip.L'), jt('thigh.L', 'knee.L'), jt('shin.L', 'ankle.L')
+    u, v = k_-h, an-k_
+    out = dict(muzzle_over_paw_mm=round(float(mu[2]-paw[2])*1000, 1), paw_ahead_of_muzzle_mm=round(float(mu[1]-paw[1])*1000, 1),
+               knee_L_bend_deg=round(math.degrees(math.acos(max(-1., min(1., u@v/np.linalg.norm(u)/np.linalg.norm(v))))), 1))
+    for cam, c in CAMS.items():
+        q = c.px(np.array([mu, paw, jt('pelvis', 'pelvis')]))
+        out[f'muzzle_over_paw_{cam}_px'] = round(float(q[1, 1]-q[0, 1]), 1)
+        out[f'pelvis_{cam}_px'] = [round(float(x), 1) for x in q[2]]
+    return out
 
 out = dict(units='px (image y down) unless named; mm in the rig', mmPerPx=MM, method='clips4 critic silhouettes (gray differs from the '
-           'corner by more than 6); head band = top 21 percent of the figure height at frame 0')
+           'corner by more than 6); head band = the top 130 px at 720 (scaled at 192), as the batch 1 critic measures the ear angle')
 idle_m = {v: [mask(a.idle/'idle'/v/f'{k:04d}.png') for k in (0, 89)] for v in MM}
 for clip in a.clips.split(','):
     frames = json.loads((a.bake/clip/'poses.json').read_text())
@@ -107,9 +162,7 @@ for clip in a.clips.split(','):
     C = dict(perFrame={}, summary={})
     for view in MM:
         ms = series(view, clip, n)
-        h0 = feats(ms[0], 10**9)
-        fig_h = h0['box'][3]-h0['box'][1]
-        head_h = int(round(.21*fig_h))
+        head_h = int(round(130*ms[0].shape[0]/720))     # the critic's head band (clipset1/critic/ear.py): top 130 px at 720
         F = [feats(m, head_h) for m in ms]
         for k in range(n):
             F[k]['changed_px'] = int((ms[k] ^ ms[k-1]).sum()) if k else int((ms[0] ^ idle_m[view][1]).sum())
@@ -130,6 +183,12 @@ for clip in a.clips.split(','):
         S['idle_89_to_0_changed_px'] = int((idle_m[view][0] ^ idle_m[view][1]).sum())
         S['entry_idle89_to_frame0_changed_px'] = F[0]['changed_px']
         S['snout_path_px'] = [F[k]['snout'] for k in range(n)]
+        S['centroid_speed_px_per_frame'] = [round(float(np.hypot(F[k]['centroid'][0]-F[k-1]['centroid'][0], F[k]['centroid'][1]-F[k-1]['centroid'][1])), 2)
+                                            for k in range(1, n)]
+        S['tail_rear_path_px'] = [F[k]['tail_rear'] for k in range(n)]
+        if clip == 'guard':
+            S['loop_seam_26_to_0_changed_px'] = int((ms[0] ^ ms[n-1]).sum())
+            S['loop_changed_px_median'] = float(np.median([int((ms[k] ^ ms[k-1]).sum()) for k in range(1, n)]))
         S['lowest_y_px'] = [F[k]['box'][3] for k in range(n)]
         C['summary'][view] = S
     # rig
@@ -143,7 +202,8 @@ for clip in a.clips.split(','):
                          feet_lowest_mm=round(float(P[FEET, 2].min())*1000, 1),
                          body_front_y_mm=round(float(P[BODY_FRONT, 1].min())*1000, 1),
                          body_back_y_mm=round(float(P[BODY_BACK, 1].max())*1000, 1),
-                         trunk_front_y_mm=round(float(P[TRUNK, 1].min())*1000, 1), trunk_back_y_mm=round(float(P[TRUNK, 1].max())*1000, 1)))
+                         trunk_front_y_mm=round(float(P[TRUNK, 1].min())*1000, 1), trunk_back_y_mm=round(float(P[TRUNK, 1].max())*1000, 1),
+                         **landmarks(P, fr)))
     back0 = rows[0]['body_back_y_mm']
     tback0 = rows[0]['trunk_back_y_mm']
     for r in rows:
