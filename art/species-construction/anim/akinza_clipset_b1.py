@@ -362,7 +362,7 @@ EVADE = dict(
     # 15, settled onto idle frame 89 at 17. Root (x, y back, z up) in metres per frame.
     root=[(0, 0, 0), (0, .004, -.035), (0, .012, -.060), (0, .060, -.005), (0, .135, .060), (0, .208, .085), (0, .278, .080),
           (0, .295, .020), (0, .300, -.040), (0, .300, -.048), (0, .272, -.036), (0, .222, -.030), (0, .170, -.032),
-          (0, .118, -.028), (0, .070, -.034), (0, .032, -.024), (0, .009, -.006), (0, 0, 0)],
+          (0, .118, -.028), (0, .070, -.034), (0, .026, -.020), (0, .002, -.0008), (0, 0, 0)],
     # feet per side: (dy, dz, pitch, pivot); pivot t = toe pads (the heel rises), a = ankle (in the air), f = free (the
     # foot follows the shin, no ankle bend: E5, the pointed foot in the air creased the ankle). Flight targets sit under
     # the hips with the knees folded (the legs' reach is checked per frame: ankle error 0)
