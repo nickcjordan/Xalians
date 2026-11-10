@@ -20,7 +20,7 @@
       at the same scale, then its close views; picks are [[clip, frame, [crop views]], ...].
   python art/species-construction/anim/compose_clipset.py setupfaint <setup frames dir> <setup check json> <extra json> <out png> [picked]
       [candidates, e.g. K,S] [idle clay frames dir]
-      Batch 2's faint setup sheet: the lying candidates A, B, C with their numbers (extra json: visible192 and fur per candidate).
+      Batch 2's faint setup sheet: the lying candidates (A, B, C in fix pass 1; K, S in fix pass 2) with their numbers (extra json: visible192 and fur per candidate).
   python art/species-construction/anim/compose_clipset.py json2 <bake dir> <out json> [extra json...]
       Batch 2's clips.json (displaced, held, held_in, held_out, faint), with the ear line per frame (ear-line.json).
   python art/species-construction/anim/compose_clipset.py json <bake dir> <out json> [extra json...]
