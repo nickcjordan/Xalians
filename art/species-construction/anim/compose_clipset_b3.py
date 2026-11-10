@@ -179,6 +179,11 @@ def clips_json_b3(bake, out, extra):
         entry = {k: v for k, v in sp.items() if k != 'params'}
         if clip in chk:
             entry['summary'] = chk[clip]['summary']
+            S = chk[clip]['summary']
+            if 'reach_at_hit_forward_m' in S:            # the acts: the measured reach (the further striking claw tips forward at `hit`)
+                entry['reachM'] = max(S.get(f'reach_at_hit_forward_m_{o}', S['reach_at_hit_forward_m']) for o in 'LR')
+                entry['reachRule'] = ('reachM: the striking claw tips\' furthest point forward of the origin (along the facing) at `hit`, '
+                                      'measured on the posed claws; reachDeclaredM was the brief\'s starting value')
             entry['perFrame'] = [{k: v for k, v in r.items() if k not in ('bounds_src', 'info')} for r in chk[clip]['frames']]
         else:
             entry['status'] = 'not checked'
