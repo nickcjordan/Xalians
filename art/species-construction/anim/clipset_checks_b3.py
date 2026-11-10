@@ -14,8 +14,15 @@ stretch, arm, tail, ear, foot and ground tests are repeated unchanged; batch 3 a
   point forward, as -y from the origin, and their distance from the origin), and the striking claw tips' speed per frame (mm a
   frame) with the frames it peaks.
 
+- creases (fix pass 2, with the overhead keys): per frame, in the shoulder and armpit regions, the triangles whose normal turns
+  more than 90 degrees (folded) and more than 60 degrees (sharp) from the surface's own normal smoothed over its neighbours (30
+  rounds), against the same count over the --crease-baseline bakes (Night Stalk and the guard, the approved clips with the arms
+  highest). The fold count above measures each triangle against its dominant bone's turn, which an arm raised past the horizontal
+  breaks (the armpit skin follows the arm while its dominant bone is the chest): it counted 870 shoulder triangles on the bare
+  overhead pose and 2534 once the overhead keys smoothed it, where this count gives 376 and 11.
+
   python art/species-construction/anim/clipset_checks_b3.py clips <rig dir> <rest skin npz> <bake dir> <approved bake dir>
-      [--clips move,move_in,move_out,light,heavy] [--parts <parts npz>]
+      [--clips move,move_in,move_out,light,heavy] [--parts <parts npz>] [--crease-baseline a/poses.json,b/poses.json]
   python art/species-construction/anim/clipset_checks_b3.py setup <rig dir> <rest skin npz> <bake dir> <out json>
       [--frames moveToeoff:0,...] [--parts <parts npz>]
 
@@ -28,6 +35,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import scipy.sparse as sp
 from scipy.spatial import cKDTree
 
 HERE = Path(__file__).resolve().parent
@@ -50,6 +58,7 @@ p.add_argument('--clips', default='move,move_in,move_out,light,heavy')
 p.add_argument('--frames', default='')
 p.add_argument('--parts', type=Path, default=DEFAULT_PARTS)
 p.add_argument('--approved-cache', type=Path, default=None, help='a json holding the approved crouch maxima (written on the first run, read after)')
+p.add_argument('--crease-baseline', default='', help='bakes (poses.json, comma separated) whose shoulder and armpit creases are the baseline')
 a = p.parse_args()
 
 B = rc.ANIM_BONES
@@ -337,10 +346,43 @@ print('parts', len(PARTS), 'hind claws', {sd: len(v) for sd, v in HIND.items()},
       'heel vertices', {sd: len(v) for sd, v in HEEL.items()}, flush=True)
 
 
+_ADJ = sp.coo_matrix((np.ones(2*len(edges)), (np.r_[edges[:, 0], edges[:, 1]], np.r_[edges[:, 1], edges[:, 0]])),
+                     shape=(len(rest), len(rest))).tocsr()
+_ADJ = sp.diags(1/np.maximum(np.asarray(_ADJ.sum(1)).ravel(), 1))@_ADJ
+CREASE_REGIONS = ('shoulder', 'armpit')
+
+
+def creases(P, rounds=30):
+    """Per region [folded, sharp]: triangles turned more than 90 and 60 degrees from the locally smoothed surface normal."""
+    fn = np.cross(P[tris[:, 1]]-P[tris[:, 0]], P[tris[:, 2]]-P[tris[:, 0]])
+    vn = np.zeros_like(P)
+    for k in range(3):
+        np.add.at(vn, tris[:, k], fn)
+    for _ in range(rounds):
+        vn = .5*vn+.5*(_ADJ@vn)
+    vn /= np.maximum(np.linalg.norm(vn, axis=1, keepdims=True), 1e-20)
+    fu = fn/np.maximum(np.linalg.norm(fn, axis=1, keepdims=True), 1e-20)
+    dot = np.einsum('ij,ij->i', fu, vn[tris].mean(1))
+    return {r: [int(np.sum(region_of[r] & (dot < 0))), int(np.sum(region_of[r] & (dot < .5)))] for r in CREASE_REGIONS}
+
+
+def crease_baseline():
+    out = {}
+    for b in [x for x in a.crease_baseline.split(',') if x]:
+        frs = json.loads(Path(b).read_text())
+        cs = [creases(posed(fr['pose'], fr['lift'], fr)[0]) for fr in frs]
+        out[str(Path(b).parent.name)] = {r: [max(c[r][0] for c in cs), max(c[r][1] for c in cs)] for r in CREASE_REGIONS}
+    if out:
+        out['max'] = {r: [max(v[r][0] for k, v in out.items() if k != 'max'), max(v[r][1] for k, v in out.items() if k != 'max')] for r in CREASE_REGIONS}
+    print('crease baseline', out, flush=True)
+    return out
+
+
 def row_of(fr, prev):
     P, vals = posed(fr['pose'], fr['lift'], fr)
     row = dict(frame=fr.get('frame', 0), keys={k: round(v, 3) for k, v in vals.items() if v > 0},
                **frame_checks(P, fr['pose'], fr['lift'], prev, targets_of(fr)))
+    row['creases'] = creases(P)
     row['angles'] = joint_angles(fr['pose'])
     row['regions_over_approved'] = {r: row['folds'][r] for r in APPROVED_REGIONS
                                     if row['folds'][r][0] > APPR[r][0] or row['folds'][r][1] > APPR[r][1]}
@@ -349,13 +391,13 @@ def row_of(fr, prev):
 
 if a.mode == 'setup':
     out = dict(rig=str(R), rest=str(a.rest), units='mm unless named', approvedCrouchFoldsMaxPerRegion=APPR,
-               approvedCrouchStretchMax=APPR_ST, frames={})
+               approvedCrouchStretchMax=APPR_ST, creaseBaseline=crease_baseline(), frames={})
     for spec in a.frames.split(','):
         clip, fno = spec.split(':')
         fr = json.loads((a.bake/clip/'poses.json').read_text())[int(fno)]
         row, _ = row_of(fr, None)
         out['frames'][spec] = row
-        print(spec, 'over approved', row['regions_over_approved'], 'folds', row['folds'], 'angles', row['angles'], flush=True)
+        print(spec, 'over approved', row['regions_over_approved'], 'folds', row['folds'], 'creases', row['creases'], 'angles', row['angles'], flush=True)
     Path(a.approved).parent.mkdir(parents=True, exist_ok=True)
     Path(a.approved).write_text(json.dumps(out, indent=1))
     print('SETUP_DONE')
@@ -369,7 +411,8 @@ idle_step = float(np.linalg.norm(P_idle0-P_idle89, axis=1).max()*1000)
 report = dict(rig=str(R), rest=str(a.rest), approved=str(a.approved), units='mm unless named',
               soleVertices={sd: int(len(v)) for sd, v in SOLE.items()}, contactPoint={sd: CONTACT_PT[sd].round(5).tolist() for sd in 'LR'},
               heelVertices={sd: int(len(v)) for sd, v in HEEL.items()}, parts=[dict(name=q['name'], bone=q['bone']) for q in PARTS],
-              approvedCrouchFoldsMaxPerRegion=APPR, approvedCrouchStretchMax=APPR_ST, idleStep89to0_max_mm=round(idle_step, 4))
+              approvedCrouchFoldsMaxPerRegion=APPR, approvedCrouchStretchMax=APPR_ST, idleStep89to0_max_mm=round(idle_step, 4),
+              creaseBaseline=crease_baseline())
 
 
 def mx(X, Y):
@@ -409,6 +452,8 @@ for clip in a.clips.split(','):
         pl = [r[f'sole_{sd}_slide_mm'] for r in rows if r.get(f'sole_{sd}_slide_mm') is not None and (r['planted'] or {}).get(sd)]
         S[f'sole_{sd}_slide_planted_max_mm'] = max(pl) if pl else None
     S['foldsMaxPerRegion'] = {r: [max(x['folds'][r][0] for x in rows), max(x['folds'][r][1] for x in rows)] for r in region_of}
+    S['creasesMaxPerRegion'] = {r: [max(x['creases'][r][0] for x in rows), max(x['creases'][r][1] for x in rows)] for r in CREASE_REGIONS}
+    S['creasesPerFrame'] = {str(x['frame']): x['creases'] for x in rows}
     S['stretchMax'] = {r: {k: max(x['stretch'][r][k] for x in rows) for k in ('edge_p99', 'edge_max', 'area_max', 'tilted60')}
                        for r in STRETCH_REGIONS}
     S['framesOverApprovedFolds'] = [dict(frame=r['frame'], regions=r['regions_over_approved']) for r in rows if r['regions_over_approved']]

@@ -122,7 +122,12 @@ def setup(fdir, chk, out, rows_json, S=512):
                  f"folds over the approved crouch maxima: {over if over else 'none'};  shoulder {r['folds']['shoulder']} ({appr['shoulder']}), armpit "
                  f"{r['folds']['armpit']} ({appr['armpit']}), elbow {r['folds']['elbow']} ({appr['elbow']}), hip {r['folds']['hip']} ({appr['hip']}), knee "
                  f"{r['folds']['knee']} ({appr['knee']}), ankle {r['folds']['ankle']} ({appr['ankle']}), tail fork {r['folds']['tail_fork']} ({appr['tail_fork']}), "
-                 f"neck {r['folds']['neck']} ({appr['neck']}), belly {r['folds']['belly']} ({appr['belly']})",
+                 f"neck {r['folds']['neck']} ({appr['neck']}), belly {r['folds']['belly']} ({appr['belly']})"]
+        if 'creases' in r:
+            bl = c.get('creaseBaseline', {}).get('max', {})
+            lines.append(f"creases (triangles turned over 90 / over 60 degrees from the smoothed surface): shoulder {r['creases']['shoulder']}, armpit "
+                         f"{r['creases']['armpit']};  Night Stalk and guard at most: shoulder {bl.get('shoulder')}, armpit {bl.get('armpit')}")
+        lines += [
                  f"angles (degrees of swing from rest): thigh {ang['thigh_L']}/{ang['thigh_R']}, knee {ang['knee_L']}/{ang['knee_R']}, ankle (+ pointing) "
                  f"{ang['ankle_L']}/{ang['ankle_R']}, upper arm {ang['upperarm_L']}/{ang['upperarm_R']}, elbow {ang['elbow_L']}/{ang['elbow_R']};  keys "
                  + ', '.join(f'{k} {v}' for k, v in sorted(r['keys'].items()) if any(s in k for s in ('shoulder', 'armpit', 'ankle', 'knee_mush.', 'elbow_mush.')))]
@@ -136,7 +141,7 @@ def setup(fdir, chk, out, rows_json, S=512):
     H = 40+sum(22*len(ln)+S+14 for ln, _ in blocks)
     out_im = Image.new('RGB', (per*S, H), (12, 12, 12))
     dr = ImageDraw.Draw(out_im)
-    dr.text((8, 8), 'Akinza clip set batch 3 setup check: the extreme poses on the bare rig (clay)', fill=(235, 235, 235), font=font(20))
+    dr.text((8, 8), c.get('title', 'Akinza clip set batch 3 setup check: the extreme poses on the bare rig (clay)'), fill=(235, 235, 235), font=font(20))
     y = 40
     for ln, ims in blocks:
         for i, t in enumerate(ln):
