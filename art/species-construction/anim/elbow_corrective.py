@@ -44,11 +44,11 @@ p.add_argument('rig', type=Path)
 p.add_argument('rest', type=Path)
 p.add_argument('--rounds', type=int, default=80)
 p.add_argument('--fine', type=int, default=4)
-p.add_argument('--r0', type=float, default=.03)          # defaults: the accepted rig-p8b build (elbow-corrective.json)
+p.add_argument('--r0', type=float, default=.03)          # defaults: the accepted rig-p8b build (elbow-corrective.json; fix pass 4: no deep key)
 p.add_argument('--r1', type=float, default=.07)
 p.add_argument('--relax', type=int, default=3000)
 p.add_argument('--mid-share', type=float, default=.6)
-p.add_argument('--deep-share', type=float, default=1.08, help='also a key past the guard, the forearm at this share of its guard turn '
+p.add_argument('--deep-share', type=float, default=0., help='also a key past the guard, the forearm at this share of its guard turn '
                '(fix pass 3: guard_in and guard_out fold the forearm a little past the guard, to 1.07)')
 p.add_argument('--rise0', type=float, default=30.)
 p.add_argument('--fore-falloff', default='', help='t0,t1: the mask fades out along the forearm (0 at the elbow joint, 1 at the '

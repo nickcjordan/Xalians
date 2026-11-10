@@ -13,6 +13,8 @@
       before rig-p8b's elbow keys.
   python art/species-construction/anim/compose_clipset.py ankle <ankle setup dir> <before json> <after json> <out png>
       The ankle keys' setup sheet: each static pose before and after, side, three-quarter and two ankle close views.
+  python art/species-construction/anim/compose_clipset.py grid key=<frames dir>[,key2=<dir>] <rows json> <out png> <title> [size]
+      A comparison sheet: rows of [label, frames dir key, clip, [views]] (fix pass 4: shoulder and ear root checks).
   python art/species-construction/anim/compose_clipset.py json <bake dir> <out json> [extra json...]
       clips.json: frames, events, rules, per-clip check summaries and per-frame numbers (checks-skin.json), the render
       measures (measure-render.json) and any render logs given.
@@ -190,6 +192,26 @@ def ankle(fdir, before_json, after_json, out):
     print('ankle sheet', out, out_im.size)
 
 
+def grid(fdirs, rows_json, out, title, size=400):
+    """A comparison sheet: rows of [label, frames dir key, clip, [views]], each image <frames dir>/<clip>/<view>/0000.png
+    resized to size px, the label over each row (fix pass 4: the shoulder against Night Stalk f18 and idle, the ear root)."""
+    rows = json.loads(Path(rows_json).read_text()) if str(rows_json).endswith('.json') else json.loads(rows_json)
+    S = int(size)
+    W = max(len(r[3]) for r in rows)*S
+    out_im = Image.new('RGB', (W, 30+len(rows)*(S+24)), (12, 12, 12))
+    dr = ImageDraw.Draw(out_im)
+    dr.text((8, 8), title, fill=(235, 235, 235), font=font(15))
+    y = 30
+    for lab, key, clip, views in rows:
+        dr.text((8, y+4), lab, fill=(250, 210, 90), font=font(13))
+        y += 22
+        for i, v in enumerate(views):
+            out_im.paste(Image.open(Path(fdirs[key])/clip/v/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS), (i*S, y))
+        y += S+2
+    out_im.save(out)
+    print('grid sheet', out, out_im.size)
+
+
 def clips_json(bake, out, extra):
     spec = json.loads((bake/'clipset-spec.json').read_text())
     chk = json.loads((bake/'checks-skin.json').read_text())
@@ -242,6 +264,8 @@ if __name__ == '__main__':
         sheet(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]), sys.argv[6:])
     elif cmd == 'setup':
         setup(Path(sys.argv[2]), sys.argv[3], Path(sys.argv[4]), sys.argv[5] if len(sys.argv) > 5 else None, *sys.argv[6:8])
+    elif cmd == 'grid':
+        grid(dict(x.split('=', 1) for x in sys.argv[2].split(',')), sys.argv[3], Path(sys.argv[4]), sys.argv[5], *sys.argv[6:7])
     elif cmd == 'ankle':
         ankle(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]))
     elif cmd == 'json':
