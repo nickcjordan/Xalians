@@ -73,5 +73,8 @@ for kind, f in POSES:
     V = np.empty(len(m.vertices) * 3); m.vertices.foreach_get('co', V); e.to_mesh_clear()
     V = V.reshape(-1, 3)[::5]; Wb = np.array(body.matrix_world); out[key + '_body'] = V @ Wb[:3, :3].T + Wb[:3, 3]
     meta.append(key); print('POSE', MODE, key, flush=True)
-np.savez_compressed(OUT, names=np.array([pb.name for pb in rig.pose.bones]), keys=np.array(meta), **out)
+gn_ = [g.name for g in body.vertex_groups]; dom_ = []
+for v in list(body.data.vertices)[::5]:
+    dom_.append(gn_[max(v.groups, key=lambda x: x.weight).group] if len(v.groups) else '')
+np.savez_compressed(OUT, names=np.array([pb.name for pb in rig.pose.bones]), keys=np.array(meta), body_dom=np.array(dom_), **out)
 print('VERIFY dump done', MODE, flush=True)

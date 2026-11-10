@@ -251,11 +251,59 @@ def apply_carriage(rig, car, scale=1.0):
     bpy.context.view_layer.update(); return True
 
 
+PAW = {}
+
+
+def paw_points(rig):
+    """luceras-final pass 4: the fore paw points that touch the ground (fore claws and the paw skin weighted >= 0.9 to
+    leg_f?_03), in that bone's rest space, so their posed height is exact for the claws and near-exact for the skin."""
+    if PAW: return PAW
+    body = bpy.data.objects['luceras_blockout']; gi = {g.name: g.index for g in body.vertex_groups}
+    Mb = body.matrix_world; Mr = rig.matrix_world.inverted()
+    for leg, sx in (('fl', 'l'), ('fr', 'r')):
+        bn = f'leg_{leg}_03'; g = gi[bn]; Rinv = rig.data.bones[bn].matrix_local.inverted(); pts = []
+        for v in body.data.vertices:
+            w = next((x.weight for x in v.groups if x.group == g), 0.0)
+            if w >= 0.9: pts.append(Rinv @ (Mr @ (Mb @ v.co)))
+        for o in bpy.context.scene.objects:
+            if o.type == 'MESH' and o.name.startswith(('fore_claw_' + sx + '_', 'fore_dewclaw_' + sx)):
+                pts += [Rinv @ (Mr @ (o.matrix_world @ v.co)) for v in o.data.vertices]
+        PAW[leg] = np.array([list(q) for q in pts])
+    return PAW
+
+
+def plant_fore_paws(rig, poser, ground=0.0, clear=0.0002):
+    """luceras-final pass 4 claw fix: when the carriage pushes a fore paw below the ground, lift that paw straight up by
+    the smallest amount that clears it (two-link solve, the paw keeps its orientation); nothing else moves."""
+    pts = paw_points(rig); lifts = {}
+    for leg in ('fl', 'fr'):
+        c = rig.pose.bones[f'leg_{leg}_03']; M = np.array(c.matrix)
+        z = (pts[leg] @ M[:3, :3].T + M[:3, 3])[:, 2].min()
+        dz = ground + clear - z
+        if dz <= 0: continue
+        L = poser.legs[leg]; a, b, cc = (rig.pose.bones[n] for n in L['names'])
+        H = a.head.copy(); W = b.tail.copy() + Vector((0, 0, dz)); K = a.tail.copy(); R3 = cc.matrix.to_3x3().normalized()
+        d = W - H; L1, L2 = L['L1'], L['L2']
+        dist = max(abs(L1 - L2) + 1e-4, min(L1 + L2 - 1e-4, d.length)); n = d.normalized()
+        along = (L1 * L1 - L2 * L2 + dist * dist) / (2 * dist); h = math.sqrt(max(L1 * L1 - along * along, 0.0))
+        pole = K - H; side = pole - n * pole.dot(n); side.normalize()
+        Kn = H + n * along + side * h
+        for p_, start, end in ((a, H, Kn), (b, Kn, H + n * dist)):
+            Mx = p_.matrix.copy(); cur = Mx.col[1].xyz.normalized(); q = cur.rotation_difference((end - start).normalized())
+            p_.matrix = Matrix.Translation(p_.head) @ (q.to_matrix() @ Mx.to_3x3()).to_4x4(); bpy.context.view_layer.update()
+        cc.matrix = Matrix.Translation(cc.head) @ R3.to_4x4(); bpy.context.view_layer.update()
+        lifts[leg] = round(dz * 1000, 2)
+    return lifts
+
+
 def apply_root_dz(rig, dz):
     """A root height offset (metres, world up) on top of the pose, through the root bone."""
     if not dz: return False
     pr = rig.pose.bones['root']; pr.rotation_mode = 'QUATERNION'; pr.matrix = Matrix.Translation((0.0, 0.0, dz)) @ pr.matrix
     bpy.context.view_layer.update(); return True
+
+
+PLANT_LOG = {}
 
 
 def keyed_bones(rig, poser, extra):
@@ -275,6 +323,7 @@ def bake(rig, poser, name, clip, car=None):
         poser.apply(s)
         apply_carriage(rig, car.get('block'), 1.0)
         apply_root_dz(rig, (car.get('root_dz') or {}).get(str(f), 0.0))
+        if car.get('block') and car.get('plant'): PLANT_LOG.setdefault(name, {})[f] = plant_fore_paws(rig, poser)
         store.append({nm: (tuple(rig.pose.bones[nm].location), tuple(rig.pose.bones[nm].rotation_quaternion), tuple(rig.pose.bones[nm].scale)) for nm in names})
     old = bpy.data.actions.get(name)
     if old: bpy.data.actions.remove(old)
@@ -481,6 +530,7 @@ def bake_carriage_extras(rig, poser, clips, CAR):
         for nm, (loc, q, sc) in ch.items():
             p = rig.pose.bones[nm]; p.location = loc; p.rotation_quaternion = q; p.scale = sc
         bpy.context.view_layer.update(); apply_carriage(rig, CAR['rest'], 1.0)
+        if CAR.get('plant_fore_paws'): PLANT_LOG.setdefault('rest', {})[0] = plant_fore_paws(rig, poser)
         st = {nm: (tuple(rig.pose.bones[nm].location), tuple(rig.pose.bones[nm].rotation_quaternion), tuple(rig.pose.bones[nm].scale)) for nm in names_all}
         key_action(rig, 'rest', [st, st]); out['rest'] = dict(frames=1, source='review.poses frame 1 + carriage.rest')
     sig = clips['sig.horns-first-descent']; nt = int(CAR.get('transition_frames', 7)); names = keyed_bones(rig, poser, ['root'])
@@ -488,6 +538,7 @@ def bake_carriage_extras(rig, poser, clips, CAR):
         s = sig['fn'](sf * 1000.0 / FPS); store = []; rig.animation_data.action = None
         for f in range(nt + 1):
             poser.apply(s); apply_carriage(rig, CAR.get('idle'), LC.trans_weight(kind, f, nt))
+            if CAR.get('plant_fore_paws'): PLANT_LOG.setdefault(tag, {})[f] = plant_fore_paws(rig, poser)
             store.append({nm: (tuple(rig.pose.bones[nm].location), tuple(rig.pose.bones[nm].rotation_quaternion), tuple(rig.pose.bones[nm].scale)) for nm in names})
         key_action(rig, tag, store); out[tag] = dict(frames=nt, sig_frame=sf, kind=kind)
     rig.animation_data.action = None; poser.reset()
@@ -508,7 +559,7 @@ def do_bake():
     set_deform_mods(False)
     specs_all = {}; info = {}
     CAR = params.get('carriage') or {}
-    carmap = {'idle': dict(block=CAR.get('idle')), 'sig.horns-first-descent': dict(root_dz=CAR.get('sig_root_dz'))}
+    carmap = {'idle': dict(block=CAR.get('idle'), plant=CAR.get('plant_fore_paws', False)), 'sig.horns-first-descent': dict(root_dz=CAR.get('sig_root_dz'))}
     for name, clip in clips.items():
         t0 = time.time(); act, specs, store = bake(rig, poser, name, clip, carmap.get(name)); specs_all[name] = specs
         # bake check: evaluated action reproduces the posed values
@@ -535,6 +586,7 @@ def do_bake():
                           step_after_seam=seam, step_before_seam=jumps[-1], max_step=max(jumps), mean_step=float(np.mean(jumps)))
     rig.animation_data.action = None; poser.reset()
     if CAR: info.update(bake_carriage_extras(rig, poser, clips, CAR))
+    info['fore_paw_lifts_mm'] = {k: {f: v for f, v in d.items() if v} for k, d in PLANT_LOG.items()}
     rig.animation_data.action = None; poser.reset()
     bpy.ops.wm.save_as_mainfile(filepath=str(WORK / 'clips.blend'))
     clean = {k: [{kk: vv for kk, vv in s.items() if kk != 'legs'} | {'legs': s.get('legs')} for s in v] for k, v in specs_all.items()}

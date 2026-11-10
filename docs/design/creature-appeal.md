@@ -26,6 +26,8 @@ The first numbers below were set before they were measured on references, and th
 - The reader's reasons were whole-body: a small head on a long, spindly, hunched body, a dark horn dominating the head, and an eye that is barely visible in profile.
 - Turning the eyes forward (item 2) shrinks what a pure side sprite shows of them.
 
+**Second finding (2026-11-09, Luceras eye passes 3 and 4).** Item 4 first asked for the iris ring to be visible all the way round. The rebuilt Luceras eye did that: its iris filled the almond opening exactly. In eight blind reader runs, face-on and in the side sprite, readers called it "lidless", "startled", "a doll or taxidermy eye" and "a bead stuck onto the head". The sheet's eye, whose upper lid covers about a quarter of the iris, won every run. Lid skin color (pass 3) and iris shading, catchlight and a flatter cornea (pass 4) did not change that read. Item 4 now asks for lids that cut the iris. Item 1's 16 percent also sits above the sheet's 14 to 15 percent. It stays flagged until the calibration set exists.
+
 So the numbers are provisional until they are calibrated on references that read appealing (the Luceras sheet, Akinza, Toothless) and on references that read unfriendly, measured in the product view (side sprites). Two items are missing and are being added: head-to-body proportion and limb sturdiness, and the eye as seen in profile (how much iris and highlight a side sprite shows). The reader test is the gate; the numbers are guides that must agree with it.
 
 ## The floor (provisional, every species)
@@ -35,7 +37,7 @@ Measured on the rest pose, head in profile and from straight ahead. Ratios use t
 1. **Eye size.** Eye opening height is at least 16 percent of head height. Real goats sit near 10 percent; Akinza sits far above the floor.
 2. **Eyes facing forward.** Both eyes are visible from straight ahead: each eye's axis turns no more than 35 degrees from the snout line.
 3. **Eyes low on the head.** The eye center sits at or below the midpoint between crown and jaw line, which leaves a rounded forehead above.
-4. **Readable eyes.** A round pupil at rest, no more than half the iris width, with the iris ring visible all the way round and a highlight in every render. The eye reads as an eye, not a dot, at sprite size (192 px body height).
+4. **Readable, lidded eyes.** A round pupil at rest, no more than half the iris width, and a highlight in every render. The lids cut the iris at rest: the upper lid covers roughly a fifth to a quarter of it and the lower lid touches or just covers its bottom, so little or no sclera shows. An iris visible all the way round reads as a startled, doll-like stare (amended 2026-11-09, see the calibration finding below). The eye reads as an eye, not a dot or a bead, at sprite size (192 px body height).
 5. **Muzzle.** Snout length (eye center to nose tip) is at most 1.2 times the eye-to-crown distance. A longer face needs a compensating gain elsewhere (larger eyes, a rounder skull) and the reader test below.
 6. **Face contrast.** The eye area reads lighter than the surrounding coat, or framed by a high-contrast rim, so the eyes stay the first thing seen at sprite size.
 7. **Threat features near the face.** Horns, crests, teeth and spikes are allowed, but none crosses in front of the eyes in the rest pose, and points near the face are blunted or curved away from it.

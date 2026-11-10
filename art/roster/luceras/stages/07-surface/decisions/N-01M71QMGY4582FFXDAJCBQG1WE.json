@@ -1,0 +1,15 @@
+{
+  "id": "N-01M71QMGY4582FFXDAJCBQG1WE",
+  "alias": "g6rs",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Stall audit, eye region (passes 3 and 4 flat). Judged on the full face sheet (front, three-quarter, side, close, side sprite 4x) with 8 blind reader runs, so not a one-camera judgment. Physical cause: the iris diameter equals the opening height, so neither lid cuts the iris and it reads as a full outlined disc in every view; all 8 runs name it (lidless, startled, doll, button), and the sheet, whose upper lid covers about a quarter of the iris, wins every run. Pass 3 (lid skin color) and pass 4 (iris shading, catchlight, flattened cornea) never touched that ratio, and pass 4's flat cornea read as a slit pupil in profile. Holds checked: 'opening size, shape and placement unchanged' was inferred by the orchestrator to protect pass 2 and does not block an iris change; it is relaxed to let the opening go down to 14 percent of head height (the sheet's own value). Floor item 4 ('iris ring visible all the way round') pushed toward the failing look and is amended in creature-appeal.md; item 1 (16 percent) sits above the sheet's 14 to 15 percent and is flagged. Outcome: change method, iris-to-opening ratio (variant A larger iris, variant B upper lid lowered), pass 2 cornea, gated by side and face-on readers twice each. Last eye pass in the slice; if it fails, the pass 2 eye ships in the slice and the gap goes to Nick with the reader evidence. Also ruled: the fore pad sinks 3.4 mm because of the orchestrator's own b5 fore girth scale, not a Nick hold, so the pad underside is excluded from that scale (restores the pre-b5 pad).",
+  "date": "2026-11-10",
+  "kind": "audit",
+  "binds": {
+    "defect": "D-01M71QMGTF7Y119WEABJC8MENP",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-10T03:22:12Z"
+}

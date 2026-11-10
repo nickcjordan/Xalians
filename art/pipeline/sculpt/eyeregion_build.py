@@ -672,6 +672,251 @@ for m in list(ob.modifiers):
 s.collection.objects.link(ob)
 LOG['eye_region_coat_strands'] = int(len(keep))
 
+# ---- pass 4 (N-564s follow-up): the eye itself. Every step is off unless its parameter is set.
+#   cap_dome_m   the visible cap of eyeball and cornea becomes a low dome over the almond opening (height cap_dome_m
+#                above the margin), so the cornea sits flush with the lid line in profile; the opening is unchanged
+#                (the dome meets the old sphere exactly on the margin). The eye mesh is subdivided first (cap_cuts) and
+#                the iris keeps its look through an 'iris_co' attribute (the pre-flatten position in the eye frame).
+#   iris2        lighter golden amber ramp, a thinner, lighter limbal ring, the lower half brighter, and the upper-lid
+#                occlusion: the iris and sclera darken toward the upper margin (a shader term of the distance below
+#                the margin curve), so the bright iris reads as a lower almond.
+#   cards        the catchlight is a real reflection: per eye, small emissive cards seen only by glossy rays and lit
+#                only onto that eye's cornea (light linking), one per review view (side sprite, front, three-quarter),
+#                placed by the mirror law so the highlight sits upper front on the iris; the cornea turns glossy and
+#                the studio lights no longer reach it (light linking exclude), so the cards are its only highlight.
+#                The emissive iris dot is switched off.
+#   tear / caruncle  a thin wet line along the lower margin and a small inner-corner caruncle.
+import bmesh
+
+
+def frame_coords(F, P):
+    q = P - F['c']; return q @ F['x'], q @ F['y'], q @ F['z']
+
+
+def dome_flatten(F, ob, D, cuts, set_attr):
+    me_ = ob.data; Mo = np.array(ob.matrix_world); Moi = np.linalg.inv(Mo)
+    if cuts:
+        bm = bmesh.new(); bm.from_mesh(me_)
+        bmesh.ops.subdivide_edges(bm, edges=bm.edges[:], cuts=int(cuts), use_grid_fill=True)
+        bm.to_mesh(me_); bm.free(); me_.update()
+        for pl in me_.polygons: pl.use_smooth = True
+        # back onto the sphere (the eye and the cornea are spheres about their own centres)
+        P = np.array([v.co[:] for v in me_.vertices]) @ Mo[:3, :3].T + Mo[:3, 3]; cen = F['c']
+        rad = np.linalg.norm(P - cen, axis=1); R0 = float(np.median(rad))
+        P = cen + (P - cen) / rad[:, None] * R0
+        for v, x in zip(me_.vertices, (P - Mo[:3, 3]) @ np.linalg.inv(Mo[:3, :3]).T): v.co = x.tolist()
+        # one rigid weight: every vertex follows the bone its first vertex follows
+        if ob.vertex_groups:
+            g0 = max(me_.vertices[0].groups, key=lambda g: g.weight).group if me_.vertices[0].groups else 0
+            vg = ob.vertex_groups[g0]; vg.add(list(range(len(me_.vertices))), 1.0, 'REPLACE')
+    P = np.array([v.co[:] for v in me_.vertices]) @ Mo[:3, :3].T + Mo[:3, 3]
+    if set_attr:
+        em = bpy.data.objects['ap_eye_frame_' + F['side']]; Ei = np.linalg.inv(np.array(em.matrix_world))
+        Q = P @ Ei[:3, :3].T + Ei[:3, 3]
+        at = me_.attributes.get('iris_co') or me_.attributes.new('iris_co', 'FLOAT_VECTOR', 'POINT'); at.data.foreach_set('vector', Q.astype(np.float32).ravel())
+    if not D: return P
+    x, y, h = frame_coords(F, P); p = np.hypot(x, y); ph = np.mod(np.arctan2(y, x), 2 * math.pi)
+    rho = np.linalg.norm(P - F['c'], axis=1); TMv = interp_phi(F['TM'], ph); pm = F['r'] * np.sin(TMv)
+    inside = (h > 0) & (p < pm)
+    hs = np.sqrt(np.maximum(rho ** 2 - p ** 2, 0)); hm = np.sqrt(np.maximum(rho ** 2 - pm ** 2, 0)); u = np.clip(p / np.maximum(pm, 1e-9), 0, 1)
+    # a smooth dome: the margin height at the rim (u = 1), one apex height at the centre (u = 0), so the cap has no
+    # crease where the margin height changes round the almond; the apex stands D above the highest margin point
+    hm_sph = np.sqrt(np.maximum(F['r'] ** 2 - pm ** 2, 0)); Hap = float(np.sqrt(F['r'] ** 2 - (F['r'] * np.sin(F['TM'].min())) ** 2)) + D
+    dome = (hm + (hm_sph - hm) * 0) * u * u + (Hap + (rho - F['r'])) * (1 - u * u)
+    dh = np.where(inside, hs - dome, 0.0)
+    P2 = P - np.outer(dh, F['z'])
+    for v, xx in zip(me_.vertices, (P2 - Mo[:3, 3]) @ np.linalg.inv(Mo[:3, :3]).T): v.co = xx.tolist()
+    me_.update(); return P2
+
+
+def iris2(F, m_):
+    """Retune the round-eye material: lighter golden amber, thinner limb, lower half brighter, upper-lid occlusion."""
+    nt = m_.node_tree; N = nt.nodes; L_ = nt.links
+    tc = next(n for n in N if n.bl_idname == 'ShaderNodeTexCoord'); nrm = next(n for n in N if n.bl_idname == 'ShaderNodeVectorMath' and n.operation == 'NORMALIZE')
+    if g('cap_dome_m', 0.0) or g('cap_cuts', 0):
+        at = N.new('ShaderNodeAttribute'); at.attribute_name = 'iris_co'; at.attribute_type = 'GEOMETRY'
+        for l in list(nrm.inputs[0].links): L_.remove(l)
+        L_.new(at.outputs['Vector'], nrm.inputs[0])
+    ramp = next(n for n in N if n.bl_idname == 'ShaderNodeValToRGB'); cr = ramp.color_ramp
+    els = sorted(cr.elements, key=lambda e: e.position)
+    cols = (g('iris2_inner', [0.30, 0.15, 0.035]), g('iris2_mid', [0.80, 0.46, 0.12]), g('iris2_outer', [0.55, 0.30, 0.07]))
+    for e, c in zip(els, cols): e.color = tuple(c) + (1,)
+    ti = math.radians(g('iris_deg', 42.0)); tp = ti * g('pupil_frac', 0.5)
+    for n_ in N:
+        if n_.bl_idname == 'ShaderNodeMapRange' and abs(n_.inputs['From Min'].default_value - (ti - 0.09)) < 1e-4:
+            n_.inputs['From Min'].default_value = ti - g('limb_w_rad', 0.035); n_.inputs['From Max'].default_value = ti - 0.004
+        if n_.bl_idname == 'ShaderNodeMapRange' and abs(n_.inputs['To Max'].default_value - g('ap_hl_gain_old', 3.0)) < 1e-4:
+            n_.inputs['To Max'].default_value = g('hl_gain', 0.0)     # the emissive dot (the cards replace it)
+        if n_.bl_idname == 'ShaderNodeMixRGB' and tuple(n_.inputs['Color2'].default_value)[:3] == (0.05, 0.025, 0.01) or (n_.bl_idname == 'ShaderNodeMixRGB' and abs(n_.inputs['Color2'].default_value[0] - 0.05) < 1e-4):
+            n_.inputs['Color2'].default_value = tuple(g('limb_rgb', [0.16, 0.08, 0.025])) + (1,)
+    bs_ = next(n for n in N if n.bl_idname == 'ShaderNodeBsdfPrincipled'); src = bs_.inputs['Base Color'].links[0].from_socket
+    sep = next(n for n in N if n.bl_idname == 'ShaderNodeSeparateXYZ')
+    info = F['info']; hw = info['hw']; yu = info['yu']
+
+    def math_(op, a, b=None, v=None):
+        n_ = N.new('ShaderNodeMath'); n_.operation = op
+        (L_.new(a, n_.inputs[0]) if not isinstance(a, float) else n_.inputs[0].__setattr__('default_value', a))
+        if b is not None: (L_.new(b, n_.inputs[1]) if not isinstance(b, float) else n_.inputs[1].__setattr__('default_value', b))
+        return n_.outputs[0]
+    # the upper margin curve in the eye frame (unit-sphere units): Ym(X) = yu * (1 - (X/hw)^2)^0.75
+    t = math_('DIVIDE', sep.outputs['X'], float(hw)); t2 = math_('MULTIPLY', t, t); base = math_('MAXIMUM', math_('SUBTRACT', 1.0, t2), 0.0)
+    Ym = math_('MULTIPLY', math_('POWER', base, 0.75), float(yu)); dist = math_('SUBTRACT', Ym, sep.outputs['Y'])
+    mr = N.new('ShaderNodeMapRange'); mr.interpolation_type = 'SMOOTHSTEP'; L_.new(dist, mr.inputs['Value'])
+    mr.inputs['From Min'].default_value = 0.0; mr.inputs['From Max'].default_value = g('occ_depth', 0.30) * (yu - info['yl'])
+    mr.inputs['To Min'].default_value = 1.0 - g('occ', 0.55); mr.inputs['To Max'].default_value = 1.0
+    lo = N.new('ShaderNodeMapRange'); lo.interpolation_type = 'SMOOTHSTEP'; L_.new(sep.outputs['Y'], lo.inputs['Value'])
+    lo.inputs['From Min'].default_value = 0.05; lo.inputs['From Max'].default_value = info['yl'] * 0.8
+    lo.inputs['To Min'].default_value = 1.0; lo.inputs['To Max'].default_value = g('lower_bright', 1.35)
+    f_ = math_('MULTIPLY', mr.outputs['Result'], lo.outputs['Result'])
+    sc = N.new('ShaderNodeVectorMath'); sc.operation = 'SCALE'; L_.new(src, sc.inputs[0]); L_.new(f_, sc.inputs['Scale'])
+    L_.new(sc.outputs['Vector'], bs_.inputs['Base Color'])
+
+
+def card_for(F, view, D, dist, size, strength, recv):
+    """A glossy-only emissive card that the cornea reflects at the target point for an orthographic view along view."""
+    c, r, z = F['c'], F['r'], F['z']; v = np.array(view, float); v /= np.linalg.norm(v)
+    # target on the dome: upper front of the iris, toward the camera side in the frame plane
+    vx, vy = v @ F['x'], v @ F['y']; tgt2 = np.array([g('hl_x', 0.18) * np.sign(vx) * min(1.0, abs(vx) * 3), g('hl_y', 0.30)]) * np.sin(math.radians(g('iris_deg', 42.0)))
+    p_ = float(np.hypot(*tgt2)) * r; phT = math.atan2(tgt2[1], tgt2[0]); pm = r * math.sin(float(interp_phi(F['TM'], np.array([phT % (2 * math.pi)]))[0]))
+    hm = math.sqrt(max(r * r - pm * pm, 0.0)); Hap = math.sqrt(r * r - (r * math.sin(F['TM'].min())) ** 2) + D; u2 = (p_ / pm) ** 2
+    h_ = hm * u2 + Hap * (1 - u2) if D else math.sqrt(max(r * r - p_ * p_, 0.0))
+    P = c + F['x'] * tgt2[0] * r + F['y'] * tgt2[1] * r + z * h_
+    if D:
+        gr = 2 * (hm - Hap) / pm ** 2; n = z - (F['x'] * tgt2[0] * r + F['y'] * tgt2[1] * r) * gr
+    else:
+        n = P - c
+    n /= np.linalg.norm(n); Ld = 2 * (n @ v) * n - v; Ld /= np.linalg.norm(Ld)
+    C = P + Ld * dist; nrm_ = -Ld; a_ = np.cross(nrm_, [0, 0, 1.0]); a_ /= max(np.linalg.norm(a_), 1e-9); b_ = np.cross(nrm_, a_)
+    hs_ = size / 2; Vc = [C + a_ * sx * hs_ + b_ * sy * hs_ * g('card_aspect', 0.8) for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+    mt = bpy.data.meshes.new('eyecard'); mt.from_pydata([list(map(float, q)) for q in Vc], [], [[0, 1, 2, 3]]); mt.update()
+    m_ = bpy.data.materials.get('Eye catchlight card') or bpy.data.materials.new('Eye catchlight card'); m_.use_nodes = True
+    nt = m_.node_tree; nt.nodes.clear(); out = nt.nodes.new('ShaderNodeOutputMaterial'); em_ = nt.nodes.new('ShaderNodeEmission')
+    # soft edge: a radial falloff over the card (UV-free: generated coordinates)
+    tc = nt.nodes.new('ShaderNodeTexCoord'); gr_ = nt.nodes.new('ShaderNodeTexGradient'); gr_.gradient_type = 'SPHERICAL'
+    mp = nt.nodes.new('ShaderNodeMapping'); mp.inputs['Location'].default_value = (-0.5, -0.5, 0.0); mp.inputs['Scale'].default_value = (2.0, 2.0, 1.0)
+    nt.links.new(tc.outputs['Generated'], mp.inputs['Vector']); mp2 = nt.nodes.new('ShaderNodeVectorMath'); mp2.operation = 'SUBTRACT'
+    nt.links.new(tc.outputs['Generated'], mp2.inputs[0]); mp2.inputs[1].default_value = (0.5, 0.5, 0.5)
+    sc2 = nt.nodes.new('ShaderNodeVectorMath'); sc2.operation = 'SCALE'; sc2.inputs['Scale'].default_value = 2.0; nt.links.new(mp2.outputs[0], sc2.inputs[0])
+    nt.links.new(sc2.outputs[0], gr_.inputs['Vector'])
+    ramp = nt.nodes.new('ShaderNodeValToRGB'); ramp.color_ramp.elements[0].position = 0.0; ramp.color_ramp.elements[1].position = g('card_soft', 0.55)
+    nt.links.new(gr_.outputs['Fac'], ramp.inputs['Fac']); mul = nt.nodes.new('ShaderNodeMath'); mul.operation = 'MULTIPLY'; mul.inputs[1].default_value = strength
+    nt.links.new(ramp.outputs['Color'], mul.inputs[0]); nt.links.new(mul.outputs[0], em_.inputs['Strength'])
+    em_.inputs['Color'].default_value = (1.0, 0.98, 0.95, 1.0); nt.links.new(em_.outputs[0], out.inputs['Surface'])
+    mt.materials.append(m_)
+    ob = bpy.data.objects.new(f'eyeregion_catchlight_{F["side"]}_{len(F.setdefault("cards", []))}', mt); s.collection.objects.link(ob)
+    ob.visible_camera = False; ob.visible_diffuse = False; ob.visible_transmission = False; ob.visible_volume_scatter = False; ob.visible_shadow = False; ob.visible_glossy = True
+    ob.light_linking.receiver_collection = recv
+    ob.parent = rig; ob.parent_type = 'BONE'; ob.parent_bone = 'head_01'; bpy.context.view_layer.update(); ob.matrix_world = Matrix.Identity(4)
+    F['cards'].append(dict(name=ob.name, view=list(map(float, v)), target_frame_xy=tgt2.round(3).tolist(), card_dir=Ld.round(3).tolist()))
+    return ob
+
+
+P4 = {}
+if g('pass4', 0):
+    for side, F in EYES.items():
+        F['side'] = side
+        eo = bpy.data.objects['eye_' + side]; co = bpy.data.objects['surface_cornea_eye_' + side]
+        D = g('cap_dome_m', 0.0); cuts = g('cap_cuts', 0)
+        dome_flatten(F, eo, D, cuts, True)
+        P2c = dome_flatten(F, co, D, cuts, False)
+        F['CV'] = P2c
+        m_ = bpy.data.materials.get('Appeal round eye ' + side)
+        if m_ is not None and g('iris2', 0): iris2(F, m_)
+    if g('cards', 0):
+        # the cornea: glossy (its highlight), the studio lights no longer reach it (they would put their own large soft
+        # reflections on it); each eye's cards light only that eye's cornea
+        excl = bpy.data.collections.new('eyeregion_studio_excl')
+        for side in EYES: excl.objects.link(bpy.data.objects['surface_cornea_eye_' + side])
+        for co_ in excl.collection_objects: co_.light_linking.link_state = 'EXCLUDE'
+        for ln in [o for o in s.objects if o.type == 'LIGHT' and not o.hide_render]:
+            ln.light_linking.receiver_collection = excl; P4.setdefault('studio_lights_excluding_cornea', []).append(ln.name)
+        for side, F in EYES.items():
+            co = bpy.data.objects['surface_cornea_eye_' + side]
+            for cm in co.data.materials:
+                b_ = next((n for n in cm.node_tree.nodes if n.bl_idname == 'ShaderNodeBsdfPrincipled'), None)
+                if b_ is None: continue
+                b_.inputs['Specular IOR Level'].default_value = g('cornea_spec', 0.5); b_.inputs['Roughness'].default_value = g('cornea_rough', 0.04)
+            recv = bpy.data.collections.new('eyeregion_card_recv_' + side); recv.objects.link(co)
+            if g('one_card', 0):
+                # one card per eye, its direction chosen so the single highlight lands upper front on the iris in every
+                # view this eye is seen in (the right eye: the side sprite and the front; the left: the front and the
+                # three-quarter); on the dome the normal is n ~ (-2k x, -2k y, 1), k = (margin - apex height) / pm^2
+                VS = {'side': np.array([-1.0, 0, 0]), 'front': np.array([0, -1.0, 0.07]), 'threeq': np.array([0.57, -0.82, 0.07])}
+                groups = g('card_groups', {'r': [['side'], ['front']], 'l': [['front', 'threeq']]})[side]
+                for grp in groups:
+                    views = [(VS[k], 1.0) for k in grp]
+                    r_, z_ = F['r'], F['z']; pm_ = r_ * np.sin(F['TM']).mean(); hm_ = math.sqrt(r_ * r_ - pm_ * pm_)
+                    Hap_ = math.sqrt(r_ * r_ - (r_ * math.sin(F['TM'].min())) ** 2) + g('cap_dome_m', 0.0); kk = 2 * (Hap_ - hm_) / pm_ ** 2
+                    Ri_ = r_ * math.sin(math.radians(g('iris_deg', 42.0)))
+                    nS = 6000; k_ = np.arange(nS) + 0.5; th_ = np.arccos(1 - 2 * k_ / nS); ph_ = math.pi * (1 + 5 ** 0.5) * k_
+                    Ls = np.c_[np.sin(th_) * np.cos(ph_), np.sin(th_) * np.sin(ph_), np.cos(th_)]; Ls = Ls[Ls @ z_ > 0.1]
+                    cost = np.zeros(len(Ls)); posd = {}
+                    for vi, (v_, wv) in enumerate(views):
+                        v_ = v_ / np.linalg.norm(v_); nn = Ls + v_; nn /= np.linalg.norm(nn, axis=1, keepdims=True)
+                        nz = nn @ z_; px = (nn @ F['x']) / np.maximum(nz, 1e-6) / kk; py = (nn @ F['y']) / np.maximum(nz, 1e-6) / kk
+                        tx = g('hl_x', 0.18) * Ri_ * np.sign(v_ @ F['x']) * min(1.0, abs(v_ @ F['x']) * 3); ty = g('hl_y', 0.30) * Ri_
+                        cst = (px - tx) ** 2 + (py - ty) ** 2; cst = np.where((nz > 0) & (np.hypot(px, py) < 0.85 * Ri_), cst, 1e3)
+                        cost += wv * cst; posd[vi] = (px, py)
+                    b = int(np.argmin(cost)); Ld = Ls[b]
+                    # card centre: along Ld from the eye's front point, facing it
+                    C = c + z_ * Hap_ + Ld * g('card_dist_m', 0.06); nrm_ = -Ld; a_ = np.cross(nrm_, [0, 0, 1.0]); a_ /= max(np.linalg.norm(a_), 1e-9); b_ = np.cross(nrm_, a_)
+                    hs_ = g('card_size_m', 0.02) / 2; Vc = [C + a_ * sx * hs_ + b_ * sy * hs_ * g('card_aspect', 0.8) for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+                    ob = card_for(F, views[0][0], g('cap_dome_m', 0.0), g('card_dist_m', 0.06), g('card_size_m', 0.02), g('card_strength', 40.0), recv)
+                    mt = ob.data
+                    for vv, q in zip(mt.vertices, Vc): vv.co = list(map(float, q))
+                    mt.update()
+                    pred = {}
+                    for kname, v_ in VS.items():
+                        v_ = v_ / np.linalg.norm(v_); nn = Ld + v_; nn /= np.linalg.norm(nn); nz = nn @ z_
+                        pred[kname] = [round(float((nn @ F['x']) / nz / kk / Ri_), 2), round(float((nn @ F['y']) / nz / kk / Ri_), 2)] if nz > 0 else None
+                    F['cards'][-1].update(card_dir=Ld.round(3).tolist(), for_views=grp, predicted_highlight_iris_units=pred)
+            else:
+              for vw in g('card_views', [[-1, 0, 0], [0, -1, 0.07], [0.57, -0.82, 0.07]]):
+                if (side == 'l' and vw[0] < -0.5) or (side == 'r' and vw[0] > 0.5): continue   # this eye is turned away from that camera
+                card_for(F, vw, g('cap_dome_m', 0.0), g('card_dist_m', 0.03), g('card_size_m', 0.009), g('card_strength', 40.0), recv)
+            P4.setdefault('cards', {})[side] = F.get('cards', [])
+    if g('tear', 0) or g('caruncle', 0):
+        wet = bpy.data.materials.new('Eye wet line'); wet.use_nodes = True; bw = wet.node_tree.nodes.get('Principled BSDF')
+        bw.inputs['Base Color'].default_value = tuple(g('tear_rgb', [0.42, 0.33, 0.32])) + (1,); bw.inputs['Roughness'].default_value = 0.08
+        car = bpy.data.materials.new('Eye caruncle'); car.use_nodes = True; bc_ = car.node_tree.nodes.get('Principled BSDF')
+        bc_.inputs['Base Color'].default_value = tuple(g('caruncle_rgb', [0.42, 0.22, 0.21])) + (1,); bc_.inputs['Roughness'].default_value = 0.3
+        for side, F in EYES.items():
+            c, r = F['c'], F['r']; TM = F['TM']
+            if g('tear', 0):
+                path, sa, sb = [], [], []
+                for i, ph in enumerate(PH):
+                    if math.sin(ph) > -0.15: continue
+                    d = dirs(F, np.array([TM[i] - g('tear_in_m', 0.0007) / r]), np.array([ph]))[0]; d2 = dirs(F, np.array([TM[i] - g('tear_in_m', 0.0007) / r + 0.01]), np.array([ph]))[0]
+                    tn = d2 - d; tn /= np.linalg.norm(tn)
+                    hh = r
+                    if g('cap_dome_m', 0.0):
+                        x_, y_, h0 = frame_coords(F, (c + d * r)[None, :]); pp = float(np.hypot(x_, y_)); pm = r * math.sin(TM[i]); hm = math.sqrt(r * r - pm * pm)
+                        Hap = math.sqrt(r * r - (r * math.sin(F['TM'].min())) ** 2) + g('cap_dome_m', 0.0); u2 = (pp / pm) ** 2
+                        hh = None; Pp = c + F['x'] * x_[0] + F['y'] * y_[0] + F['z'] * (hm * u2 + Hap * (1 - u2) + 0.0002)
+                    path.append(Pp if hh is None else c + d * (r + 0.0002)); sa.append(tn); sb.append(d)
+                # an open strand: the tube helper closes rings, so give it the open path as a closed one with a tiny return
+                if len(path) > 3:
+                    Vt, Ft = [], []; nseg = 8; n_ = len(path)
+                    for i in range(n_):
+                        for j in range(nseg):
+                            ps = 2 * math.pi * j / nseg; Vt.append(path[i] + sa[i] * math.cos(ps) * g('tear_w_m', 0.0005) + sb[i] * math.sin(ps) * 0.00025)
+                    for i in range(n_ - 1):
+                        for j in range(nseg): Ft.append([i * nseg + j, i * nseg + (j + 1) % nseg, (i + 1) * nseg + (j + 1) % nseg, (i + 1) * nseg + j])
+                    mt = bpy.data.meshes.new('tear'); mt.from_pydata([list(map(float, q)) for q in Vt], [], Ft); mt.update()
+                    for p_ in mt.polygons: p_.use_smooth = True
+                    ob = bpy.data.objects.new('eyeregion_tear_line_' + side, mt); s.collection.objects.link(ob); mt.materials.append(wet)
+                    ob.parent = rig; ob.parent_type = 'BONE'; ob.parent_bone = 'head_01'; bpy.context.view_layer.update(); ob.matrix_world = Matrix.Identity(4)
+            if g('caruncle', 0):
+                # the inner corner: the margin point farthest toward the head midline
+                pts = [c + dirs(F, np.array([TM[i]]), np.array([ph]))[0] * r for i, ph in enumerate(PH)]
+                k = int(np.argmin([abs(p_[0]) for p_ in pts])); q_ = pts[k]; inward = (c - q_) / np.linalg.norm(c - q_)
+                cen = q_ + inward * g('caruncle_in_m', 0.0012)
+                bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=8, radius=1.0, location=tuple(cen))
+                ob = bpy.context.active_object; ob.name = 'eyeregion_caruncle_' + side; ob.scale = tuple(g('caruncle_size_m', [0.0016, 0.0016, 0.0011]))
+                ob.data.materials.append(car); bpy.context.view_layer.update(); mw_ = ob.matrix_world.copy()
+                ob.parent = rig; ob.parent_type = 'BONE'; ob.parent_bone = 'head_01'; bpy.context.view_layer.update(); ob.matrix_world = mw_
+    LOG['pass4'] = P4
+
 # ---- measures: opening height / head height (margin path z extent), iris covers, cornea vs margin
 dg = bpy.context.evaluated_depsgraph_get()
 H = NEW[HEADM]; crown, jaw = float(H[:, 2].max()), float(H[:, 2].min()); hh = crown - jaw

@@ -1,0 +1,12 @@
+{
+  "id": "D-01M71QMGTF7Y119WEABJC8MENP",
+  "alias": "2nx5",
+  "stage": "07-surface",
+  "description": "Eye reads lidless: the iris fills the almond opening exactly, so it shows as a full outlined disc (startled, doll, button) in face-on and side-sprite views; the sheet's upper lid covers about a quarter of the iris",
+  "camera": "front, side sprite 4x",
+  "region": "eye",
+  "origin": "blind readers, eye passes 3 and 4",
+  "attempts": [],
+  "status": "open",
+  "createdAt": "2026-11-10T03:22:12Z"
+}
