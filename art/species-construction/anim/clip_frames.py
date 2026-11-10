@@ -19,6 +19,9 @@ Views, one fixed framing each for every frame of every clip:
   crop_<name>  --crops name:azimuth:elevation:joint:half: a close clay view centred on that posed joint, half size in
           rig metres, --size px square.
 Writes <out>/<clip>/<view>/NNNN.png and <out>/<clip>/frames.json (render seconds per frame and view).
+--front-px N (batch 2 fix pass 3, a lying faint longer than the cell): the side, three-quarter and sprite views come out N
+sprite pixels wider on the left (the side and three-quarter views N * size / sprite) at the same scale and ground line; the
+front and back views and the crops are unchanged.
 
 --fur-checks (fur look): per frame, the root error through fur_bind (each rebuilt root against its barycentric
 point on the posed skin triangle, and against the nearest point of the posed skin surface), and the largest strand
@@ -67,6 +70,9 @@ p.add_argument('--look', choices=['clay', 'fur'], default='clay')
 p.add_argument('--views', default='side,sprite')
 p.add_argument('--size', type=int, default=720)
 p.add_argument('--sprite', type=int, default=192)
+p.add_argument('--front-px', type=int, default=0, help='batch 2 fix pass 3 (faint lies longer than the cell): widen the side, three-quarter '
+               'and sprite frames by this many sprite pixels on the left (the front: Akinza faces left) at the same scale and ground '
+               'line; the side and three-quarter views widen by front-px * size / sprite pixels. 0 leaves every frame as before')
 p.add_argument('--samples', type=int, default=16)
 p.add_argument('--box', required=True)
 p.add_argument('--sprite-box', required=True)
@@ -261,6 +267,19 @@ def frame_camera(view):
     else:
         lc = bpy.data.objects['lookdev_cam_sprite']
         cam.data.shift_x, cam.data.shift_y = lc.data.shift_x, lc.data.shift_y
+    if a.front_px and view in ('side', 'sprite', 'threequarter'):
+        # the frame widened on the left by `extra` pixels at the same pixels per metre and the same ground line: the
+        # orthographic scale spans the (now larger) width, the shifts are in units of it, and the frame's centre moves
+        # left by half the extra width
+        extra = int(round(a.front_px*size/a.sprite))
+        o0 = cam.data.ortho_scale
+        o1 = o0*(size+extra)/size
+        sx, sy = cam.data.shift_x*o0, cam.data.shift_y*o0
+        cam.data.sensor_fit = 'AUTO'
+        cam.data.ortho_scale = o1
+        cam.data.shift_x = (sx-extra/2*o0/size)/o1
+        cam.data.shift_y = sy/o1
+        sc.render.resolution_x = size+extra
     bpy.context.view_layer.update()
 
 

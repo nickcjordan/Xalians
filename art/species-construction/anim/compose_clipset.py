@@ -209,19 +209,24 @@ def ankle(fdir, before_json, after_json, out):
 
 def grid(fdirs, rows_json, out, title, size=400):
     """A comparison sheet: rows of [label, frames dir key, clip, [views]], each image <frames dir>/<clip>/<view>/0000.png
-    resized to size px, the label over each row (fix pass 4: the shoulder against Night Stalk f18 and idle, the ear root)."""
+    resized to size px high at its own aspect (a frame widened with clip_frames.py --front-px stays undistorted), the label
+    over each row (fix pass 4: the shoulder against Night Stalk f18 and idle, the ear root)."""
     rows = json.loads(Path(rows_json).read_text()) if str(rows_json).endswith('.json') else json.loads(rows_json)
     S = int(size)
-    W = max(len(r[3]) for r in rows)*S
+    ims = [[Image.open(Path(fdirs[key])/clip/v/'0000.png').convert('RGB') for v in views] for _, key, clip, views in rows]
+    ims = [[im.resize((round(S*im.width/im.height), S), Image.LANCZOS) for im in row] for row in ims]
+    W = max(sum(im.width for im in row) for row in ims)
     out_im = Image.new('RGB', (W, 30+len(rows)*(S+24)), (12, 12, 12))
     dr = ImageDraw.Draw(out_im)
     dr.text((8, 8), title, fill=(235, 235, 235), font=font(15))
     y = 30
-    for lab, key, clip, views in rows:
+    for (lab, key, clip, views), row in zip(rows, ims):
         dr.text((8, y+4), lab, fill=(250, 210, 90), font=font(13))
         y += 22
-        for i, v in enumerate(views):
-            out_im.paste(Image.open(Path(fdirs[key])/clip/v/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS), (i*S, y))
+        x = 0
+        for im in row:
+            out_im.paste(im, (x, y))
+            x += im.width
         y += S+2
     out_im.save(out)
     print('grid sheet', out, out_im.size)
