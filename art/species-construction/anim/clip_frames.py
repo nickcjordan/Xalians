@@ -82,6 +82,9 @@ p.add_argument('--diag-frames', default=None, help='clip:frame list: classify th
                'their root is on and the region of skin they pass into (fur look, with --fur-checks)')
 p.add_argument('--alpha', action='store_true', help='film transparent, straight-alpha 8-bit RGBA PNG')
 p.add_argument('--sockets', action='store_true', help='per frame, the contract sockets in the sprite view: <out>/<clip>/sockets.json')
+p.add_argument('--ground', action='store_true', help='clip set batch 2 (faint lies on the floor), fur look: per frame, how far the '
+               'fur of record hangs below the floor (z = 0 in the rig): the lowest strand point and the strands with a point more '
+               'than 1, 5 and 10 mm under it (the fur is not collided with the floor), into fur-checks.json')
 p.add_argument('--crops', default=None, help='clay close views, name:azimuth:elevation:joint:half size (rig metres), comma separated; '
                'each renders as view crop_<name> at --size px')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
@@ -397,6 +400,12 @@ def apply(fr, clip):
                     inside_strands(Px, pts, classify=True)
             elif (clip, fr['frame']) in DEEP or (clip == clips[0] and fr['frame'] == 0):
                 row['strands_inside_skin'], row['points_inside_skin'] = inside_strands(Px, pts)
+            if a.ground:
+                zm = to_m(pts)[:, 2]
+                low = np.minimum.reduceat(zm, offs[:-1])           # each strand's lowest point (rig metres)
+                row['fur_lowest_mm'] = round(float(zm.min())*1000, 2)
+                row['strands_under_floor'] = {f'{k}mm': int(np.sum(low < -k/1000)) for k in (1, 5, 10)}
+                row['skin_lowest_mm'] = round(float(to_m(Px)[:, 2].min())*1000, 2)
             row['seconds'] = round(time.time()-t1, 1)
             fur_rows.append(row)
             print('fur check', row, flush=True)

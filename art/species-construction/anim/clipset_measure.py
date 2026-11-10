@@ -186,6 +186,9 @@ for clip in a.clips.split(','):
         S['centroid_speed_px_per_frame'] = [round(float(np.hypot(F[k]['centroid'][0]-F[k-1]['centroid'][0], F[k]['centroid'][1]-F[k-1]['centroid'][1])), 2)
                                             for k in range(1, n)]
         S['tail_rear_path_px'] = [F[k]['tail_rear'] for k in range(n)]
+        if clip == 'held':          # batch 2's loop
+            S['loop_seam_last_to_0_changed_px'] = int((ms[0] ^ ms[n-1]).sum())
+            S['loop_changed_px_median'] = float(np.median([int((ms[k] ^ ms[k-1]).sum()) for k in range(1, n)]))
         if clip == 'guard':
             S['loop_seam_26_to_0_changed_px'] = int((ms[0] ^ ms[n-1]).sum())
             S['loop_changed_px_median'] = float(np.median([int((ms[k] ^ ms[k-1]).sum()) for k in range(1, n)]))

@@ -18,6 +18,10 @@
   python art/species-construction/anim/compose_clipset.py furcheck <fur frames dir> <approved fur frames dir> <out png> <picks json> [fur-checks json]
       The fur check sheet: each clip's deepest frame (side 720 and sprite 192) beside the approved Night Stalk fur frame 18
       at the same scale, then its close views; picks are [[clip, frame, [crop views]], ...].
+  python art/species-construction/anim/compose_clipset.py setupfaint <setup frames dir> <setup check json> <extra json> <out png> [picked]
+      Batch 2's faint setup sheet: the lying candidates A, B, C with their numbers (extra json: visible192 and fur per candidate).
+  python art/species-construction/anim/compose_clipset.py json2 <bake dir> <out json> [extra json...]
+      Batch 2's clips.json (displaced, held, held_in, held_out, faint), with the ear line per frame (ear-line.json).
   python art/species-construction/anim/compose_clipset.py json <bake dir> <out json> [extra json...]
       clips.json: frames, events, rules, per-clip check summaries and per-frame numbers (checks-skin.json), the render
       measures (measure-render.json) and any render logs given.
@@ -52,6 +56,10 @@ def clip_order(frames, clip):
         n = count(frames, 'guard')
         return ([('guard_in', k) for k in range(count(frames, 'guard_in'))]+[('guard', k) for k in range(7, n)]
                 +[('guard', k) for k in range(n)]+[('guard_out', k) for k in range(count(frames, 'guard_out'))])
+    if clip == 'held':          # batch 2: held_in, the loop twice, held_out (in place of the next loop's frame 0 onward)
+        n = count(frames, 'held')
+        return ([('held_in', k) for k in range(count(frames, 'held_in'))]+[('held', k) for k in range(n)]*2
+                +[('held_out', k) for k in range(count(frames, 'held_out'))])
     return [(clip, k) for k in range(count(frames, clip))]
 
 
@@ -60,6 +68,9 @@ def seq(frames, idle, out, clip, scale=3, tag='clay'):
     for _ in range(2):
         order += [('idle', k) for k in range(60, 90)]
         order += clip_order(frames, clip)
+        if clip == 'faint':     # batch 2: the game holds faint's last frame; here for 1 s, then the sequence starts again
+            order += [order[-1]]*FPS
+            continue
         order += [('idle', k) for k in range(30)]
         order += [('idle', 29)]*(FPS//2)
     for vd in sorted(d for d in (frames/clip).iterdir() if d.is_dir() and not d.name.startswith('crop_')):
@@ -86,9 +97,9 @@ def sheet(frames, clip, spec, out, refs):
     W = 240
     tiles = []
     parts = [(clip, k, '') for k in range(n)]
-    if clip == 'guard':     # entry, the loop, exit
-        parts = ([('guard_in', k, 'in ') for k in range(count(frames, 'guard_in'))]+[('guard', k, '') for k in range(n)]
-                 +[('guard_out', k, 'out ') for k in range(count(frames, 'guard_out'))])
+    if clip in ('guard', 'held'):     # entry, the loop, exit
+        parts = ([(f'{clip}_in', k, 'in ') for k in range(count(frames, f'{clip}_in'))]+[(clip, k, '') for k in range(n)]
+                 +[(f'{clip}_out', k, 'out ') for k in range(count(frames, f'{clip}_out'))])
     for c, k, pre in parts:
         im = Image.open(frames/c/'side'/f'{k:04d}.png').convert('RGB')
         im = im.resize((W, W), Image.LANCZOS)                 # the whole frame: evade's tails reach the right edge's last 70 px
@@ -112,13 +123,13 @@ def sheet(frames, clip, spec, out, refs):
     h = title+grid.height+sum(s.height+30 for s in strips)
     out_im = Image.new('RGB', (grid.width, h), (12, 12, 12))
     dr = ImageDraw.Draw(out_im)
-    what = (f'guard_in (in f0 to f6), the loop (f0 to f{n-1}) and guard_out (out f0 to f{count(frames, "guard_out")-1})' if clip == 'guard'
-            else f'every frame of {n}')
+    what = (f'{clip}_in (in f0 to f{count(frames, clip+"_in")-1}), the loop (f0 to f{n-1}) and {clip}_out (out f0 to f{count(frames, clip+"_out")-1})'
+            if clip in ('guard', 'held') else f'every frame of {n}')
     dr.text((8, 6), f'Akinza {clip}: {what} (30 fps), clay side; events marked; reference frames below', fill=(235, 235, 235), font=font(20))
     out_im.paste(grid, (0, title))
     y = title+grid.height
     for s, r in zip(strips, refs):
-        dr.text((8, y+6), f'reference: {Path(r).name} (anim/ref/clipset-b1/sources.json)', fill=(200, 200, 200), font=font(16))
+        dr.text((8, y+6), f'reference: {Path(r).name} (anim/ref/{Path(r).parent.name}/sources.json)', fill=(200, 200, 200), font=font(16))
         out_im.paste(s, (0, y+28))
         y += s.height+30
     out_im.save(out)
@@ -296,6 +307,111 @@ def clips_json(bake, out, extra):
     print('wrote', out)
 
 
+def clips_json_b2(bake, out, extra):
+    """Batch 2's clips.json: frames, events, entry and exit rules, the per-clip check summaries and per-frame numbers
+    (checks-skin.json from clipset_checks_b2.py), the ear line against stalk f18 (ear-line.json), the render measures
+    (measure-render.json) and any render logs or extra json given."""
+    spec = json.loads((bake/'clipset-spec.json').read_text())
+    chk = json.loads((bake/'checks-skin.json').read_text())
+    meas = bake/'measure-render.json'
+    meas = json.loads(meas.read_text()) if meas.exists() else {}
+    ear = bake/'ear-line.json'
+    ear = json.loads(ear.read_text()) if ear.exists() else {}
+    rules = {'footSlide': 'planted sole contact drift per frame under 2 mm (frames the clip marks planted; the sole in contact both frames)',
+             'startEnd': 'frame 0 equals approved idle frame 0 and the last frame equals approved idle frame 89, under 0.1 mm (faint: its start only)',
+             'heldSeam': 'held frame 0 against frame 45 under 0.1 mm, and the velocity change across the seam against the largest elsewhere',
+             'heldEntryExit': 'held_in frame 0 equals idle frame 0 and steps into loop frame 0; held_out frame 0 equals loop frame 0 and its last '
+                              'frame equals idle frame 89',
+             'folds': 'no more folded or collapsed triangles per region than the approved crouch clip (rest to night_stalk)',
+             'ears': 'ear_root folds against the approved 50; the ear line against stalk f18 per frame (ear-line.json); no ear vertex inside '
+                     'the skull or the nape and back',
+             'tails': 'tails at least 60 mm apart and clear of the legs',
+             'arms': 'held: arm skin inside the trunk and hips (vertices) and the smallest signed gap',
+             'ground': 'faint: the lowest skin point per region (under 0 is below the floor) and vertices more than 1 mm under it',
+             'furRootError': 'fur stage, after the blind critic passes the clay (not run)',
+             'amplitudes': 'visible moves measured in the 720 side and 192 sprite renders (measure-render.json)'}
+    doc = dict(format='akinza-clipset-b2', fps=spec['fps'], rig=spec['rig'], units='mm unless named', rules=rules,
+               approvedCrouchFoldsMaxPerRegion=chk['approvedCrouchFoldsMaxPerRegion'], idleStep89to0_max_mm=chk['idleStep89to0_max_mm'],
+               soleVertices=chk['soleVertices'], clips={})
+    for clip in ('displaced', 'held', 'held_in', 'held_out', 'faint'):
+        sp = spec.get(clip) or dict(frames=len(chk[clip]['frames']) if clip in chk else None, loop=False, events=[],
+                                    partOf='held (see held.entry and held.exit)')
+        entry = dict(frames=sp['frames'], loop=sp['loop'], events=sp['events'])
+        for k in ('startsOn', 'endsOn', 'entry', 'exit', 'partOf', 'candidate'):
+            if k in sp:
+                entry[k] = sp[k]
+        if clip in chk:
+            entry['summary'] = chk[clip]['summary']
+            entry['perFrame'] = [{k: v for k, v in r.items() if k not in ('bounds_src', 'info')} for r in chk[clip]['frames']]
+        else:
+            entry['status'] = 'not checked'
+        if clip in ear:
+            entry['earLine'] = dict(framesOnF18Line=ear[clip]['framesOnF18Line'], beyondF18OnLine=ear[clip]['beyondF18OnLine'],
+                                    vsStalk18ScreenDeg=[r['vs_stalk18_screen'] for r in ear[clip]['perFrame']])
+        if clip in meas:
+            entry['renderMeasures'] = dict(summary=meas[clip]['summary'], rig={k: v for k, v in meas[clip]['rig'].items()})
+        doc['clips'][clip] = entry
+    for e in extra:
+        d = json.loads(Path(e).read_text())
+        if 'renderSeconds' in d:
+            doc.setdefault('renders', {})[Path(e).parent.name+'/'+Path(e).name] = dict(
+                look=d['look'], size=d['size'], sprite=d['sprite'], samples=d['samples'], seconds=d['seconds'],
+                meanSeconds={k: round(sum(v)/len(v), 2) for k, v in d['renderSeconds'].items()})
+        else:
+            doc.setdefault('extra', {})[Path(e).name] = d
+    Path(out).write_text(json.dumps(doc, indent=1))
+    print('wrote', out)
+
+
+def setup_faint(fdir, chk, extra_json, out, picked='A'):
+    """Batch 2's faint setup sheet: per lying candidate (A, B, C), the clay side 720, sprite 192 (3x nearest) and
+    three-quarter views of the end pose on the bare rig, with its numbers: folds against the approved crouch maxima, the
+    ground (the lowest skin point per region), the tails' clearances, the pixels the 192 sprite shows of the head, each ear and
+    the tails (clipset_b2_preview.visible_regions) and the fur's hang below the floor (clip_frames --ground)."""
+    c = json.loads(Path(chk).read_text())
+    ex = json.loads(Path(extra_json).read_text())
+    appr = c['approvedCrouchFoldsMaxPerRegion']
+    S = 520
+    names = {'A': 'A: on its right side (the far side down), the back to the camera, the head to the right',
+             'B': 'B: on its right side, the belly and limbs to the camera, the head to the left (the elephant reference)',
+             'C': "C: slumped forward on its belly, the near flank to the camera (the brief's example for B)"}
+    rows = []
+    for k in ('A', 'B', 'C'):
+        r = c['frames'][f'faint{k}:0']
+        over = r['regions_over_approved']
+        v = ex.get('visible192', {}).get(f'faint{k}', {})
+        fu = ex.get('fur', {}).get(f'faint{k}', {})
+        lines = [names[k] + ('   << picked' if k == picked else ''),
+                 f"folds over the approved crouch maxima: {over if over else 'none'};  ear root {r['folds']['ear_root']} (approved {appr['ear_root']}), "
+                 f"tail fork {r['folds']['tail_fork']} ({appr['tail_fork']}), hip {r['folds']['hip']} ({appr['hip']}), neck {r['folds']['neck']} ({appr['neck']}), "
+                 f"shoulder {r['folds']['shoulder']} ({appr['shoulder']})",
+                 f"ground: lowest skin per region (mm) {r['ground_min_mm']}; vertices >1 mm under the floor {r['below_floor_1mm_vertices']}; "
+                 f"fur lowest {fu.get('fur_lowest_mm', '-')} mm, strands under the floor {fu.get('strands_under_floor', '-')}",
+                 f"tails apart ab {r['tail_ab_mm']} ac {r['tail_ac_mm']} bc {r['tail_bc_mm']} mm, to the legs a {r['tail_a_leg_mm']} b {r['tail_b_leg_mm']} "
+                 f"c {r['tail_c_leg_mm']} mm;  sprite 192 pixels shown: head {v.get('head', 0)}, near ear {v.get('ear_near', 0)}, far ear "
+                 f"{v.get('ear_far', 0)}, tails {v.get('tails', 0)} (idle frame 0: {ex.get('visible192', {}).get('idle0', {})})"]
+        ims = [Image.open(Path(fdir)/f'faint{k}'/'side'/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS),
+               Image.open(Path(fdir)/f'faint{k}'/'sprite'/'0000.png').convert('RGB').resize((S, S), Image.NEAREST),
+               Image.open(Path(fdir)/f'faint{k}'/'threequarter'/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS)]
+        rows.append((lines, ims))
+    W = 3*S
+    H = 40+sum(22*len(ln)+S+12 for ln, _ in rows)
+    im = Image.new('RGB', (W, H), (12, 12, 12))
+    dr = ImageDraw.Draw(im)
+    dr.text((8, 8), 'Akinza faint setup check: the lying end pose candidates on the bare rig (clay), side 720, sprite 192 (3x), three-quarter',
+            fill=(235, 235, 235), font=font(20))
+    y = 40
+    for ln, ims in rows:
+        for i, t in enumerate(ln):
+            dr.text((8, y), t, fill=(250, 210, 90) if i == 0 else (205, 205, 205), font=font(15 if i else 17))
+            y += 22
+        for i, x in enumerate(ims):
+            im.paste(x, (i*S, y))
+        y += S+12
+    im.save(out)
+    print('faint setup sheet', out, im.size)
+
+
 if __name__ == '__main__':
     cmd = sys.argv[1]
     if cmd == 'seq':
@@ -312,3 +428,7 @@ if __name__ == '__main__':
         ankle(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]))
     elif cmd == 'json':
         clips_json(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4:])
+    elif cmd == 'setupfaint':
+        setup_faint(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]), *sys.argv[6:7])
+    elif cmd == 'json2':
+        clips_json_b2(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4:])
