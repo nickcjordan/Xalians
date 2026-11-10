@@ -138,7 +138,7 @@ def setup(fdir, chk, out, before=None, after_tag='with the elbow keys', before_t
     if before:
         lines.append(line(before_tag, json.loads(Path(before).read_text())['frames']['guardB:0']))
     lines.append(f"approved crouch maxima: shoulder {appr['shoulder']}, armpit {appr['armpit']}, elbow {appr['elbow']}, wrist {appr.get('wrist', '-')}, neck {appr['neck']}, ear root {appr['ear_root']}")
-    big = ['side', 'front', 'threequarter']
+    big = [v for v in ('side', 'front', 'threequarter', 'back') if (Path(fdir)/'guardB'/v).exists()][:3]
     crops = [d.name for d in sorted(Path(fdir, 'guardB').iterdir()) if d.is_dir() and d.name.startswith('crop_')]
     S = 1024
     ims = [Image.open(Path(fdir)/'guardB'/v/'0000.png').convert('RGB') for v in big]
