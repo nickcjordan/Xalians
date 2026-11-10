@@ -670,7 +670,7 @@ def lie_frame(rig, skin, name):
 # line instead of reading as a cap) while the ears go back onto stalk f18's line on screen, the knees buckle from frame 2 into a
 # crouch by 9 (as pass 1, which the critic liked, 3 cm shallower), and from frame 11 the hips sink and the feet slide back
 # along the floor, rolling from their toe pads onto their tops, so the knees come down to the floor (at 25) while the trunk sags
-# forward and tips over them, gathering speed under gravity, the head a frame behind the trunk and the arms two; the tails swing
+# forward and tips over them, gathering speed under gravity, the head two frames behind the trunk's bend, the arms hanging; the tails swing
 # up and back as the hips drop and settle into their drape; the chest and forearms meet the floor and the head lands ahead of
 # them on frame 27 (`down`); one small bounce (the body lifts 8 mm off the floor and drops back), settled by 31, still to 35 (the
 # game holds the last frame). The end pose is the setup check's kneel, K.
@@ -702,14 +702,18 @@ FAINT = dict(
     ears_k=[(0, 'linear', 0.), (1, 'linear', 0.), (4, 'smooth', .7), (7, 'smooth', .97)],
     tails_k=[(0, 'linear', 0.), (3, 'linear', 0.), (9, 'smooth', .25)],
     # the fall (from frame 11): the share of the way from the buckled pose to the lying pose per group, (start lag, end frame,
-    # ease): the knees fold down first (the legs), the trunk and root tip forward over them with a gravity ease and land on 27,
-    # the head a frame behind landing with them, the arms 2 frames behind and down on 28, the ears and tails settling by 30
+    # ease): the root tips the whole body forward from 12 with a gravity ease and lands on 27, the trunk's own bend from 14, the
+    # head's from 16 landing with them, the arms eased in from 13 and down on 28, the ears settling by 30, the tails turning to
+    # their drape from 20 and down on 27; the hips sink on their own track and the feet slide back on theirs (below)
     # (the legs hold the crouch's fold while the whole body tips forward over the toes, so the knees go down to the floor without
     # folding past the crouch's approved bend and nothing rises; blending the legs toward the lying pose from the start opened the
     # knees and stood the body up, the chest rising to 655 mm)
     # (the root's forward pitch carries the whole body over on one gravity ease; the trunk's own bend, the head and the legs come
-    # later, so nothing straightens up on the way down: with the trunk blended from the start the head rose 40 mm at 13 to 17)
-    fall={'root': (0., 27, 'in'), 'hips': (0., 25., 'in'), 'feet': (0., 24., 'out'), 'feet_roll': (0., 25., 'linear'), 'body': (5., 27, 'smooth'),
+    # later, so nothing straightens up on the way down: with the trunk blended from the start the head rose 40 mm at 13 to 17.
+    # The pitch starts at once and gathers speed ('gravity': half steady, half accelerating), so the trunk tips over the legs while
+    # the feet slide back: on a pure accelerating ease it stayed upright to 17 while the legs slid out under it. The trunk's own
+    # bend from 14: from 16, under the earlier tip, the fork's skin collapsed 7 against the approved 6 at 18 and 19)
+    fall={'root': (1., 27, 'gravity'), 'hips': (0., 25., 'in'), 'feet': (0., 24., 'out'), 'feet_roll': (0., 25., 'linear'), 'body': (3., 27, 'smooth'),
           'legs': (10., 28, 'smooth'), 'head': (5., 27, 'smooth'), 'arms': (2., 28, 'in'), 'ears': (3., 30, 'smooth'),
           'tails': (9., 27, 'in')},
     # the ankle targets: this share of a straight slide in the world, the rest carried in the body's frame (all world: the legs
@@ -833,7 +837,9 @@ def faint_frames(rig, skin):
             continue
         shares = {}
         for g, (lag, end, kind) in P['fall'].items():
-            shares[g] = cp.ease(kind, min(1., max(0., (f-fb-lag)/(end-fb-lag))))
+            u = min(1., max(0., (f-fb-lag)/(end-fb-lag)))
+            # 'gravity': half a steady fall, half an accelerating one (it starts tipping at once and gathers speed to the floor)
+            shares[g] = .5*u+.5*cp.ease('in', u) if kind == 'gravity' else cp.ease(kind, u)
         body = cb.blend_poses(Kb, L, lambda b: shares[faint_group(b)])
         body = {k: v for k, v in body.items() if rc.base_of(k) not in ('thigh', 'shin', 'foot')}
         body['root'] = slerp_e([0., 0., 0.], L['root'], shares['root'])     # a forward pitch in the picture's plane
