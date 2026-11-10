@@ -21,11 +21,14 @@ and held, batch 3's move: shin 83.1, thigh 77.3, tail_root 17.0, neck 17.4 degre
 their skins are unchanged bit for bit. The groups are
 sculpted in order, each with the earlier groups' keys at their sculpt values. Appends the keys to <rig dir>/correctives.json
 and .npz (replacing the rebuilt groups' earlier deep keys, keeping the other groups'; the first run keeps the rig's own files as
-correctives-pre-deepflex.json and .npz) and
+correctives-pre-deepflex.json and .npz). Other builders write the same files, so the write takes <rig dir>/correctives.lock
+(waiting while another holder has it), re-reads the files as they are at that moment, replaces only this run's keys by name,
+writes, and removes the lock; keys another builder added meanwhile are kept. It
 writes <rig dir>/deepflex-corrective.json (parameters, sculpt angles, every key's largest value over the --check-bakes).
 """
 import argparse
 import json
+import time
 import os
 import shutil
 import sys
@@ -202,12 +205,42 @@ rep = dict(params={k: str(v) for k, v in vars(a).items()}, rise0=dict(knee=KNEE_
            sculpt=report, clips={str(Path(b).parent.parent.name)+'/'+str(Path(b).parent.name): bake_values(b) for b in a.check_bakes.split(',') if b})
 print(json.dumps(rep['clips']), flush=True)
 if not a.dry_run:
-    tmp = R/'correctives.tmp.npz'
-    np.savez_compressed(tmp, **{f'{k}__ids': v[0] for k, v in deltas.items()}, **{f'{k}__delta': v[1].astype(np.float32) for k, v in deltas.items()})
-    os.replace(tmp, R/'correctives.npz')
-    out = dict(base_json)
-    out['keys'] = keys+new_keys
-    (R/'correctives.tmp.json').write_text(json.dumps(out, indent=1))
-    os.replace(R/'correctives.tmp.json', R/'correctives.json')
+    # the corrective files are shared with the other clip builders (batch 3 adds shoulder keys): take
+    # <rig>/correctives.lock (wait while another holder has it), load the files as they are now, replace only this run's
+    # keys by name, write, release. Nothing is written from a snapshot.
+    lock = R/'correctives.lock'
+    t0 = time.time()
+    while True:
+        try:
+            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.write(fd, f'deepflex_corrective.py (batch 2 builder) {time.strftime("%Y-%m-%d %H:%M:%S")}\n'.encode())
+            os.close(fd)
+            break
+        except FileExistsError:
+            if time.time()-t0 > 1800:
+                raise SystemExit(f'{lock} held for 30 minutes: {lock.read_text(errors="replace").strip()}; nothing written')
+            print('waiting for', lock, '(', lock.read_text(errors='replace').strip(), ')', flush=True)
+            time.sleep(5)
+    try:
+        cur_json = json.loads((R/'correctives.json').read_text())
+        mine = {k['name'] for k in new_keys}
+        cur_keys = [k for k in cur_json['keys'] if k['name'] not in mine and not any(k['name'].startswith(f'{g}_deep') for g in GROUPS)]
+        with np.load(R/'correctives.npz') as cz:
+            cur = {k['name']: (np.array(cz[k['name']+'__ids']), np.array(cz[k['name']+'__delta'])) for k in cur_keys}
+        changed = sorted({k['name'] for k in cur_keys} ^ {k['name'] for k in keys})
+        if changed:
+            print('other keys changed since this run read the files (kept as they are now):', changed, flush=True)
+        rep['other_keys_changed_during_run'] = changed
+        for k in new_keys:
+            cur[k['name']] = (deltas[k['name']][0], deltas[k['name']][1].astype(np.float32))
+        tmp = R/'correctives.tmp.npz'
+        np.savez_compressed(tmp, **{f'{k}__ids': v[0] for k, v in cur.items()}, **{f'{k}__delta': v[1] for k, v in cur.items()})
+        os.replace(tmp, R/'correctives.npz')
+        out = dict(cur_json)
+        out['keys'] = cur_keys+new_keys
+        (R/'correctives.tmp.json').write_text(json.dumps(out, indent=1))
+        os.replace(R/'correctives.tmp.json', R/'correctives.json')
+    finally:
+        lock.unlink(missing_ok=True)
     (R/'deepflex-corrective.json').write_text(json.dumps(rep, indent=1, default=str))
-    print('wrote', len(keys+new_keys), 'keys', flush=True)
+    print('wrote', len(cur_keys+new_keys), 'keys', flush=True)
