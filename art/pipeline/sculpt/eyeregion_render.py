@@ -19,7 +19,8 @@ import lookdev  # noqa: E402
 s = bpy.context.scene
 body = bpy.data.objects['luceras_blockout']; rig = bpy.data.objects['luceras_rig']
 POSE_ORDER = 'rest,crouch,leap,landing,head_left_up,tail_side_up,foreleg_step,breath_in,crouch_deep,landing_old'.split(',')
-OBLIQUE = {'face': (35.0, 4.0), 'face_front': (0.0, 4.0), 'face_side': (270.0, 4.0), 'low34': (45.0, -12.0)}   # low34 = reskin_furcheck low34_front_left (body)
+OBLIQUE = {'face': (35.0, 4.0), 'face_front': (0.0, 4.0), 'face_side': (270.0, 4.0), 'low34': (45.0, -12.0),
+           'head': (35.0, 4.0), 'head_back': (180.0, 20.0), 'head_backleft': (135.0, 15.0), 'head_backright': (225.0, 15.0)}   # head*: reskin_furcheck 'head' (head bounds, 90 mm pad)   # low34 = reskin_furcheck low34_front_left (body)
 s.render.threads_mode = 'FIXED'; s.render.threads = int(os.environ.get('FUR_THREADS', '12'))
 s.cycles.samples = int(os.environ.get('FUR_SAMPLES', '40'))
 
@@ -69,7 +70,7 @@ def cam_oblique(view):
     if view == 'low34':
         V = evbody(); lo, hi = V.min(0), V.max(0); pad = 0.03
     else:
-        V = evbody()[HEADM]; lo, hi = V.min(0), V.max(0); pad = 0.004
+        V = evbody()[HEADM]; lo, hi = V.min(0), V.max(0); pad = 0.09 if view.startswith('head') else 0.004
     cam = lookdev.place_camera('furcheck_' + view, (Vector((lo - pad).tolist()), Vector((hi + pad).tolist())), az, el, 0.05)
     s.render.resolution_x = 960; s.render.resolution_y = 960; s.camera = cam; bpy.context.view_layer.update(); return cam
 

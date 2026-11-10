@@ -1,0 +1,14 @@
+{
+  "id": "D-01M72N9H767X42SAHYKEEPSHZJ",
+  "alias": "933s",
+  "stage": "07-surface",
+  "description": "Fore forearm front and hind shank front and lower hind leg read as smooth, pale, near-bare skin with a specular streak, where the sheet shows legs furred to the paw. Same fault class as the nape (D-xed4): the skin shows through sparse or flat fur. Visible at 2x in every clip, worst at sig f11 to f29 when the legs stretch",
+  "camera": "side sprite 2x and 4x, idle f0, sig f11, f16, f29",
+  "region": "fore leg from elbow to wrist (front face); hind leg from stifle to hock and hock to paw (front face)",
+  "origin": "builder whole-creature region read at 4x on sprite pass 6, confirmed by orchestrator at 2x and 4x 2026-11-10",
+  "attempts": [
+    "B-01M72N9T9WRW9ZW3SMJF6445Y7"
+  ],
+  "status": "open",
+  "createdAt": "2026-11-10T12:00:29Z"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "B-01M72N9T9WRW9ZW3SMJF6445Y7",
+  "alias": "7fmf",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Limb fur coverage: the fore forearm and the hind shank and lower hind leg read as furred coat at 2x and 4x in every clip, with no smooth bare-looking skin or specular streak, at the approved colors and the current silhouette",
+  "scope": "fur on the fore leg elbow to wrist and hind leg stifle to paw; groom only, no mesh or skeleton",
+  "defect": "D-01M72N9H767X42SAHYKEEPSHZJ",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-10T12:00:38Z",
+  "briefSha256": "67e2f01c0036bb687dafb33a873892b0391a9b5c75a05036bb965fc11350d4ec"
+}

@@ -8,12 +8,169 @@
   "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-tail/final_board/board_tail.png",
+      "hash": "1a852614d1aa3ee61a264d86d797bd29edb212163d46099a6ea99887a22db4be"
+    },
+    {
+      "name": "luceras-tail/final/build.json",
+      "hash": "ce3e84f26403ff46960a5dea7baf2cd9cf2f49b506a8f2214be14d2756b4d6d4"
+    },
+    {
+      "name": "luceras-tail/work/t5.json",
+      "hash": "d9caf71a6b71594e2f0d5a31fef4eea9a7bd63d917a9a0e6f6b56c900207ba5d"
+    },
+    {
+      "name": "luceras-tail/work/sheet_tail.json",
+      "hash": "b9678a327494d23bf09e685f642ee5ea81b3995aa26c4e490bd995d317039e7a"
+    },
+    {
+      "name": "luceras-tail/work/idle0_final_tail.json",
+      "hash": "648bec478d1f6a1829959799c4794e363b611eadc9a83b8ab39dd3f8b46bbba5"
+    },
+    {
+      "name": "luceras-tail/work/idle0_pass5_tail.json",
+      "hash": "95700ad5c1cdae6c35c1508794ab831ce9a1b15e7e2e5027541146a021c4ba71"
+    },
+    {
+      "name": "luceras-final/final/scene.blend",
+      "hash": "968b5659315091013e1178d54d6bb23463dc198813300b6fe662d685006f7d9c"
+    },
+    {
+      "name": "C:/dev/src/xalians-creature-pipeline/art/pipeline/groom/tail_shaft.py",
+      "hash": "912efc2d9dba130f835fb0090e64029ed6d3fd6cfa9c8ee8aa761536622c0956"
+    },
+    {
+      "name": "luceras-tail/work/tail_measure.py",
+      "hash": "6a4e76a2f292c3310c4c832c15e482c264e4b5ec08e9882e4d920385dd807931"
+    },
+    {
+      "name": "luceras-sprites/pass6/report.json",
+      "hash": "c6345375dbe593e7876be8fbb925340094039a4aea9560df1702ea4a6e170f24"
+    },
+    {
+      "name": "luceras-tail/report.json",
+      "hash": "2fbf4bea8aab953afd0bfb5e882d248f8b5957b6c269a6ff145e5ad9b7b451e0"
+    },
+    {
+      "name": "luceras-final/final/scene.blend",
+      "hash": "968b5659315091013e1178d54d6bb23463dc198813300b6fe662d685006f7d9c"
+    },
+    {
+      "name": "luceras-sprites/pass6/report.json",
+      "hash": "c6345375dbe593e7876be8fbb925340094039a4aea9560df1702ea4a6e170f24"
+    },
+    {
+      "name": "luceras-sprites/pass6/sheets/idle.png",
+      "hash": "3faafc7be8837fa4b61f0afa2a7996540ba5404bab49ccaa017eb63751fc14bb"
+    },
+    {
+      "name": "luceras-sprites/pass6/sheets/sig.horns-first-descent.png",
+      "hash": "c1621326831373dc753de795baaaf63259074ebc4034f3f4f9861020f71502e5"
+    },
+    {
+      "name": "luceras-sprites/pass6/sheets/trans.idle-to-sig.png",
+      "hash": "1851a15c219e8d19c62711ad8dd76be952a3453ee8fd536482ebc1535b42eac8"
+    },
+    {
+      "name": "luceras-sprites/pass6/sheets/trans.sig-to-idle.png",
+      "hash": "3434ebe4696c340e6bd8cef4f151c08c0f643b14acf5a5fbd3e8026f9d219966"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-tail/final_board/board_tail.png",
+        "hash": "1a852614d1aa3ee61a264d86d797bd29edb212163d46099a6ea99887a22db4be"
+      },
+      {
+        "name": "luceras-tail/final/build.json",
+        "hash": "ce3e84f26403ff46960a5dea7baf2cd9cf2f49b506a8f2214be14d2756b4d6d4"
+      },
+      {
+        "name": "luceras-tail/work/t5.json",
+        "hash": "d9caf71a6b71594e2f0d5a31fef4eea9a7bd63d917a9a0e6f6b56c900207ba5d"
+      },
+      {
+        "name": "luceras-tail/work/sheet_tail.json",
+        "hash": "b9678a327494d23bf09e685f642ee5ea81b3995aa26c4e490bd995d317039e7a"
+      },
+      {
+        "name": "luceras-tail/work/idle0_final_tail.json",
+        "hash": "648bec478d1f6a1829959799c4794e363b611eadc9a83b8ab39dd3f8b46bbba5"
+      },
+      {
+        "name": "luceras-tail/work/idle0_pass5_tail.json",
+        "hash": "95700ad5c1cdae6c35c1508794ab831ce9a1b15e7e2e5027541146a021c4ba71"
+      },
+      {
+        "name": "luceras-final/final/scene.blend",
+        "hash": "968b5659315091013e1178d54d6bb23463dc198813300b6fe662d685006f7d9c"
+      },
+      {
+        "name": "C:/dev/src/xalians-creature-pipeline/art/pipeline/groom/tail_shaft.py",
+        "hash": "912efc2d9dba130f835fb0090e64029ed6d3fd6cfa9c8ee8aa761536622c0956"
+      },
+      {
+        "name": "luceras-tail/work/tail_measure.py",
+        "hash": "6a4e76a2f292c3310c4c832c15e482c264e4b5ec08e9882e4d920385dd807931"
+      },
+      {
+        "name": "luceras-sprites/pass6/report.json",
+        "hash": "c6345375dbe593e7876be8fbb925340094039a4aea9560df1702ea4a6e170f24"
+      },
+      {
+        "name": "luceras-tail/report.json",
+        "hash": "2fbf4bea8aab953afd0bfb5e882d248f8b5957b6c269a6ff145e5ad9b7b451e0"
+      },
+      {
+        "name": "luceras-final/final/scene.blend",
+        "hash": "968b5659315091013e1178d54d6bb23463dc198813300b6fe662d685006f7d9c"
+      },
+      {
+        "name": "luceras-sprites/pass6/report.json",
+        "hash": "c6345375dbe593e7876be8fbb925340094039a4aea9560df1702ea4a6e170f24"
+      },
+      {
+        "name": "luceras-sprites/pass6/sheets/idle.png",
+        "hash": "3faafc7be8837fa4b61f0afa2a7996540ba5404bab49ccaa017eb63751fc14bb"
+      },
+      {
+        "name": "luceras-sprites/pass6/sheets/sig.horns-first-descent.png",
+        "hash": "c1621326831373dc753de795baaaf63259074ebc4034f3f4f9861020f71502e5"
+      },
+      {
+        "name": "luceras-sprites/pass6/sheets/trans.idle-to-sig.png",
+        "hash": "1851a15c219e8d19c62711ad8dd76be952a3453ee8fd536482ebc1535b42eac8"
+      },
+      {
+        "name": "luceras-sprites/pass6/sheets/trans.sig-to-idle.png",
+        "hash": "3434ebe4696c340e6bd8cef4f151c08c0f643b14acf5a5fbd3e8026f9d219966"
+      }
+    ],
+    "blockedBy": "nothing",
+    "defectResult": "partly. Thickness at three stations is within 20 percent of the sheet (+10, +16, +2 percent) and the top reads darker than the underside at 1x (114,108,103 over 152,144,141; before 143,137,134 over 226,220,217), but at 2x and 4x the shaft still reads as a smooth pale tube, not the sheet's furred whip. The orchestrator then found Nick's words of 2026-10-24, 'the tail color looks fine', which postdate the 2026-10-21 recommendation the defect relied on, so the darkening is withdrawn and the defect is rescoped to coverage only (ruling filed with this report).",
+    "newDefects": [],
+    "checks": [
+      "plume tufts and plume spine bit-identical to pass 5",
+      "flight sig f11 to f30 and f40 at 4x: no strands lift off bends or gap inside them; nothing passes through the plume or hind legs"
+    ],
+    "cost": {
+      "wall_h": 0,
+      "agent_tokens": 0,
+      "note": "counted under B-ewzn (same builder session)"
+    }
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-10T06:15:03Z",
-  "briefSha256": "b58f2310f644788a6181bb10dc6bc333c985473aa97c1bf0597c4fa218dab595"
+  "briefSha256": "b58f2310f644788a6181bb10dc6bc333c985473aa97c1bf0597c4fa218dab595",
+  "checks": [
+    "plume tufts and plume spine bit-identical to pass 5",
+    "flight sig f11 to f30 and f40 at 4x: no strands lift off bends or gap inside them; nothing passes through the plume or hind legs"
+  ],
+  "reportedAt": "2026-11-10T12:00:17Z"
 }

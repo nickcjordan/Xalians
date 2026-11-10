@@ -1,0 +1,16 @@
+{
+  "id": "N-01M72N9H1S8AY5MX3G320S6TFM",
+  "alias": "6s3h",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Correction and rescope of D-a3hs. The defect said Nick had not declined the 2026-10-21 shaft recommendation; he later said, on 2026-10-24 while reviewing the coat, 'the tail color looks fine'. That is a sourced hold on the tail's color, so B-ajd4's darker shaft top is withdrawn and the shaft returns to its pass 5 colors. The defect stays open for coverage only: at 2x and 4x the shaft reads as a smooth, pale, bare tube (sig f11, f16, f29), which is a fur-coverage fault, not a color choice. Nick can override toward the sheet's darker shaft.",
+  "date": "2026-11-10",
+  "kind": "ruling",
+  "binds": {
+    "build": "B-01M721H0ZQPKJBDXZZRW7MYZT5",
+    "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-10T12:00:29Z"
+}

@@ -9,6 +9,7 @@
   "attempts": [
     "B-01M7214QXWGAF8XQWJWAZAP03X"
   ],
-  "status": "open",
-  "createdAt": "2026-11-10T06:08:10Z"
+  "status": "closed",
+  "createdAt": "2026-11-10T06:08:10Z",
+  "closedAt": "2026-11-10T12:00:17Z"
 }

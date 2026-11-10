@@ -8,12 +8,173 @@
   "defect": "D-01M7214DQSNQ11VEJJDEH06C95",
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-nape/final_board/board_nape.png",
+      "hash": "185088cf3d8668d17d9b39f29b9343cbc095000d06ccf04411d4d93b5ded187e"
+    },
+    {
+      "name": "luceras-nape/work/coverage_table.json",
+      "hash": "0f1815a2f4cb59d12dad24bb5e26df173d9e9bc50128381b006a61369700d221"
+    },
+    {
+      "name": "luceras-nape/work/diff_base_final.json",
+      "hash": "539e5a8e5df891df8da2096ee22325fa25a38ae645e1366975da3245ae40c68a"
+    },
+    {
+      "name": "luceras-nape/n7/build.json",
+      "hash": "1b9e7bc64b8b515d3bfb883b02b5efb626e2cd98b1bf9e6da29263581b46943f"
+    },
+    {
+      "name": "luceras-nape/work/n7.json",
+      "hash": "8cc55eb8cabef326867de96db8d44559301a4f5600161f08df83993b963f8a91"
+    },
+    {
+      "name": "luceras-final/final/scene.blend",
+      "hash": "968b5659315091013e1178d54d6bb23463dc198813300b6fe662d685006f7d9c"
+    },
+    {
+      "name": "C:/dev/src/xalians-creature-pipeline/art/pipeline/groom/nape_regrow.py",
+      "hash": "7d3163e37cd09b6927d44709aed4b7f367f6678b685872b1364b7e1d6e1140b7"
+    },
+    {
+      "name": "C:/dev/src/xalians-creature-pipeline/art/pipeline/groom/coverage.py",
+      "hash": "bb0a2976ccfa251e6597cdc32ec96a3fd334c0c50ca9030f12323feff49b52a6"
+    },
+    {
+      "name": "C:/dev/src/xalians-creature-pipeline/art/pipeline/groom/curves_digest.py",
+      "hash": "a8064bf3f1a8259d624b0dadd8b2729239e55335cef5e503a3f6a1c3770c53c8"
+    },
+    {
+      "name": "luceras-sprites/pass6/report.json",
+      "hash": "c6345375dbe593e7876be8fbb925340094039a4aea9560df1702ea4a6e170f24"
+    },
+    {
+      "name": "luceras-nape/report.json",
+      "hash": "6fa231c73b30d67bc9ea05636178025ef55409e3502166361069524fd459fec2"
+    },
+    {
+      "name": "luceras-final/final/scene.blend",
+      "hash": "968b5659315091013e1178d54d6bb23463dc198813300b6fe662d685006f7d9c"
+    },
+    {
+      "name": "luceras-sprites/pass6/report.json",
+      "hash": "c6345375dbe593e7876be8fbb925340094039a4aea9560df1702ea4a6e170f24"
+    },
+    {
+      "name": "luceras-sprites/pass6/sheets/idle.png",
+      "hash": "3faafc7be8837fa4b61f0afa2a7996540ba5404bab49ccaa017eb63751fc14bb"
+    },
+    {
+      "name": "luceras-sprites/pass6/sheets/sig.horns-first-descent.png",
+      "hash": "c1621326831373dc753de795baaaf63259074ebc4034f3f4f9861020f71502e5"
+    },
+    {
+      "name": "luceras-sprites/pass6/sheets/trans.idle-to-sig.png",
+      "hash": "1851a15c219e8d19c62711ad8dd76be952a3453ee8fd536482ebc1535b42eac8"
+    },
+    {
+      "name": "luceras-sprites/pass6/sheets/trans.sig-to-idle.png",
+      "hash": "3434ebe4696c340e6bd8cef4f151c08c0f643b14acf5a5fbd3e8026f9d219966"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-nape/final_board/board_nape.png",
+        "hash": "185088cf3d8668d17d9b39f29b9343cbc095000d06ccf04411d4d93b5ded187e"
+      },
+      {
+        "name": "luceras-nape/work/coverage_table.json",
+        "hash": "0f1815a2f4cb59d12dad24bb5e26df173d9e9bc50128381b006a61369700d221"
+      },
+      {
+        "name": "luceras-nape/work/diff_base_final.json",
+        "hash": "539e5a8e5df891df8da2096ee22325fa25a38ae645e1366975da3245ae40c68a"
+      },
+      {
+        "name": "luceras-nape/n7/build.json",
+        "hash": "1b9e7bc64b8b515d3bfb883b02b5efb626e2cd98b1bf9e6da29263581b46943f"
+      },
+      {
+        "name": "luceras-nape/work/n7.json",
+        "hash": "8cc55eb8cabef326867de96db8d44559301a4f5600161f08df83993b963f8a91"
+      },
+      {
+        "name": "luceras-final/final/scene.blend",
+        "hash": "968b5659315091013e1178d54d6bb23463dc198813300b6fe662d685006f7d9c"
+      },
+      {
+        "name": "C:/dev/src/xalians-creature-pipeline/art/pipeline/groom/nape_regrow.py",
+        "hash": "7d3163e37cd09b6927d44709aed4b7f367f6678b685872b1364b7e1d6e1140b7"
+      },
+      {
+        "name": "C:/dev/src/xalians-creature-pipeline/art/pipeline/groom/coverage.py",
+        "hash": "bb0a2976ccfa251e6597cdc32ec96a3fd334c0c50ca9030f12323feff49b52a6"
+      },
+      {
+        "name": "C:/dev/src/xalians-creature-pipeline/art/pipeline/groom/curves_digest.py",
+        "hash": "a8064bf3f1a8259d624b0dadd8b2729239e55335cef5e503a3f6a1c3770c53c8"
+      },
+      {
+        "name": "luceras-sprites/pass6/report.json",
+        "hash": "c6345375dbe593e7876be8fbb925340094039a4aea9560df1702ea4a6e170f24"
+      },
+      {
+        "name": "luceras-nape/report.json",
+        "hash": "6fa231c73b30d67bc9ea05636178025ef55409e3502166361069524fd459fec2"
+      },
+      {
+        "name": "luceras-final/final/scene.blend",
+        "hash": "968b5659315091013e1178d54d6bb23463dc198813300b6fe662d685006f7d9c"
+      },
+      {
+        "name": "luceras-sprites/pass6/report.json",
+        "hash": "c6345375dbe593e7876be8fbb925340094039a4aea9560df1702ea4a6e170f24"
+      },
+      {
+        "name": "luceras-sprites/pass6/sheets/idle.png",
+        "hash": "3faafc7be8837fa4b61f0afa2a7996540ba5404bab49ccaa017eb63751fc14bb"
+      },
+      {
+        "name": "luceras-sprites/pass6/sheets/sig.horns-first-descent.png",
+        "hash": "c1621326831373dc753de795baaaf63259074ebc4034f3f4f9861020f71502e5"
+      },
+      {
+        "name": "luceras-sprites/pass6/sheets/trans.idle-to-sig.png",
+        "hash": "1851a15c219e8d19c62711ad8dd76be952a3453ee8fd536482ebc1535b42eac8"
+      },
+      {
+        "name": "luceras-sprites/pass6/sheets/trans.sig-to-idle.png",
+        "hash": "3434ebe4696c340e6bd8cef4f151c08c0f643b14acf5a5fbd3e8026f9d219966"
+      }
+    ],
+    "blockedBy": "nothing (GPU slot held by another session 01:18 to 02:58; renders waited)",
+    "defectResult": "fixed at product size. Cause: missing strand roots on the back of the head and dorsal nape (2.9 roots per cm2 against 64 on the head), present since headpass1 k16, enlarged by the b5 head scale and exposed by the carriage lift. One new curves object (22,308 strands) tops up sparse skin with nearest-coat colors; no existing strand or mesh changed (attribute hashes match). Skin visible through fur at the nape fell from 0.94-0.98 to 0.18-0.26 across every clip. The written gate (nape no barer than the near control in every frame) failed by 0.02-0.03 at rest and by up to 0.19 in the idle head turn; the orchestrator's read at 4x and 2x (pass 5 against pass 6, idle f0 and f30, sig f29 front-below) finds no bare skin, ring, seam or tuft, so the defect closes on the visual read with the numeric gap recorded.",
+    "newDefects": [
+      "fore forearm front reads as smooth, pale, near-bare skin in every clip (builder region read, confirmed by the orchestrator at 4x and 2x)",
+      "hind shank front and lower hind leg read as smooth pale skin, worst at sig f16 to f29 (builder read, confirmed at 2x)",
+      "small dark crease in the elbow pit in idle and both transitions (builder read, not yet confirmed)"
+    ],
+    "checks": [
+      "binding diff: 14 existing curves objects and the body mesh identical to the pass 5 scene of record",
+      "sprites pass 6: 166 frames, 283.30 px/m, no pops, head seams 5.6/0/0/5.4 mm, fringe 5.1 percent, clearance 4 px or more, pad and claw fixes kept"
+    ],
+    "cost": {
+      "wall_h": 5.8,
+      "agent_tokens": 827501,
+      "note": "one builder session covered B-ewzn, B-ajd4 and sprite pass 6; tokens are for the whole session"
+    }
+  },
+  "blockedBy": "nothing (GPU slot held by another session 01:18 to 02:58; renders waited)",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-10T06:08:20Z",
-  "briefSha256": "5a82224dea937fafe479baf83d16d775fbead8e7c8963c3d20bed937bf150891"
+  "briefSha256": "5a82224dea937fafe479baf83d16d775fbead8e7c8963c3d20bed937bf150891",
+  "checks": [
+    "binding diff: 14 existing curves objects and the body mesh identical to the pass 5 scene of record",
+    "sprites pass 6: 166 frames, 283.30 px/m, no pops, head seams 5.6/0/0/5.4 mm, fringe 5.1 percent, clearance 4 px or more, pad and claw fixes kept"
+  ],
+  "reportedAt": "2026-11-10T12:00:12Z"
 }

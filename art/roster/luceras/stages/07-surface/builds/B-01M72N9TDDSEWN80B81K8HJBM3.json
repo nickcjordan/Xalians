@@ -1,0 +1,19 @@
+{
+  "id": "B-01M72N9TDDSEWN80B81K8HJBM3",
+  "alias": "5mg8",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Tail shaft coverage at the pass 5 colors: the shaft reads as a furred whip, not a smooth pale tube, at 2x and 4x in idle and the signature; color returns to pass 5 per Nick 2026-10-24",
+  "scope": "tail shaft coat object only; plume held",
+  "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-10T12:00:38Z",
+  "briefSha256": "a4e598c76d472e49a1b182c528d8102e61118f82cbf413d00541117ec347a5e5"
+}
