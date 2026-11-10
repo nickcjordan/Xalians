@@ -11,6 +11,8 @@
   python art/species-construction/anim/compose_clipset.py setup <setup frames dir> <setup check json> <out png> [before json]
       The guard setup check (pose B): side, front and three-quarter, then the close views, with the numbers after and
       before rig-p8b's elbow keys.
+  python art/species-construction/anim/compose_clipset.py ankle <ankle setup dir> <before json> <after json> <out png>
+      The ankle keys' setup sheet: each static pose before and after, side, three-quarter and two ankle close views.
   python art/species-construction/anim/compose_clipset.py json <bake dir> <out json> [extra json...]
       clips.json: frames, events, rules, per-clip check summaries and per-frame numbers (checks-skin.json), the render
       measures (measure-render.json) and any render logs given.
@@ -158,6 +160,36 @@ def setup(fdir, chk, out, before=None):
     print('setup sheet', out, out_im.size)
 
 
+def ankle(fdir, before_json, after_json, out):
+    """The ankle setup sheet (E5): each static pose before and after the direction-aware ankle keys, side, three-quarter
+    and the two ankle close views, with the ankle region's folds."""
+    poses = ['evadeF3', 'evadeF5pointed', 'runToeoff']
+    views = ['side', 'threequarter', 'crop_ankleL', 'crop_ankleLback']
+    cb_, ca_ = json.loads(Path(before_json).read_text()), json.loads(Path(after_json).read_text())
+    S = 360
+    rows = []
+    for pz in poses:
+        for tag, folder, c in (('before', 'frames-before', cb_), ('after', 'frames-after', ca_)):
+            r = c['frames'][f'{pz}:0']
+            txt = (f"{pz} {tag}: ankle folded/collapsed {r['folds']['ankle']}  knee {r['folds']['knee']}  (approved crouch ankle "
+                   f"{c['approvedCrouchFoldsMaxPerRegion']['ankle']});  ankle keys {', '.join(f'{k} {v}' for k, v in r['keys'].items() if k.startswith('ankle'))}")
+            ims = [Image.open(Path(fdir)/folder/pz/v/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS) for v in views]
+            rows.append((txt, ims))
+    W = S*len(views)
+    out_im = Image.new('RGB', (W, 36+len(rows)*(S+28)), (12, 12, 12))
+    dr = ImageDraw.Draw(out_im)
+    dr.text((8, 8), 'Akinza ankle keys (E5): before and after, side, three-quarter, ankle close (side), ankle close (back three-quarter)',
+            fill=(235, 235, 235), font=font(16))
+    y = 36
+    for txt, ims in rows:
+        dr.text((8, y+4), txt, fill=(250, 210, 90) if ' after' in txt[:30] else (200, 200, 200), font=font(13))
+        for i, im in enumerate(ims):
+            out_im.paste(im, (i*S, y+24))
+        y += S+28
+    out_im.save(out)
+    print('ankle sheet', out, out_im.size)
+
+
 def clips_json(bake, out, extra):
     spec = json.loads((bake/'clipset-spec.json').read_text())
     chk = json.loads((bake/'checks-skin.json').read_text())
@@ -210,5 +242,7 @@ if __name__ == '__main__':
         sheet(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]), sys.argv[6:])
     elif cmd == 'setup':
         setup(Path(sys.argv[2]), sys.argv[3], Path(sys.argv[4]), sys.argv[5] if len(sys.argv) > 5 else None)
+    elif cmd == 'ankle':
+        ankle(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]))
     elif cmd == 'json':
         clips_json(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4:])
