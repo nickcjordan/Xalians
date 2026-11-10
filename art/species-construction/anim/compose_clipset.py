@@ -19,6 +19,7 @@
       The fur check sheet: each clip's deepest frame (side 720 and sprite 192) beside the approved Night Stalk fur frame 18
       at the same scale, then its close views; picks are [[clip, frame, [crop views]], ...].
   python art/species-construction/anim/compose_clipset.py setupfaint <setup frames dir> <setup check json> <extra json> <out png> [picked]
+      [candidates, e.g. K,S] [idle clay frames dir]
       Batch 2's faint setup sheet: the lying candidates A, B, C with their numbers (extra json: visible192 and fur per candidate).
   python art/species-construction/anim/compose_clipset.py json2 <bake dir> <out json> [extra json...]
       Batch 2's clips.json (displaced, held, held_in, held_out, faint), with the ear line per frame (ear-line.json).
@@ -363,47 +364,59 @@ def clips_json_b2(bake, out, extra):
     print('wrote', out)
 
 
-def setup_faint(fdir, chk, extra_json, out, picked='A'):
-    """Batch 2's faint setup sheet: per lying candidate (A, B, C), the clay side 720, sprite 192 (3x nearest) and
-    three-quarter views of the end pose on the bare rig, with its numbers: folds against the approved crouch maxima, the
-    ground (the lowest skin point per region), the tails' clearances, the pixels the 192 sprite shows of the head, each ear and
-    the tails (clipset_b2_preview.visible_regions) and the fur's hang below the floor (clip_frames --ground)."""
+SETUP_NAMES = {'A': 'A: on its right side (the far side down), the back to the camera, the head to the right',
+               'B': 'B: on its right side, the belly and limbs to the camera, the head to the left (the elephant reference)',
+               'C': "C: slumped forward on its belly, the near flank to the camera (the brief's example for B)",
+               'K': 'K: forward onto the chest in profile, a kneel with the rump up (the thighs less folded), facing left',
+               'S': 'S: forward onto the chest in profile, sitting back on the heels (the hips and knees folded deep), facing left'}
+
+
+def setup_faint(fdir, chk, extra_json, out, picked='A', cands='A,B,C', idle_dir=None):
+    """Batch 2's faint setup sheet: per lying candidate (fix pass 1: A, B, C; fix pass 2: K, S), the clay side 720, sprite 192 (3x
+    nearest) and three-quarter views of the end pose on the bare rig, with idle frame 0's side and sprite beside them when
+    `idle_dir` (a clay frames dir holding idle/) is given, and its numbers: folds against the approved crouch maxima, the ground
+    (the lowest skin point per region), the tails' clearances, the pixels the 192 sprite shows of the head, each ear and the tails
+    (clipset_b2_preview.visible_regions) and the fur's hang below the floor (clip_frames --ground)."""
     c = json.loads(Path(chk).read_text())
     ex = json.loads(Path(extra_json).read_text())
     appr = c['approvedCrouchFoldsMaxPerRegion']
-    S = 520
-    names = {'A': 'A: on its right side (the far side down), the back to the camera, the head to the right',
-             'B': 'B: on its right side, the belly and limbs to the camera, the head to the left (the elephant reference)',
-             'C': "C: slumped forward on its belly, the near flank to the camera (the brief's example for B)"}
+    S = 440
+    idle = None
+    if idle_dir:
+        idle = (Image.open(Path(idle_dir)/'idle'/'side'/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS),
+                Image.open(Path(idle_dir)/'idle'/'sprite'/'0000.png').convert('RGB').resize((S, S), Image.NEAREST))
     rows = []
-    for k in ('A', 'B', 'C'):
+    for k in cands.split(','):
         r = c['frames'][f'faint{k}:0']
         over = r['regions_over_approved']
         v = ex.get('visible192', {}).get(f'faint{k}', {})
         fu = ex.get('fur', {}).get(f'faint{k}', {})
-        lines = [names[k] + ('   << picked' if k == picked else ''),
+        lines = [SETUP_NAMES[k] + ('   << picked' if k == picked else ''),
                  f"folds over the approved crouch maxima: {over if over else 'none'};  ear root {r['folds']['ear_root']} (approved {appr['ear_root']}), "
-                 f"tail fork {r['folds']['tail_fork']} ({appr['tail_fork']}), hip {r['folds']['hip']} ({appr['hip']}), neck {r['folds']['neck']} ({appr['neck']}), "
-                 f"shoulder {r['folds']['shoulder']} ({appr['shoulder']})",
+                 f"tail fork {r['folds']['tail_fork']} ({appr['tail_fork']}), hip {r['folds']['hip']} ({appr['hip']}), knee {r['folds']['knee']} ({appr['knee']}), "
+                 f"ankle {r['folds']['ankle']} ({appr['ankle']}), neck {r['folds']['neck']} ({appr['neck']})",
                  f"ground: lowest skin per region (mm) {r['ground_min_mm']}; vertices >1 mm under the floor {r['below_floor_1mm_vertices']}; "
                  f"fur lowest {fu.get('fur_lowest_mm', '-')} mm, strands under the floor {fu.get('strands_under_floor', '-')}",
                  f"tails apart ab {r['tail_ab_mm']} ac {r['tail_ac_mm']} bc {r['tail_bc_mm']} mm, to the legs a {r['tail_a_leg_mm']} b {r['tail_b_leg_mm']} "
                  f"c {r['tail_c_leg_mm']} mm;  sprite 192 pixels shown: head {v.get('head', 0)}, near ear {v.get('ear_near', 0)}, far ear "
-                 f"{v.get('ear_far', 0)}, tails {v.get('tails', 0)} (idle frame 0: {ex.get('visible192', {}).get('idle0', {})})"]
-        ims = [Image.open(Path(fdir)/f'faint{k}'/'side'/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS),
-               Image.open(Path(fdir)/f'faint{k}'/'sprite'/'0000.png').convert('RGB').resize((S, S), Image.NEAREST),
-               Image.open(Path(fdir)/f'faint{k}'/'threequarter'/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS)]
+                 f"{v.get('ear_far', 0)}, tails {v.get('tails', 0)} (idle frame 0: {ex.get('visible192', {}).get('idle0', {})}; Night Stalk f18 near "
+                 f"ear {ex.get('visible192', {}).get('stalk18', {}).get('ear_near', '-')})"]
+        side = Image.open(Path(fdir)/f'faint{k}'/'side'/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS)
+        spr = Image.open(Path(fdir)/f'faint{k}'/'sprite'/'0000.png').convert('RGB').resize((S, S), Image.NEAREST)
+        tq = Image.open(Path(fdir)/f'faint{k}'/'threequarter'/'0000.png').convert('RGB').resize((S, S), Image.LANCZOS)
+        ims = [side, idle[0], spr, idle[1], tq] if idle else [side, spr, tq]
         rows.append((lines, ims))
-    W = 3*S
-    H = 40+sum(22*len(ln)+S+12 for ln, _ in rows)
+    W = len(rows[0][1])*S
+    H = 64+sum(22*len(ln)+S+12 for ln, _ in rows)
     im = Image.new('RGB', (W, H), (12, 12, 12))
     dr = ImageDraw.Draw(im)
-    dr.text((8, 8), 'Akinza faint setup check: the lying end pose candidates on the bare rig (clay), side 720, sprite 192 (3x), three-quarter',
-            fill=(235, 235, 235), font=font(20))
-    y = 40
+    dr.text((8, 8), 'Akinza faint setup check: the lying end pose candidates on the bare rig (clay)', fill=(235, 235, 235), font=font(20))
+    dr.text((8, 36), 'side 720 | idle frame 0 side | sprite 192 (3x) | idle frame 0 sprite | three-quarter' if idle else
+            'side 720 | sprite 192 (3x) | three-quarter', fill=(180, 180, 180), font=font(15))
+    y = 64
     for ln, ims in rows:
-        for i, t in enumerate(ln):
-            dr.text((8, y), t, fill=(250, 210, 90) if i == 0 else (205, 205, 205), font=font(15 if i else 17))
+        for i, t_ in enumerate(ln):
+            dr.text((8, y), t_, fill=(250, 210, 90) if i == 0 else (205, 205, 205), font=font(15 if i else 17))
             y += 22
         for i, x in enumerate(ims):
             im.paste(x, (i*S, y))
@@ -429,6 +442,6 @@ if __name__ == '__main__':
     elif cmd == 'json':
         clips_json(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4:])
     elif cmd == 'setupfaint':
-        setup_faint(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]), *sys.argv[6:7])
+        setup_faint(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]), *sys.argv[6:9])
     elif cmd == 'json2':
         clips_json_b2(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4:])
