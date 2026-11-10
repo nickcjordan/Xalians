@@ -12,7 +12,9 @@ rig_core.swing_deg, Blender's ROT_W SWING_TWIST_Y local), on forearm.L / forearm
   elbow_mush_mid  sculpted at the guard's forearm turned the share --mid-share of the way; rises from --rise0 (30) to
                   that angle and falls to 0 at the guard's angle;
   elbow_mush      sculpted at the guard's deepest frame (akinza_clipset_b1.guard_frame 0); rises from the mid angle to
-                  the guard's angle and holds.
+                  the guard's angle and holds (or, with --deep-share, falls to 0 at the deep key's angle);
+  elbow_mush_deep (--deep-share) sculpted with the forearm turned that share of its guard turn, past the guard (the
+                  entry and exit fold the arm a little further on the way); rises from the guard's angle and holds.
 Both are 0 at 30 degrees of bend or less, so idle, Night Stalk, hurt and evade (all under 30) are untouched. The mask
 also needs the vertex to be arm skin (more than half its weight on that side's upper arm, forearm or hand), so the
 chest and hips never move. Appends the keys to <rig dir>/correctives.json and correctives.npz, replacing earlier elbow
@@ -46,6 +48,8 @@ p.add_argument('--r0', type=float, default=.025)
 p.add_argument('--r1', type=float, default=.06)
 p.add_argument('--relax', type=int, default=0)
 p.add_argument('--mid-share', type=float, default=.6)
+p.add_argument('--deep-share', type=float, default=0., help='also a key past the guard, the forearm at this share of its guard turn '
+               '(fix pass 3: guard_in and guard_out fold the forearm a little past the guard, to 1.07)')
 p.add_argument('--rise0', type=float, default=30.)
 p.add_argument('--check-bakes', default='', help='comma list of poses.json files whose forearm swing is reported')
 p.add_argument('--dry-run', action='store_true')
@@ -111,18 +115,26 @@ for sd in 'LR':
     mid_pose[f'forearm.{sd}'] = ac.share_of(full_pose[f'forearm.{sd}'], a.mid_share)
 ang_full = {sd: rc.swing_deg(J, full_pose, f'forearm.{sd}', B) for sd in 'LR'}
 ang_mid = {sd: rc.swing_deg(J, mid_pose, f'forearm.{sd}', B) for sd in 'LR'}
+deep_pose = dict(full_pose)
+for sd in 'LR':
+    deep_pose[f'forearm.{sd}'] = ac.share_of(full_pose[f'forearm.{sd}'], a.deep_share) if a.deep_share else full_pose[f'forearm.{sd}']
+ang_deep = {sd: rc.swing_deg(J, deep_pose, f'forearm.{sd}', B) for sd in 'LR'}
 print('forearm swing at the guard', {k: round(v, 2) for k, v in ang_full.items()}, 'mid', {k: round(v, 2) for k, v in ang_mid.items()}, flush=True)
 masks = {sd: mask(sd) for sd in 'LR'}
 print('mask vertices', {sd: int((m[0] > 1e-4).sum()) for sd, m in masks.items()}, 'band', {sd: m[1] for sd, m in masks.items()}, flush=True)
 SM_REST = smooth(rest, a.fine)-smooth(rest, a.rounds)
 new_keys = []
-for gname, pose in (('elbow_mush_mid', mid_pose), ('elbow_mush', full_pose)):
+GROUPS = [('elbow_mush_mid', mid_pose), ('elbow_mush', full_pose)]+([('elbow_mush_deep', deep_pose)] if a.deep_share else [])
+for gname, pose in GROUPS:
     for sd in 'LR':
-        k = dict(name=f'{gname}.{sd}', group=gname, bone=f'forearm.{sd}', pose='guard loop frame 0' + (f' (forearm at {a.mid_share} share)' if gname.endswith('mid') else ''))
+        k = dict(name=f'{gname}.{sd}', group=gname, bone=f'forearm.{sd}', pose='guard loop frame 0' + (
+            f' (forearm at {a.mid_share} share)' if gname.endswith('mid') else f' (forearm at {a.deep_share} share)' if gname.endswith('deep') else ''))
         if gname == 'elbow_mush_mid':
             k.update(rise=[a.rise0, float(ang_mid[sd])], fall=float(ang_full[sd]))
+        elif gname == 'elbow_mush':
+            k.update(rise=[float(ang_mid[sd]), float(ang_full[sd])], fall=float(ang_deep[sd]) if a.deep_share else None)
         else:
-            k.update(rise=[float(ang_mid[sd]), float(ang_full[sd])], fall=None)
+            k.update(rise=[float(ang_full[sd]), float(ang_deep[sd])], fall=None)
         new_keys.append(k)
     P, Rv, vals = rc.posed_skin(rest, idx, w, J, pose, lift, keys=keys+new_keys[:-2], deltas=deltas)
     base = smooth(P, a.rounds)

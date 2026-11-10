@@ -81,11 +81,11 @@ def quat(e):
 
 def slerp_e(e0, e1, t):
     """Rotation between Euler rotations e0 and e1 at share t (quaternion slerp), Euler degrees."""
-    if t <= 0:
+    if t == 0:
         return list(e0)
-    if t >= 1:
+    if t == 1:
         return list(e1)
-    q0, q1 = quat(e0), quat(e1)
+    q0, q1 = quat(e0), quat(e1)          # (t outside 0..1 carries on along the same arc: an overshoot or a lead-in)
     d = float(q0@q1)
     if d < 0:
         q1, d = -q1, -d
@@ -375,10 +375,10 @@ EVADE = dict(
     # the hips with the knees folded (the legs' reach is checked per frame: ankle error 0)
     feet={'L': [(0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 6, 't'), (0, .006, 40, 't'), (.05, .062, 38, 'a'), (.14, .125, 0, 'f'),
                 (.225, .115, 0, 'f'), (.30, 0, 12, 't'), (.30, 0, 0, 't'), (.30, 0, 0, 't'), (.30, 0, 16, 't'),
-                (.15, .016, -6, 'a'), (0, 0, 4, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't')],
+                (.15, .016, 4, 'a'), (0, 0, 4, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't')],
           'R': [(0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 6, 't'), (0, .006, 40, 't'), (.05, .062, 38, 'a'), (.14, .125, 0, 'f'),
                 (.225, .115, 0, 'f'), (.30, 0, 12, 't'), (.30, 0, 0, 't'), (.30, 0, 0, 't'), (.30, 0, 0, 't'),
-                (.30, 0, 0, 't'), (.30, 0, 18, 't'), (.15, .016, -6, 'a'), (0, 0, 4, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't')]},
+                (.30, 0, 0, 't'), (.30, 0, 18, 't'), (.15, .016, 4, 'a'), (0, 0, 4, 't'), (0, 0, 0, 't'), (0, 0, 0, 't'), (0, 0, 0, 't')]},
     planted={'L': [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
              'R': [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]},
     # trunk pitch (degrees, + leans forward), split pelvis .4, spine .3, chest .3; the head keeps .6 of it off
@@ -483,23 +483,30 @@ GUARD = dict(
     # fix pass 3 (G4, too faint at 192 px with dead holds): the breath doubled (chest, bob, breath key), the head and the
     # paws 2.5 frames behind the chest (the paws' bob is taken off the upper arms and given back late; the head nods
     # late), the lower two tails sway a little (one cycle a loop) so no two frames hold still
-    breath_rot={'chest': [-3.2, 0., 0.], 'spine': [-1.0, 0., 0.],
-                'neck': [1.6, 0., 0.], 'head': [1.2, 0., 0.]},
+    # (chest 2.8 degrees, not 3.2: at 3.2 the breath peak folded one shoulder triangle past the approved 5; neck .8 and head
+    # .6: more collapsed up to 7 throat triangles under the tucked chin. The paws' lag is shared by the upper arm and the
+    # wrist: all of it on the upper arm (8 degrees) folded one shoulder triangle past 5 on the exhale, and a share on the
+    # forearm collapsed up to 12 elbow triangles (the static guard has 4); measured lag 2.4 frames. The head's lag is a neck turn in the chest's frame, not a nod: a 1.5-degree nod moved the head 0.25 frames
+    # late; the neck turn moves it 2.5 frames late with no throat fold)
+    breath_rot={'chest': [-2.8, 0., 0.], 'spine': [-1.0, 0., 0.],
+                'neck': [.8, 0., 0.], 'head': [.6, 0., 0.]},
     breath_key=1.6,
     bob_m=.024,                            # root up 24 mm on the full breath (fix pass 3: was 12)
     lag_f=2.5,
-    arm_lag_deg=8.,                        # upper arm turn that delays the paws' share of the bob
-    head_lag_deg=3.,                       # the head's late nod
+    arm_lag_deg={'upperarm': 4., 'hand': 16.},     # arm turns (parent frame) that delay the paws' share of the bob
+    head_lag_deg={'neck': 14.},            # the head's late rise (degrees per bone, parent frame for the neck)
     tail_sway={'b': (0., 1.2, 1.6, 2., 2.4), 'c': (0., 1.2, 1.6, 2., 2.4)}, tail_sway_phase={'b': 0., 'c': .5},
     # G4: the top tail's tip flicks up in 2 frames and back over 3 (about 20 px at 720)
     twitch=[(13, 'linear', 0.), (14, 'linear', .55), (15, 'linear', 1.), (16, 'linear', .5), (17, 'linear', .15), (18, 'smooth', 0.)],
     twitch_deg={'tail_a4': 12., 'tail_a5': 20.},
     # entry (first loop only): shares of the guard per group by frame 0..7 (7 = loop frame 7, `set`)
-    # fix pass 3 (G2, the arm straightened into a level reach that overshot the guard): the arm bones blend by world
-    # direction (blend_arms); the forearm folds up first while the elbow is still down, then the elbow rises, so the paw
-    # comes up close to the chest and never passes the guard
-    entry={'fore':  [0., .3, .6, .82, .94, .99, 1., 1.],
-           'upper': [0., .05, .15, .35, .6, .82, .95, 1.],
+    # fix pass 3 (G2, the arm straightened into a level reach that overshot the guard by 19 px): the forearm folds to the
+    # guard's bend first (by frame 3) while the elbow is still low, then the elbow rises, so the paw comes up close to the
+    # chest and stops at the guard (at most 2.0 mm past the loop's most forward paw). (Tried: blending the arm bones by
+    # world direction bent the elbow past 150 degrees, 581 folded triangles; folding past the guard's bend, to 1.18 or
+    # 1.07, folded 516 or 46 even with rig-p8b's elbow_mush_deep keys.)
+    entry={'fore':  [0., .4, .78, .98, 1., 1., 1., 1.],
+           'upper': [0., .07, .22, .48, .74, .92, .99, 1.],
            'body':  [0., .07, .24, .49, .73, .9, .98, 1.],
            'ears':  [0., .25, .5, .68, .84, .94, .99, 1.],      # (fix pass 2: was .32, .72, .93 by frame 3: 67 degrees visible at 3)
            'tails': [0., .02, .12, .32, .57, .8, .95, 1.]},
@@ -507,9 +514,12 @@ GUARD = dict(
     # frame 0's pose, the last is idle frame 89's, so idle frame 0 follows (the Night Stalk entry and hand back rule). The
     # arms drop a little ahead of the body rising, the ears and tails follow; eased so the hand back runs at idle speed
     exit_frames=8,
-    # (fix pass 3: the elbow drops first, the forearm still up, then the forearm drops, so the paw comes down along the body)
-    exit={'upper': [0., .25, .55, .8, .93, .98, 1., 1.],
-          'fore':  [0., .05, .15, .35, .6, .82, .95, 1.],
+    # (fix pass 3: the elbow drops first with the forearm held at the guard's bend, then the forearm drops, so the paw comes
+    # down along the body and never forward of the loop's most forward paw (0.1 mm short of it at most). Folding the forearm
+    # further, a share of -.02 at frame 2, collapsed 13 elbow triangles; the upper arm at .12 by frame 1 put the paw 4.9 mm
+    # past the guard)
+    exit={'upper': [0., .06, .3, .64, .87, .97, 1., 1.],
+          'fore':  [0., 0., 0., .1, .45, .78, .96, 1.],
           'body':  [0., .1, .32, .58, .8, .94, .99, 1.],
           'ears':  [0., .08, .26, .5, .74, .9, .98, 1.],
           'tails': [0., .05, .18, .4, .64, .85, .96, 1.]},
@@ -570,8 +580,10 @@ def guard_loop_body(rig, f):
     for bone, e in P['breath_rot'].items():
         turn(pose, bone, [v*b for v in e])
     for sd in 'LR':
-        turn(pose, f'upperarm.{sd}', [-P['arm_lag_deg']*(bl-b), 0., 0.], pre=True)
-    turn(pose, 'head', [-P['head_lag_deg']*(bl-b), 0., 0.])
+        for ab, deg in P['arm_lag_deg'].items():
+            turn(pose, f'{ab}.{sd}', [-deg*(bl-b), 0., 0.], pre=True)
+    for hb, deg in P['head_lag_deg'].items():
+        turn(pose, hb, [-deg*(bl-b), 0., 0.], pre=(hb == 'neck'))
     for t, degs in P['tail_sway'].items():
         for k in range(1, rc.TAIL_BONES+1):
             turn(pose, f'tail_{t}{k}', [degs[k-1]*math.sin(2*math.pi*((f-1.2*k) % n)/n+2*math.pi*P['tail_sway_phase'][t]), 0., 0.])
@@ -594,44 +606,6 @@ def guard_frame(rig, f):
     return frame_dict(f, full, lift, bk, info, belly=0.)
 
 
-ARM_CHAIN = {sd: [f'upperarm.{sd}', f'forearm.{sd}', f'hand.{sd}'] for sd in 'LR'}
-
-
-def slerp_dir(u, v, t):
-    u, v = np.asarray(u, float), np.asarray(v, float)
-    c = float(np.clip(u@v, -1., 1.))
-    if c > 1-1e-9:
-        return v
-    th = math.acos(c)
-    return (math.sin((1-t)*th)*u+math.sin(t*th)*v)/math.sin(th)
-
-
-def arm_dirs_of(rig, pose):
-    T = rc.bone_transforms(rig.J, pose, bones=B)
-    out = {}
-    for sd in 'LR':
-        for b in ARM_CHAIN[sd]:
-            out[b] = T[b][0]@rc.bone_axis(rig.J, b, B)
-    return out
-
-
-def blend_arms(rig, pose, p_from, p_to, share_of_bone):
-    """Fix pass 3 (G2): the arms between two poses by the world direction of each arm bone (a slerp of directions, each
-    bone on its own share), set on `pose` (whose trunk and clavicles are already blended). Blending the bones' own
-    turns let a bent forearm ride a half-raised upper arm out into a level reach past the guard; by direction a forearm
-    that has folded up stays up while the elbow rises, so the paw comes up close to the chest."""
-    shares = [share_of_bone(b) for sd in 'LR' for b in ARM_CHAIN[sd]]
-    if all(v == 0 for v in shares) or all(v == 1 for v in shares):
-        return pose                    # the end poses themselves (blend_poses already gave them exactly)
-    d0, d1 = arm_dirs_of(rig, p_from), arm_dirs_of(rig, p_to)
-    targets = {}
-    for sd in 'LR':
-        for b in ARM_CHAIN[sd]:
-            targets[b] = slerp_dir(d0[b], d1[b], share_of_bone(b))
-    base = {k: v for k, v in pose.items() if k not in targets}
-    return rc.pose_from_directions(rig.J, targets, base=base, bones=B)
-
-
 def guard_in_frame(rig, f):
     """Entry frame f (0..6): from idle frame f's pose toward guard loop frame f's, per group, arriving at loop frame 7."""
     P = GUARD
@@ -639,7 +613,6 @@ def guard_in_frame(rig, f):
     ip, ilift, ib = idle_pose(rig, f)
     gp, glift, gb, ginfo = guard_loop_body(rig, f)
     pose = blend_poses(ip, gp, lambda b: e[guard_group(b)])
-    pose = blend_arms(rig, pose, ip, gp, lambda b: e[guard_group(b)])
     lift = (1-e['body'])*ilift+e['body']*glift
     full, _ = solve_feet(rig, pose, lift, guard_feet(e['body']))
     breath = (1-e['body'])*ib+e['body']*gb
@@ -658,7 +631,6 @@ def guard_out_frame(rig, f):
     phase = IDLE_N-1-(n-1)+f
     ip, ilift, ib = idle_pose(rig, phase)
     pose = blend_poses(gp, ip, lambda b: e[guard_group(b)])
-    pose = blend_arms(rig, pose, gp, ip, lambda b: e[guard_group(b)])
     lift = (1-e['body'])*glift+e['body']*ilift
     full, _ = solve_feet(rig, pose, lift, guard_feet(1-e['body']))
     breath = (1-e['body'])*gb+e['body']*ib
