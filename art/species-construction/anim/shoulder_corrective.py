@@ -55,6 +55,8 @@ p.add_argument('--band', default='.08,.10')
 p.add_argument('--backup', default='')
 p.add_argument('--check-bakes', default='')
 p.add_argument('--dry-run', action='store_true')
+p.add_argument('--remove', action='store_true', help='take the shoulder_mush keys out of the rig and stop (fix pass 5: the new guard arm '
+               'pose keeps the shoulder within the approved folds without them, so they are not left as dead keys)')
 a = p.parse_args()
 
 B = rc.ANIM_BONES
@@ -82,6 +84,18 @@ base_json = json.loads((R/'correctives.json').read_text())
 cz = np.load(R/'correctives.npz')
 keys = [k for k in base_json['keys'] if not k['name'].startswith('shoulder_mush')]
 deltas = {k['name']: (cz[k['name']+'__ids'], cz[k['name']+'__delta'].astype(np.float64)) for k in keys}
+if a.remove:
+    gone = [k['name'] for k in base_json['keys'] if k['name'].startswith('shoulder_mush')]
+    if not a.dry_run:
+        np.savez_compressed(R/'correctives.npz', **{f'{k}__ids': v[0] for k, v in deltas.items()},
+                            **{f'{k}__delta': v[1].astype(np.float32) for k, v in deltas.items()})
+        out = dict(base_json)
+        out['keys'] = keys
+        (R/'correctives.json').write_text(json.dumps(out, indent=1))
+        if (R/'shoulder-corrective.json').exists():
+            (R/'shoulder-corrective.json').rename(R/'shoulder-corrective-pass4-removed.json')
+    print('removed', gone, 'kept', len(keys), 'keys', flush=True)
+    raise SystemExit(0)
 A = sp.coo_matrix((np.ones(2*len(edges)), (np.r_[edges[:, 0], edges[:, 1]], np.r_[edges[:, 1], edges[:, 0]])), shape=(n, n)).tocsr()
 A = sp.diags(1/np.maximum(np.asarray(A.sum(1)).ravel(), 1))@A
 

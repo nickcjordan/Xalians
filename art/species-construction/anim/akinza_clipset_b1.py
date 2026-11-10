@@ -490,7 +490,12 @@ def evade_frame(rig, f):
 
 GUARD = dict(
     frames=27, set=7, entry_frames=7,
-    lift=(0., .008, -.045),               # sunk 45 mm, the hips 8 mm back
+    # fix pass 5 (G1, the upright trunk read as a meerkat): the trunk leans forward from the hips, so the hips go 70 mm back
+    # and 74 mm down and the knees bend deeper (hip about 51, knee 49 to 58, ankle 9 degrees through the loop; pass 4: 28,
+    # 40, 10), the weight 27 to 38 mm behind the toe joints, over the balls of the feet (pass 4: 23). (70 mm down let the
+    # knee open to 47.8 degrees at the breath's peak, where the knee keys left 1705 collapsed triangles, 2 past the approved
+    # crouch's 1703; at 74 the knee stays at 49.4 or more, 1658)
+    lift=(0., .07, -.074),
     heel=8.,                              # heels raised 8 degrees about the toe pads: the weight on the balls of the feet
     # guard pass 2 (orchestrator, 2026-11-09): the arms are short, so the head tucks down and in behind the paws, chin
     # lowered, as the boxing cat's does (was neck -3, head -4: the muzzle's underside sat 37 mm over the paws' top; with
@@ -502,8 +507,18 @@ GUARD = dict(
     # at 24). The head is raised until it is level at the loop's deepest frame (f6, the breath's peak and the late nod),
     # so the f18 line never needs more swing than f18's own: 14 degrees up, 3 of them in the neck and 11 in the head (all
     # in the head collapsed 2 throat triangles at f0 to f2), world pitch 0 at f6 and -7.6 at f18
-    trunk={'pelvis': [5., 0., 0.], 'spine': [3., 0., 0.], 'chest': [3., 0., 0.], 'neck': [-3., 0., 0.], 'head': [-11., 0., 0.]},
-    clavicle={'clavicle.L': [0., -4., -8.], 'clavicle.R': [0., 4., 8.]},     # shoulders a little up and forward
+    # fix pass 5 (G1): the trunk leans forward from the hips as Night Stalk f18's does (pelvis 14, spine 6, chest 6: the chest
+    # 24 degrees forward, Night Stalk 38), and the neck and head take it back (neck -14, head -15) so the head keeps pass 4's
+    # orientation in the world (level at f6) and the ears their f18 line and clean root. (A face covered by the paws is out
+    # of reach with these proportions, the coordinator's call: the eyes sit 0.29 m over the shoulders, the arm and paw are
+    # 0.42 m long, and the lean moves the face and the shoulders together; the guard is a crouched, claws-out stance)
+    trunk={'pelvis': [14., 0., 0.], 'spine': [6., 0., 0.], 'chest': [6., 0., 0.], 'neck': [-14., 0., 0.], 'head': [-15., 0., 0.]},
+    # fix pass 5 (G6, the shoulder's ball): the clavicles at rest. Measured (the front-of-shoulder bump without the shoulder
+    # keys, 99th percentile of the shoulder front against its own 600-round smoothed surface; Night Stalk f18 7.29 mm, idle
+    # 7.79, pass 4 8.56): the clavicle pulled forward 8 and up 4 degrees made most of it (at rest 7.93), the upper arm turned
+    # in across the chest the rest (7 or 15 degrees further out 8.30 or 8.08, 9 further in 8.94); a bigger forward raise
+    # lessened it (16 more 8.12, 14 less 8.93), as the rig's armpit_fwd key, sculpted at Night Stalk's raise, comes fully on
+    clavicle={'clavicle.L': [0., 0., 0.], 'clavicle.R': [0., 0., 0.]},
     # world directions of the arm bones in the guard (left side; the right side mirrors x), the forearm up in front of
     # the chest, the hand forward and a little up, claws to the front. Setup check (2026-11-09): pose A, the upper arm
     # forward, down and in across the chest (-.30, -.86, -.40), folded the shoulders (armpit: 451 folded, 863 collapsed
@@ -531,8 +546,15 @@ GUARD = dict(
     # the armpit (48 to 164 triangles); a shrug that lifted the paws 24 mm folded the shoulder (25 folded, 47 collapsed).
     # So with these short arms and the raised head the paws sit lower than pass 3's: their tops 55 (far) and 83 (near) mm
     # under the muzzle's underside (pass 3: 35 and 50)
-    arm_dirs={'upperarm.L': (.045, -.641, -.766), 'forearm.L': (-.128, -.602, .788), 'hand.L': (-.116, -.547, .829),
-              'upperarm.R': (-.026, -.743, -.669), 'forearm.R': (.146, -.509, .848), 'hand.R': (.129, -.451, .883)},
+    # fix pass 5 (G1, G6): on the leaned trunk the upper arms turn out (7.6 and 7.8 degrees in the chest's frame, Night
+    # Stalk 6.9) and rise forward 60 and 65 degrees against the chest; the forearms reach forward, the paws in line, the
+    # claws leading toward the opponent (hands 36 and 42 degrees up; pass 4: 51 and 57); the far paw higher and 6 mm further
+    # forward. World elevation and turn per side: near (L) upper arm -54 (13 out), forearm 37 (22 in), hand 41 (22 in);
+    # far (R) upper arm -49 (12 out), forearm 43 (6 in), hand 47 (6 in). The upper arm stays under 76.9 degrees of swing
+    # (73.2 at most with the late breath), where rig-p8b's shoulder_raise key starts: at 77 to 81 it collapsed 83 to 127
+    # shoulder triangles; turned in further (4 to 6 degrees out) the armpit_fwd key collapsed 54 to 67
+    arm_dirs={'upperarm.L': (.132, -.573, -.809), 'forearm.L': (-.299, -.74, .602), 'hand.L': (-.283, -.7, .656),
+              'upperarm.R': (-.136, -.642, -.755), 'forearm.R': (.076, -.727, .682), 'hand.R': (.071, -.678, .731)},
     # (fix pass 4: the ears are set per frame in guard_loop_body to Night Stalk f18's ear line on screen, set_ear_line)
     tail_share=.25,                        # tails a quarter of the way to their night_stalk pose (a little lowered)
     # the loop: one breath a loop, the chest and shoulders up and the body bobbing up on the inhale
@@ -549,7 +571,7 @@ GUARD = dict(
     # late; the neck turn moves it 2.5 frames late with no throat fold)
     breath_rot={'chest': [-2.8, 0., 0.], 'spine': [-1.0, 0., 0.],
                 'neck': [.8, 0., 0.], 'head': [.6, 0., 0.]},
-    breath_key=1.6,
+    breath_key=1.3,                        # (fix pass 5: 1.6 folded 30 belly triangles on the leaned trunk at the breath's peak; 1.35 and under fold none)
     bob_m=.024,                            # root up 24 mm on the full breath (fix pass 3: was 12)
     lag_f=2.5,
     # (fix pass 4: with the lower elbows the same turns put the paws only 1.85 frames behind the chest; 6 and 18 put them
@@ -591,8 +613,13 @@ GUARD = dict(
     # forearm drops along the body while the elbow draws back a little past idle's (a share past 1), so the paw passes
     # level between f3 and f4 behind the guard, not forward at belly height (out f3: forearms 45 and 51 degrees up, the
     # elbows 121 and 107 mm under the shoulders, the paw at most 0.4 mm forward of the guard's)
-    exit={'upper': [0., .02, .05, .1, 1.1, 1.12, 1.04, 1.],
-          'fore':  [0., .02, .05, .1, .45, .8, .96, 1.],
+    # fix pass 5 (G2, the arms held to out f3 and then dropped to the hip at f4): the forearms start down at out f1 with the
+    # head and the body (lean and knees, the 'body' share) and the drop spreads over f1 to f5 (forearm 40 degrees up at f0,
+    # then 29, -9, -47, -67, -74), the elbow drawing back first, past idle's (a share past 1), as guard_in played backward,
+    # so the paws never go forward of their guard spot (6 mm behind it at the closest); the forearm folds 1.5 percent more
+    # at f1 (a share of -.015), where the dropping upper arm would otherwise carry the paw forward
+    exit={'upper': [0., .2, .68, 1.05, 1.1, 1.05, 1.02, 1.],
+          'fore':  [0., -.015, .15, .45, .75, .93, .99, 1.],
           'body':  [0., .1, .32, .58, .8, .94, .99, 1.],
           'ears':  [0., .08, .26, .5, .74, .9, .98, 1.],
           'tails': [0., .05, .18, .4, .64, .85, .96, 1.]},
@@ -755,23 +782,24 @@ def bake(rig_dir, out, clips=None):
     (out/'clipset-spec.json').write_text(json.dumps(spec, indent=1, default=str))
 
 
-def bake_setup(rig_dir, out, approved=None):
+def bake_setup(rig_dir, out, approved=None, tuck=False):
     """Setup check on the bare rig, one frame per folder: <out>/guardB, the guard's deepest frame for the ears and the arms
     (fix pass 4: loop frame 6, the breath's peak with the late nod, where the head pitches furthest down and the ear needs
-    the most swing to draw Night Stalk f18's line); <out>/earTuck, the same frame with pass 3's tucked head (neck 0, head 10,
-    the ears on the f18 line), the ear root the raised head avoids; with `approved` (the approved bake), <out>/stalk18 and
+    the most swing to draw Night Stalk f18's line); with tuck (fix pass 4 only), <out>/earTuck, the same frame with pass 3's
+    tucked head (neck 0, head 10, the ears on the f18 line), the ear root the raised head avoids; with `approved` (the approved bake), <out>/stalk18 and
     <out>/idle0, Night Stalk frame 18 and idle frame 0 copied for the shoulder comparison."""
     rig = ac.Rig(rig_dir)
     out = Path(out)
     frames = {}
     _GUARD_BASE.clear()
     frames['guardB'] = guard_frame(rig, 6)
-    trunk = {k: list(v) for k, v in GUARD['trunk'].items()}
-    GUARD['trunk'].update(neck=[0., 0., 0.], head=[10., 0., 0.])
-    _GUARD_BASE.clear()
-    frames['earTuck'] = guard_frame(rig, 6)
-    GUARD['trunk'] = trunk
-    _GUARD_BASE.clear()
+    if tuck:
+        trunk = {k: list(v) for k, v in GUARD['trunk'].items()}
+        GUARD['trunk'].update(neck=[0., 0., 0.], head=[10., 0., 0.])
+        _GUARD_BASE.clear()
+        frames['earTuck'] = guard_frame(rig, 6)
+        GUARD['trunk'] = trunk
+        _GUARD_BASE.clear()
     if approved:
         frames['stalk18'] = json.loads((Path(approved)/'stalk'/'poses.json').read_text())[18]
         frames['idle0'] = json.loads((Path(approved)/'idle'/'poses.json').read_text())[0]
