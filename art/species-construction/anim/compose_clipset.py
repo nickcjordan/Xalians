@@ -8,7 +8,7 @@
       <seq dir>/<clip>-clay/<view>/NNNN.png for encode_video.py (--fps 30) and <seq dir>/<clip>-clay/order.json.
   python art/species-construction/anim/compose_clipset.py sheet <frames dir> <clip> <spec json> <out png> [ref strips...]
       Every frame of the clip's side view (they are short), the event frame marked, the reference strips under them.
-  python art/species-construction/anim/compose_clipset.py setup <setup frames dir> <setup check json> <out png> [before json]
+  python art/species-construction/anim/compose_clipset.py setup <setup frames dir> <setup check json> <out png> [before json] [after label] [before label]
       The guard setup check (pose B): side, front and three-quarter, then the close views, with the numbers after and
       before rig-p8b's elbow keys.
   python art/species-construction/anim/compose_clipset.py ankle <ankle setup dir> <before json> <after json> <out png>
@@ -120,7 +120,7 @@ def sheet(frames, clip, spec, out, refs):
     print('sheet', out, out_im.size)
 
 
-def setup(fdir, chk, out, before=None):
+def setup(fdir, chk, out, before=None, after_tag='with the elbow keys', before_tag='before (no elbow keys)'):
     """The guard setup sheet: pose B's deepest frame with rig-p8b's elbow keys (side, front, three-quarter at full width, then
     the close views at full size), the numbers after and, if given, before the elbow keys."""
     c = json.loads(Path(chk).read_text())
@@ -129,13 +129,13 @@ def setup(fdir, chk, out, before=None):
 
     def line(tag, r):
         return (f"{tag}: folded/collapsed triangles  shoulder {r['folds']['shoulder']}  armpit {r['folds']['armpit']}  elbow {r['folds']['elbow']}  "
-                f"neck {r['folds']['neck']}  ear root {r['folds']['ear_root']};  arm vertices inside other skin "
+                f"wrist {r['folds'].get('wrist', '-')}  neck {r['folds']['neck']}  ear root {r['folds']['ear_root']};  arm vertices inside other skin "
                 f"{r['arm_L_inside_upper']+r['arm_L_inside_forearm_hand']}/{r['arm_R_inside_upper']+r['arm_R_inside_forearm_hand']} (L/R);  "
                 f"forearm and paw to chest/face {r['arm_L_forearm_hand_to_face_chest_min_mm']} mm;  elbow area ratio max {r['stretch']['elbow']['area_max']}")
-    lines = [line('with the elbow keys', r)]
+    lines = [line(after_tag, r)]
     if before:
-        lines.append(line('before (no elbow keys)', json.loads(Path(before).read_text())['frames']['guardB:0']))
-    lines.append(f"approved crouch maxima: shoulder {appr['shoulder']}, armpit {appr['armpit']}, elbow {appr['elbow']}, neck {appr['neck']}, ear root {appr['ear_root']}")
+        lines.append(line(before_tag, json.loads(Path(before).read_text())['frames']['guardB:0']))
+    lines.append(f"approved crouch maxima: shoulder {appr['shoulder']}, armpit {appr['armpit']}, elbow {appr['elbow']}, wrist {appr.get('wrist', '-')}, neck {appr['neck']}, ear root {appr['ear_root']}")
     big = ['side', 'front', 'threequarter']
     crops = [d.name for d in sorted(Path(fdir, 'guardB').iterdir()) if d.is_dir() and d.name.startswith('crop_')]
     S = 1024
@@ -241,7 +241,7 @@ if __name__ == '__main__':
     elif cmd == 'sheet':
         sheet(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]), sys.argv[6:])
     elif cmd == 'setup':
-        setup(Path(sys.argv[2]), sys.argv[3], Path(sys.argv[4]), sys.argv[5] if len(sys.argv) > 5 else None)
+        setup(Path(sys.argv[2]), sys.argv[3], Path(sys.argv[4]), sys.argv[5] if len(sys.argv) > 5 else None, *sys.argv[6:8])
     elif cmd == 'ankle':
         ankle(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]))
     elif cmd == 'json':
