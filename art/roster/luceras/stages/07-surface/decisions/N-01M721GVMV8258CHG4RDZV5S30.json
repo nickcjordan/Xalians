@@ -1,0 +1,15 @@
+{
+  "id": "N-01M721GVMV8258CHG4RDZV5S30",
+  "alias": "hfzg",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Closing D-gnev on Nick's own reviews after the method change to authored plume guides: 2026-10-21 'The dark hair that you have there and the style you have for the dark hair looks great' (white hair then rebuilt as the same hair in a different color), 2026-10-21 'much better' (odd chunk at the tip removed), 2026-10-24 'looks good' (check 4, plume follows the tail bones in flight). The sheet's pointed-tuft read is accepted as met by those approvals; any new plume request opens a new defect.",
+  "date": "2026-11-10",
+  "kind": "ruling",
+  "binds": {
+    "defect": "D-01M53ADQZSJ9PZ5AENRR509JWC",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-10T06:14:57Z"
+}

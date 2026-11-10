@@ -1,0 +1,19 @@
+{
+  "id": "B-01M721H0ZQPKJBDXZZRW7MYZT5",
+  "alias": "ajd4",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Tail shaft reads as the sheet's furred whip at game size: dark gray on top over the approved white underside, visibly thicker than the bare tail, fur lying along the shaft toward the plume",
+  "scope": "groom strands of the tail shaft only (tail root to plume base); plume, pattern and motion held",
+  "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-10T06:15:03Z",
+  "briefSha256": "b58f2310f644788a6181bb10dc6bc333c985473aa97c1bf0597c4fa218dab595"
+}

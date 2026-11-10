@@ -1,0 +1,14 @@
+{
+  "id": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
+  "alias": "a3hs",
+  "stage": "07-surface",
+  "description": "Tail shaft reads as a thin pale line at game size: the sheet's shaft is a furred whip, dark gray on top with the white underside below, visibly thicker than the bare tail; the build's shaft fur is short and sparse, so the white underside dominates and the shaft looks bare. Orchestrator recommended a shaggier shaft on 2026-10-21; Nick did not decline; applied as an overridable decision",
+  "camera": "side sprite 1x and 2x, idle and signature",
+  "region": "tail shaft from the tail root to the base of the plume",
+  "origin": "orchestrator, sheet comparison 2026-10-21, re-read 2026-11-10",
+  "attempts": [
+    "B-01M721H0ZQPKJBDXZZRW7MYZT5"
+  ],
+  "status": "open",
+  "createdAt": "2026-11-10T06:14:58Z"
+}
