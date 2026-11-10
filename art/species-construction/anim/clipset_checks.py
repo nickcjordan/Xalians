@@ -91,6 +91,10 @@ def vertex_normals(P):
 head_share = share(['head'])
 SKULL = np.where((head_share > .95) & (rest[:, 1] > J['head_base'][1]-.02))[0]
 EAR = share([b for b in NAMES if b.startswith('ear_')]) > .9
+# fix pass 4: the nape and the back (neck, chest and spine skin behind the neck's line, no arm or ear weight), so an ear
+# swung down behind the head is tested against them as against the skull
+NAPE_BACK = np.where((share(['neck', 'chest', 'spine']) > .9) & (share([b for b in NAMES if b.startswith('ear_')]) < .01)
+                     & (rest[:, 1] > J['neck_base'][1]))[0]
 TAIL = {t: share([f'tail_{t}{k}' for k in range(2, rc.TAIL_BONES+1)]) > .5 for t in rc.TAILS}
 any_tail = share([b for b in NAMES if b.startswith('tail_')])
 LEGS = (share([b for b in NAMES if rc.base_of(b) in ('thigh', 'shin', 'foot')]) > .5) & (any_tail < .01)
@@ -197,6 +201,13 @@ def frame_checks(P, pose, lift, prev, targets=None):
     near = dd < .03
     out['ear_inside_skull'] = int(np.sum(near & (signed < -.001)))
     out['ear_skull_gap_min_mm'] = round(float(signed[near].min())*1000, 2) if near.any() else None
+    nb = P[NAPE_BACK]
+    nbn = vertex_normals(P)[NAPE_BACK]
+    dd, qi = cKDTree(nb).query(P[EAR], k=1, workers=-1)
+    signed = np.einsum('ij,ij->i', P[EAR]-nb[qi], nbn[qi])
+    near = dd < .03
+    out['ear_inside_nape_back'] = int(np.sum(near & (signed < -.001)))
+    out['ear_nape_back_gap_min_mm'] = round(float(dd.min())*1000, 2)
     out.update(arm_checks(P))
     for sd in 'LR':
         sole = P[SOLE[sd]]
@@ -312,7 +323,7 @@ for clip in a.clips.split(','):
                                                           'arm_L_inside_upper', 'max_vertex_step_mm')}, flush=True)
     n = len(frames)
     S = {}
-    keys = [k for k in rows[0] if (k.endswith('_mm') or k in ('ear_inside_skull', 'foldedTotal', 'collapsedTotal') or k.startswith('arm_')
+    keys = [k for k in rows[0] if (k.endswith('_mm') or k in ('ear_inside_skull', 'ear_inside_nape_back', 'foldedTotal', 'collapsedTotal') or k.startswith('arm_')
                                    or k.endswith('_contact_vertices')) and k != 'bounds_src']
     for k in keys + ['max_vertex_step_mm']:
         vals = [r[k] for r in rows if r.get(k) is not None]

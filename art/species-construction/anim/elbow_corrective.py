@@ -51,6 +51,10 @@ p.add_argument('--mid-share', type=float, default=.6)
 p.add_argument('--deep-share', type=float, default=1.08, help='also a key past the guard, the forearm at this share of its guard turn '
                '(fix pass 3: guard_in and guard_out fold the forearm a little past the guard, to 1.07)')
 p.add_argument('--rise0', type=float, default=30.)
+p.add_argument('--fore-falloff', default='', help='t0,t1: the mask fades out along the forearm (0 at the elbow joint, 1 at the '
+               'wrist) from t0 to t1, so the key cannot reach the middle of the forearm (fix pass 4: the pass 3 keys, mask r1 .07 '
+               'past the blend band and 3000 relax rounds, moved the mid-forearm skin 10 to 15 mm, the hump of the S)')
+p.add_argument('--backup', default='', help='also copy the current correctives to correctives-<name>.json and .npz first')
 p.add_argument('--check-bakes', default='', help='comma list of poses.json files whose forearm swing is reported')
 p.add_argument('--dry-run', action='store_true')
 a = p.parse_args()
@@ -73,6 +77,9 @@ w /= w.sum(1, keepdims=True)
 dense = np.zeros((n, len(NAMES)))
 np.put_along_axis(dense, idx, w, 1)
 share = lambda bones: dense[:, [NI[b] for b in bones]].sum(1)
+if a.backup and not (R/f'correctives-{a.backup}.json').exists():
+    shutil.copyfile(R/'correctives.json', R/f'correctives-{a.backup}.json')
+    shutil.copyfile(R/'correctives.npz', R/f'correctives-{a.backup}.npz')
 if not (R/'correctives-pre-elbow.json').exists():
     shutil.copyfile(R/'correctives.json', R/'correctives-pre-elbow.json')
     shutil.copyfile(R/'correctives.npz', R/'correctives-pre-elbow.npz')
@@ -103,7 +110,14 @@ def mask(sd):
     held = np.maximum(g1, g2)/np.maximum(tot, 1e-9)
     band = (tot > .9) & (held < .97)
     dband, _ = cKDTree(rest[band]).query(rest, k=1, workers=-1)
-    return (1-rc.smoothstep(dband, a.r0, a.r1))*rc.smoothstep(share([f'upperarm.{sd}', f'forearm.{sd}', f'hand.{sd}']), .5, .9), int(band.sum())
+    m = (1-rc.smoothstep(dband, a.r0, a.r1))*rc.smoothstep(share([f'upperarm.{sd}', f'forearm.{sd}', f'hand.{sd}']), .5, .9)
+    if a.fore_falloff:
+        t0, t1 = (float(x) for x in a.fore_falloff.split(','))
+        e, wr = np.array(J[f'elbow.{sd}']), np.array(J[f'wrist.{sd}'])
+        ax = (wr-e)/np.linalg.norm(wr-e)
+        t = (rest-e)@ax/np.linalg.norm(wr-e)
+        m = m*(1-rc.smoothstep(t, t0, t1))
+    return m, int(band.sum())
 
 
 rigobj = ac.Rig(R)

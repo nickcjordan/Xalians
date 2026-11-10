@@ -14,8 +14,8 @@ Views, one fixed framing each for every frame of every clip:
           --size px;
   sprite  the look-dev `sprite` camera: side_left (azimuth 90, elevation 0) framed by lookdev.place_camera to
           --sprite-box (6 percent margin), --sprite px square;
-  front, threequarter  (clip set batch 1 setup checks) the side view's fit to --box from azimuth 0 or 45
-          (elevation 3 or 8), --size px square;
+  front, threequarter, back  (clip set batch 1 setup checks) the side view's fit to --box from azimuth 0, 45 or 180
+          (elevation 3, 8 or 8), --size px square;
   crop_<name>  --crops name:azimuth:elevation:joint:half: a close clay view centred on that posed joint, half size in
           rig metres, --size px square.
 Writes <out>/<clip>/<view>/NNNN.png and <out>/<clip>/frames.json (render seconds per frame and view).
@@ -85,7 +85,7 @@ p.add_argument('--sockets', action='store_true', help='per frame, the contract s
 p.add_argument('--crops', default=None, help='clay close views, name:azimuth:elevation:joint:half size (rig metres), comma separated; '
                'each renders as view crop_<name> at --size px')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
-BOX_VIEWS = {'side': (90., 3.), 'front': (0., 3.), 'threequarter': (45., 8.)}     # fitted to --box, square --size px
+BOX_VIEWS = {'side': (90., 3.), 'front': (0., 3.), 'threequarter': (45., 8.), 'back': (180., 8.)}   # fitted to --box, square --size px
 t0 = time.time()
 R = a.rig
 rig = json.loads((R/'rig.json').read_text())
