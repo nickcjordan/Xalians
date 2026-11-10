@@ -320,10 +320,12 @@ MOVE_IN = dict(
     dip=[0., -.012, -.016, -.008, 0., 0.],          # the anticipation's dip (root z, m), on top of the blend
     ears=[0., .15, .3, .45, .5, .5],                # shares of Night Stalk's sweep on screen
     # the near (L) foot: contact move (ty, tz) from rest and pitch per frame; it lifts at 2 and swings forward to land at loop 0
-    near=[(0., 0., 0.), (0., 0., 8.), (-.01, .03, 24.), (-.06, .07, 30.), (-.12, .075, 28.), (-.165, .035, 24.)],
+    # (the last two frames reach ahead and paw back onto the touchdown spot, as the loop's own swing does before frame 0: arriving
+    # from behind, the foot's velocity reversed on the touchdown, a change of 77 mm a frame against the loop's 34 at most)
+    near=[(0., 0., 0.), (0., 0., 8.), (-.035, .03, 24.), (-.12, .06, 28.), (-.215, .035, 24.), (-.225, .012, 22.)],
     # the far (R) foot: planted on frames 0 to 3 (the contact moving back with the ground, the heel rising), off from 4
     far_pitch=[0., 6., 18., 32., 48., 62.],
-    far_air=[(4, .03), (5, .075)],                  # (frame, the contact's height) once it has left the floor
+    far_air=[(4, .032, .115), (5, .068, .175)],     # (frame, the contact's height, its move back) once it has left the floor
 )
 
 
@@ -344,9 +346,9 @@ def move_in_frame(rig, k):
     feet = {'L': dict(t=(0., ty, tz+(ON_FLOOR if pitch > 10 and tz < .001 else 0.)), pitch=pitch)}
     g = P['ground'](k)
     fp = P['far_pitch'][k]
-    air = dict(P['far_air'])
+    air = {a_[0]: a_[1:] for a_ in P['far_air']}
     if k in air:
-        feet['R'] = dict(t=(0., g, air[k]+ON_FLOOR), pitch=fp)
+        feet['R'] = dict(t=(0., air[k][1], air[k][0]+ON_FLOOR), pitch=fp)
     else:
         feet['R'] = dict(t=(0., g, ON_FLOOR*min(1., fp/10.)), pitch=fp)
     full, targets = solve_feet3(rig, pose, lift, feet)
@@ -364,7 +366,7 @@ def move_in_frame(rig, k):
 MOVE_OUT = dict(
     frames=8,
     # the body: the share of the way from the loop (continuing at its frame k) to idle
-    body=[0., .06, .18, .36, .58, .78, .93, 1.],
+    body=[0., .07, .2, .4, .63, .84, .97, 1.],
     brake=[0., -.002, -.006, -.010, -.006, -.002, 0., 0.],     # the brake's extra sink (root z, m)
     ears=[1., .92, .78, .58, .36, .18, .06, 0.],              # the run's ear line released into idle's
     near_pitch=[None, None, 18., 12., 7., 3., .8, 0.],          # the near heel lowering (None: the loop's own)
