@@ -270,7 +270,9 @@ for _c in (a.crops.split(',') if a.crops else []):
 
 
 def crop_camera(view):
-    """A close square view (clay) on a posed joint: azimuth and elevation as the look-dev cameras, half size in rig metres."""
+    """A close square view on a posed joint: azimuth and elevation as the look-dev cameras, half size in rig metres. With the
+    fur look the slice's three lights are placed for this camera as for the box views (render_surface.place), so a close
+    view is lit as the full views are."""
     az, el, jn, half = CROPS[view]
     b = next(b for b, _, h, t in rc.ANIM_BONES if h == jn or t == jn)
     Rb, tb = LAST['T'][b]
@@ -284,6 +286,10 @@ def crop_camera(view):
     cam.data.shift_x = cam.data.shift_y = 0.
     cam.data.clip_end = 100
     sc.camera = cam
+    if a.look == 'fur':
+        loc, rot_e = cam.location.copy(), cam.rotation_euler.copy()
+        render.place(cam, lights, (az, el, c, cam.data.ortho_scale, a.size, a.size))
+        cam.location, cam.rotation_euler = loc, rot_e
     sc.render.resolution_x = sc.render.resolution_y = a.size
     bpy.context.view_layer.update()
 
@@ -301,6 +307,18 @@ def region_of_bone(b):
         return 'lower_leg'
     if base in ('pelvis', 'root'):
         return 'pelvis'
+    # (clip set batch 1 fur check: the arms, paws, head and ears apart, so fur through an arm or a paw in front of the face
+    # can be read; the slice's own rows lumped them as other)
+    if base in ('upperarm', 'forearm', 'clavicle'):
+        return 'arm_'+b[-1]
+    if base == 'hand':
+        return 'paw_'+b[-1]
+    if base in ('head', 'jaw', 'neck'):
+        return 'head'
+    if b.startswith('ear_'):
+        return 'ear'
+    if base in ('chest', 'spine'):
+        return 'chest'
     return 'other'
 
 

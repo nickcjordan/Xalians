@@ -1,6 +1,6 @@
 """Playback sequences, key-frame sheets, the setup sheet and clips.json for the batch 1 clips (PIL, no Blender).
 
-  python art/species-construction/anim/compose_clipset.py seq <frames dir> <idle frames dir> <seq dir> <clip> [--scale 3]
+  python art/species-construction/anim/compose_clipset.py seq <frames dir> <idle frames dir> <seq dir> <clip> [tag, clay by default]
       In context, twice: idle frames 60 to 89, the clip (its frame 0 plays in place of idle frame 0; guard: guard_in, the
       rest of that loop, one more loop, guard_out), then idle frames 0 to 29 (the clip hands back to idle frame 0), a
       0.5 s hold on that idle frame, and again. Per view
@@ -15,6 +15,9 @@
       The ankle keys' setup sheet: each static pose before and after, side, three-quarter and two ankle close views.
   python art/species-construction/anim/compose_clipset.py grid key=<frames dir>[,key2=<dir>] <rows json> <out png> <title> [size]
       A comparison sheet: rows of [label, frames dir key, clip, [views]] (fix pass 4: shoulder and ear root checks).
+  python art/species-construction/anim/compose_clipset.py furcheck <fur frames dir> <approved fur frames dir> <out png> <picks json> [fur-checks json]
+      The fur check sheet: each clip's deepest frame (side 720 and sprite 192) beside the approved Night Stalk fur frame 18
+      at the same scale, then its close views; picks are [[clip, frame, [crop views]], ...].
   python art/species-construction/anim/compose_clipset.py json <bake dir> <out json> [extra json...]
       clips.json: frames, events, rules, per-clip check summaries and per-frame numbers (checks-skin.json), the render
       measures (measure-render.json) and any render logs given.
@@ -52,18 +55,18 @@ def clip_order(frames, clip):
     return [(clip, k) for k in range(count(frames, clip))]
 
 
-def seq(frames, idle, out, clip, scale=3):
+def seq(frames, idle, out, clip, scale=3, tag='clay'):
     order = []
     for _ in range(2):
         order += [('idle', k) for k in range(60, 90)]
         order += clip_order(frames, clip)
         order += [('idle', k) for k in range(30)]
         order += [('idle', 29)]*(FPS//2)
-    for vd in sorted(d for d in (frames/clip).iterdir() if d.is_dir()):
+    for vd in sorted(d for d in (frames/clip).iterdir() if d.is_dir() and not d.name.startswith('crop_')):
         view = vd.name
-        od = out/f'{clip}-clay'/view
+        od = out/f'{clip}-{tag}'/view
         od.mkdir(parents=True, exist_ok=True)
-        big = out/f'{clip}-clay'/f'{view}{scale}x' if view.startswith('sprite') else None
+        big = out/f'{clip}-{tag}'/f'{view}{scale}x' if view.startswith('sprite') else None
         if big is not None:
             big.mkdir(parents=True, exist_ok=True)
         for i, (c, k) in enumerate(order):
@@ -73,7 +76,7 @@ def seq(frames, idle, out, clip, scale=3):
                 im = Image.open(src)
                 im.resize((im.width*scale, im.height*scale), Image.NEAREST).save(big/f'{i:04d}.png')
         print('seq', clip, view, len(order))
-    (out/f'{clip}-clay'/'order.json').write_text(json.dumps(dict(fps=FPS, order=[f'{c}:{k}' for c, k in order]), indent=0))
+    (out/f'{clip}-{tag}'/'order.json').write_text(json.dumps(dict(fps=FPS, order=[f'{c}:{k}' for c, k in order]), indent=0))
 
 
 def sheet(frames, clip, spec, out, refs):
@@ -212,6 +215,43 @@ def grid(fdirs, rows_json, out, title, size=400):
     print('grid sheet', out, out_im.size)
 
 
+def furcheck(fdir, approved_fur, out, picks_json, checks_json=None, S=560):
+    """The batch 1 fur check sheet: per clip, its deepest frame's fur side view and sprite (3x nearest) beside the approved
+    Night Stalk fur frame 18 at the same scale (the same framing box, so equal display sizes are equal scale), then its 3x
+    close views; the fur check numbers per frame from fur-checks.json."""
+    picks = json.loads(picks_json)            # [[clip, frame, [crop views]], ...]
+    checks = {(r['clip'], r['frame']): r for r in json.loads(Path(checks_json).read_text())} if checks_json else {}
+    ns_side = Image.open(Path(approved_fur)/'stalk'/'side'/'0018.png').convert('RGB').resize((S, S), Image.LANCZOS)
+    ns_spr = Image.open(Path(approved_fur)/'stalk'/'sprite'/'0018.png').convert('RGB').resize((S, S), Image.NEAREST)
+    cols = 4
+    rows = []
+    for clip, fr, crops in picks:
+        r = checks.get((clip, fr), {})
+        txt = (f"{clip} f{fr}: fur root error max {r.get('root_error_max_mm')} mm, strands with a point 0.5 mm inside the skin "
+               f"{r.get('strands_inside_skin')} ({r.get('points_inside_skin')} points), length change max {r.get('length_change_max_pct')} pct")
+        top = [Image.open(Path(fdir)/clip/'side'/f'{fr:04d}.png').convert('RGB').resize((S, S), Image.LANCZOS), ns_side,
+               Image.open(Path(fdir)/clip/'sprite'/f'{fr:04d}.png').convert('RGB').resize((S, S), Image.NEAREST), ns_spr]
+        cr = [Image.open(Path(fdir)/clip/v/f'{fr:04d}.png').convert('RGB').resize((S, S), Image.LANCZOS) for v in crops]
+        rows.append((txt, top, ['side 720', 'Night Stalk f18 side (approved fur)', 'sprite 192 (3x)', 'Night Stalk f18 sprite (3x)']))
+        rows.append((f'{clip} f{fr} close views at 3x the side view: ' + ', '.join(v.replace('crop_', '') for v in crops), cr, [v.replace('crop_', '') for v in crops]))
+    W = cols*S
+    H = 34+sum(S+44 for _ in rows)
+    out_im = Image.new('RGB', (W, H), (12, 12, 12))
+    dr = ImageDraw.Draw(out_im)
+    dr.text((8, 8), 'Akinza batch 1 fur check: the deepest frame of each clip beside the approved Night Stalk fur frame 18, same scale', fill=(235, 235, 235), font=font(16))
+    y = 34
+    for txt, ims, labs in rows:
+        dr.text((8, y+3), txt, fill=(250, 210, 90), font=font(13))
+        y += 22
+        for i, (im, lab) in enumerate(zip(ims, labs)):
+            out_im.paste(im, (i*S, y))
+            dr.rectangle([i*S, y, i*S+len(lab)*7+8, y+16], fill=(0, 0, 0))
+            dr.text((i*S+4, y+2), lab, fill=(255, 255, 0), font=font(12))
+        y += S+22
+    out_im.save(out)
+    print('fur check sheet', out, out_im.size)
+
+
 def clips_json(bake, out, extra):
     spec = json.loads((bake/'clipset-spec.json').read_text())
     chk = json.loads((bake/'checks-skin.json').read_text())
@@ -259,13 +299,15 @@ def clips_json(bake, out, extra):
 if __name__ == '__main__':
     cmd = sys.argv[1]
     if cmd == 'seq':
-        seq(Path(sys.argv[2]), Path(sys.argv[3]), Path(sys.argv[4]), sys.argv[5])
+        seq(Path(sys.argv[2]), Path(sys.argv[3]), Path(sys.argv[4]), sys.argv[5], tag=sys.argv[6] if len(sys.argv) > 6 else 'clay')
     elif cmd == 'sheet':
         sheet(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]), sys.argv[6:])
     elif cmd == 'setup':
         setup(Path(sys.argv[2]), sys.argv[3], Path(sys.argv[4]), sys.argv[5] if len(sys.argv) > 5 else None, *sys.argv[6:8])
     elif cmd == 'grid':
         grid(dict(x.split('=', 1) for x in sys.argv[2].split(',')), sys.argv[3], Path(sys.argv[4]), sys.argv[5], *sys.argv[6:7])
+    elif cmd == 'furcheck':
+        furcheck(Path(sys.argv[2]), Path(sys.argv[3]), Path(sys.argv[4]), sys.argv[5], sys.argv[6] if len(sys.argv) > 6 else None)
     elif cmd == 'ankle':
         ankle(Path(sys.argv[2]), sys.argv[3], sys.argv[4], Path(sys.argv[5]))
     elif cmd == 'json':
