@@ -177,8 +177,9 @@ HELD = dict(
     frames=45, entry_frames=6, exit_frames=10,
     # the pin: the upper arms pressed in against the ribs and a little back, the forearms in along the hips; the clavicles
     # drawn down a little (the grip); weight a little down and back, the trunk a touch forward
-    # (setup: 9 and 6 degrees in left the arms 13 to 61 mm off the sides; 13 and 8 lay them against the ribs and hips at rest)
-    pin={'upperarm.L': [10., 13., 0.], 'upperarm.R': [10., -13., 0.], 'forearm.L': [-4., 8., 0.], 'forearm.R': [-4., -8., 0.],
+    # (setup: 9 and 6 degrees in left the arms 13 to 61 mm off the sides; 13 and 8, and 11 and 7, pressed them into the hips at
+    # rest, 917 and 34 arm vertices inside; 10 and 6 lay them 7 mm off the hips at rest, 10 to 55 mm in the strains)
+    pin={'upperarm.L': [10., 10., 0.], 'upperarm.R': [10., -10., 0.], 'forearm.L': [-4., 6., 0.], 'forearm.R': [-4., -6., 0.],
          'hand.L': [4., 0., 0.], 'hand.R': [4., 0., 0.], 'clavicle.L': [0., -4., 0.], 'clavicle.R': [0., 4., 0.],
          'pelvis': [5., 0., 0.], 'spine': [3., 0., 0.], 'chest': [2., 0., 0.]},
     lift=(0., .012, -.03),
@@ -191,9 +192,9 @@ HELD = dict(
     # chest toward the camera), bend (spine and chest Y), lean (trunk X), head yaw and pitch, shrug (clavicle raise, near and
     # far), drop (root z), back (root y)
     strains=[
-        dict(at=6, on=3, hold=3, rel=7, k=1.0, twist=18., bend=6., lean=-10., head_yaw=-24., head_pitch=-10., shrug=(-6., -2.),
+        dict(at=6, on=3, hold=3, rel=7, k=1.0, twist=18., bend=6., lean=-10., head_yaw=-20., head_pitch=-10., shrug=(-6., -2.),
              drop=.015, back=.03),
-        dict(at=18, on=4, hold=4, rel=7, k=1.0, twist=-20., bend=-7., lean=12., head_yaw=-12., head_pitch=-4., shrug=(-3., -7.),
+        dict(at=18, on=4, hold=4, rel=7, k=1.0, twist=-20., bend=-7., lean=12., head_yaw=10., head_pitch=-4., shrug=(-3., -7.),
              drop=.03, back=-.02),
         dict(at=33, on=3, hold=2, rel=6, k=.7, twist=10., bend=-4., lean=-9., head_yaw=-14., head_pitch=-8., shrug=(-5., -5.),
              drop=-.01, back=.025),
@@ -281,6 +282,8 @@ def held_loop_body(rig, f):
     turn(pose, 'clavicle.L', [0., sh[0], 0.])
     turn(pose, 'clavicle.R', [0., -sh[1], 0.])
     # rule 1: the head's world orientation first (its turn here), the ears then drawn on Night Stalk f18's line
+    # (the head turns against the trunk's twist, so its world turn stays within 10 degrees and turned away from the camera:
+    # turned toward it, or further, the ear needs more than f18's swing (folds) or leaves f18's line on screen, up to 34 degrees)
     # (the neck and head take the trunk's lean back out, so the head's world pitch is the strain's own head pitch: chin up
     # only, as a chin-down head needs the ear past f18's swing and folds the ear root)
     turn(pose, 'neck', [.4*hp-.5*ln, 0., .4*hy])
