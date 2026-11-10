@@ -1,0 +1,15 @@
+{
+  "id": "N-01M73PSBFH4RT3CP1MJQKMVVX0",
+  "alias": "vsx4",
+  "stage": "07-surface",
+  "who": "nick",
+  "words": "sure (2026-11-10, answering: 'Do you want the tail shaft darkened to match your sheet, or kept pale as it is now? If darkened: dark gray on top, lighter underneath; the plume and the tail's motion stay exactly as they are. I recommend matching the sheet.'). Read as approval of the recommendation: the shaft matches the sheet. This lifts the 2026-10-24 'tail color looks fine' hold for the shaft only; the plume, the tail pattern and the tail motion stay held. Build B-cy8f.",
+  "date": "2026-11-10",
+  "kind": "ruling",
+  "binds": {
+    "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-10T21:45:50Z"
+}

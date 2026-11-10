@@ -1,0 +1,19 @@
+{
+  "id": "B-01M73PS6GTYCSF4G2QPC8Y3M8D",
+  "alias": "cy8f",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Tail shaft matches the sheet at 2x: a dark gray furred whip on top over a lighter underside, leading to the white plume",
+  "scope": "recolor the shaft strands (Tail shaft coat and the shaft's own strands) toward the sheet, top dark, underside lighter, soft side transition, soft blend at the tail root; length or lift only if the 2x read still reads thin; plume, tail pattern, motion and every other curves object unchanged; previews only, no sprite render",
+  "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-10T21:45:45Z",
+  "briefSha256": "22b8db95b4679a317fc376b21fe26b91f7d2e1542417850e04ade56a80ceec82"
+}
