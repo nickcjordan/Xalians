@@ -100,6 +100,12 @@ for R in g('regions', []):
             idx = np.where(DOM == bn)[0]; f = bone_frac(bn, idx)
             bad = (f < R.get('from_frac', -9)) | (f > R.get('to_frac', 9)); zone[idx[bad]] = False
     if R.get('z_min_m') is not None: zone &= VW[:, 2] > R['z_min_m']
+    if R.get('plantar_max') is not None:
+        # leave out the plantar side (rest normal facing down and back, square to the bone): it meets the ground when standing
+        for bn in bones:
+            b_ = rig.data.bones[bn]; h_ = (Mr @ np.r_[np.array(b_.head_local[:]), 1])[:3]; t_ = (Mr @ np.r_[np.array(b_.tail_local[:]), 1])[:3]
+            u_ = (t_ - h_) / np.linalg.norm(t_ - h_); pl = np.array([0, 0, -1.0]) - u_ * (-u_[2]); pl /= np.linalg.norm(pl)
+            idx = np.where(DOM == bn)[0]; nn_ = VN[idx] / np.linalg.norm(VN[idx], axis=1, keepdims=True); zone[idx[(nn_ @ pl) > R['plantar_max']]] = False
     zi = np.where(zone)[0]; dens = np.full(NV, np.nan); r8 = g('disc_m', 0.008); kr = root_tree(R.get('density_exclude', []))
     for i in zi:
         n_r = len(kr.find_range(VW[i].tolist(), r8)); a_ = sum(VA[x[1]] for x in kv.find_range(VW[i].tolist(), r8)); dens[i] = n_r / max(a_ * 1e4, 1e-9)
@@ -122,6 +128,12 @@ for R in g('regions', []):
     for j, i in enumerate(don): kd.insert(croot[i].tolist(), j)
     kd.balance()
     Mi = np.linalg.inv(Mw[:3, :3]); lens = []
+    # optional tufts: roots grouped by a jittered grid of clump_mm; each group shares a random direction and lift offset
+    CA = np.zeros(n_new); CLF = np.zeros(n_new)
+    if R.get('clump_mm') and n_new:
+        cs_ = R['clump_mm'] / 1000.0; sh_ = rng.random(3) * cs_; key_ = np.floor((rootW + sh_) / cs_).astype(np.int64)
+        _, inv_ = np.unique(key_, axis=0, return_inverse=True); inv_ = inv_.ravel(); nc_ = inv_.max() + 1
+        CA = np.radians(rng.normal(0, R.get('clump_angle_deg', 15.0), nc_))[inv_]; CLF = rng.normal(0, R.get('clump_lift_deg', 8.0), nc_)[inv_]
     # optional length taper along the bone toward to_frac (strands shorten into the paw edge instead of stopping in a ring)
     tk = np.ones(n_new)
     if R.get('taper_from_frac') is not None and n_new:
@@ -143,7 +155,7 @@ for R in g('regions', []):
         di = don[js[0]]; a0, n_ = coffs[di], ccnt[di]; sl = slice(a0, a0 + n_)
         Pd = np.c_[CH[sl], CX[sl], CY[sl]]; Ld = float(np.linalg.norm(np.diff(Pd, axis=0), axis=1).sum()); ad = math.atan2(Pd[-1, 2], Pd[-1, 1])
         ids_ = ids[k]; nL, tL, bL = tri_frame(VL[ids_[0]], VL[ids_[1]], VL[ids_[2]])
-        dl_ = Mi @ dd; ang = math.atan2(dl_ @ bL, dl_ @ tL) + rng.normal(0, math.radians(R.get('angle_jitter_deg', 6.0)))
+        dl_ = Mi @ dd; ang = math.atan2(dl_ @ bL, dl_ @ tL) + rng.normal(0, math.radians(R.get('angle_jitter_deg', 6.0))) + float(CA[k])
         rot = ang - ad; cs, sn = math.cos(rot), math.sin(rot); sc = L / max(Ld, 1e-9)
         hk = R.get('lie_k', 1.0)
         if R.get('min_lift_deg'):
@@ -155,7 +167,7 @@ for R in g('regions', []):
         Pn = np.c_[Pd[:, 0] * sc * hk, (Pd[:, 1] * cs - Pd[:, 2] * sn) * sc, (Pd[:, 1] * sn + Pd[:, 2] * cs) * sc]
         if R.get('shape') == 'synthetic':
             # a plain strand lying along the flow at lift_deg from the skin, curving down toward its tip (no donor shape)
-            lk_ = math.radians(R.get('lift_deg', 30.0) + rng.normal(0, R.get('lift_jitter_deg', 0.0))); u_ = np.linspace(0, 1, NPT)
+            lk_ = math.radians(R.get('lift_deg', 30.0) + float(CLF[k]) + rng.normal(0, R.get('lift_jitter_deg', 0.0))); u_ = np.linspace(0, 1, NPT)
             an_ = lk_ * (1 - R.get('tip_droop', 0.6) * u_); st_ = L / (NPT - 1)
             hh_ = np.r_[0, np.cumsum(np.sin(an_[1:]) * st_)]; ss_ = np.r_[0, np.cumsum(np.cos(an_[1:]) * st_)]
             ca_ = math.cos(ang); sa_ = math.sin(ang); Pn = np.c_[hh_, ss_ * ca_, ss_ * sa_]

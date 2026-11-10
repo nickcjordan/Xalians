@@ -8,12 +8,249 @@
   "defect": "D-01M72N9H767X42SAHYKEEPSHZJ",
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-final/cand_footfur/scene.blend",
+      "hash": "822a34a8eb4cc47c6dd650b10ec55f9bc6b5c7988b7d3639a7786ad37a0a34c2"
+    },
+    {
+      "name": "luceras-final/cand_footfur/foot_params.json",
+      "hash": "7d3da97b9d660fafa11a44ff5a25ba4562acdfee457ecd6641c2aa2e42e265be"
+    },
+    {
+      "name": "luceras-final/cand_footfur/foot_build.json",
+      "hash": "5cebecdaf40bdb6ffa89fd3884583f2e9653a10dc522324810c4e04dad9e5489"
+    },
+    {
+      "name": "luceras-final/cand_footfur/foot_trim.json",
+      "hash": "24071bea2f22e2fc6678c45ee2e8250da5dfa830769b4e3eca3264eea6c3cb80"
+    },
+    {
+      "name": "luceras-footfur/spec.md",
+      "hash": "dd7f65c2d6586ff923d1d9afbd28992613934503edd0ff0a3c3dedd4229a0992"
+    },
+    {
+      "name": "luceras-footfur/gate/gate.json",
+      "hash": "0b01cac99ab75e05cd1492d93b8b82696ae84690b9d5231898be8e5486ef80b0"
+    },
+    {
+      "name": "luceras-footfur/gate/cov.json",
+      "hash": "346fc4d5330dc47ea3459da632d29bf325aad433160cf27cda34f1831dd702d1"
+    },
+    {
+      "name": "luceras-footfur/P7/cov.json",
+      "hash": "15fe27f1a74b5220b9fa8f1ed999cb2871fd9379886db44a0c25ae4c376bcac3"
+    },
+    {
+      "name": "luceras-footfur/F4/cov.json",
+      "hash": "7a07bfe6428ad5d22256599cee538c2c329fc95cd1ddef7cdd2309f905103646"
+    },
+    {
+      "name": "luceras-footfur/F4/fv.json",
+      "hash": "5ac0888a82d570a4cc0794b71798c05581319a8793464a26c3e5837c49c41c6c"
+    },
+    {
+      "name": "luceras-footfur/work/diag/foot_pass7.json",
+      "hash": "7c58e951f40adba6a35465bdce42013b1a7c30315da0114280b98f479cac037e"
+    },
+    {
+      "name": "luceras-footfur/work/texture2x_F4.json",
+      "hash": "a1f732e4eb461b4768e9210e902d5279afe533794e4bed198d3541be7603c8c2"
+    },
+    {
+      "name": "luceras-footfur/F4/board_F4_width.json",
+      "hash": "4b58fc4ec914881d3a33b0b923dbafdb4faf020a4cb501fd20bdf6022a92428f"
+    },
+    {
+      "name": "luceras-footfur/work/digest_diff_pass7_cand.json",
+      "hash": "b0cfb20d0ac9b5f4568af712f74db65f4b7fc290d12a1653d2c7716760d789e4"
+    },
+    {
+      "name": "luceras-footfur/work/frac_bins.png",
+      "hash": "87f22438f7c356bd5f35c0945bafa31512d4a9a19ef44058aa4c8c6df72c8f88"
+    },
+    {
+      "name": "luceras-footfur/work/fv_f16_diag.png",
+      "hash": "b0454a1f59ddeab7e110ad982d8a03b8c704e36faf7bbdc403e07f21e131b9cc"
+    },
+    {
+      "name": "luceras-footfur/work/fv_f29_diag.png",
+      "hash": "c5c6e154fe9bbcf658e780694489e897f5bd73fbbb9d72b74826291e6402f8ef"
+    },
+    {
+      "name": "luceras-footfur/F4/board_F4_2x_0.png",
+      "hash": "9bf70daf2b65cf5c2c8f8590edac295c7273ab5f938df8fa36ec24aa190f3864"
+    },
+    {
+      "name": "luceras-footfur/F4/board_F4_2x_1.png",
+      "hash": "752dddfe28d602e7d5a58f6a3d1ecf9efc3b7e5f7c8250c769a48e278ee07230"
+    },
+    {
+      "name": "luceras-footfur/F4/board_F4_4x_0.png",
+      "hash": "84c5557496bd8ff3d2a0d690e8c335873b2025d003ec6c87c3dbbad00faa18ea"
+    },
+    {
+      "name": "luceras-footfur/F4/board_F4_4x_1.png",
+      "hash": "f77b752cddaec10b0a586f44c55bda6048c04cf32a97b009e3d35fcf96298a4f"
+    },
+    {
+      "name": "art/pipeline/groom/limb_regrow.py",
+      "hash": "003e5f2f15f1e03f3378f78ea9e49b07f3978600f0bf1d4b6bc8c0341c648720"
+    },
+    {
+      "name": "art/pipeline/groom/foot_diag.py",
+      "hash": "6b6a9cc78ffa23c5f775bafa6e3acc37be5aca4d101f8e392073106a7b1aac63"
+    },
+    {
+      "name": "art/pipeline/groom/foot_visible.py",
+      "hash": "a6519dda7bfef7f9f5fa5b91507e3ed91317fab9484939480c592ae8636cbcc6"
+    },
+    {
+      "name": "art/pipeline/groom/ground_trim.py",
+      "hash": "3bede8b7c38ff78585998017e99b6f1759dc862bd40f6e238f7279ff7776fd94"
+    },
+    {
+      "name": "art/pipeline/groom/coverage.py",
+      "hash": "1a912ed093eaf31ac4eac418a21b3af8535983dd0b698334616297009125f15a"
+    },
+    {
+      "name": "luceras-footfur/report.json",
+      "hash": "45c2117383cbae80dfe9bba6bc5b9e6a202b7a332da6f4e107253fbb0d088e5e"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-final/cand_footfur/scene.blend",
+        "hash": "822a34a8eb4cc47c6dd650b10ec55f9bc6b5c7988b7d3639a7786ad37a0a34c2"
+      },
+      {
+        "name": "luceras-final/cand_footfur/foot_params.json",
+        "hash": "7d3da97b9d660fafa11a44ff5a25ba4562acdfee457ecd6641c2aa2e42e265be"
+      },
+      {
+        "name": "luceras-final/cand_footfur/foot_build.json",
+        "hash": "5cebecdaf40bdb6ffa89fd3884583f2e9653a10dc522324810c4e04dad9e5489"
+      },
+      {
+        "name": "luceras-final/cand_footfur/foot_trim.json",
+        "hash": "24071bea2f22e2fc6678c45ee2e8250da5dfa830769b4e3eca3264eea6c3cb80"
+      },
+      {
+        "name": "luceras-footfur/spec.md",
+        "hash": "dd7f65c2d6586ff923d1d9afbd28992613934503edd0ff0a3c3dedd4229a0992"
+      },
+      {
+        "name": "luceras-footfur/gate/gate.json",
+        "hash": "0b01cac99ab75e05cd1492d93b8b82696ae84690b9d5231898be8e5486ef80b0"
+      },
+      {
+        "name": "luceras-footfur/gate/cov.json",
+        "hash": "346fc4d5330dc47ea3459da632d29bf325aad433160cf27cda34f1831dd702d1"
+      },
+      {
+        "name": "luceras-footfur/P7/cov.json",
+        "hash": "15fe27f1a74b5220b9fa8f1ed999cb2871fd9379886db44a0c25ae4c376bcac3"
+      },
+      {
+        "name": "luceras-footfur/F4/cov.json",
+        "hash": "7a07bfe6428ad5d22256599cee538c2c329fc95cd1ddef7cdd2309f905103646"
+      },
+      {
+        "name": "luceras-footfur/F4/fv.json",
+        "hash": "5ac0888a82d570a4cc0794b71798c05581319a8793464a26c3e5837c49c41c6c"
+      },
+      {
+        "name": "luceras-footfur/work/diag/foot_pass7.json",
+        "hash": "7c58e951f40adba6a35465bdce42013b1a7c30315da0114280b98f479cac037e"
+      },
+      {
+        "name": "luceras-footfur/work/texture2x_F4.json",
+        "hash": "a1f732e4eb461b4768e9210e902d5279afe533794e4bed198d3541be7603c8c2"
+      },
+      {
+        "name": "luceras-footfur/F4/board_F4_width.json",
+        "hash": "4b58fc4ec914881d3a33b0b923dbafdb4faf020a4cb501fd20bdf6022a92428f"
+      },
+      {
+        "name": "luceras-footfur/work/digest_diff_pass7_cand.json",
+        "hash": "b0cfb20d0ac9b5f4568af712f74db65f4b7fc290d12a1653d2c7716760d789e4"
+      },
+      {
+        "name": "luceras-footfur/work/frac_bins.png",
+        "hash": "87f22438f7c356bd5f35c0945bafa31512d4a9a19ef44058aa4c8c6df72c8f88"
+      },
+      {
+        "name": "luceras-footfur/work/fv_f16_diag.png",
+        "hash": "b0454a1f59ddeab7e110ad982d8a03b8c704e36faf7bbdc403e07f21e131b9cc"
+      },
+      {
+        "name": "luceras-footfur/work/fv_f29_diag.png",
+        "hash": "c5c6e154fe9bbcf658e780694489e897f5bd73fbbb9d72b74826291e6402f8ef"
+      },
+      {
+        "name": "luceras-footfur/F4/board_F4_2x_0.png",
+        "hash": "9bf70daf2b65cf5c2c8f8590edac295c7273ab5f938df8fa36ec24aa190f3864"
+      },
+      {
+        "name": "luceras-footfur/F4/board_F4_2x_1.png",
+        "hash": "752dddfe28d602e7d5a58f6a3d1ecf9efc3b7e5f7c8250c769a48e278ee07230"
+      },
+      {
+        "name": "luceras-footfur/F4/board_F4_4x_0.png",
+        "hash": "84c5557496bd8ff3d2a0d690e8c335873b2025d003ec6c87c3dbbad00faa18ea"
+      },
+      {
+        "name": "luceras-footfur/F4/board_F4_4x_1.png",
+        "hash": "f77b752cddaec10b0a586f44c55bda6048c04cf32a97b009e3d35fcf96298a4f"
+      },
+      {
+        "name": "art/pipeline/groom/limb_regrow.py",
+        "hash": "003e5f2f15f1e03f3378f78ea9e49b07f3978600f0bf1d4b6bc8c0341c648720"
+      },
+      {
+        "name": "art/pipeline/groom/foot_diag.py",
+        "hash": "6b6a9cc78ffa23c5f775bafa6e3acc37be5aca4d101f8e392073106a7b1aac63"
+      },
+      {
+        "name": "art/pipeline/groom/foot_visible.py",
+        "hash": "a6519dda7bfef7f9f5fa5b91507e3ed91317fab9484939480c592ae8636cbcc6"
+      },
+      {
+        "name": "art/pipeline/groom/ground_trim.py",
+        "hash": "3bede8b7c38ff78585998017e99b6f1759dc862bd40f6e238f7279ff7776fd94"
+      },
+      {
+        "name": "art/pipeline/groom/coverage.py",
+        "hash": "1a912ed093eaf31ac4eac418a21b3af8535983dd0b698334616297009125f15a"
+      },
+      {
+        "name": "luceras-footfur/report.json",
+        "hash": "45c2117383cbae80dfe9bba6bc5b9e6a202b7a332da6f4e107253fbb0d088e5e"
+      }
+    ],
+    "blockedBy": "nothing",
+    "defectResult": "nearly fixed. Cause measured first: not skin (0.05 of the region, under the thigh control) and not the sole (14 percent of what shows); the flat paw fur (10 mm strands lying at 9 degrees) and its sheen along the plantar edge, where the pass 7 limb coat thins at 0.6 to 0.78 of the bone. One new curves object, 'Foot coat' (33,722 strands, 0.42 to 0.80 of the bone on every side, lifted about 40 degrees, 12 to 16 mm, grouped into 4 mm tufts, colors including the paw mask copied from the nearest lower-leg strand, 3,626 ground-piercing strands removed); every other curves object and the body bit-identical to pass 7. Gate passes in all 166 frames (distal skin share 0.013 to 0.025 against a thigh control of 0.103 to 0.119); foot outline at 1x +2.1 to +3.0 percent; standing frames unchanged at 2x. Orchestrator read of the 2x and 4x boards: the blue-white sheen at sig f16, f20 and f25 is gone and the paw half shows fiber texture there; f12 and f34 slightly better; f29 barely changed, the band just above the toes still reads pale and smooth (the shortest strands carrying the approved pale paw color). Not a regression anywhere.",
+    "newDefects": [],
+    "checks": [
+      "every-frame coverage gate on the distal hind foot, 166 frames, 0 fails",
+      "toes, pads and claws match pass 7 at 4x; nothing passes through the paws or below the ground line"
+    ],
+    "cost": {
+      "wall_h": 1.73,
+      "agent_tokens": 520920,
+      "note": "previews and gate only, no sprite render; tokens are the builder session's running total for this round"
+    }
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-10T16:57:33Z",
-  "briefSha256": "6c4b674e63e27f6a99c593e1cabc97c8063edbf1525ee2ecb1c804ee1645d3dc"
+  "briefSha256": "6c4b674e63e27f6a99c593e1cabc97c8063edbf1525ee2ecb1c804ee1645d3dc",
+  "checks": [
+    "every-frame coverage gate on the distal hind foot, 166 frames, 0 fails",
+    "toes, pads and claws match pass 7 at 4x; nothing passes through the paws or below the ground line"
+  ],
+  "reportedAt": "2026-11-10T18:44:25Z"
 }

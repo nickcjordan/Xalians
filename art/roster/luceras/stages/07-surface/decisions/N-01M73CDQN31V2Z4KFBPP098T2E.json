@@ -1,0 +1,16 @@
+{
+  "id": "N-01M73CDQN31V2Z4KFBPP098T2E",
+  "alias": "dznn",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Stall audit, D-933s (limb coverage), after two builds (B-7fmf, B-t3sm). (1) Both judged on boards at 2x and 4x across sig f12, f16, f20, f25, f29, f34, f40 and idle f0, against pass 7 and the sheet. (2) What the defect names is fixed: skin no longer shows (distal hind foot 0.013 to 0.025 in all 166 frames against a thigh control of 0.10 to 0.12; forearm and shank fixed in B-7fmf) and the specular streak is gone at f16, f20 and f25. (3) Residual: at sig f29 a band just above the toes still reads pale and smooth. Cause: the shortest Foot coat strands carry the approved pale paw color and lie close to the toe base. More length there puts fur over the toes and pads approved in the claw and pad passes (mitten risk); a darker paw is a change to approved coloring. Neither is worth it for one frame of a fast leap without first seeing it at product size in motion. Holds checked: hind leg shape and motion (Nick 10-21, 'keep the hind legs as they are'), paw and claw passes, coat colors (Nick 10-24 pass). Outcome: rescope. D-933s closes on what it names; the f29 band is re-read in motion at 1x and 2x on the next sprite render, and becomes its own defect only if it reads there. B-t3sm's candidate is promoted to the scene of record.",
+  "date": "2026-11-10",
+  "kind": "audit",
+  "binds": {
+    "build": "B-01M7369FTTJ0PJHA3MBCQ4A67A",
+    "defect": "D-01M72N9H767X42SAHYKEEPSHZJ",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-10T18:44:44Z"
+}

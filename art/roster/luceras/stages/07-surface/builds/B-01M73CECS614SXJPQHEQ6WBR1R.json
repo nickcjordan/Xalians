@@ -1,0 +1,19 @@
+{
+  "id": "B-01M73CECS614SXJPQHEQ6WBR1R",
+  "alias": "87d4",
+  "stage": "07-surface",
+  "kind": "run",
+  "goal": "Sprite pass 8 from the scene of record with the Foot coat (B-t3sm) promoted: all four clips, full every-frame gate, whole-creature region read at 4x and 2x, and the sig f29 toe band re-read in motion at 1x and 2x",
+  "scope": "promote luceras-final/cand_footfur to final (old final to final_prefoot); render only; no groom, mesh, color or tail change",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-10T18:45:05Z",
+  "briefSha256": "e6f0a6bc7c9d576ae00d2a5bd09ce1db6f11f95ab2febe87c36126838b6a82d4"
+}
