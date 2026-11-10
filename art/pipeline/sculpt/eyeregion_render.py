@@ -19,7 +19,7 @@ import lookdev  # noqa: E402
 s = bpy.context.scene
 body = bpy.data.objects['luceras_blockout']; rig = bpy.data.objects['luceras_rig']
 POSE_ORDER = 'rest,crouch,leap,landing,head_left_up,tail_side_up,foreleg_step,breath_in,crouch_deep,landing_old'.split(',')
-OBLIQUE = {'face': (35.0, 4.0), 'face_front': (0.0, 4.0), 'face_side': (270.0, 4.0)}
+OBLIQUE = {'face': (35.0, 4.0), 'face_front': (0.0, 4.0), 'face_side': (270.0, 4.0), 'low34': (45.0, -12.0)}   # low34 = reskin_furcheck low34_front_left (body)
 s.render.threads_mode = 'FIXED'; s.render.threads = int(os.environ.get('FUR_THREADS', '12'))
 s.cycles.samples = int(os.environ.get('FUR_SAMPLES', '40'))
 
@@ -66,7 +66,10 @@ def evbody():
 
 def cam_oblique(view):
     az, el = OBLIQUE[view]
-    V = evbody()[HEADM]; lo, hi = V.min(0), V.max(0); pad = 0.004
+    if view == 'low34':
+        V = evbody(); lo, hi = V.min(0), V.max(0); pad = 0.03
+    else:
+        V = evbody()[HEADM]; lo, hi = V.min(0), V.max(0); pad = 0.004
     cam = lookdev.place_camera('furcheck_' + view, (Vector((lo - pad).tolist()), Vector((hi + pad).tolist())), az, el, 0.05)
     s.render.resolution_x = 960; s.render.resolution_y = 960; s.camera = cam; bpy.context.view_layer.update(); return cam
 
@@ -123,10 +126,17 @@ def pose_clip(clip, f):
 
 POSE = os.environ.get('ER_POSE', 'rest')
 if POSE == 'rest': pose_rest()
+elif POSE.startswith('review:'):
+    # a review.poses pose by name (frame 1 + 10 * index), no carriage, as reskin_furcheck.py pose('review', name)
+    pose_clip('review.poses', 1 + 10 * POSE_ORDER.index(POSE.split(':', 1)[1]))
 else:
     _c, _f = POSE.rsplit(':', 1); pose_clip({'sig': 'sig.horns-first-descent'}.get(_c, _c), int(_f))
+    # ER_ROOT_DZ: the render-time root height offset of the old scenes (reskin_furcheck.py pose() for 'sig'), for
+    # before/after looks against the rebaked clips that carry it themselves
+    _dz = json.loads(os.environ.get('ER_ROOT_DZ', '{}')).get(str(int(_f)), 0.0) if _c == 'sig' else 0.0
+    if _dz: rig.location = (0, 0, _dz); bpy.context.view_layer.update()
 OUT.mkdir(parents=True, exist_ok=True); done = []
-TAG = 'rest' if POSE == 'rest' else POSE.replace(':', '_f')
+TAG = 'rest' if POSE == 'rest' else POSE.replace('review:', '').replace(':', '_f')
 modes = {'clay': (True,), 'fur': (False,), 'both': (False, True)}[MODE]
 for v in VIEWS:
     if v == 'side': cam_side()

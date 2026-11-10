@@ -29,5 +29,6 @@ rep = dict(build='luceras-sprites pass1', source=dict(scene='luceras-surface/hea
            bake='luceras-reskin/pass10/anim3/work/bake.json (h1 rig, pass 10 clips)'),
            cell=cell, clips=fin['clips'], render_time=rt, downscale=dict(method='premultiplied 4x4 box (area) filter, output straight alpha', comparison=fr),
            pop_checks=pops, files_sha256=files, frames_sha256=frames, tools=['art/pipeline/animate/sprite_render.py', 'sprite_cell.py', 'sprite_downscale.py',
-           'sprite_pops.py', 'sprite_finalize.py', 'sprite_report.py'], **notes)
+           'sprite_pops.py', 'sprite_finalize.py', 'sprite_report.py'])
+rep.update(notes)   # luceras-final: the notes may name the build and source themselves
 (P / 'report.json').write_text(json.dumps(rep, indent=1)); print('report written', len(files), 'files')

@@ -19,6 +19,9 @@ P = Path(sys.argv[1]); bake = json.loads(Path(sys.argv[2]).read_text())
 cell = json.loads((P / 'cell.json').read_text()); meas = json.loads((P / 'measure.json').read_text())
 W, H = cell['cell_px']; K = cell['master_scale']; ppm = cell['px_per_m']
 CLIPS = {'idle': dict(frames=90, ms=3000, loop=True), 'sig.horns-first-descent': dict(frames=60, ms=2000, loop=False)}
+# luceras-final: the idle/signature transitions (8 frames each, 0..7) when the cell carries them
+for _t in ('trans.idle-to-sig', 'trans.sig-to-idle'):
+    if _t in cell['per_clip']: CLIPS[_t] = dict(frames=8, ms=round(8 * 1000 / 30, 2), loop=False)
 GRAY, DARK = (128, 128, 128), (24, 24, 28)
 GUTTER, COLS = 2, 10
 # pivot: the rest-pose root on the ground, in cell pixels (x of the rig origin, y of the rest ground line)
@@ -58,7 +61,7 @@ for clip, c in CLIPS.items():
     dur = durations(n, c['ms'])
     rows = math.ceil(n / COLS); SW = COLS * W + (COLS - 1) * GUTTER; SH = rows * H + (rows - 1) * GUTTER
     sheet = np.zeros((SH, SW, 4), np.uint8); frames = []
-    roots = [float(bake['specs'][clip][f].get('_root', 0.0)) for f in range(n)]
+    roots = [float(bake['specs'][clip][f].get('_root', 0.0)) for f in range(n)] if clip in bake['specs'] else [0.0] * n
     for i, a in enumerate(one):
         x = (i % COLS) * (W + GUTTER); y = (i // COLS) * (H + GUTTER); sheet[y:y + H, x:x + W] = a
         frames.append(dict(index=i, name=f'{clip}_{i:04d}', rect=dict(x=x, y=y, w=W, h=H), duration_ms=dur[i], start_ms=sum(dur[:i]),
@@ -78,7 +81,7 @@ for clip, c in CLIPS.items():
                            root_motion=('none (plays in place)' if not clip.startswith('sig') else
                                         'cells are in place; add frames[i].root_offset.x_px to the sprite position (forward = +x). The offset reaches '
                                         f'{roots[-1] * ppm:.1f} px ({roots[-1]:.3f} m) and holds; vertical motion (the leap) is inside the cell'),
-                           events_source='luceras_clips.py bake (anim3 work/bake.json times; fore/hind foot-down = fore_land/hind_land)'),
+                           events_source=f'luceras_clips.py bake ({Path(sys.argv[2]).parents[2].name}/{Path(sys.argv[2]).parents[1].name}/work/bake.json times; fore/hind foot-down = fore_land/hind_land)'),
                  frames=frames, events=events)
     (sd / f'{clip}.json').write_text(json.dumps(atlas, indent=1))
     pv = P / 'preview'; pv.mkdir(exist_ok=True); outs = []

@@ -84,6 +84,9 @@ class Poser:
     def reset(self):
         for p in self.pb:
             p.rotation_mode = 'QUATERNION'; p.rotation_quaternion = Quaternion(); p.location = Vector(); p.scale = (1, 1, 1)
+        # luceras-final: the root now carries the carriage pitch and root offsets; evaluate the cleared pose before
+        # apply() sets spine_01 by matrix, or the previous frame's root would leak into spine_01's local channels
+        self.vl.update()
 
     def rot(self, name, axis, deg):
         if abs(deg) < 1e-9: return
@@ -232,15 +235,47 @@ def frames_of(clip):
     return int(round(n))
 
 
-def bake(rig, poser, name, clip):
-    """Pose every frame from the spec, then key every deform bone. Returns per-frame specs."""
-    n = frames_of(clip); store = []; specs = []
+def apply_carriage(rig, car, scale=1.0):
+    """The carriage block's stance pitch (whole pose about the stance pivot, through the root bone) and per-bone
+    local pitch offsets, scaled by ``scale`` (the same operations reskin_furcheck.py applied at render time)."""
+    if not car or scale == 0.0: return False
+    sp = car.get('stance_pitch_deg', 0.0) * scale
+    if sp:
+        pv = Vector(car['stance_pivot']); R_ = Matrix.Rotation(math.radians(sp), 4, 'X'); T_ = Matrix.Translation(pv) @ R_ @ Matrix.Translation(-pv)
+        Ta = rig.matrix_world.inverted() @ T_ @ rig.matrix_world
+        pr = rig.pose.bones['root']; pr.rotation_mode = 'QUATERNION'; pr.matrix = Ta @ pr.matrix; bpy.context.view_layer.update()
+    for bn, deg in (car.get('bones') or {}).items():
+        pb = rig.pose.bones.get(bn)
+        if pb is None: continue
+        pb.rotation_mode = 'QUATERNION'; pb.rotation_quaternion = pb.rotation_quaternion @ Quaternion((1, 0, 0), math.radians(deg * scale))
+    bpy.context.view_layer.update(); return True
+
+
+def apply_root_dz(rig, dz):
+    """A root height offset (metres, world up) on top of the pose, through the root bone."""
+    if not dz: return False
+    pr = rig.pose.bones['root']; pr.rotation_mode = 'QUATERNION'; pr.matrix = Matrix.Translation((0.0, 0.0, dz)) @ pr.matrix
+    bpy.context.view_layer.update(); return True
+
+
+def keyed_bones(rig, poser, extra):
+    return poser.deform + [b for b in extra if b not in poser.deform]
+
+
+def bake(rig, poser, name, clip, car=None):
+    """Pose every frame from the spec, then key every deform bone (and the root when a carriage or a root offset
+    moves it). ``car`` = the clip's carriage: {'block': carriage dict or None, 'root_dz': {frame: m}}.
+    Returns per-frame specs."""
+    n = frames_of(clip); store = []; specs = []; car = car or {}
+    names = keyed_bones(rig, poser, ['root'] if (car.get('block') or car.get('root_dz')) else [])
     for f in range(n + 1):
         t = f * 1000.0 / FPS
         if clip['loop'] and f == n: t = 0.0
         s = clip['fn'](t); specs.append(s)
         poser.apply(s)
-        store.append({nm: (tuple(rig.pose.bones[nm].location), tuple(rig.pose.bones[nm].rotation_quaternion), tuple(rig.pose.bones[nm].scale)) for nm in poser.deform})
+        apply_carriage(rig, car.get('block'), 1.0)
+        apply_root_dz(rig, (car.get('root_dz') or {}).get(str(f), 0.0))
+        store.append({nm: (tuple(rig.pose.bones[nm].location), tuple(rig.pose.bones[nm].rotation_quaternion), tuple(rig.pose.bones[nm].scale)) for nm in names})
     old = bpy.data.actions.get(name)
     if old: bpy.data.actions.remove(old)
     act = bpy.data.actions.new(name); act.use_fake_user = True
@@ -419,6 +454,46 @@ def hit_contact(rig, poser, clip):
     return c
 
 
+def key_action(rig, name, store):
+    old = bpy.data.actions.get(name)
+    if old: bpy.data.actions.remove(old)
+    act = bpy.data.actions.new(name); act.use_fake_user = True; rig.animation_data.action = act
+    for f, st in enumerate(store):
+        for nm, (loc, q, sc) in st.items():
+            p = rig.pose.bones[nm]; p.location = loc; p.rotation_quaternion = q; p.scale = sc
+            for prop in ('location', 'rotation_quaternion', 'scale'): p.keyframe_insert(prop, frame=f, group=nm)
+    act.frame_range = (0, max(1, len(store) - 1))
+    try: act.use_frame_range = True
+    except Exception: pass
+    return act
+
+
+def bake_carriage_extras(rig, poser, clips, CAR):
+    """luceras-final: the rest pose with its carriage (action 'rest', from review.poses frame 1) and the two
+    idle/signature transition clips ('trans.idle-to-sig', 'trans.sig-to-idle'), keyed like the clips."""
+    out = {}; names_all = [b.name for b in rig.data.bones]
+    if CAR.get('rest') and 'review.poses' in bpy.data.actions:
+        poser.reset(); rig.animation_data.action = bpy.data.actions['review.poses']; ac = rig.animation_data.action
+        if hasattr(rig.animation_data, 'action_slot') and rig.animation_data.action_slot is None and len(ac.slots): rig.animation_data.action_slot = ac.slots[0]
+        bpy.context.scene.frame_set(1); bpy.context.view_layer.update()
+        ch = {nm: (tuple(rig.pose.bones[nm].location), tuple(rig.pose.bones[nm].rotation_quaternion), tuple(rig.pose.bones[nm].scale)) for nm in names_all}
+        rig.animation_data.action = None; poser.reset()
+        for nm, (loc, q, sc) in ch.items():
+            p = rig.pose.bones[nm]; p.location = loc; p.rotation_quaternion = q; p.scale = sc
+        bpy.context.view_layer.update(); apply_carriage(rig, CAR['rest'], 1.0)
+        st = {nm: (tuple(rig.pose.bones[nm].location), tuple(rig.pose.bones[nm].rotation_quaternion), tuple(rig.pose.bones[nm].scale)) for nm in names_all}
+        key_action(rig, 'rest', [st, st]); out['rest'] = dict(frames=1, source='review.poses frame 1 + carriage.rest')
+    sig = clips['sig.horns-first-descent']; nt = int(CAR.get('transition_frames', 7)); names = keyed_bones(rig, poser, ['root'])
+    for tag, kind, sf in (('trans.idle-to-sig', 'in', 0), ('trans.sig-to-idle', 'out', int(CAR.get('transition_sig_frame_out', 59)))):
+        s = sig['fn'](sf * 1000.0 / FPS); store = []; rig.animation_data.action = None
+        for f in range(nt + 1):
+            poser.apply(s); apply_carriage(rig, CAR.get('idle'), LC.trans_weight(kind, f, nt))
+            store.append({nm: (tuple(rig.pose.bones[nm].location), tuple(rig.pose.bones[nm].rotation_quaternion), tuple(rig.pose.bones[nm].scale)) for nm in names})
+        key_action(rig, tag, store); out[tag] = dict(frames=nt, sig_frame=sf, kind=kind)
+    rig.animation_data.action = None; poser.reset()
+    return out
+
+
 def do_bake():
     params = load_params(); clips = build_clips(params)
     rig = open_rig(); poser = Poser(rig)
@@ -432,8 +507,10 @@ def do_bake():
         sp['hit_center_height_m'] = P['hit_center_height_m'] + err; clips = build_clips(params)
     set_deform_mods(False)
     specs_all = {}; info = {}
+    CAR = params.get('carriage') or {}
+    carmap = {'idle': dict(block=CAR.get('idle')), 'sig.horns-first-descent': dict(root_dz=CAR.get('sig_root_dz'))}
     for name, clip in clips.items():
-        t0 = time.time(); act, specs, store = bake(rig, poser, name, clip); specs_all[name] = specs
+        t0 = time.time(); act, specs, store = bake(rig, poser, name, clip, carmap.get(name)); specs_all[name] = specs
         # bake check: evaluated action reproduces the posed values
         n = frames_of(clip); err = 0.0
         rig.animation_data.action = act
@@ -456,6 +533,8 @@ def do_bake():
     seam = max(float(np.abs(mats[1][k] - mats[0][k]).max()) for k in mats[0])
     m['idle_seam'] = dict(first_equals_last=max(float(np.abs(mats[n][k] - mats[0][k]).max()) for k in mats[0]),
                           step_after_seam=seam, step_before_seam=jumps[-1], max_step=max(jumps), mean_step=float(np.mean(jumps)))
+    rig.animation_data.action = None; poser.reset()
+    if CAR: info.update(bake_carriage_extras(rig, poser, clips, CAR))
     rig.animation_data.action = None; poser.reset()
     bpy.ops.wm.save_as_mainfile(filepath=str(WORK / 'clips.blend'))
     clean = {k: [{kk: vv for kk, vv in s.items() if kk != 'legs'} | {'legs': s.get('legs')} for s in v] for k, v in specs_all.items()}

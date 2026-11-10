@@ -1,0 +1,14 @@
+{
+  "id": "N-01M71DXBMY9MS7VEJV0RRQQ1GB",
+  "alias": "sk93",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Eye pass 3 (lid band and crease color) failed its gate: face-on readers could not tell it from pass 2 at lineup size (run 1 tied, run 2 pass 2 above pass 3), so the pass 2 eye stays in the scene of record luceras-final/final/scene.blend. Motion carriage, stance pitch, f28-f33 root heights and 8-frame transitions are now baked into the clips (worst pose difference 0.0019 mm against render time). Sprite scale keeps the 192 px rest-body rule, so 283.30 px/m (torso about 5 percent smaller on screen than pass 2); overridable by Nick.",
+  "date": "2026-11-10",
+  "kind": "ruling",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-10T00:32:16Z"
+}

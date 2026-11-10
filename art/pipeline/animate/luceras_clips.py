@@ -26,6 +26,20 @@ import math
 FPS = 30
 LEGS = ("fl", "fr", "hl", "hr")
 
+# -- carriage (appeal build 5, baked since luceras-final): offsets added on top of a clip's solved pose -----------
+# A carriage block (params.json "carriage") holds, for the rest pose and the idle: local pitch offsets per bone
+# ("bones": {bone: degrees about the bone's own +X}), and a whole-pose stance pitch ("stance_pitch_deg" about the
+# point "stance_pivot", nose-up positive, applied to the root bone). The signature keeps its approved pose and only
+# takes "sig_root_dz" ({frame: metres} added to the root height on the horn-contact frames, which keeps the larger
+# appeal head on the approved contact). Two transition clips ease the idle carriage out onto the signature's first
+# frame and back in from its last: "transition_frames" frames, weight below.
+
+
+def trans_weight(kind, f, n=7):
+    """Share of the idle carriage in transition frame f of n: 'in' (idle -> signature) 1 -> 0, 'out' 0 -> 1."""
+    u = max(0.0, min(1.0, f / n)); sm = u * u * (3 - 2 * u)
+    return 1.0 - sm if kind == "in" else sm
+
 
 # -- primitives -----------------------------------------------------------------------------------------------
 

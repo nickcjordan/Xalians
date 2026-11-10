@@ -1,0 +1,19 @@
+{
+  "id": "B-01M71DXBT73KB6EDEVGBAX9R9H",
+  "alias": "szmk",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Eye pass 4: the side-sprite eye reads as a lidded, seated, living eye instead of a round button; upper-lid occlusion on the iris, lighter graded iris, thinner limbal ring, soft reflection-only catchlight, cornea flush with the lid line in profile; plus the idle f19 fore-claw ground fix and a full sprite re-render to luceras-sprites/pass4",
+  "scope": "eye and lids only (opening size, shape and placement held); idle clip foot plant; sprite re-render",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-10T00:32:16Z",
+  "briefSha256": "c5990cd5f806a5e75ab6911e9803c40d804f2f0625011df36ebf79757fe232e1"
+}

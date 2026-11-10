@@ -22,6 +22,8 @@ s = bpy.context.scene; vl = bpy.context.view_layer
 rig = next(o for o in s.objects if o.type == 'ARMATURE' and o.name.startswith('luceras_rig'))
 body = s.objects['luceras_blockout']
 CLIPS = {'idle': 90, 'sig.horns-first-descent': 60}
+if os.environ.get('SP_CLIPS'):   # luceras-final: e.g. 'trans.idle-to-sig:7,trans.sig-to-idle:7' (last frame index)
+    CLIPS = {c.split(':')[0]: int(c.split(':')[1]) for c in os.environ['SP_CLIPS'].split(',')}
 HIDE = ('lookdev_ground', 'lookdev_target', 'Plume spine curve')
 
 
@@ -65,7 +67,7 @@ if MODE == 'measure':
     cam = side_camera(); Ci = np.array(cam.matrix_world.inverted())
     bake = json.loads(Path(os.environ['SP_BAKE']).read_text())
     proxy = next((o for o in s.objects if o.name.startswith('luceras_plume_spine')), None)
-    parts = [o for o in s.objects if o.name.startswith(('head_nose_pad', 'head_lid_rim_', 'head_upper_lid_', 'head_lip_'))]
+    parts = [o for o in s.objects if o.name.startswith(('head_nose_pad', 'head_lid_rim_', 'head_upper_lid_', 'head_lip_', 'eyeregion_lid_margin_'))]   # luceras-final: the eye region's lid margin tubes
     rec = dict(camera=dict(matrix=[list(r) for r in cam.matrix_world]), clips={})
     # rest pose body height (camera vertical), the scale reference: 192 px at 1x
     rig.animation_data.action = None
@@ -75,7 +77,7 @@ if MODE == 'measure':
     rec['rest_body'] = dict(height_m=float(Pb[:, 1].max() - Pb[:, 1].min()), width_m=float(Pb[:, 0].max() - Pb[:, 0].min()), bottom_m=float(Pb[:, 1].min()))
     t0 = time.time()
     for clip, n in CLIPS.items():
-        rows = []; specs = bake['specs'][clip]
+        rows = []; specs = bake['specs'].get(clip, [])
         for f in range(0, n + 1):
             set_clip(clip, f); dg = bpy.context.evaluated_depsgraph_get(); row = dict(frame=f, root_m=float(specs[f].get('_root', 0.0)) if f < len(specs) else None)
             lo = np.array([1e9, 1e9]); hi = -lo; cats = {}
@@ -114,6 +116,9 @@ if MODE == 'render':
     s.render.resolution_x = W_; s.render.resolution_y = H_; s.render.resolution_percentage = 100
     s.render.film_transparent = True; s.render.image_settings.file_format = 'PNG'; s.render.image_settings.color_mode = 'RGBA'; s.render.image_settings.color_depth = '8'
     for o in s.objects:
+        # the studio light's ground (N-vf3n) is invisible to camera rays but still bounces light onto the belly and
+        # legs: it stays in the render (film transparent keeps the background clear); any other hidden helper goes
+        if o.name.startswith('lookdev_ground') and not o.visible_camera: continue
         if o.name.startswith(HIDE): o.hide_render = True
     s.render.engine = 'CYCLES'; dev = os.environ.get('SP_DEVICE', 'CPU')
     if dev != 'CPU':

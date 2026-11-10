@@ -252,6 +252,20 @@ for side, F in EYES.items():
         Pp[zid] = np.c_[tz * np.cos(pz), tz * np.sin(pz)]
     th3 = np.where(zone, np.linalg.norm(Pp, axis=1), th1); ph3 = np.where(zone, np.mod(np.arctan2(Pp[:, 1], Pp[:, 0]), 2 * math.pi), ph1)
     TM3 = interp_phi(F['TM'], ph3); sarc = (th3 - TM3) * r
+    # lid rows (pass 3): the outside vertices on the lid wall (0 < s < row_band_m) had scattered margin distances, so
+    # the wall rose in a zigzag of facets (the dark ticks along the upper lid); their distances are smoothed along
+    # the lid with their wall neighbours, so each row runs as one even curve. The margin ring stays on the margin.
+    rb = g('row_band_m', 0.0)
+    if rb > 0:
+        wall = zone & ~inside_old & (sarc > 1e-6) & (sarc < rb)
+        Ew = E[wall[E[:, 0]] & wall[E[:, 1]]]; cw = np.bincount(Ew.ravel(), minlength=NV).astype(float); wid = np.where(wall & (cw > 0))[0]
+        sv = sarc.copy()
+        for _ in range(int(g('row_iters', 20))):
+            sm = np.bincount(Ew[:, 0], weights=sv[Ew[:, 1]], minlength=NV) + np.bincount(Ew[:, 1], weights=sv[Ew[:, 0]], minlength=NV)
+            sv[wid] = 0.5 * sv[wid] + 0.5 * sm[wid] / cw[wid]
+            sv[wid] = np.clip(sv[wid], g('snap_m', 0.0007) * 0.5, rb)
+        th3 = np.where(wall, TM3 + sv / r, th3); sarc = np.where(wall, sv, sarc)
+        LOG['eye_' + side]['lid_wall_rows_smoothed'] = int(len(wid))
     # 5. heights: inside the margin the skin tucks under the eyeball; the lid lies on the eyeball at its thickness;
     #    past the lid band the skin blends to the skull surface (seen along the same direction from c2)
     sp = np.sin(ph3); up_w = np.clip(sp, 0, 1); lo_w = np.clip(-sp, 0, 1)
@@ -432,6 +446,13 @@ if g('hide_eyelid_rings', 1):
         o_.hide_render = True
 LOG['strands_switched_off'] = off
 
+def cue_skin(s_, ph_):
+    up_ = max(0.0, math.sin(ph_)) ** g('cue_pow', 1.5)
+    band_ = float(1 - sst(g('uplid_to_m', 0.0035), g('uplid_to_m', 0.0035) + g('uplid_soft_m', 0.0015), np.array(s_)))
+    crease_ = math.exp(-((s_ - g('crease_line_at_m', 0.0062)) / g('crease_line_w_m', 0.0014)) ** 2)
+    return (1 + (g('uplid_light', 1.0) - 1) * band_ * up_) * (1 + (g('crease_dark', 1.0) - 1) * crease_ * up_)
+
+
 # donors: visible coat strands rooted just outside the region (old rest positions; outside the region nothing moved)
 cd = coat.data
 cia = arr(cd.attributes['bind_ia'].data, 'value', 1, np.int32); cib = arr(cd.attributes['bind_ib'].data, 'value', 1, np.int32); cic = arr(cd.attributes['bind_ic'].data, 'value', 1, np.int32)
@@ -470,6 +491,9 @@ if sca is not None and sca.domain == 'POINT' and g('skin_match', 0) == 2:
         for _ in range(int(g('skin_smooth', 0))):
             sm = np.zeros((NV, 4)); np.add.at(sm, Er[:, 0], scol[Er[:, 1]]); np.add.at(sm, Er[:, 1], scol[Er[:, 0]])
             m_ = cr_ > 0; scol[m_ & regv] = 0.5 * scol[m_ & regv] + 0.5 * sm[m_ & regv] / cr_[m_ & regv, None]
+    if g('uplid_light', 1.0) != 1.0 or g('crease_dark', 1.0) != 1.0:
+        for i in np.where(regv & ~np.isnan(SVAL))[0]:
+            if SVAL[i] > 0: scol[i, :3] *= cue_skin(SVAL[i], PHV[i])
     sca.data.foreach_set('color', scol.astype(np.float32).ravel()); LOG['skin_colour_from_coat_vertices'] = int(regv.sum())
 
 
@@ -538,6 +562,16 @@ def donor_dir_world(di):
     return Pt[1] * t0 + Pt[2] * b0
 
 
+def cue(s_, ph_):
+    """Pass 3 value cues (upper lid only, faded toward the corners): a lighter soft band on the lid just above the
+    margin, and a darker soft line along the brow crease above it, both following the lid curve."""
+    up_ = max(0.0, math.sin(ph_)) ** g('cue_pow', 1.5)
+    if up_ <= 0: return 1.0
+    band_ = float(1 - sst(g('uplid_to_m', 0.0035), g('uplid_to_m', 0.0035) + g('uplid_soft_m', 0.0015), np.array(s_)))
+    crease_ = math.exp(-((s_ - g('crease_line_at_m', 0.0062)) / g('crease_line_w_m', 0.0014)) ** 2)
+    return (1 + (g('uplid_light', 1.0) - 1) * band_ * up_) * (1 + (g('crease_dark', 1.0) - 1) * crease_ * up_)
+
+
 NPT = 9; Ntot = len(new_curves)
 POS = np.zeros((Ntot * NPT, 3), np.float32); BH = np.zeros(Ntot * NPT, np.float32); BX = np.zeros_like(BH); BY = np.zeros_like(BH); RAD = np.zeros_like(BH)
 BIA = np.zeros(Ntot, np.int32); BIB = np.zeros_like(BIA); BIC = np.zeros_like(BIA); BA = np.zeros(Ntot, np.float32); BB = np.zeros_like(BA); BC = np.zeros_like(BA); SRC = np.zeros(Ntot, np.int64)
@@ -570,6 +604,7 @@ for k, (side, ti_, ba_, dpair, Pd, Ld, ad, sroot, dedge, we, dfl, nW, tW, bW) in
     sl = slice(k * NPT, (k + 1) * NPT); POS[sl] = pts; BH[sl] = Pn[:, 0]; BX[sl] = Pn[:, 1]; BY[sl] = Pn[:, 2]
     RAD[sl] = crad[coffs[di]:coffs[di] + NPT] * (g('lid_radius_k', 0.8) + (1 - g('lid_radius_k', 0.8)) * w_len); lens.append(L)
     TINT[k] = 1 + (g('lid_tint', 1.0) - 1) * (1 - float(sst(0.0, g('lid_tint_m', 0.005), np.array(sroot))))
+    TINT[k] *= cue(sroot, phk)
 LOG['new_strand_len_mm'] = [round(float(np.percentile(lens, p)) * 1000, 2) for p in (5, 50, 95)] if lens else None
 
 # opening check: no new strand point may enter the eye opening
