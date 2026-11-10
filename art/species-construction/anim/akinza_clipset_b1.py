@@ -517,9 +517,9 @@ GUARD = dict(
     # (fix pass 3: the elbow drops first with the forearm held at the guard's bend, then the forearm drops, so the paw comes
     # down along the body and never forward of the loop's most forward paw (0.1 mm short of it at most). Folding the forearm
     # further, a share of -.02 at frame 2, collapsed 13 elbow triangles; the upper arm at .12 by frame 1 put the paw 4.9 mm
-    # past the guard)
+    # past the guard. The forearm eases into idle's paw, 4.7 mm on the last step, not 10.2, for the hand back)
     exit={'upper': [0., .06, .3, .64, .87, .97, 1., 1.],
-          'fore':  [0., 0., 0., .1, .45, .78, .96, 1.],
+          'fore':  [0., 0., 0., .12, .5, .84, .98, 1.],
           'body':  [0., .1, .32, .58, .8, .94, .99, 1.],
           'ears':  [0., .08, .26, .5, .74, .9, .98, 1.],
           'tails': [0., .05, .18, .4, .64, .85, .96, 1.]},
