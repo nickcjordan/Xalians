@@ -96,9 +96,9 @@ any_tail = share([b for b in NAMES if b.startswith('tail_')])
 LEGS = (share([b for b in NAMES if rc.base_of(b) in ('thigh', 'shin', 'foot')]) > .5) & (any_tail < .01)
 REGIONS = {'shoulder': ['shoulder.L', 'shoulder.R'], 'elbow': ['elbow.L', 'elbow.R'], 'hip': ['hip.L', 'hip.R'],
            'knee': ['knee.L', 'knee.R'], 'neck': ['neck_base', 'head_base'], 'jaw': ['jaw_hinge'],
-           'ear_root': ['ear0.L', 'ear0.R'], 'tail_fork': ['tail_fork']}
+           'ear_root': ['ear0.L', 'ear0.R'], 'tail_fork': ['tail_fork'], 'ankle': ['ankle.L', 'ankle.R']}
 RADIUS = {'shoulder': .09, 'elbow': .06, 'hip': .10, 'knee': .07, 'neck': .08, 'jaw': .06, 'ear_root': .09,
-          'tail_fork': .10}
+          'tail_fork': .10, 'ankle': .06}
 centroid = rest[tris].mean(1)
 region_of = {}
 for r, js in REGIONS.items():
@@ -108,7 +108,7 @@ for r, js in REGIONS.items():
 APPROVED_REGIONS = list(REGIONS)
 ARMPIT_PT = {sd: np.array(J[f'shoulder.{sd}'])*np.array([.85, 1, 1])+np.array([0, 0, -.06]) for sd in 'LR'}
 region_of['armpit'] = np.min([np.linalg.norm(centroid-ARMPIT_PT[sd], axis=1) for sd in 'LR'], axis=0) < .06
-STRETCH_REGIONS = ('shoulder', 'armpit', 'elbow')
+STRETCH_REGIONS = ('shoulder', 'armpit', 'elbow', 'ankle')
 edge_region = {}
 vert_region = {}
 for r in STRETCH_REGIONS:
@@ -263,7 +263,7 @@ if a.mode == 'setup':
         fr = json.loads((a.bake/clip/'poses.json').read_text())[int(fno)]
         P, vals = posed(fr['pose'], fr['lift'], fr)
         row = dict(keys={k: round(v, 3) for k, v in vals.items() if v > 0}, **frame_checks(P, fr['pose'], fr['lift'], None, targets_of(fr)))
-        row['swing_deg'] = {b: round(rc.swing_deg(J, fr['pose'], b, B), 1) for b in ('clavicle.L', 'upperarm.L', 'forearm.L', 'hand.L',
+        row['swing_deg'] = {b: round(rc.swing_deg(J, fr['pose'], b, B), 1) for b in ('foot.L', 'foot.R', 'clavicle.L', 'upperarm.L', 'forearm.L', 'hand.L',
                                                                                     'upperarm.R', 'forearm.R', 'hand.R')}
         T = rc.bone_transforms(J, fr['pose'], bones=B, root_translate=tuple(rc.lift_vec(fr['lift'])))
         joints = {}

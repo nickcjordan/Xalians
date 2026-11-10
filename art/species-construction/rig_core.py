@@ -1041,8 +1041,36 @@ def driver_value(angle, rise, fall=None):
     return max(0., min(1., v))
 
 
+def swing_direction(joints, pose, bone, axis, bones=None):
+    """Which way a bone swings (2026-11-09, the ankle keys): the cosine between the swing's own axis (the bone's rest
+    axis crossed with its turned axis, in the parent's frame) and `axis`; -1 to 1, 0 when the bone does not swing.
+    For a foot with axis +X, a dorsiflexion (toes up, the crouch) gives about -1, a pointed foot about +1."""
+    u = bone_axis(joints, bone, bones)
+    v = euler_matrix(*pose.get(bone, (0, 0, 0)))@u
+    w = np.cross(u, v)
+    n = float(np.linalg.norm(w))
+    if n < 1e-9:
+        return 0.
+    a = np.asarray(axis, float)
+    return float(w@a/(n*np.linalg.norm(a)))
+
+
+def key_value(joints, pose, k, bones=None):
+    """A corrective key's value: driver_value of the bone's swing; a key with a `direction` {axis, sign, band} only
+    fires when the swing turns that way: times smoothstep(sign * swing_direction, band[0], band[1]), which is exactly 1
+    for a swing well inside that direction (so such frames keep their values bit for bit) and 0 the other way."""
+    v = driver_value(swing_deg(joints, pose, k['bone'], bones), k['rise'], k.get('fall'))
+    dr = k.get('direction')
+    if dr and v > 0:
+        c = dr['sign']*swing_direction(joints, pose, k['bone'], dr['axis'], bones)
+        lo, hi = dr['band']
+        t = min(1., max(0., (c-lo)/(hi-lo)))
+        v *= t*t*(3-2*t)
+    return v
+
+
 def corrective_values(joints, pose, keys, bones=None):
-    return {k['name']: driver_value(swing_deg(joints, pose, k['bone'], bones), k['rise'], k.get('fall')) for k in keys}
+    return {k['name']: key_value(joints, pose, k, bones) for k in keys}
 
 
 def slerp_pose(pose, f):

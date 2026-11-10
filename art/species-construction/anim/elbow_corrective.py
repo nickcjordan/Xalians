@@ -72,8 +72,8 @@ share = lambda bones: dense[:, [NI[b] for b in bones]].sum(1)
 if not (R/'correctives-pre-elbow.json').exists():
     shutil.copyfile(R/'correctives.json', R/'correctives-pre-elbow.json')
     shutil.copyfile(R/'correctives.npz', R/'correctives-pre-elbow.npz')
-base_json = json.loads((R/'correctives-pre-elbow.json').read_text())
-cz = np.load(R/'correctives-pre-elbow.npz')
+base_json = json.loads((R/'correctives.json').read_text())       # the rig's current keys (other passes' keys kept),
+cz = np.load(R/'correctives.npz')                                  # earlier elbow keys replaced
 keys = [k for k in base_json['keys'] if not k['name'].startswith('elbow_')]
 deltas = {k['name']: (cz[k['name']+'__ids'], cz[k['name']+'__delta'].astype(np.float64)) for k in keys}
 A = sp.coo_matrix((np.ones(2*len(edges)), (np.r_[edges[:, 0], edges[:, 1]], np.r_[edges[:, 1], edges[:, 0]])), shape=(n, n)).tocsr()
