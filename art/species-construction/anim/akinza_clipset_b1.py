@@ -98,9 +98,11 @@ def slerp_e(e0, e1, t):
 
 
 def blend_poses(p0, p1, share_of_bone):
-    """Per bone, slerp from p0 to p1 by share_of_bone(bone)."""
+    """Per bone, slerp from p0 to p1 by share_of_bone(bone). (Batch 2 fix pass 2: the bones in sorted order, so guard_in's and
+    guard_out's poses keep one key order and bake to the same bytes whatever the interpreter's hash seed; the values are as
+    before.)"""
     out = {}
-    for b in set(p0) | set(p1):
+    for b in sorted(set(p0) | set(p1)):
         out[b] = slerp_e(p0.get(b, [0., 0., 0.]), p1.get(b, [0., 0., 0.]), share_of_bone(b))
     return out
 
