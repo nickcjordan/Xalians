@@ -96,9 +96,9 @@ any_tail = share([b for b in NAMES if b.startswith('tail_')])
 LEGS = (share([b for b in NAMES if rc.base_of(b) in ('thigh', 'shin', 'foot')]) > .5) & (any_tail < .01)
 REGIONS = {'shoulder': ['shoulder.L', 'shoulder.R'], 'elbow': ['elbow.L', 'elbow.R'], 'hip': ['hip.L', 'hip.R'],
            'knee': ['knee.L', 'knee.R'], 'neck': ['neck_base', 'head_base'], 'jaw': ['jaw_hinge'],
-           'ear_root': ['ear0.L', 'ear0.R'], 'tail_fork': ['tail_fork'], 'ankle': ['ankle.L', 'ankle.R']}
+           'ear_root': ['ear0.L', 'ear0.R'], 'tail_fork': ['tail_fork'], 'ankle': ['ankle.L', 'ankle.R'], 'wrist': ['wrist.L', 'wrist.R']}
 RADIUS = {'shoulder': .09, 'elbow': .06, 'hip': .10, 'knee': .07, 'neck': .08, 'jaw': .06, 'ear_root': .09,
-          'tail_fork': .10, 'ankle': .06}
+          'tail_fork': .10, 'ankle': .06, 'wrist': .05}
 centroid = rest[tris].mean(1)
 region_of = {}
 for r, js in REGIONS.items():

@@ -1,8 +1,11 @@
 """Ankle keys for rig-p8b, direction aware (E5, clip set batch 1; batch 3's run on the toes needs it). Numpy, no Blender.
 
   python art/species-construction/anim/ankle_corrective.py poses <rig dir> <out dir>
-  python art/species-construction/anim/ankle_corrective.py build <rig dir> <rest skin npz> [--rounds 40] [--r0 .025 --r1 .06]
-      [--relax 0] [--band .1,.4] [--check-bakes a.json,b.json]
+  python art/species-construction/anim/ankle_corrective.py build <rig dir> <rest skin npz> [--rounds 40] [--r0 .03 --r1 .07]
+      [--relax 3000] [--band .1,.4] [--check-bakes a.json,b.json]
+
+(the defaults are the accepted build 2: build 1, smoothing only (relax 0, r0 .025, r1 .06), moved the skin at most
+1.6 mm and left evade f3's ankle at 118 folded and 235 collapsed triangles)
 
 The cause (fix pass 2, evade f3 and f4): the rig's ankle keys (ankle_mush_low, _mid and ankle_mush, pose_board.py) are
 driven by how far the ankle bends, whichever way, and were sculpted on the crouch's flexed ankle (toes up toward the
@@ -238,9 +241,9 @@ if __name__ == '__main__':
     p.add_argument('--out', type=Path)
     p.add_argument('--rounds', type=int, default=40)
     p.add_argument('--fine', type=int, default=0)
-    p.add_argument('--r0', type=float, default=.025)
-    p.add_argument('--r1', type=float, default=.06)
-    p.add_argument('--relax', type=int, default=0)
+    p.add_argument('--r0', type=float, default=.03)
+    p.add_argument('--r1', type=float, default=.07)
+    p.add_argument('--relax', type=int, default=3000)
     p.add_argument('--band', default='.1,.4')
     p.add_argument('--full-heel', type=float, default=60.)
     p.add_argument('--check-bakes', default='')
