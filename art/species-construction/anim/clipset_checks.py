@@ -109,7 +109,16 @@ for r, js in REGIONS.items():
     dist = np.min([np.linalg.norm(centroid-np.array(J[j]), axis=1)-np.linalg.norm(centroid-np.array(J[j]), axis=1).min()
                    for j in js], axis=0)
     region_of[r] = dist < RADIUS[r]
-APPROVED_REGIONS = list(REGIONS)
+# fix pass 5 (the guard leans its trunk forward): the spine (the back over the waist and chest joints) and the belly (the
+# front of the trunk between the hips and the ribs), each from the trunk skin (more than half its weight on the pelvis,
+# spine or chest, no arm, leg or tail weight)
+TRUNK_SKIN = (share(['pelvis', 'spine', 'chest']) > .5) & (share([b for b in NAMES if rc.base_of(b) in ('upperarm', 'forearm', 'hand',
+                                                                                                          'thigh', 'shin', 'foot', 'glute')]) < .05)     & (share([b for b in NAMES if b.startswith('tail')]) < .05)
+TRUNK_SKIN = TRUNK_SKIN[tris].all(1)                                  # per triangle
+_w, _c = np.array(J['waist']), np.array(J['chest'])
+region_of['spine'] = TRUNK_SKIN & (centroid[:, 1] > _w[1]+.02) & (centroid[:, 2] > np.array(J['pelvis'])[2]+.04) & (centroid[:, 2] < _c[2]+.08)
+region_of['belly'] = TRUNK_SKIN & (centroid[:, 1] < _w[1]-.02) & (centroid[:, 2] > np.array(J['hip.L'])[2]+.03) & (centroid[:, 2] < _c[2])
+APPROVED_REGIONS = list(REGIONS)+['spine', 'belly']
 ARMPIT_PT = {sd: np.array(J[f'shoulder.{sd}'])*np.array([.85, 1, 1])+np.array([0, 0, -.06]) for sd in 'LR'}
 region_of['armpit'] = np.min([np.linalg.norm(centroid-ARMPIT_PT[sd], axis=1) for sd in 'LR'], axis=0) < .06
 STRETCH_REGIONS = ('shoulder', 'armpit', 'elbow', 'ankle')
