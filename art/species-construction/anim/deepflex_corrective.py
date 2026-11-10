@@ -235,7 +235,18 @@ if not a.dry_run:
             cur[k['name']] = (deltas[k['name']][0], deltas[k['name']][1].astype(np.float32))
         tmp = R/'correctives.tmp.npz'
         np.savez_compressed(tmp, **{f'{k}__ids': v[0] for k, v in cur.items()}, **{f'{k}__delta': v[1] for k, v in cur.items()})
-        os.replace(tmp, R/'correctives.npz')
+        t1 = time.time()
+        while True:
+            try:
+                os.replace(tmp, R/'correctives.npz')
+                break
+            except PermissionError:
+                # Windows will not replace a file another process still holds open (a lazy np.load); the lock stays held
+                if time.time()-t1 > 1800:
+                    tmp.unlink(missing_ok=True)
+                    raise SystemExit('correctives.npz held open by another process for 30 minutes; nothing written')
+                print('correctives.npz is open in another process; retrying', flush=True)
+                time.sleep(10)
         out = dict(cur_json)
         out['keys'] = cur_keys+new_keys
         (R/'correctives.tmp.json').write_text(json.dumps(out, indent=1))
