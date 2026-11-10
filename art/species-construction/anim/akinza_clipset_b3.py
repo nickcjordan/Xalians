@@ -414,9 +414,13 @@ MOVE_OUT = dict(
     brake=[0., -.008, -.022, -.028, -.016, -.005, -.001, 0.],    # the planted leg giving (root z, m)
     arms=[0., .4, 1., .8, .4, .12, 0., 0.],              # the arms' forward catch (share of brake_arm, local degrees)
     brake_arm={'upperarm': -12., 'forearm': -10.},
-    tails=[0., .35, 1., .7, .1, -.2, -.06, 0.],          # the tails' lift (share of tail_deg per bone), each tail later than the last
-    tail_deg=(2., 4., 6., 7., 8.), tail_order={'a': 0., 'b': .6, 'c': 1.2}, tail_chain_lag=.4,
-    ears=[1., 1., 1., .9, .65, .3, .08, 0.],             # the run's ear line (loop frame 0's) released into idle's
+    # the tails' lift (share of tail_deg per bone), each tail later than the last; done by frame 5 with every lag (lagged longer, the
+    # last frame missed idle frame 89 by 8.8 mm)
+    tails=[0., .35, 1., .55, -.1, 0., 0., 0.],
+    tail_deg=(2., 4., 6., 7., 8.), tail_order={'a': 0., 'b': .4, 'c': .8}, tail_chain_lag=.25,
+    # the run's ear line released into idle's over 3 to 5 (through the sweep's middle once, on 4); still 8 percent out on 6, the ear
+    # tips moved 44 mm into the last frame
+    ears=[1., 1., 1., .85, .5, .15, 0., 0.],
     near_pitch=[12., 5., 1.5, 0., 0., 0., 0., 0.],       # the near heel lowering flat
     # the far (R) foot: (contact move y, height, pitch) in the air from its loop frame 0 path; y None: down, moving with the ground
     far=[None, (.16, .105, 52.), (.08, .072, 34.), (0., .034, 16.), (None, 0., 3.), (None, 0., .8), (None, 0., 0.), (None, 0., 0.)],
