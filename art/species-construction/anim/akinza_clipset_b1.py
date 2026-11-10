@@ -552,7 +552,12 @@ GUARD = dict(
     breath_key=1.6,
     bob_m=.024,                            # root up 24 mm on the full breath (fix pass 3: was 12)
     lag_f=2.5,
-    arm_lag_deg={'upperarm': 4., 'hand': 16.},     # arm turns (parent frame) that delay the paws' share of the bob
+    # (fix pass 4: with the lower elbows the same turns put the paws only 1.85 frames behind the chest; 6 and 18 put them
+    # 2.45 frames behind, and the shoulder keys keep the shoulder at 0 folded triangles)
+    arm_lag_deg={'upperarm': 6., 'hand': 18.},     # arm turns (parent frame) that delay the paws' share of the bob
+    # (fix pass 4: with the raised head the same late neck turn is a late nod about the head's middle: the chin follows the
+    # chest 2.45 frames late, the top of the head 0.67 frames early; turning the neck the other way or adding a head turn
+    # moved the chin early or folded the throat)
     head_lag_deg={'neck': 14.},            # the head's late rise (degrees per bone, parent frame for the neck)
     tail_sway={'b': (0., 1.2, 1.6, 2., 2.4), 'c': (0., 1.2, 1.6, 2., 2.4)}, tail_sway_phase={'b': 0., 'c': .5},
     # G4: the top tail's tip flicks up in 2 frames and back over 3 (about 20 px at 720)
