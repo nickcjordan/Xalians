@@ -100,7 +100,7 @@ def slerp_e(e0, e1, t):
 def blend_poses(p0, p1, share_of_bone):
     """Per bone, slerp from p0 to p1 by share_of_bone(bone). (Batch 2 fix pass 2: the bones in sorted order, so guard_in's and
     guard_out's poses keep one key order and bake to the same bytes whatever the interpreter's hash seed; the values are as
-    before.)"""
+    before. guard_in and guard_out also write their poses with the bone keys sorted.)"""
     out = {}
     for b in sorted(set(p0) | set(p1)):
         out[b] = slerp_e(p0.get(b, [0., 0., 0.]), p1.get(b, [0., 0., 0.]), share_of_bone(b))
@@ -721,7 +721,7 @@ def guard_in_frame(rig, f):
     full, _ = solve_feet(rig, pose, lift, guard_feet(e['body']))
     breath = (1-e['body'])*ib+e['body']*gb
     belly = (1-e['body'])*ib
-    return frame_dict(f, full, lift, breath, dict(shares={g: round(v, 4) for g, v in e.items()}, idleClock=f, guard=ginfo,
+    return frame_dict(f, dict(sorted(full.items())), lift, breath, dict(shares={g: round(v, 4) for g, v in e.items()}, idleClock=f, guard=ginfo,
                                                   heel=round(GUARD['heel']*e['body'], 3), planted=dict(L=True, R=True)), belly=belly)
 
 
@@ -739,7 +739,7 @@ def guard_out_frame(rig, f):
     lift = (1-e['body'])*glift+e['body']*ilift
     full, _ = solve_feet(rig, pose, lift, guard_feet(1-e['body']))
     breath = (1-e['body'])*gb+e['body']*ib
-    return frame_dict(f, full, lift, breath, dict(shares={g: round(v, 4) for g, v in e.items()}, idleClock=phase, guard=ginfo,
+    return frame_dict(f, dict(sorted(full.items())), lift, breath, dict(shares={g: round(v, 4) for g, v in e.items()}, idleClock=phase, guard=ginfo,
                                                   heel=round(GUARD['heel']*(1-e['body']), 3), planted=dict(L=True, R=True)),
                       belly=e['body']*ib)
 
