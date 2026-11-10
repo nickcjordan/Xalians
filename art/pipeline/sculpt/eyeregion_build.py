@@ -123,7 +123,10 @@ def almond(F):
         t = np.where(xs_ < pk, (xs_ - pk) / (1 + pk), (xs_ - pk) / (1 - pk)); return np.clip(1 - t * t, 0, 1) ** pw
     up = base + (yu - (yin + (yout - yin) * (pk_u + 1) / 2)) * bell(xs, pk_u, g('upper_pow', 0.75))
     lo = base + (yl - (yin + (yout - yin) * (pk_l + 1) / 2)) * bell(xs, pk_l, g('lower_pow', 0.85))
-    X = xs * hw; poly = np.r_[np.c_[X, up], np.c_[X[::-1], lo[::-1]]]
+    # pass 5: the outer and inner halves can reach farther than the almond's own half width (corner_ext_outer/inner,
+    # shares of hw), so the opening is wider than the iris at that corner and the eyeball shows past the iris there
+    X = np.where(xs > 0, xs * hw * (1 + g('corner_ext_outer', 0.0)), xs * hw * (1 + g('corner_ext_inner', 0.0)))
+    poly = np.r_[np.c_[X, up], np.c_[X[::-1], lo[::-1]]]
     return poly, dict(Ri=Ri, yu=yu, yl=yl, hw=hw, ti=ti)
 
 
@@ -380,8 +383,9 @@ bs_.inputs['Roughness'].default_value = 0.55
 def add_tube(name, path, wa, wb, sa, sb, m_, nseg=10):
     Vt, Ft = [], []; n_ = len(path)
     for i in range(n_):
+        wai = wa[i] if hasattr(wa, '__len__') else wa; wbi = wb[i] if hasattr(wb, '__len__') else wb
         for j in range(nseg):
-            ps = 2 * math.pi * j / nseg; Vt.append(path[i] + sa[i] * math.cos(ps) * wa + sb[i] * math.sin(ps) * wb)
+            ps = 2 * math.pi * j / nseg; Vt.append(path[i] + sa[i] * math.cos(ps) * wai + sb[i] * math.sin(ps) * wbi)
     for i in range(n_):
         for j in range(nseg):
             i2 = (i + 1) % n_; Ft.append([i * nseg + j, i * nseg + (j + 1) % nseg, i2 * nseg + (j + 1) % nseg, i2 * nseg + j])
@@ -398,12 +402,16 @@ for side, F in EYES.items():
         d = dirs(F, np.array([TM[i]]), np.array([ph]))[0]; d2 = dirs(F, np.array([TM[i] + 0.01]), np.array([ph]))[0]
         tn = d2 - d; tn /= np.linalg.norm(tn)
         path.append(c + d * (r + g('margin_gap_m', 0.00025) + g('margin_h_m', 0.0003) * 0.5)); sa.append(tn); sb.append(d)
-    add_tube('eyeregion_lid_margin_' + side, path, g('margin_w_m', 0.0007) / 2, g('margin_h_m', 0.0003), sa, sb, lidm)
+    # pass 5: the upper margin reads as a slightly thicker dark line (width grows toward the top of the arc)
+    upk = np.array([max(0.0, math.sin(ph)) ** g('margin_up_pow', 1.0) for ph in PH]) * g('margin_up_gain', 0.0)
+    add_tube('eyeregion_lid_margin_' + side, path, g('margin_w_m', 0.0007) / 2 * (1 + upk), g('margin_h_m', 0.0003) * (1 + 0.5 * upk), sa, sb, lidm)
     F['margin_path'] = np.array(path)
 
 # ---- iris radius: the round-eye material's map ranges are rebuilt for the new iris angle
+#      (pass 5: iris_mat_deg sizes the painted iris apart from iris_deg, which sizes the almond; default the same)
+TI_MAT = math.radians(g('iris_mat_deg', g('iris_deg', 42.0)))
 ti_old = math.radians(g('iris_deg_old', 34.0)); tp_old = ti_old * g('pupil_frac_old', 0.5)
-ti = math.radians(g('iris_deg', 42.0)); tp = ti * g('pupil_frac', 0.5); nmr = 0
+ti = TI_MAT; tp = ti * g('pupil_frac', 0.5); nmr = 0
 for side in ('l', 'r'):
     m_ = bpy.data.materials.get('Appeal round eye ' + side)
     if m_ is None: continue
@@ -737,11 +745,20 @@ def iris2(F, m_):
         at = N.new('ShaderNodeAttribute'); at.attribute_name = 'iris_co'; at.attribute_type = 'GEOMETRY'
         for l in list(nrm.inputs[0].links): L_.remove(l)
         L_.new(at.outputs['Vector'], nrm.inputs[0])
+    sep = next(n for n in N if n.bl_idname == 'ShaderNodeSeparateXYZ'); sepU = sep
+    drop = g('iris_drop_deg', 0.0)
+    if drop:
+        # pass 5: the painted iris turns about the frame's x axis (positive drop = centre lower); the lid terms below
+        # keep the unturned frame (they follow the margin, not the iris)
+        lk = sep.inputs[0].links[0]; src0 = lk.from_socket; L_.remove(lk)
+        vr = N.new('ShaderNodeVectorRotate'); vr.rotation_type = 'X_AXIS'; vr.inputs['Angle'].default_value = -math.radians(drop)
+        L_.new(src0, vr.inputs['Vector']); L_.new(vr.outputs['Vector'], sep.inputs[0])
+        sepU = N.new('ShaderNodeSeparateXYZ'); L_.new(src0, sepU.inputs[0])
     ramp = next(n for n in N if n.bl_idname == 'ShaderNodeValToRGB'); cr = ramp.color_ramp
     els = sorted(cr.elements, key=lambda e: e.position)
     cols = (g('iris2_inner', [0.30, 0.15, 0.035]), g('iris2_mid', [0.80, 0.46, 0.12]), g('iris2_outer', [0.55, 0.30, 0.07]))
     for e, c in zip(els, cols): e.color = tuple(c) + (1,)
-    ti = math.radians(g('iris_deg', 42.0)); tp = ti * g('pupil_frac', 0.5)
+    ti = TI_MAT; tp = ti * g('pupil_frac', 0.5)
     for n_ in N:
         if n_.bl_idname == 'ShaderNodeMapRange' and abs(n_.inputs['From Min'].default_value - (ti - 0.09)) < 1e-4:
             n_.inputs['From Min'].default_value = ti - g('limb_w_rad', 0.035); n_.inputs['From Max'].default_value = ti - 0.004
@@ -749,8 +766,19 @@ def iris2(F, m_):
             n_.inputs['To Max'].default_value = g('hl_gain', 0.0)     # the emissive dot (the cards replace it)
         if n_.bl_idname == 'ShaderNodeMixRGB' and tuple(n_.inputs['Color2'].default_value)[:3] == (0.05, 0.025, 0.01) or (n_.bl_idname == 'ShaderNodeMixRGB' and abs(n_.inputs['Color2'].default_value[0] - 0.05) < 1e-4):
             n_.inputs['Color2'].default_value = tuple(g('limb_rgb', [0.16, 0.08, 0.025])) + (1,)
+    if g('sclera_rgb', None) is not None:
+        # pass 5: the eyeball past the iris edge is its own dark sclera (the limbal ring is lighter now)
+        acn = next(n for n in N if n.bl_idname == 'ShaderNodeMath' and n.operation == 'ARCCOSINE')
+        dk = next(n for n in N if n.bl_idname == 'ShaderNodeMixRGB' and n.inputs['Color1'].links and n.inputs['Color1'].links[0].from_node.bl_idname == 'ShaderNodeValToRGB')
+        pmx = next(n for n in N if n.bl_idname == 'ShaderNodeMixRGB' and n.inputs['Color1'].links and n.inputs['Color1'].links[0].from_node == dk)
+        fs = N.new('ShaderNodeMapRange'); fs.clamp = True; fs.inputs['From Min'].default_value = ti; fs.inputs['From Max'].default_value = ti + g('sclera_edge_rad', 0.012)
+        fs.inputs['To Min'].default_value = 0.0; fs.inputs['To Max'].default_value = 1.0; L_.new(acn.outputs[0], fs.inputs['Value'])
+        smx = N.new('ShaderNodeMixRGB'); L_.new(fs.outputs['Result'], smx.inputs['Fac']); L_.new(dk.outputs['Color'], smx.inputs['Color1'])
+        smx.inputs['Color2'].default_value = tuple(g('sclera_rgb', [0.03, 0.022, 0.018])) + (1,)
+        for l in list(pmx.inputs['Color1'].links): L_.remove(l)
+        L_.new(smx.outputs['Color'], pmx.inputs['Color1'])
     bs_ = next(n for n in N if n.bl_idname == 'ShaderNodeBsdfPrincipled'); src = bs_.inputs['Base Color'].links[0].from_socket
-    sep = next(n for n in N if n.bl_idname == 'ShaderNodeSeparateXYZ')
+    sep = sepU
     info = F['info']; hw = info['hw']; yu = info['yu']
 
     def math_(op, a, b=None, v=None):
@@ -846,16 +874,19 @@ if g('pass4', 0):
                 for grp in groups:
                     views = [(VS[k], 1.0) for k in grp]
                     r_, z_ = F['r'], F['z']; pm_ = r_ * np.sin(F['TM']).mean(); hm_ = math.sqrt(r_ * r_ - pm_ * pm_)
-                    Hap_ = math.sqrt(r_ * r_ - (r_ * math.sin(F['TM'].min())) ** 2) + g('cap_dome_m', 0.0); kk = 2 * (Hap_ - hm_) / pm_ ** 2
-                    Ri_ = r_ * math.sin(math.radians(g('iris_deg', 42.0)))
+                    Hap_ = math.sqrt(r_ * r_ - (r_ * math.sin(F['TM'].min())) ** 2) + g('cap_dome_m', 0.0); kk = 2 * (Hap_ - hm_) / pm_ ** 2 if g('cap_dome_m', 0.0) else 1.0
+                    Ri_ = r_ * math.sin(TI_MAT); yc_ = -r_ * math.sin(math.radians(g('iris_drop_deg', 0.0)))
+                    DOME = bool(g('cap_dome_m', 0.0))
                     nS = 6000; k_ = np.arange(nS) + 0.5; th_ = np.arccos(1 - 2 * k_ / nS); ph_ = math.pi * (1 + 5 ** 0.5) * k_
                     Ls = np.c_[np.sin(th_) * np.cos(ph_), np.sin(th_) * np.sin(ph_), np.cos(th_)]; Ls = Ls[Ls @ z_ > 0.1]
                     cost = np.zeros(len(Ls)); posd = {}
                     for vi, (v_, wv) in enumerate(views):
                         v_ = v_ / np.linalg.norm(v_); nn = Ls + v_; nn /= np.linalg.norm(nn, axis=1, keepdims=True)
-                        nz = nn @ z_; px = (nn @ F['x']) / np.maximum(nz, 1e-6) / kk; py = (nn @ F['y']) / np.maximum(nz, 1e-6) / kk
-                        tx = g('hl_x', 0.18) * Ri_ * np.sign(v_ @ F['x']) * min(1.0, abs(v_ @ F['x']) * 3); ty = g('hl_y', 0.30) * Ri_
-                        cst = (px - tx) ** 2 + (py - ty) ** 2; cst = np.where((nz > 0) & (np.hypot(px, py) < 0.85 * Ri_), cst, 1e3)
+                        nz = nn @ z_
+                        if DOME: px = (nn @ F['x']) / np.maximum(nz, 1e-6) / kk; py = (nn @ F['y']) / np.maximum(nz, 1e-6) / kk
+                        else: px = (nn @ F['x']) * r_; py = (nn @ F['y']) * r_          # sphere: the mirror point's normal is nn
+                        tx = g('hl_x', 0.18) * Ri_ * np.sign(v_ @ F['x']) * min(1.0, abs(v_ @ F['x']) * 3); ty = g('hl_y', 0.30) * Ri_ + yc_
+                        cst = (px - tx) ** 2 + (py - ty) ** 2; cst = np.where((nz > 0) & (np.hypot(px, py - yc_) < 0.85 * Ri_), cst, 1e3)
                         cost += wv * cst; posd[vi] = (px, py)
                     b = int(np.argmin(cost)); Ld = Ls[b]
                     # card centre: along Ld from the eye's front point, facing it
@@ -868,7 +899,9 @@ if g('pass4', 0):
                     pred = {}
                     for kname, v_ in VS.items():
                         v_ = v_ / np.linalg.norm(v_); nn = Ld + v_; nn /= np.linalg.norm(nn); nz = nn @ z_
-                        pred[kname] = [round(float((nn @ F['x']) / nz / kk / Ri_), 2), round(float((nn @ F['y']) / nz / kk / Ri_), 2)] if nz > 0 else None
+                        if nz <= 0: pred[kname] = None
+                        elif DOME: pred[kname] = [round(float((nn @ F['x']) / nz / kk / Ri_), 2), round(float((nn @ F['y']) / nz / kk / Ri_), 2)]
+                        else: pred[kname] = [round(float((nn @ F['x']) * r_ / Ri_), 2), round(float(((nn @ F['y']) * r_ - yc_) / Ri_), 2)]
                     F['cards'][-1].update(card_dir=Ld.round(3).tolist(), for_views=grp, predicted_highlight_iris_units=pred)
             else:
               for vw in g('card_views', [[-1, 0, 0], [0, -1, 0.07], [0.57, -0.82, 0.07]]):

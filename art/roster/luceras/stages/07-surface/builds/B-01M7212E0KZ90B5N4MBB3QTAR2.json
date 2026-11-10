@@ -1,0 +1,123 @@
+{
+  "id": "B-01M7212E0KZ90B5N4MBB3QTAR2",
+  "alias": "z5yf",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Eye pass 5 (last in the slice): the lids cut the iris so the eye stops reading lidless; variant A larger iris, variant B lowered upper lid (builder added C wider corners, D outer corner extended); pass 2 cornea, iris value between passes 2 and 4, softer catchlight, thicker lid margin; plus the fore pad sole excluded from the b5 girth scale and a full sprite re-render to luceras-sprites/pass5",
+  "scope": "eye and lids (opening down to 14 percent of head height allowed); fore paw sole; sprite re-render",
+  "defect": "D-01M71QMGTF7Y119WEABJC8MENP",
+  "holds": [],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "luceras-eyeregion/pass5/proof/face_sheet.png",
+      "hash": "55ef7703e1dbdf1a5e11ddcaf43d29016627ad0320c57ea1116c2f7919337b91"
+    },
+    {
+      "name": "luceras-eyeregion/pass5/proof/readers.json",
+      "hash": "b8747bc4b97cf4079364e5a1bdcec83137715a955092596fe5b464ce6ff9272e"
+    },
+    {
+      "name": "luceras-eyeregion/pass5/report.json",
+      "hash": "cf157e2e33bca252dfdaf778985846e482aa4ffc037584756ac9ad82c07e62ce"
+    },
+    {
+      "name": "luceras-final/final/scene.blend",
+      "hash": "4e88b72b624026043412b267753034b80ba6edf77457f34af0a221f202fbfc58"
+    },
+    {
+      "name": "luceras-final/report.json",
+      "hash": "e5f3f201ef3735722c3ba0f2f2ea1fa31e902a604d12e0f80a2fdff80626d401"
+    },
+    {
+      "name": "luceras-sprites/pass5/report.json",
+      "hash": "ff2c0eefabf5d0eac88a8db2022aae063c6754f4da283f9366bc6a095cd86bf2"
+    },
+    {
+      "name": "luceras-sprites/pass5/sheets/idle.png",
+      "hash": "52a3fec506b4b57025cf1673201e098678b00594e4402e7dae4de7c7db71cf03"
+    },
+    {
+      "name": "luceras-sprites/pass5/sheets/sig.horns-first-descent.png",
+      "hash": "99b31ec0093a81e4ca5812c8434cae892647ae9224cd62b9cbf1c01d5d80781f"
+    },
+    {
+      "name": "luceras-sprites/pass5/sheets/trans.idle-to-sig.png",
+      "hash": "7c57076eeb38eda6bdd51eb518abc6f5b38137320f438684c07c36ef3a3ba0c2"
+    },
+    {
+      "name": "luceras-sprites/pass5/sheets/trans.sig-to-idle.png",
+      "hash": "8ae475ca9a1d2f12008955a4511b5f3c10b1c89ab34f72d043a74dfd1bc34785"
+    }
+  ],
+  "validators": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-eyeregion/pass5/proof/face_sheet.png",
+        "hash": "55ef7703e1dbdf1a5e11ddcaf43d29016627ad0320c57ea1116c2f7919337b91"
+      },
+      {
+        "name": "luceras-eyeregion/pass5/proof/readers.json",
+        "hash": "b8747bc4b97cf4079364e5a1bdcec83137715a955092596fe5b464ce6ff9272e"
+      },
+      {
+        "name": "luceras-eyeregion/pass5/report.json",
+        "hash": "cf157e2e33bca252dfdaf778985846e482aa4ffc037584756ac9ad82c07e62ce"
+      },
+      {
+        "name": "luceras-final/final/scene.blend",
+        "hash": "4e88b72b624026043412b267753034b80ba6edf77457f34af0a221f202fbfc58"
+      },
+      {
+        "name": "luceras-final/report.json",
+        "hash": "e5f3f201ef3735722c3ba0f2f2ea1fa31e902a604d12e0f80a2fdff80626d401"
+      },
+      {
+        "name": "luceras-sprites/pass5/report.json",
+        "hash": "ff2c0eefabf5d0eac88a8db2022aae063c6754f4da283f9366bc6a095cd86bf2"
+      },
+      {
+        "name": "luceras-sprites/pass5/sheets/idle.png",
+        "hash": "52a3fec506b4b57025cf1673201e098678b00594e4402e7dae4de7c7db71cf03"
+      },
+      {
+        "name": "luceras-sprites/pass5/sheets/sig.horns-first-descent.png",
+        "hash": "99b31ec0093a81e4ca5812c8434cae892647ae9224cd62b9cbf1c01d5d80781f"
+      },
+      {
+        "name": "luceras-sprites/pass5/sheets/trans.idle-to-sig.png",
+        "hash": "7c57076eeb38eda6bdd51eb518abc6f5b38137320f438684c07c36ef3a3ba0c2"
+      },
+      {
+        "name": "luceras-sprites/pass5/sheets/trans.sig-to-idle.png",
+        "hash": "8ae475ca9a1d2f12008955a4511b5f3c10b1c89ab34f72d043a74dfd1bc34785"
+      }
+    ],
+    "blockedBy": "nothing",
+    "defectResult": "not fixed: A and B each ranked above pass 2 in both side runs but below it in face-on run 1; D ranked last in side run 2 (bulging) and below pass 2 in face-on run 1; C dropped before readers (inner corner reached the nose bridge, cornea 1.8 mm proud). Gate required beating pass 2 in all four runs; pass 2 eye ships in the slice. Builder's view-space trace: the iris is already 1.34 to 1.39x the visible opening height and the lids already hide 15 to 19 percent top, 9 to 11 percent bottom; the iris (41.8 mm) is as wide as the opening (42.1 mm), so no iris arc shows at either corner. The softer catchlight vanished at lineup size and the lower wet line read as a pasted-on outline.",
+    "newDefects": [
+      "furless smooth patch at the nape behind the ear, visible in every render since sprite pass 2 (side reader caught it)"
+    ],
+    "checks": [
+      "fore pads: no mesh point below -0.5 mm in any frame of any clip on the scene-of-record mesh (rest +0.67, idle +0.2, sig 0.0, transitions 0.0); only the fore paws moved (max 6.06 mm)",
+      "sprites: 166 frames, no plume or head-part pops, head seams 5.6/0.0/0.0/5.4 mm, alpha fringe 6.7 percent",
+      "scale kept at 283.30 px/m, rest body 191.0 px"
+    ],
+    "cost": {
+      "wall_h": 2.7,
+      "agent_tokens": 370636
+    }
+  },
+  "blockedBy": "nothing",
+  "cost": null,
+  "status": "reported",
+  "createdAt": "2026-11-10T06:07:05Z",
+  "briefSha256": "2abaeaec2ecea14f58f8fc12a382b84f21513ab7e825e424ca4da4d632c1fe52",
+  "checks": [
+    "fore pads: no mesh point below -0.5 mm in any frame of any clip on the scene-of-record mesh (rest +0.67, idle +0.2, sig 0.0, transitions 0.0); only the fore paws moved (max 6.06 mm)",
+    "sprites: 166 frames, no plume or head-part pops, head seams 5.6/0.0/0.0/5.4 mm, alpha fringe 6.7 percent",
+    "scale kept at 283.30 px/m, rest body 191.0 px"
+  ],
+  "reportedAt": "2026-11-10T06:07:20Z"
+}

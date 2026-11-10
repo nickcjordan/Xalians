@@ -8,12 +8,72 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-eyeregion/pass4/proof/face_sheet.png",
+      "hash": "c501a7edbfb90ebfcd63a4bc43b272d811007b56b1dc3e5f7826d3bd82dee76f"
+    },
+    {
+      "name": "luceras-eyeregion/pass4/report.json",
+      "hash": "fb46212a299f7f1825bc9d41412bf8f948c95e877e2100b5b3f6b8ac2e51848f"
+    },
+    {
+      "name": "luceras-sprites/pass4/report.json",
+      "hash": "9f38abd0f9085500186723a082ccb0bfb49263e57b29081d79d5c7ae3532c677"
+    },
+    {
+      "name": "luceras-sprites/pass4/sheets/idle.png",
+      "hash": "af897974ce26c81e1745fb00039b01ba348938288b435966780078d8659edd58"
+    },
+    {
+      "name": "luceras-sprites/pass4/sheets/sig.horns-first-descent.png",
+      "hash": "fa18bd802cdb9e5d013d33f5b736dd99ae150775df2dc37963620e38f0bedb9c"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-eyeregion/pass4/proof/face_sheet.png",
+        "hash": "c501a7edbfb90ebfcd63a4bc43b272d811007b56b1dc3e5f7826d3bd82dee76f"
+      },
+      {
+        "name": "luceras-eyeregion/pass4/report.json",
+        "hash": "fb46212a299f7f1825bc9d41412bf8f948c95e877e2100b5b3f6b8ac2e51848f"
+      },
+      {
+        "name": "luceras-sprites/pass4/report.json",
+        "hash": "9f38abd0f9085500186723a082ccb0bfb49263e57b29081d79d5c7ae3532c677"
+      },
+      {
+        "name": "luceras-sprites/pass4/sheets/idle.png",
+        "hash": "af897974ce26c81e1745fb00039b01ba348938288b435966780078d8659edd58"
+      },
+      {
+        "name": "luceras-sprites/pass4/sheets/sig.horns-first-descent.png",
+        "hash": "fa18bd802cdb9e5d013d33f5b736dd99ae150775df2dc37963620e38f0bedb9c"
+      }
+    ],
+    "blockedBy": "inferred hold 'opening size, shape and placement unchanged' (orchestrator), lifted for pass 5 in audit N-g6rs",
+    "defectResult": "not fixed: face-on beat pass 2 in both runs, side lost both runs (flat cornea read as a slit pupil in profile, iris as a saturated bead with a hard highlight); dropped, pass 2 eye kept",
+    "newDefects": [
+      "fore pads sink up to 3.4 mm (orchestrator's b5 fore girth x1.15), fixed in pass 5"
+    ],
+    "checks": [
+      "claw ground fix: idle fore claws clear the ground in every frame of every clip; hind legs unmoved"
+    ],
+    "cost": {
+      "wall_h": 2.8,
+      "agent_tokens": 956000
+    }
+  },
+  "blockedBy": "inferred hold 'opening size, shape and placement unchanged' (orchestrator), lifted for pass 5 in audit N-g6rs",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-10T00:32:16Z",
-  "briefSha256": "c5990cd5f806a5e75ab6911e9803c40d804f2f0625011df36ebf79757fe232e1"
+  "briefSha256": "c5990cd5f806a5e75ab6911e9803c40d804f2f0625011df36ebf79757fe232e1",
+  "checks": [
+    "claw ground fix: idle fore claws clear the ground in every frame of every clip; hind legs unmoved"
+  ],
+  "reportedAt": "2026-11-10T06:07:20Z"
 }

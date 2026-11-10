@@ -6,7 +6,9 @@
   "camera": "front, side sprite 4x",
   "region": "eye",
   "origin": "blind readers, eye passes 3 and 4",
-  "attempts": [],
+  "attempts": [
+    "B-01M7212E0KZ90B5N4MBB3QTAR2"
+  ],
   "status": "open",
   "createdAt": "2026-11-10T03:22:12Z"
 }

@@ -1,0 +1,19 @@
+{
+  "id": "B-01M7214QXWGAF8XQWJWAZAP03X",
+  "alias": "ewzn",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Nape coverage: the back of the head behind the ear meets the neck as continuous coat, with no bare skin visible from the side sprite camera in any frame of any clip; then a full sprite re-render to luceras-sprites/pass6",
+  "scope": "groom strands of the nape region only (behind the ear and horn base down to the neck ruff); sprite re-render",
+  "defect": "D-01M7214DQSNQ11VEJJDEH06C95",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-10T06:08:20Z",
+  "briefSha256": "5a82224dea937fafe479baf83d16d775fbead8e7c8963c3d20bed937bf150891"
+}

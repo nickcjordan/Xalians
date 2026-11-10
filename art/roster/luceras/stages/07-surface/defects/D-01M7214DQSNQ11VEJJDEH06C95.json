@@ -1,0 +1,14 @@
+{
+  "id": "D-01M7214DQSNQ11VEJJDEH06C95",
+  "alias": "xed4",
+  "stage": "07-surface",
+  "description": "Bare nape: a smooth, furless, bluish-gray patch with hard edges shows at the back of the head behind the ear, where the skull meets the dorsal neck, in every idle frame and visible at 1x and 2x; absent in sprite pass 1 (headpass1 k16 groom), faint in pass 2 (colorpass1 c11 groom), strong from pass 3 on (b5 head scale, carriage, studio light)",
+  "camera": "side sprite (idle f0, 4x master crop)",
+  "region": "nape: behind the ear base and horn base, down to the top of the neck ruff",
+  "origin": "orchestrator review of sprite pass 5; first named by a blind side reader in eye pass 5 run 1",
+  "attempts": [
+    "B-01M7214QXWGAF8XQWJWAZAP03X"
+  ],
+  "status": "open",
+  "createdAt": "2026-11-10T06:08:10Z"
+}

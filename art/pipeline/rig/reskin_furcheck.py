@@ -183,6 +183,14 @@ def head_detail():
                         if gg.group == gidx.index: wv[v.index] = gg.weight
                 h_ = bw(bn); t_ = bw(bn, 'tail_local'); ax2 = t_ - h_; uu = ((NB - h_) @ ax2) / (ax2 @ ax2)
                 ease = sst(0.0, 0.25, uu) * (1 - sst(0.75, 1.0, uu)); wf = wv * ease
+                sole = g('ap_fore_girth_sole_m', 0.0)
+                if sole and bi == '03':
+                    # luceras-final pass 5 (D-2nx5 follow-up): the pad underside keeps its pre-girth shape; the girth
+                    # scale fades out over the lowest `sole` metres of this bone's skin (the sole sat 3.4 mm under the
+                    # ground in every standing frame), the girth above the paw stays
+                    zz = NB[:, 2]; zmin = float(zz[wv > 0.5].min()) if (wv > 0.5).any() else 0.0
+                    keep = sst(zmin + sole, zmin + 2 * sole, zz); wf = wf * keep
+                    APLOG.setdefault('fore_girth_sole', {})[bn] = dict(sole_m=sole, faded_vertices=int(((wv > 0.05) & (keep < 0.99)).sum()))
                 foot = h_ + np.clip(uu, 0, 1)[:, None] * ax2; NB = foot + (NB - foot) * (1 + (gf - 1) * wf)[:, None]
                 APLOG.setdefault('fore_girth', {})[bn] = dict(factor=gf, vertices=int((wf > 0.05).sum()))
         dl = (NB - BV) @ Mi[:3, :3].T
