@@ -8,12 +8,250 @@
   "defect": "D-01M72N9H767X42SAHYKEEPSHZJ",
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-limbs/spec.md",
+      "hash": "02ae554496f2de7faab94977363759caeaf026a8cbdd3c37195fc9d021c41e33"
+    },
+    {
+      "name": "luceras-limbs/work/L10.json",
+      "hash": "46ab775b017e988a819873b468f01e5062d0334ce1db6f7255b9455660bb6a85"
+    },
+    {
+      "name": "luceras-limbs/L10/build.json",
+      "hash": "51d1a35e365d6f0ca9cb756b0dc1cc9ef59424993f022bcd18622ccf4fe1856d"
+    },
+    {
+      "name": "luceras-limbs/L10/trim.json",
+      "hash": "757ca3156a082b70c752e4665b51d21215fea6521e8cccc2519932694a4a9277"
+    },
+    {
+      "name": "luceras-limbs/L10t/scene.blend",
+      "hash": "5924b75e4aff04224379ef2c87d7d76c939aecfcc81967b00fa7fc4a37d10aa2"
+    },
+    {
+      "name": "luceras-limbs/work/diag/diag_pass6.json",
+      "hash": "be4c7dde2ab1dc8583541879d4668d80a74f39ab9bfd832eec9e335a62714e2a"
+    },
+    {
+      "name": "luceras-limbs/work/diag/diag_final.json",
+      "hash": "da757ccaf52de02ec2e7f6c46b6a076af03d4ebb60aba682575ac69a7f58bad8"
+    },
+    {
+      "name": "luceras-limbs/work/widths_final.json",
+      "hash": "b1285166220882697616d43bc4f11abfe08b4dd0f2c17922f651edd971b67c3b"
+    },
+    {
+      "name": "art/pipeline/groom/limb_regrow.py",
+      "hash": "9f70b3ca8f147f3f090ce9e0640cdabd95b0dd5c189394276d23524abde9d0ba"
+    },
+    {
+      "name": "art/pipeline/groom/ground_trim.py",
+      "hash": "3bede8b7c38ff78585998017e99b6f1759dc862bd40f6e238f7279ff7776fd94"
+    },
+    {
+      "name": "art/pipeline/groom/region_diag.py",
+      "hash": "4e574b3e1f4ac158758eda7d462708146bed08a6986f4a0e340acd7716c4aa96"
+    },
+    {
+      "name": "art/pipeline/groom/coverage.py",
+      "hash": "1a912ed093eaf31ac4eac418a21b3af8535983dd0b698334616297009125f15a"
+    },
+    {
+      "name": "luceras-limbs/final_board/board_limbs_2x.png",
+      "hash": "a0d3edcd5904a1693997a0338cbc60d459f979f0a5bb4b352e32bf8d5697178f"
+    },
+    {
+      "name": "luceras-limbs/final_board/board_limbs_4x.png",
+      "hash": "05827680e60bd08157fa0d60d724f1a6db649084135c948da91daf6918b7589a"
+    },
+    {
+      "name": "luceras-limbs/final_board/elbow_2x.png",
+      "hash": "b845ecbf5f06c2ad8a2d32cae9ebaba6daa8578f9c1bbfd6e3c75b041de11b75"
+    },
+    {
+      "name": "luceras-limbs/final_board/hind_paw_4x.png",
+      "hash": "6dba99ecc7c7e18da0694a41bb84bf4f7c634f46bcd2a246fb6d77ea3939d20a"
+    },
+    {
+      "name": "luceras-final/final/scene.blend",
+      "hash": "94a6c64302e0c3a726070e09ff506a98a3892062c72d9a8e7237b453360d6237"
+    },
+    {
+      "name": "luceras-sprites/pass7/report.json",
+      "hash": "bbebbf648cbdeeb0ece7e338e13d591c15b653c583304ca4e1bcf788d09df140"
+    },
+    {
+      "name": "luceras-sprites/pass7/work/gate.json",
+      "hash": "6c673a9943ecec1f1502f58032ede0d1f5b582c5ee03c9b0c86dc26462f975cf"
+    },
+    {
+      "name": "luceras-sprites/pass7/work/cov_gate_A.json",
+      "hash": "39aa08cd8796b444088dcb20a39e5c7b2b9fe8df7e248f56184c73d8b1f582e9"
+    },
+    {
+      "name": "luceras-sprites/pass7/work/cov_gate_B.json",
+      "hash": "258fc52b5a8959cd1161574ec4d33b93723aca4bb863398a791213672a6af694"
+    },
+    {
+      "name": "luceras-limbs/work/digest_diff_pass6_final.json",
+      "hash": "6b779c95a69381b17d191e980c0537c259ee4a914e5ec44763bbb104e92802c1"
+    },
+    {
+      "name": "luceras-limbs/report.json",
+      "hash": "5d8d433e85abf8430abc8cb8ea14be9236327750fe8803a67d4fdbeb5e2d00f8"
+    },
+    {
+      "name": "luceras-sprites/pass7/sheets/idle.png",
+      "hash": "9d4a2e5c3b7d4504b0e1f4ccd607731d56cb75dbddb99b80493e2b2afae31519"
+    },
+    {
+      "name": "luceras-sprites/pass7/sheets/sig.horns-first-descent.png",
+      "hash": "512c3ea7d9ad4137e11d97bbbd0cb6abf6f51416d7c06d45c2d22b438fabc303"
+    },
+    {
+      "name": "luceras-sprites/pass7/sheets/trans.idle-to-sig.png",
+      "hash": "37d7d646df900a1803dc499d3c8eb6f92bbd6d4ebbaac91d9e721085450c457b"
+    },
+    {
+      "name": "luceras-sprites/pass7/sheets/trans.sig-to-idle.png",
+      "hash": "ec22403c62cf680d8a7ce2b4ddbda6ef7e5b361c2ef41b95d10892eee4ee068e"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-limbs/spec.md",
+        "hash": "02ae554496f2de7faab94977363759caeaf026a8cbdd3c37195fc9d021c41e33"
+      },
+      {
+        "name": "luceras-limbs/work/L10.json",
+        "hash": "46ab775b017e988a819873b468f01e5062d0334ce1db6f7255b9455660bb6a85"
+      },
+      {
+        "name": "luceras-limbs/L10/build.json",
+        "hash": "51d1a35e365d6f0ca9cb756b0dc1cc9ef59424993f022bcd18622ccf4fe1856d"
+      },
+      {
+        "name": "luceras-limbs/L10/trim.json",
+        "hash": "757ca3156a082b70c752e4665b51d21215fea6521e8cccc2519932694a4a9277"
+      },
+      {
+        "name": "luceras-limbs/L10t/scene.blend",
+        "hash": "5924b75e4aff04224379ef2c87d7d76c939aecfcc81967b00fa7fc4a37d10aa2"
+      },
+      {
+        "name": "luceras-limbs/work/diag/diag_pass6.json",
+        "hash": "be4c7dde2ab1dc8583541879d4668d80a74f39ab9bfd832eec9e335a62714e2a"
+      },
+      {
+        "name": "luceras-limbs/work/diag/diag_final.json",
+        "hash": "da757ccaf52de02ec2e7f6c46b6a076af03d4ebb60aba682575ac69a7f58bad8"
+      },
+      {
+        "name": "luceras-limbs/work/widths_final.json",
+        "hash": "b1285166220882697616d43bc4f11abfe08b4dd0f2c17922f651edd971b67c3b"
+      },
+      {
+        "name": "art/pipeline/groom/limb_regrow.py",
+        "hash": "9f70b3ca8f147f3f090ce9e0640cdabd95b0dd5c189394276d23524abde9d0ba"
+      },
+      {
+        "name": "art/pipeline/groom/ground_trim.py",
+        "hash": "3bede8b7c38ff78585998017e99b6f1759dc862bd40f6e238f7279ff7776fd94"
+      },
+      {
+        "name": "art/pipeline/groom/region_diag.py",
+        "hash": "4e574b3e1f4ac158758eda7d462708146bed08a6986f4a0e340acd7716c4aa96"
+      },
+      {
+        "name": "art/pipeline/groom/coverage.py",
+        "hash": "1a912ed093eaf31ac4eac418a21b3af8535983dd0b698334616297009125f15a"
+      },
+      {
+        "name": "luceras-limbs/final_board/board_limbs_2x.png",
+        "hash": "a0d3edcd5904a1693997a0338cbc60d459f979f0a5bb4b352e32bf8d5697178f"
+      },
+      {
+        "name": "luceras-limbs/final_board/board_limbs_4x.png",
+        "hash": "05827680e60bd08157fa0d60d724f1a6db649084135c948da91daf6918b7589a"
+      },
+      {
+        "name": "luceras-limbs/final_board/elbow_2x.png",
+        "hash": "b845ecbf5f06c2ad8a2d32cae9ebaba6daa8578f9c1bbfd6e3c75b041de11b75"
+      },
+      {
+        "name": "luceras-limbs/final_board/hind_paw_4x.png",
+        "hash": "6dba99ecc7c7e18da0694a41bb84bf4f7c634f46bcd2a246fb6d77ea3939d20a"
+      },
+      {
+        "name": "luceras-final/final/scene.blend",
+        "hash": "94a6c64302e0c3a726070e09ff506a98a3892062c72d9a8e7237b453360d6237"
+      },
+      {
+        "name": "luceras-sprites/pass7/report.json",
+        "hash": "bbebbf648cbdeeb0ece7e338e13d591c15b653c583304ca4e1bcf788d09df140"
+      },
+      {
+        "name": "luceras-sprites/pass7/work/gate.json",
+        "hash": "6c673a9943ecec1f1502f58032ede0d1f5b582c5ee03c9b0c86dc26462f975cf"
+      },
+      {
+        "name": "luceras-sprites/pass7/work/cov_gate_A.json",
+        "hash": "39aa08cd8796b444088dcb20a39e5c7b2b9fe8df7e248f56184c73d8b1f582e9"
+      },
+      {
+        "name": "luceras-sprites/pass7/work/cov_gate_B.json",
+        "hash": "258fc52b5a8959cd1161574ec4d33b93723aca4bb863398a791213672a6af694"
+      },
+      {
+        "name": "luceras-limbs/work/digest_diff_pass6_final.json",
+        "hash": "6b779c95a69381b17d191e980c0537c259ee4a914e5ec44763bbb104e92802c1"
+      },
+      {
+        "name": "luceras-limbs/report.json",
+        "hash": "5d8d433e85abf8430abc8cb8ea14be9236327750fe8803a67d4fdbeb5e2d00f8"
+      },
+      {
+        "name": "luceras-sprites/pass7/sheets/idle.png",
+        "hash": "9d4a2e5c3b7d4504b0e1f4ccd607731d56cb75dbddb99b80493e2b2afae31519"
+      },
+      {
+        "name": "luceras-sprites/pass7/sheets/sig.horns-first-descent.png",
+        "hash": "512c3ea7d9ad4137e11d97bbbd0cb6abf6f51416d7c06d45c2d22b438fabc303"
+      },
+      {
+        "name": "luceras-sprites/pass7/sheets/trans.idle-to-sig.png",
+        "hash": "37d7d646df900a1803dc499d3c8eb6f92bbd6d4ebbaac91d9e721085450c457b"
+      },
+      {
+        "name": "luceras-sprites/pass7/sheets/trans.sig-to-idle.png",
+        "hash": "ec22403c62cf680d8a7ce2b4ddbda6ef7e5b361c2ef41b95d10892eee4ee068e"
+      }
+    ],
+    "blockedBy": "nothing",
+    "defectResult": "partly fixed. Cause measured before building: sparse roots on the forearm (36.7 per cm2 against 53.6 on the upper arm) and hind shank (30.3 against 116.6 on the thigh), flat short paw fur on the lower hind leg; nothing in the skin shader. One new curves object, 'Limb coat' (264,384 strands, colors copied from the nearest limb strand, 3,774 ground-piercing strands removed); every existing curves object and the body bit-identical. Coverage gate passes in all 166 frames (forearm bare 0.07-0.19 from 0.27-0.65; shank 0.06-0.12 from 0.42-0.47; lower hind leg 0.04-0.11 from 0.35-0.43); widths at 1x within +15 percent (max +12.4, forearm sig f29). Orchestrator read at 2x: standing, idle and transition frames are furred to the paw and match the sheet better. Still wrong: in the leaping frames (sig f12 to f34) the paw half of the lower hind leg reads pale and smooth at 2x, flat pale paw fur and sole rather than skin.",
+    "newDefects": [
+      "hind shank and hock read darker gray than pass 6 because gray coat now covers pale skin; closer to the sheet, but a visible change on an approved leg, so it goes to Nick as a check",
+      "pale fleck in the elbow pit at sig f29, 4x only (below product size)"
+    ],
+    "checks": [
+      "sprite pass 7: 166 frames, 283.30 px/m, no pops, clearance 4 px or more, head seams 5.6/0/0/5.4 mm, fringe 5.3 percent, no alpha below the ground line"
+    ],
+    "cost": {
+      "wall_h": 4.9,
+      "agent_tokens": 383611,
+      "note": "one builder session covered B-7fmf, B-5mg8 and sprite pass 7 (builds 2.1 h, every-frame gate 0.7 h, render 1.9 h)"
+    }
+  },
+  "blockedBy": "nothing",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-10T12:00:38Z",
-  "briefSha256": "67e2f01c0036bb687dafb33a873892b0391a9b5c75a05036bb965fc11350d4ec"
+  "briefSha256": "67e2f01c0036bb687dafb33a873892b0391a9b5c75a05036bb965fc11350d4ec",
+  "checks": [
+    "sprite pass 7: 166 frames, 283.30 px/m, no pops, clearance 4 px or more, head seams 5.6/0/0/5.4 mm, fringe 5.3 percent, no alpha below the ground line"
+  ],
+  "reportedAt": "2026-11-10T16:57:21Z"
 }

@@ -49,7 +49,7 @@ for o in s.objects:
         continue
     if o == body: continue
     if o.type == 'CURVES':
-        if o.name.startswith(SPEC.get('hide_curves', ('Pass7 paw',))): o.hide_render = True; continue
+        if o.name.startswith(tuple(SPEC.get('hide_curves', ('Pass7 paw',)))): o.hide_render = True; continue
         curves.append(o)
     for i in range(len(o.data.materials)): o.data.materials[i] = black
     if o.type == 'MESH' and not len(o.data.materials): o.data.materials.append(black)

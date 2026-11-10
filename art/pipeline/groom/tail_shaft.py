@@ -122,16 +122,28 @@ for k in range(n_new):
     ax = (tdir[v0] * wv[:, None]).sum(0); ax /= np.linalg.norm(ax); zz = (tz[v0] * wv[:, None]).sum(0); zz /= np.linalg.norm(zz)
     n_ = nW[k]; sd = float(n_ @ zz); sides.append(sd)
     d = ax - n_ * (ax @ n_); d /= max(np.linalg.norm(d), 1e-9)
+    if g('lateral_comb_deg', 0.0) and abs(sd) < 0.5:
+        # lateral strands lean toward the dorsal side, so the ventral white strip stays clear in profile
+        up_ = zz - n_ * (zz @ n_); nu = np.linalg.norm(up_)
+        if nu > 1e-6:
+            cb = math.radians(g('lateral_comb_deg', 0.0)) * (1 - abs(sd) / 0.5); d = d * math.cos(cb) + (up_ / nu) * math.sin(cb); d /= np.linalg.norm(d)
     fpos = float(sst(a0, a1, np.array(tvi[k])) * (1 - sst(b0 - 0.3, b1, np.array(tvi[k]))))
     L = (lu + (lt - lu) * float(sst(-0.6, 0.6, np.array(sd)))) * (0.45 + 0.55 * fpos) * float(np.exp(rng.normal(0, 0.12)))
     # a strand lying toward the tip: elevation lift at the root, a third of it at the tip
-    u = np.linspace(0, 1, NPT); ang = lift * (1 - 0.66 * u); step = L / (NPT - 1)
+    lk = (math.radians(g('lift_ventral_deg', math.degrees(lift))) if sd < -0.5 else lift) + math.radians(rng.normal(0, g('lift_jitter_deg', 0.0)))
+    fs_ = g('flat_side', None)
+    if fs_ and fs_[0] < sd < fs_[1]:
+        # a band lying close to the skin (covers it without reaching past the silhouette edge below): own lift, shorter
+        lk = math.radians(fs_[2]) + math.radians(rng.normal(0, g('lift_jitter_deg', 0.0)) * 0.4); L *= fs_[3]
+    u = np.linspace(0, 1, NPT); ang = lk * (1 - g('tip_droop', 0.66) * u); step = L / (NPT - 1)
     hh = np.r_[0, np.cumsum(np.sin(ang[1:]) * step)]; ss_ = np.r_[0, np.cumsum(np.cos(ang[1:]) * step)]
     ids_ = v0; nL, tL, bL = tri_frame(VL[ids_[0]], VL[ids_[1]], VL[ids_[2]])
     dl_ = Mi @ d; dx, dy = float(dl_ @ tL), float(dl_ @ bL); nn = math.hypot(dx, dy); dx, dy = dx / nn, dy / nn
+    if g('angle_jitter_deg', 0.0):
+        aj = math.radians(rng.normal(0, g('angle_jitter_deg', 0.0))); dx, dy = dx * math.cos(aj) - dy * math.sin(aj), dx * math.sin(aj) + dy * math.cos(aj)
     Pn = np.c_[hh, ss_ * dx, ss_ * dy]
     rootL = (VL[ids_] * wv[:, None]).sum(0); pts = rootL + Pn[:, 0:1] * nL + Pn[:, 1:2] * tL + Pn[:, 2:3] * bL
-    sl = slice(k * NPT, (k + 1) * NPT); POS[sl] = pts; BH[sl] = Pn[:, 0]; BX[sl] = Pn[:, 1]; BY[sl] = Pn[:, 2]; RAD[sl] = rad_prof
+    sl = slice(k * NPT, (k + 1) * NPT); POS[sl] = pts; BH[sl] = Pn[:, 0]; BX[sl] = Pn[:, 1]; BY[sl] = Pn[:, 2]; RAD[sl] = rad_prof * (0.0 if g('skip_side', None) and g('skip_side', None)[0] < sd < g('skip_side', None)[1] else 1.0)
     nb = [x[1] for x in kd.find_n(rootW[k].tolist(), int(g('colour_k', 12)))]
     if g('dark_top', 0.0) > 0 and sd > 0.3:
         # dorsal side: the darkest share of the nearby existing tail strands (an existing coat colour, darker top)

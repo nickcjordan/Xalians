@@ -1,0 +1,16 @@
+{
+  "id": "N-01M7369FMHRXWRA6YVMKKSR1Y0",
+  "alias": "8kxg",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Stall audit, D-a3hs (tail shaft), after two builds (B-ajd4, B-5mg8). (1) Both builds were judged on boards at 4x and 2x across idle f0 and sig f11, f16, f29, f40, against the sheet; not one camera at a time. (2) Physical cause of the remaining read: at 2x the shaft is about 8 px of pale gray on a light gray ground. Coverage is no longer the cause (bare share 0.69 to 0.42; furred edge at 4x), and variants u5, u8 and u11 cannot be told apart at 2x, so neither more fur nor the underside tone changes the read. What would change it is the sheet's dark gray shaft, which the hold 'the tail color looks fine' (Nick, 2026-10-24) forbids. That hold is Nick's own words, so the orchestrator cannot lift it. Holds checked: plume, tail pattern and tail motion (Nick 10-21, 10-24) are not involved; the color hold is the only blocker. Outcome: ask Nick one question with pictures (keep the pale shaft, or match the sheet's dark furred whip). Meanwhile u11 stays as built; its underside tone (193 against pass 5's 226) is accepted because pass 5's 226 was mostly bare skin and the difference does not read at 2x.",
+  "date": "2026-11-10",
+  "kind": "audit",
+  "binds": {
+    "build": "B-01M72N9TDDSEWN80B81K8HJBM3",
+    "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-10T16:57:33Z"
+}

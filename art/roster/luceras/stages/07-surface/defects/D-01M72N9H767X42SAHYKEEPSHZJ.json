@@ -7,7 +7,8 @@
   "region": "fore leg from elbow to wrist (front face); hind leg from stifle to hock and hock to paw (front face)",
   "origin": "builder whole-creature region read at 4x on sprite pass 6, confirmed by orchestrator at 2x and 4x 2026-11-10",
   "attempts": [
-    "B-01M72N9T9WRW9ZW3SMJF6445Y7"
+    "B-01M72N9T9WRW9ZW3SMJF6445Y7",
+    "B-01M7369FTTJ0PJHA3MBCQ4A67A"
   ],
   "status": "open",
   "createdAt": "2026-11-10T12:00:29Z"

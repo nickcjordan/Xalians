@@ -1,0 +1,19 @@
+{
+  "id": "B-01M7369FTTJ0PJHA3MBCQ4A67A",
+  "alias": "t3sm",
+  "stage": "07-surface",
+  "kind": "build",
+  "goal": "Lower hind leg in the leaping frames: the paw half of the lower hind leg (hock to toe base) reads as furred coat at 2x in sig f12 to f34, as it already does in standing frames, with no pale smooth sheen; toes keep their own fur, nothing below the ground in any frame",
+  "scope": "fur on the lower hind leg from mid-metatarsus to the toe base, both sides; groom only",
+  "defect": "D-01M72N9H767X42SAHYKEEPSHZJ",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-10T16:57:33Z",
+  "briefSha256": "6c4b674e63e27f6a99c593e1cabc97c8063edbf1525ee2ecb1c804ee1645d3dc"
+}
