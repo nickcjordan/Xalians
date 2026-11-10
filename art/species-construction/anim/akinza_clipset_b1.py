@@ -14,8 +14,8 @@ turned about a pivot (the front of the toe pads, so a heel rises, or the ankle i
 rig's own two-bone IK with the fixed hinge planes (rig_core.plant_legs), then each foot turned to its world pitch.
 Rig space: metres, +Z up, the creature faces -Y (back is +Y), its left is +X. A positive X rotation pitches a bone's
 front down (a hanging arm swings back, a tail lifts, the jaw opens). Ears in all three swing back and down along the
-back of the head with the opening rolled out (swept_ears: ear_1 only, night_stalk's construction at a smaller angle),
-kept under 65 degrees from vertical in the render (fix pass 2).
+back of the head with the opening rolled a little out (tipped_ears: ear_1 only, turned about the vertical so the tip
+goes back, then tipped down), kept under 65 degrees from vertical in the render (fix pass 2).
 
 hurt (15 frames, `impact` at frame 2): from idle frame 0 (frame 1 within a few px of it), a blow from the front: the
 head and chest snap back on frames 2 and 3 (the head a little ahead of the chest, peak at 3), the face tipping up a
@@ -202,6 +202,32 @@ def _frame(x, y):
     return np.stack([x, y, np.cross(x, y)], 1)
 
 
+def _rodrigues(axis, deg):
+    k = np.asarray(axis, float)/np.linalg.norm(axis)
+    th = math.radians(deg)
+    K = np.array([[0, -k[2], k[1]], [k[2], 0, -k[0]], [-k[1], k[0], 0]])
+    return np.eye(3)+math.sin(th)*K+(1-math.cos(th))*K@K
+
+
+def tipped_ears(rig, yaw_deg, down_deg, roll_deg=0., k=1.):
+    """Both ears swung back and down along the back of the head (fix pass 2, the critic: the straight-back pin laid the
+    blade flat over the skull, 93 degrees in the render; the night_stalk-style sweep at a small angle stood the ear up
+    behind the head): a rigid swing of ear_1 that turns the ear about the vertical so its tip goes back (yaw), tips it
+    down about its own horizontal cross axis (down), and rolls it about its own line so the opening turns a little out
+    (roll), at the share k of that swing (slerp from rest). The right ear mirrors the left."""
+    if not k:
+        return {}
+    u = np.subtract(rig.J['ear4.L'], rig.J['ear0.L']).astype(float)
+    u /= np.linalg.norm(u)
+    R1 = _rodrigues([0., 0., 1.], yaw_deg)
+    d1 = R1@u
+    R2 = _rodrigues(np.cross([0., 0., 1.], d1), down_deg)@R1
+    RL = _rodrigues(R2@u, roll_deg)@R2
+    eL = ac.share_of(rc.euler_from_matrix(RL), k)
+    eR = ac.share_of(rc.euler_from_matrix(MIRROR_X@RL@MIRROR_X), k)
+    return {'ear_1.L': eL, 'ear_1.R': eR}
+
+
 def swept_ears(rig, back_deg, out_deg=14., k=1.):
     """Both ears swept back and down along the back of the head (fix pass 2, the critic: the straight-back pin laid the
     blade flat over the skull, 93 degrees in the render): a rigid swing of ear_1 to night_stalk's construction
@@ -264,13 +290,14 @@ HURT = dict(
     hips_lift=(.004, .030, -.028),        # at the full give: hips 30 mm back, 28 mm down (the knees bend), 4 mm to the side
     hips_rot={'pelvis': [0., -2., 0.]},   # the pelvis rolls a little with the side shift
     snap={'pelvis': [-3., 0., 0.], 'spine': [-4., 0., 0.], 'chest': [-7., 0., 0.]},
-    # fix pass 2: the head tips back less (neck -1, head -3, was -4 and -12), so with the trunk the head turns 18 degrees,
-    # not 30: the head alone pushed the visible ear angle past the critic's 65-degree limit
-    snap_head={'neck': [-1., 0., 0.], 'head': [-3., 0., 0.], 'jaw': [7., 0., 0.]},
+    # fix pass 2: the head stays nearly level as it snaps back (neck and head +6, was -4 and -12, so the head turns 2
+    # degrees with the trunk's 14, not 30): the head's own tilt alone pushed the visible ear angle past the critic's
+    # 65-degree limit before the ears moved at all; the head still travels back with the chest
+    snap_head={'neck': [6., 0., 0.], 'head': [6., 0., 0.], 'jaw': [7., 0., 0.]},
     snap_arms={'upperarm.L': [-18., 0., 0.], 'upperarm.R': [-18., 0., 0.], 'forearm.L': [-15., 0., 0.], 'forearm.R': [-15., 0., 0.]},
-    # ears swept back and down along the back of the head (swept_ears; the straight-back pin lay flat over the skull,
-    # 93 degrees in the render): the critic's limit is 65 degrees visible
-    ear_sweep=30., ear_out=14.,
+    # ears swung back and down along the back of the head (tipped_ears: 30 back, 12 down, 8 rolled out; the straight-back
+    # pin lay flat over the skull, 93 degrees in the render): the critic's limit is 65 degrees visible
+    ear_yaw=30., ear_down=12., ear_roll=8.,
     # H4: the tails whip up over frames 2 to 4 (twice the first build's swing), overshoot back down at 6 and 7 and settle;
     # a lag per bone down each chain and a little between the tails; faded out by frame 14
     tails=[0., 0., .55, 1., .75, .15, -.45, -.3, -.05, .05, 0., 0., 0., 0., 0.],
@@ -303,7 +330,7 @@ def hurt_frame(rig, f):
         turn(pose, b, e, sh['head'])
     for b, e in P['snap_arms'].items():
         turn(pose, b, e, sh['arms'])
-    for b, e in swept_ears(rig, P['ear_sweep'], P['ear_out'], sh['ears']).items():
+    for b, e in tipped_ears(rig, P['ear_yaw'], P['ear_down'], P['ear_roll'], sh['ears']).items():
         turn(pose, b, e)
     fade = 1-cp.window(f, *P['tail_fade'])
     tails = {}
@@ -330,12 +357,12 @@ EVADE = dict(
     # and the knees folding in the air (the feet about 9 cm off the floor at 5 and 6), the arms back and out for balance,
     # touchdown at 7, absorb 7 to 9; the trunk first clears its starting spot at 6 (`clear`). E3, the return was a
     # second jump landing at full speed and stopping dead: now two quick alternating shuffle steps forward (the near foot
-    # from 10 to 12, the far foot from 12 to 14, a few mm off the floor), the body leaning into the move, its speed
-    # peaking at about 58 mm a frame (25 px at 720) early and slowing, a knee give at 14 and 15, settled onto idle frame
-    # 89 at 17. Root (x, y back, z up) in metres per frame.
+    # from 10 to 12, the far foot from 12 to 14, under 2 cm off the floor), the body leaning into the move, its speed
+    # peaking at about 52 mm a frame (22 px at 720) early and slowing over the last four frames, a knee give at 14 and
+    # 15, settled onto idle frame 89 at 17. Root (x, y back, z up) in metres per frame.
     root=[(0, 0, 0), (0, .004, -.035), (0, .012, -.060), (0, .060, -.005), (0, .135, .060), (0, .208, .085), (0, .278, .080),
-          (0, .295, .020), (0, .300, -.040), (0, .300, -.048), (0, .270, -.036), (0, .215, -.030), (0, .157, -.032),
-          (0, .102, -.028), (0, .057, -.034), (0, .012, -.016), (0, .002, -.0015), (0, 0, 0)],
+          (0, .295, .020), (0, .300, -.040), (0, .300, -.048), (0, .272, -.036), (0, .222, -.030), (0, .170, -.032),
+          (0, .118, -.028), (0, .070, -.034), (0, .032, -.024), (0, .009, -.006), (0, 0, 0)],
     # feet per side: (dy, dz, pitch, pivot); pivot t = toe pads (the heel rises), a = ankle (in the air), f = free (the
     # foot follows the shin, no ankle bend: E5, the pointed foot in the air creased the ankle). Flight targets sit under
     # the hips with the knees folded (the legs' reach is checked per frame: ankle error 0)
@@ -353,9 +380,9 @@ EVADE = dict(
     arms=[(0, 0, 0), (10, 0, 2), (16, -4, 4), (14, -12, -2), (18, -24, -8), (22, -30, -12), (20, -30, -12), (12, -22, -10),
           (4, -12, -8), (0, -6, -6), (-6, -4, -8), (-10, -2, -12), (-8, 0, -10), (-6, 0, -8), (-4, 0, -6), (-2, 0, -3),
           (-.5, 0, -.5), (0, 0, 0)],
-    # ears: share of the swept-back swing (swept_ears, 45 back, 14 out)
+    # ears: share of the back-and-down swing (tipped_ears, 30 back, 12 down, 8 rolled out)
     ears=[0, .35, .6, .75, .85, .85, .8, .7, .55, .5, .55, .55, .5, .4, .25, .1, .02, 0],
-    ear_sweep=45., ear_out=14.,
+    ear_yaw=30., ear_down=12., ear_roll=8.,
     tails=[0, -.15, -.3, .1, .65, 1., .9, .5, -.3, -.6, -.35, .1, .25, .2, .05, -.08, -.04, 0],
     tail_lag=.7, tail_order={'a': 0., 'b': .4, 'c': .8},
     # E4: the lower two tails' lift sits at the root and fades toward the tip (their bones' own curve stays; an even lift
@@ -391,7 +418,7 @@ def evade_frame(rig, f):
     for sd, sg in (('L', 1.), ('R', -1.)):
         turn(pose, f'upperarm.{sd}', [ua, sg*uo, 0.])
         turn(pose, f'forearm.{sd}', [fa, 0., 0.])
-    for b, e in swept_ears(rig, P['ear_sweep'], P['ear_out'], P['ears'][f]).items():
+    for b, e in tipped_ears(rig, P['ear_yaw'], P['ear_down'], P['ear_roll'], P['ears'][f]).items():
         turn(pose, b, e)
     fade = 1-cp.window(f, *P['tail_fade'])
     for t in rc.TAILS:
@@ -432,9 +459,9 @@ GUARD = dict(
     # (guard pass 2: the forearm angles further in, (-.30, -.30, .90) to (-.45, -.30, .84), and the hand up, so the paws
     # come in front of the face, about 10 cm either side of the midline at the wrist, not beside the cheeks)
     arm_dirs={'upperarm.L': (.08, -.85, -.52), 'forearm.L': (-.45, -.30, .84), 'hand.L': (-.25, -.78, .57)},
-    # ears swept back and down along the back of the head (swept_ears): 45 degrees back from upright, 14 out, the
-    # opening rolled out; about 60 degrees from vertical in the render (the critic's limit is 65), no ear root folds
-    ear_sweep=45., ear_out=14.,
+    # ears swung back and down along the back of the head (tipped_ears: 30 back, 12 down, 8 rolled out); about 60 degrees
+    # from vertical in the render (the critic's limit is 65), no ear root folds
+    ear_yaw=30., ear_down=12., ear_roll=8.,
     tail_share=.25,                        # tails a quarter of the way to their night_stalk pose (a little lowered)
     # the loop: one breath a loop, the chest and shoulders up and the body bobbing up on the inhale
     breath_inhale=.45,
@@ -449,7 +476,7 @@ GUARD = dict(
     # entry (first loop only): shares of the guard per group by frame 0..7 (7 = loop frame 7, `set`)
     entry={'arms':  [0., .12, .36, .63, .85, .96, .995, 1.],
            'body':  [0., .07, .24, .49, .73, .9, .98, 1.],
-           'ears':  [0., .32, .72, .93, .99, 1., 1., 1.],
+           'ears':  [0., .25, .5, .68, .84, .94, .99, 1.],      # (fix pass 2: was .32, .72, .93 by frame 3: 67 degrees visible at 3)
            'tails': [0., .02, .12, .32, .57, .8, .95, 1.]},
     # exit (guard_out, 8 frames): played after loop frame 26 in place of the next loop's frames 0 to 7; frame 0 is loop
     # frame 0's pose, the last is idle frame 89's, so idle frame 0 follows (the Night Stalk entry and hand back rule). The
@@ -490,7 +517,7 @@ def guard_base(rig):
         turn(pose, b, e)
     for b, e in P['clavicle'].items():
         turn(pose, b, e)
-    for b, e in swept_ears(rig, P['ear_sweep'], P['ear_out']).items():
+    for b, e in tipped_ears(rig, P['ear_yaw'], P['ear_down'], P['ear_roll']).items():
         turn(pose, b, e)
     for b, e in rig.body.items():
         if b.startswith('tail'):
