@@ -6,8 +6,9 @@ Opens the fur of record, drops the fur curves and the eyeliner ribbons (fur-stag
 re-origin and scale from rig.json into every mesh, builds the armature from joints.json (rig_core.ANIM_BONES),
 writes weights.npz into vertex groups (1/4096 steps), binds claws to the hands and feet and the eyes, nose
 and mouth to the head, then for each pose in poses.json: poses the armature, checks the evaluated skin
-against rig_core's numpy skinning, and renders a side view and five close-ups (shoulder, hip, neck, ear
-root, tail fork) in the look-dev clay scene. Writes renders/<pose>_<view>.png, blender-check.json and
+against rig_core's numpy skinning, and renders a side view and the close-ups (shoulder, hip, knee, neck, ear
+root, tail fork, ankle) in the look-dev clay scene. Corrective keys with a `direction` get rig_core.key_value's
+gate in their driver (the swing axis from SWING_TWIST_Y's x and z channels). Writes renders/<pose>_<view>.png, blender-check.json and
 rig.blend (rest pose) into the rig dir.
 """
 import argparse
@@ -174,7 +175,49 @@ for k in KEYS:
     if k.get('fall') is not None:
         f1 = math.radians(k['fall'])
         expr = f'min({expr}, ({f1:.6f}-a)/{f1-r1:.6f})'
-    drv.expression = f'max(0.0, min(1.0, {expr}))'
+    expr = f'max(0.0, min(1.0, {expr}))'
+    dr = k.get('direction')
+    if dr:
+        # rig_core.key_value's direction gate: the swing axis (u x v, unit) against the key's axis, through a smoothstep
+        # over the band. SWING_TWIST_Y in local space gives the swing quaternion's x and z (ROT_X, ROT_Z; ROT_Y is the
+        # twist), so the swing axis is (x, 0, z) in the bone's rest frame; turned into armature space by the bone's rest
+        # matrix, its dot with the axis is (x*c0 + z*c2)/|(x, z)| with c = Bm^T axis. The gate is its own driver on a
+        # custom property of the armature (a driver expression is cut at 256 characters), read by the key's driver.
+        Bm = np.array(arm.bones[k['bone']].matrix_local.to_3x3())
+        ax = np.asarray(dr['axis'], float)
+        cvec = dr['sign']*(Bm.T@(ax/np.linalg.norm(ax)))
+        prop = f"gate_{k['name']}"
+        rig[prop] = 0.0
+        gfc = rig.driver_add(f'["{prop}"]')
+        gdrv = gfc.driver
+        gdrv.type = 'SCRIPTED'
+        for vn, ch in (('x', 'ROT_X'), ('z', 'ROT_Z')):
+            dv = gdrv.variables.new()
+            dv.name = vn
+            dv.type = 'TRANSFORMS'
+            dt = dv.targets[0]
+            dt.id = rig
+            dt.bone_target = k['bone']
+            dt.transform_type = ch
+            dt.rotation_mode = 'SWING_TWIST_Y'
+            dt.transform_space = 'LOCAL_SPACE'
+        lo, hi = dr['band']
+        t = f'max(0,min(1,(({cvec[0]:.5f}*x+{cvec[2]:.5f}*z)/sqrt(x*x+z*z+1e-12)-{lo:.4f})/{hi-lo:.4f}))'
+        gdrv.expression = f'{t}*{t}*(3-2*{t})'
+        assert len(gdrv.expression) < 256, len(gdrv.expression)
+        for mod in gfc.modifiers:
+            gfc.modifiers.remove(mod)
+        gv = drv.variables.new()
+        gv.name = 'g'
+        gv.type = 'SINGLE_PROP'
+        gv.targets[0].id_type = 'OBJECT'
+        gv.targets[0].id = rig
+        gv.targets[0].data_path = f'["{prop}"]'
+        expr = f'{expr}*g'
+    assert len(expr) < 256, (k['name'], len(expr))
+    drv.expression = expr
+    if dr:
+        print('gated driver', k['name'], 'simple expressions', drv.is_simple_expression, gdrv.is_simple_expression, flush=True)
     for mod in fc.modifiers:
         fc.modifiers.remove(mod)
 print('rig built', round(time.time()-t0), flush=True)
@@ -236,6 +279,8 @@ CROPS = {  # view: (joint or joints averaged, azimuth, elevation, half size m)
     'neck': (['neck_base', 'head_base'], 65, 6, .10),
     'ear_root': (['ear0.L'], 145, 25, .11),
     'tail_fork': (['tail_fork'], 155, 18, .13),
+    'ankle': (['ankle.L'], 60, 8, .08),            # the ankle keys (direction gated): front three-quarter and from behind
+    'ankle_back': (['ankle.L'], 150, 10, .08),
 }
 for name in names:
     pz = poses[name]
