@@ -125,7 +125,9 @@ DISPLACED = dict(
     # a frame or two behind the head's return. The line at .97 of the sweep, no more than ear_cap degrees from that share of
     # f18's own ear pose relative to the head (ear_line_capped): the full line folded the ear root 51 to 70 in the forward wobble
     # (8 to 12) against the approved 50, capped at half a degree still 52 and 53; at .97 and 1 degree at most 38
-    ears=[0, 0, 0, .45, .97, .97, .97, .97, .97, .97, .97, .97, .97, .8, .55, .3, .12, .03, 0, 0, 0],
+    # (fix pass 3: the release crosses horizontal in one frame, as hurt does at its f9: 14 at 2 degrees above horizontal, 15 at 46,
+    # 16 at 76; it was 14 at 2 and 15 at 33, two cap-like frames)
+    ears=[0, 0, 0, .45, .97, .97, .97, .97, .97, .97, .97, .97, .97, .8, .55, .22, .06, .01, 0, 0, 0],
     ears_toward_idle_from=12,
     ear_cap=1., ear_inside=20.,
     # tails: lag and swing with the lurch (degrees per bone lift, a lag down each chain and between the tails)
@@ -187,65 +189,65 @@ def displaced_frame(rig, f):
 # Bound in place by an unseen grip. Research note: the pinned cat (both cat references) does not struggle evenly: it lies
 # tense, then twists its trunk, head and hind legs hard against the grip in a burst of about 8 to 12 frames, pauses, and
 # bursts again a different way; the tail lashes through it. Fix pass 2 (critic: it read as swaying): three strains against a
-# tether a loop (a forward lunge, a twist, an upward heave), uneven in timing and size, each a wind-up, a hard lunge that stops
-# dead with a one-frame overshoot and snap back, a trembling hold with the shoulders hunched and a quick recoil; a low tremor and
-# a panting breath between them; the elbows clamped to the ribs and the hands at the thighs, pushing out a little in each strain;
-# the ears on stalk f18's line with a flick partway toward upright after each lunge; the tails lashing. Every term is periodic in
-# 45 frames, so frame 45 equals frame 0.
+# tether a loop, each a wind-up, a hard lunge that stops dead with a one-frame overshoot and snap back, a trembling hold with
+# the shoulders hunched and a quick recoil. Fix pass 3 (critic pass 2: strains 2 and 3 too small at 192, even spacing, only the
+# head trembled, the arms read as hanging): three strains of one size at 192 (a forward lunge, a yank back with a twist, an
+# upward heave; 10 to 12 px of snout travel), their stops 10, 19 and 16 frames apart; a real head jerk at each stop (chin up,
+# 10 to 13 degrees against the trunk, the ears kept on their line); the whole torso shivers in the holds (trunk pitch and roll,
+# the hips a little, the arms with it); the shoulders hunched and the hands pressed to the thighs the whole loop; ear flicks of
+# different sizes and lags, each stopping short of horizontal; both paws planted. Every term is periodic in 45 frames, so frame
+# 45 equals frame 0.
 HELD = dict(
     frames=45, entry_frames=6, exit_frames=10,
-    # fix pass 2 (critic K1 to K6): a struggle against a tether, not a sway. The pin: the elbows clamped to the ribs the whole loop
-    # (the upper arms 10 degrees in and no longer swung back, critic K3: the elbows flared back and the hands sat on the hips,
-    # akimbo), the forearms a little forward and in so the hands lie at the thighs; the clavicles raised a little (the grip);
-    # weight a little down and back, the trunk a touch forward
-    # (setup: 9 and 6 degrees in left the arms 13 to 61 mm off the sides; 13 and 8, and 11 and 7, pressed them into the hips at
-    # rest, 917 and 34 arm vertices inside; 10 and 6 lay them 7 mm off the hips at rest, 10 to 55 mm in the strains)
-    pin={'upperarm.L': [-2., 10., 0.], 'upperarm.R': [-2., -10., 0.], 'forearm.L': [-14., 6., 0.], 'forearm.R': [-14., -6., 0.],
-         'hand.L': [0., 0., 0.], 'hand.R': [0., 0., 0.], 'clavicle.L': [0., -2., 0.], 'clavicle.R': [0., 2., 0.],
+    # the pin: the elbows clamped to the ribs (no swing back: critic pass 1 K3), the forearms in so the hands press on the thighs,
+    # the clavicles raised (the shoulders hunched against the grip: critic pass 2 K3); weight a little down and back, the trunk a
+    # touch forward
+    # (setup: the forearms at 14 back and 9 in left the hands 36 mm off the thighs; at 6 and 13, 8 mm, no arm skin inside)
+    pin={'upperarm.L': [-2., 10., 0.], 'upperarm.R': [-2., -10., 0.], 'forearm.L': [-6., 13., 0.], 'forearm.R': [-6., -13., 0.],
+         'hand.L': [0., 0., 0.], 'hand.R': [0., 0., 0.], 'clavicle.L': [0., -6., 0.], 'clavicle.R': [0., 6., 0.],
          'pelvis': [5., 0., 0.], 'spine': [3., 0., 0.], 'chest': [2., 0., 0.]},
     lift=(0., .012, -.03),
     level_head={'neck': [-6., 0., 0.], 'head': [-8., 0., 0.]},       # (4 degrees chin-up: the f18 line then needs less ear swing)
-    # the ears draw Night Stalk f18's line on screen (rule 1) but turn no more than `ear_cap` degrees from f18's own pose relative
-    # to the head (setup: with the head's jerks the full line needed up to 44 degrees beyond f18 and folded the ear root 547
-    # against the approved 50; capped at 4 degrees it folded 53 to 78)
-    ear_cap=1.,
-    # (fix pass 2: where the head's chin-up asks for less swing than f18's, the line is followed up to ear_inside degrees: capped
-    # at 1 degree either way the ears stood 13 to 25 degrees off the line in the lunges)
-    ear_inside=20.,
+    # the ears draw Night Stalk f18's line on screen (rule 1) but turn no more than ear_cap degrees from f18's own pose relative
+    # to the head where that asks for more swing (the ear root folds past f18's pose), and follow it up to ear_inside degrees
+    # where the head's chin-up asks for less
+    ear_cap=1., ear_inside=20.,
+    # (fix pass 3: the line at .97 of the sweep, as displaced: with the torso's shiver the full line folded the ear root 51 and 52
+    # against the approved 50)
+    ear_base=.97,
     # strains against the tether, each: a wind-up the other way (wind frames), a hard lunge (2 frames) to a one-frame overshoot,
-    # a dead stop that snaps back a little (the end of the tether), a trembling hold (hold frames, the tremor below) with the
-    # shoulders hunched, then a quick recoil past rest and a settle. Start frame t0, size k; the moves at full size: lean (trunk
-    # pitch, + forward), twist (chest and spine yaw, + toward the camera), bend (side bend), rise (root up, m), fwd (root forward,
-    # m), shrug (clavicle raise, degrees, near and far), head pitch (- chin up) and yaw, hands (the hands pushing out against the
-    # bind, degrees of forearm)
+    # a dead stop that snaps back a little (the end of the tether), a trembling hold (hold frames) with the shoulders hunched, then
+    # a quick recoil past rest and a settle. Start frame t0 (the overshoot lands on t0+4), size k; the moves at full size: lean
+    # (trunk pitch, + forward), twist (chest and spine yaw), bend (side bend), rise (root up, m), fwd (root forward, m), shrug
+    # (clavicle raise, near and far), head (the head's pitch against the trunk with the strain, - chin up; the neck and head also
+    # take back head_level of the trunk's lean), jerk (a chin-up snap of the head against the trunk at the stop, by
+    # jerk_profile), jerk_yaw, press (the hands pressed harder on the thighs, near and far, degrees of forearm: in the twist the
+    # far hand presses into the hip and is left alone), flick (the share of the ear
+    # sweep given up toward upright) and flick_lag (frames after the lunge)
     strains=[
-        dict(name='forward lunge', t0=1, wind=2, hold=5, k=1.0, lean=14., twist=0., bend=0., rise=0., fwd=.035, shrug=(-6., -6.),
-             head_pitch=-6., head_yaw=0., hands=5.),
-        dict(name='twist', t0=15, wind=2, hold=4, k=.9, lean=4., twist=-20., bend=-6., rise=.0, fwd=-.01, shrug=(-3., -7.),
-             head_pitch=-3., head_yaw=10., hands=4.),
-        dict(name='upward heave', t0=29, wind=2, hold=6, k=.8, lean=-6., twist=6., bend=3., rise=.035, fwd=0., shrug=(-8., -8.),
-             head_pitch=-8., head_yaw=-6., hands=3.),
+        dict(name='forward lunge', t0=1, wind=2, hold=3, k=1., lean=7., twist=0., bend=0., rise=0., fwd=.035, shrug=(-4., -4.),
+             head=-2., jerk=-8., jerk_yaw=3., press=(1.5, 1.5), flick=.3, flick_lag=1.),
+        dict(name='yank back and twist', t0=11, wind=2, hold=6, k=1., lean=-5., twist=-12., bend=-5., rise=0., fwd=-.01,
+             shrug=(-3., -6.), head=-4., jerk=-10., jerk_yaw=0., press=(9., -4.), flick=.35, flick_lag=2.),
+        dict(name='upward heave', t0=30, wind=2, hold=5, k=1., lean=-4., twist=5., bend=3., rise=.022, fwd=-.01, shrug=(-6., -6.),
+             head=-3., jerk=-11., jerk_yaw=4., press=(1.5, 7.), flick=.32, flick_lag=1.5),
     ],
+    head_level=.4,
+    jerk_profile=[(0, 0.), (1, .35), (2, 1.), (3, .45), (4, .15), (5, 0.)],    # by frame from the overshoot frame's lead-in (u = wind+2)
     # the profile of a strain (share of its full size) by frame from its start: wind-up to -.25, lunge to 1.15 in 2 frames, the stop
     # snaps back to .95, the hold, the recoil to -.1 in 2 frames and a settle in 2 more
     wind_share=-.25, overshoot=1.15, stop=.95, recoil=-.1,
-    # the trembling hold: 1.3 degrees of trunk and .8 of clavicle at a 2.5-frame period (about 2 px at 192, 6 to 8 at 720 at the
-    # head); between the strains a low tremor (.3 of it) and a panting breath (6 a loop) keep every frame moving
-    tremor=dict(period=2.5, trunk=2.2, shoulder=.8, rest=.3, neck=.25),
+    # the shiver of the holds, at a 2.5-frame period (degrees and m; full in a hold, rest of it between): trunk pitch, trunk roll,
+    # hips yaw, a sideways shake of the root, the forearms (the arms tremble with the torso), the clavicles; the neck takes back
+    # neck of the trunk's pitch
+    tremor=dict(period=2.5, trunk=2.2, roll=1.8, hips=1., shake=.003, arms=1.2, shoulder=.8, rest=.3, neck=.25),
     # the arms' counter-turns that keep the elbows at the ribs and the hands at the thighs: the upper arm takes back all of the
-    # clavicle's raise (without it the elbows stood 15 to 20 mm further off the ribs and the hands 70 to 100 mm off the thighs in
-    # the strains) and a fifth of the trunk's lean (the arms bound to the ribs move with the trunk; taking back most of the lean
-    # hung them plumb, the hands swinging 40 to 60 mm forward off the thighs)
+    # clavicle's raise and a fifth of the trunk's lean
     arm_counter=dict(lean=.2, shrug=1.),
     pant=dict(cycles=6, key=.35),
-    # the ears flick partway toward upright (the share of f18's sweep drops by `flick`) 1.5 frames after each lunge, and back
-    ear_flick=.3, ear_lag=1.5,
-    # the feet shift on the spot: the near foot steps 5 cm forward after the twist and back after the heave, each one lift, one
-    # carry and one set-down, flat (a flat foot lifted 3 cm cannot dip its toes under the floor: critic K6); the far heel lifts in
-    # the forward lunge. Per foot: (frame, dy, dz, pitch) keys, linear between, periodic
-    near_foot=[(0, 0., 0., 0.), (20, 0., 0., 0.), (21, -.02, .03, 0.), (22, -.045, .03, 0.), (23, -.05, 0., 0.), (36, -.05, 0., 0.),
-               (37, -.03, .03, 0.), (38, -.005, .03, 0.), (39, 0., 0., 0.), (45, 0., 0., 0.)],
-    far_foot=[(0, 0., 0., 0.), (3, 0., 0., 0.), (4, 0., 0., 9.), (5, 0., 0., 14.), (10, 0., 0., 14.), (12, 0., 0., 6.), (14, 0., 0., 0.),
+    # both paws planted the whole loop (critic pass 2 K6); the far heel lifts in the forward lunge (the toes stay down)
+    near_foot=[(0, 0., 0., 0.), (45, 0., 0., 0.)],
+    far_foot=[(0, 0., 0., 0.), (3, 0., 0., 0.), (4, 0., 0., 7.), (5, 0., 0., 11.), (8, 0., 0., 11.), (10, 0., 0., 5.), (12, 0., 0., 0.),
               (45, 0., 0., 0.)],
     # tails lash: per tail, a lift and a yaw wave per bone (degrees at the tip bone, falling toward the root), whole cycles a
     # loop, a lag down each chain; plus a whip with each strain
@@ -299,6 +301,16 @@ def _keys_periodic(keys, f, n):
     return list(keys[-1][1:])
 
 
+def held_strains_one(f, st, n):
+    """One strain's share at frame f (periodic in n)."""
+    best = 0.
+    for sh in (-n, 0, n):
+        v, _ = _strain_profile(f-(st['t0']+sh), st)
+        if abs(v) > abs(best):
+            best = v
+    return best*st['k']
+
+
 def held_strains(f, n):
     """Per strain: its share and whether it is in its trembling hold at frame f (periodic in n)."""
     out = []
@@ -312,6 +324,17 @@ def held_strains(f, n):
     return out
 
 
+def _jerk(f, st, n):
+    """A strain's head-jerk share at frame f: jerk_profile from the frame the lunge starts (periodic in n)."""
+    best = 0.
+    xs, ys = zip(*HELD['jerk_profile'])
+    for sh in (-n, 0, n):
+        u = f-(st['t0']+sh)-st['wind']
+        if xs[0] <= u <= xs[-1]:
+            best = max(best, float(np.interp(u, xs, ys)))
+    return best
+
+
 def held_loop_body(rig, f):
     """Held loop frame f (periodic in 45): body pose (no legs), root move, feet specs, breath, info."""
     P = HELD
@@ -323,47 +346,56 @@ def held_loop_body(rig, f):
         turn(pose, b, e)
     lift = np.asarray(P['lift'], float).copy()
     sts = held_strains(f, n)
-    ln = tw = bd = hp = hy = hands = 0.
+    ln = tw = bd = hd = jk = jy = 0.
+    press = [0., 0.]
     sh = [0., 0.]
     holding = 0.
     for st, (v, hold) in zip(P['strains'], sts):
         ln += v*st['lean']
         tw += v*st['twist']
         bd += v*st['bend']
-        hp += v*st['head_pitch']
-        hy += v*st['head_yaw']
-        hands += max(0., v)*st['hands']
+        hd += v*st['head']
+        j = _jerk(f, st, n)*st['k']
+        jk += j*st['jerk']
+        jy += j*st['jerk_yaw']
+        press = [p+max(0., v)*q for p, q in zip(press, st['press'])]
         sh[0] += max(0., v)*st['shrug'][0]
         sh[1] += max(0., v)*st['shrug'][1]
         lift = lift+v*np.array([0., -st['fwd'], st['rise']])
         holding = max(holding, hold)
-    # the tremor: full in a hold, low between the strains; a 2.5-frame period, so no two frames match
+    # the shiver: full in a hold, low between the strains; a 2.5-frame period, so no two frames match; the parts out of phase
     T = P['tremor']
-    tr = math.sin(2*math.pi*f/T['period'])*(1. if holding else T['rest'])
-    turn(pose, 'pelvis', [.3*ln, 0., 0.])
-    turn(pose, 'spine', [.4*ln, .5*bd, .4*tw])
-    turn(pose, 'chest', [.3*ln+T['trunk']*tr, .5*bd, .6*tw])
+    amp = 1. if holding else T['rest']
+    ph = 2*math.pi*f/T['period']
+    tr, tr2, tr3 = (amp*math.sin(ph+o) for o in (0., 1.9, 3.7))
+    lift = lift+np.array([T['shake']*tr3, 0., 0.])
+    turn(pose, 'pelvis', [.3*ln, 0., T['hips']*tr2])
+    turn(pose, 'spine', [.4*ln, .5*bd+T['roll']*tr2, .4*tw])
+    turn(pose, 'chest', [.3*ln+T['trunk']*tr, .5*bd+.6*T['roll']*tr3, .6*tw])
     cl = {'L': sh[0]-T['shoulder']*abs(tr), 'R': -sh[1]+T['shoulder']*abs(tr)}      # the clavicles' raise (Y; - raises the near one)
     turn(pose, 'clavicle.L', [0., cl['L'], 0.])
     turn(pose, 'clavicle.R', [0., cl['R'], 0.])
-    # the elbows stay clamped to the ribs and the hands at the thighs through the strains: the upper arms take back the shrug's
-    # outward swing (the clavicle's raise carries the elbow out 2.8 mm a degree) and a little of the trunk's lean; the hands
-    # push out against the bind from the elbow (the forearm only) and snap back
+    # the elbows stay clamped to the ribs and the hands on the thighs: the upper arms take back the shrug's outward swing and a
+    # little of the trunk's lean; the hands press harder in each strain and the forearms tremble with the torso
     ca = P['arm_counter']
     turn(pose, 'upperarm.L', [-ca['lean']*ln, -ca['shrug']*cl['L'], 0.])
     turn(pose, 'upperarm.R', [-ca['lean']*ln, -ca['shrug']*cl['R'], 0.])
-    turn(pose, 'forearm.L', [0., -hands, 0.])
-    turn(pose, 'forearm.R', [0., hands, 0.])
-    # rule 1: the head's world orientation first: the neck and head take the trunk's lean back out, so the head's world pitch is
-    # the strain's own (chin up only: a chin-down head needs the ear past f18's swing and folds the ear root), and the head turns
-    # against the trunk's twist so its world turn stays small and away from the camera
-    turn(pose, 'neck', [.4*hp-.5*ln-T['neck']*T['trunk']*tr, 0., .4*hy-.4*tw])
-    turn(pose, 'head', [.6*hp-.5*ln, 0., .6*hy-.2*tw])
-    # the ears on stalk f18's line, flicking partway toward upright 1.5 frames after each lunge
-    lag = [max(0., v) for v, _ in held_strains(f-P['ear_lag'], n)]
-    lead = [max(0., v) for v, _ in held_strains(f-P['ear_lag']-1, n)]
-    flick = sum(max(0., a-b) for a, b in zip(lag, lead))                 # the lunge's rise, a frame and a half late
-    e = 1.-min(P['ear_flick'], P['ear_flick']*flick/.6)
+    turn(pose, 'forearm.L', [T['arms']*tr2, press[0], 0.])
+    turn(pose, 'forearm.R', [T['arms']*tr3, -press[1], 0.])
+    # rule 1, the head's world orientation first: the neck and head take back head_level of the trunk's lean, then turn by the
+    # strain's own head pitch and the jerk (chin up only: a chin-down head needs the ear past f18's swing and folds the ear root);
+    # the head turns against the trunk's twist and side bend so its world turn and roll stay small
+    hl = P['head_level']
+    turn(pose, 'neck', [.4*(hd+jk)-.5*hl*ln-T['neck']*T['trunk']*tr, -.5*bd, .4*jy-.5*tw])
+    turn(pose, 'head', [.6*(hd+jk)-.5*hl*ln, -.5*bd, .6*jy-.5*tw])
+    # the ears on stalk f18's line, each strain's flick (its size and lag) a share of the sweep given up toward upright as the
+    # lunge rises
+    fl = 0.
+    for st in P['strains']:
+        lag = max(0., held_strains_one(f-st['flick_lag'], st, n))
+        lead = max(0., held_strains_one(f-st['flick_lag']-1, st, n))
+        fl += min(st['flick'], st['flick']*max(0., lag-lead)/.6)
+    e = P['ear_base']-fl
     ear_line_capped(rig, pose, e, P['ear_cap'], inside=P['ear_inside'])
     whip = sum(abs(v) for v, _ in sts)
     for t in rc.TAILS:
@@ -375,13 +407,13 @@ def held_loop_body(rig, f):
                                          g*wv['yaw']*math.sin(2*math.pi*u+1.3)])
     nf = _keys_periodic(P['near_foot'], f, n)
     ff = _keys_periodic(P['far_foot'], f, n)
-    feet = {'L': dict(t=(0., nf[0], nf[1]), pitch=nf[2], pivot='toe' if nf[1] < .003 else 'ankle'),
+    feet = {'L': dict(t=(0., nf[0], nf[1]), pitch=nf[2], pivot='toe'),
             'R': dict(t=(0., ff[0], ff[1]), pitch=ff[2], pivot='toe')}
-    planted = {'L': bool(nf[1] < .003), 'R': True}
+    planted = {'L': True, 'R': True}
     pant = .5-.5*math.cos(2*math.pi*P['pant']['cycles']*f/n)
     breath = P['pant']['key']*pant+.4*holding                               # a panting breath, a caught one in each hold
     return pose, lift, feet, breath, dict(strains=[round(v, 4) for v, _ in sts], holding=holding, flick=round(1-e, 3), tremor=round(tr, 3),
-                                          planted=planted)
+                                          jerk=round(jk, 3), planted=planted)
 
 
 def held_frame(rig, f):
@@ -412,19 +444,23 @@ def _blend_feet(fa, fb, k):
 
 
 IDLE_FEET = {'L': dict(t=(0., 0., 0.), pitch=0., pivot='toe'), 'R': dict(t=(0., 0., 0.), pitch=0., pivot='toe')}
-# held_in (6 frames, from idle frame 0): the arms snap to the sides in two frames (a small overshoot inward), the body jolts
-# down and back with them, the ears go back, the tails flare a frame behind; it arrives on loop frame 44's pose at frame 5, so
-# loop frame 0 follows
-HELD_IN = {'arms': [0., .9, 1.1, 1.02, 1., 1.], 'body': [0., .6, 1., 1., 1., 1.], 'ears': [0., .7, 1., 1., 1., 1.],
-           'tails': [0., .25, .6, .85, .97, 1.], 'jolt': [0., 1., .55, .2, .05, 0.]}
-HELD_IN_JOLT = (0., .02, -.03)            # root (x, y back, z) at the jolt's peak, on top of the blend
-# fix pass 2 (critic K5): the seize in 1 to 2 frames: the shoulders snap up, the elbows snap in to the ribs (the arms' share above),
-# the trunk jerks and compresses, the ears flatten fast; at the jolt's peak, on top of the blend
-HELD_IN_SNAP = {'clavicle.L': [0., -9., 0.], 'clavicle.R': [0., 9., 0.], 'spine': [5., 0., 0.], 'chest': [4., 0., 0.], 'neck': [-3., 0., 0.],
-                'head': [-4., 0., 0.]}
+# held_in (6 frames, from idle frame 0). Fix pass 3 (critic pass 2 K5: the seize read as a slump, and the ears jumped 43 degrees
+# in one frame): frame 1 is one jolt up and back onto the toes, the shoulders snapping up and in and the arms snapping to the
+# sides; from frame 2 it drops into the held crouch; the ears ease back over three frames; it arrives on loop frame 44's pose at
+# frame 5, so loop frame 0 follows
+# (the ears' elevation on screen 86, 47, 10, -20, -26: steps of 38, 37, 30 and 6 degrees)
+HELD_IN = {'arms': [0., .8, 1.05, 1.01, 1., 1.], 'body': [0., .15, .7, .95, 1., 1.], 'ears': [0., .22, .48, .88, 1., 1.],
+           'tails': [0., .25, .6, .85, .97, 1.], 'jolt': [0., 1., .35, .1, 0., 0.]}
+HELD_IN_JOLT = (0., .015, .02)            # root (x, y back, z up) at the jolt's peak, on top of the blend
+HELD_IN_HEELS = 14.                       # the heels up (degrees about the toe pads) at the jolt's peak
+# at the jolt's peak, on top of the blend: the shoulders snap up and in, the trunk and head jerk back
+HELD_IN_SNAP = {'clavicle.L': [0., -8., -5.], 'clavicle.R': [0., 8., 5.], 'spine': [-3., 0., 0.], 'chest': [-3., 0., 0.],
+                'neck': [-3., 0., 0.], 'head': [-4., 0., 0.]}
 # held_out (10 frames, from loop frame 0's pose, played in place of it after loop frame 44): it shakes free: the arms burst
 # out from the sides and the trunk shakes, then everything eases into idle on the clock that lands on idle frame 89 at 9
-HELD_OUT = {'idle': [0., .05, .18, .38, .6, .78, .9, .97, .995, 1.], 'ears': [0., .1, .3, .52, .72, .86, .94, .98, .995, 1.],
+# (fix pass 3, critic pass 2: a flat cap at 2 and 3 and a clamshell at 4: the ears now cross horizontal in one frame, as hurt
+# does: their elevation -28, -22, -6, 36, 68, 82, 85)
+HELD_OUT = {'idle': [0., .05, .18, .38, .6, .78, .9, .97, .995, 1.], 'ears': [0., .12, .42, .72, .9, .98, 1., 1., 1., 1.],
             'burst': [0., .7, 1., .75, .4, .15, .04, 0., 0., 0.], 'shake': [0., 8., -9., 5., -2.5, 1., 0., 0., 0., 0.]}
 HELD_OUT_ARMS = {'upperarm.L': [-18., -30., 0.], 'upperarm.R': [-14., 26., 0.], 'forearm.L': [-22., 0., 0.], 'forearm.R': [-18., 0., 0.]}
 
@@ -437,9 +473,11 @@ def held_in_frame(rig, k):
     pose = cb.blend_poses(ip, hp, lambda b: e[held_group(b)])
     for b, d in HELD_IN_SNAP.items():
         turn(pose, b, d, e['jolt'])
-    ear_line_capped(rig, pose, e['ears'], HELD['ear_cap'], inside=HELD['ear_inside'])
+    ear_line_capped(rig, pose, e['ears']*HELD['ear_base'], HELD['ear_cap'], inside=HELD['ear_inside'])
     lift = (1-e['body'])*ilift+e['body']*hlift+e['jolt']*np.asarray(HELD_IN_JOLT)
     feet = _blend_feet(IDLE_FEET, hfeet, e['body'])
+    for sd in 'LR':
+        feet[sd]['pitch'] += HELD_IN_HEELS*e['jolt']
     full, targets = cb.solve_feet(rig, pose, lift, feet)
     info = dict(shares={g: round(v, 4) for g, v in e.items()}, idleClock=k, heldFrame=(k-HELD['entry_frames']) % n,
                 planted=dict(L=True, R=True), targets={sd: [round(float(x), 6) for x in targets[sd]] for sd in 'LR'})
@@ -457,7 +495,8 @@ def held_out_frame(rig, k):
         turn(pose, b, d, e['burst'])
     turn(pose, 'chest', [0., 0., e['shake']])
     turn(pose, 'neck', [0., 0., -.5*e['shake']])
-    ear_line_capped(rig, pose, 1-e['ears'], HELD['ear_cap'], toward=ip, inside=HELD['ear_inside'])
+    ear_line_capped(rig, pose, (1-e['ears'])*HELD['ear_base'], HELD['ear_cap'], toward=ip if e['ears'] > 0 else None,
+                    inside=HELD['ear_inside'])
     lift = (1-e['idle'])*hlift+e['idle']*ilift
     feet = _blend_feet(hfeet, IDLE_FEET, e['idle'])
     full, targets = cb.solve_feet(rig, pose, lift, feet)
