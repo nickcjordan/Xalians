@@ -1631,8 +1631,10 @@ FAINT4 = dict(
     head_pitch=[(0, 'linear', 0.), (1, 'linear', 3.), (4, 'out', 20.), (16, 'smooth', 45.), (21, 'smooth', 50.), (24, 'smooth', 55.),
                 (26, 'smooth', 62.)],
     head_idle=[(0, 'linear', 0.), (1, 'linear', .5), (3, 'smooth', 1.)],        # idle's own head turn eases out
-    # fix pass 6: no turn toward E's before the floor takes the head (it rolled from chin tucked to level at 24 to 27 and landed
-    # looking alert): from the touchdown it turns onto its jaw over four frames, pushed by the floor as the chest comes down
+    # fix pass 6: no turn toward E's before the floor takes the head (critic 6: it rolled from chin tucked to level at 24 to 27
+    # and landed looking alert). It stays chin down to the touchdown (25); the turn onto its jaw is then driven by the floor as
+    # the chest comes down, which finishes it by 27 (54, 35, 10 degrees at 25 to 27), ahead of this track's 29. (Letting the
+    # neck give first instead lifted the head 20 mm off the floor at 25 and 26.)
     head_land=[(25, 'linear', 0.), (29, 'smooth', 1.)], head_reach=-.772,
     neck_tuck_cap=[(0, 'linear', 50.), (19, 'linear', 50.), (21, 'smooth', 68.), (25, 'linear', 68.), (27, 'smooth', 0.)], neck_tuck_rate=40.,
     # ears: the approved ear (idle's own, unturned) held at its idle angle in the world while the head drops (they lag it), then
