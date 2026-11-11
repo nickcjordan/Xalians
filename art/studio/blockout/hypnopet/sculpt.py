@@ -365,6 +365,71 @@ def mouthrebuild(spec):
     return spec
 
 
+HEAD_GRID = 'C:/dev/art-data/studio/recon/hypnopet/r10-mv-oct512/grid-skin-6h.npz'
+
+
+def headrebuild(spec):
+    """The head below the horn rebuilt as authored volumes (Nick, 2026-11-11: "sure", to the proposal on the side
+    profile page; Nick on sculpt-80: "the side profile ... is very lumpy and doesn't look very intentional").
+
+    The reconstruction's head is cleared from the grid (prep_grids.sh step 6h: grid_clear.py inside an ellipsoid
+    around the head, the ears kept by a connectivity mask), because its own skull, cheeks and jaw carried a brow
+    ledge, cheek creases and a jowl 2.8 cm too wide each side at z 0.40, and parts added on top could only add
+    volume. In its place, measured on the sheet's front and side views at one scale (sheet_scale.json):
+    a cranium, a round dome to z 0.537 whose front follows the sheet's forehead (the bridge sweep traces the
+    midline); a face mass, widest at the eyes' lower edge and 6.6 cm each side at z 0.41 (the sheet's face there);
+    a lower face narrowing to the chin (5 cm each side at z 0.37); a neck join, so the head's underside sweeps into
+    the reconstruction's neck; and ear roots joining the kept ear blades to the cranium. The muzzle, mouth, jaw,
+    nose, eyes, lids and horn stay as authored by their own repairs. Runs after lowerface; supersedes its grid."""
+    import hashlib
+    body = next(p for p in spec['parts'] if p['part'] == 'body' and p['kind'] == 'grid')
+    body['params']['file'] = HEAD_GRID
+    body['params']['sha256'] = hashlib.sha256(open(HEAD_GRID, 'rb').read()).hexdigest()
+    P = spec['parts']
+    # cranium: the dome, 8.6 cm each side at z 0.46 (the sheet's head between the ear roots)
+    P.append({'part': 'head', 'kind': 'mass', 'blend': 0.028, 'params': {
+        'center': [0, -0.143, 0.458], 'radii': [0.086, 0.092, 0.080], 'exponent': 2.0}})
+    # the eye band: the face is widest at the eyes, which sit almost at its outline in the front view (8.6 cm each
+    # side); narrower, it left the back of each eyeball bare in the side view (sculpt-88). It sits behind the eyes'
+    # centers, so it wraps their outer sides and leaves their fronts standing out of the face (centered on the eyes,
+    # sculpt-89, it buried them to small slots)
+    P.append({'part': 'head', 'kind': 'mass', 'blend': 0.022, 'params': {
+        'center': [0, -0.168, 0.432], 'radii': [0.086, 0.048, 0.050], 'exponent': 2.0}})
+    # cheeks: 6.8 cm each side at z 0.40, narrowing below the eyes
+    P.append({'part': 'head', 'kind': 'mass', 'blend': 0.030, 'params': {
+        'center': [0, -0.195, 0.395], 'radii': [0.068, 0.058, 0.045], 'exponent': 2.0}})
+    # the side of the head behind the cheeks and under the eyes, so cheek, eye band, cranium and jaw corner read as
+    # one surface (sculpt-91 to 93: a crease behind each eye in the three-quarter view, a ridge at the jaw corner)
+    P.append({'part': 'head', 'kind': 'mass', 'blend': 0.030, 'params': {
+        'center': [0, -0.150, 0.395], 'radii': [0.070, 0.052, 0.052], 'exponent': 2.0}})
+    # lower face narrowing to the chin, 5 cm each side at z 0.37
+    P.append({'part': 'head', 'kind': 'mass', 'blend': 0.032, 'params': {
+        'center': [0, -0.198, 0.368], 'radii': [0.048, 0.050, 0.034], 'exponent': 2.0}})
+    # the jaw's underside, so it runs back level to the throat as in the sheet's side view
+    P.append({'part': 'head', 'kind': 'mass', 'blend': 0.032, 'params': {
+        'center': [0, -0.190, 0.338], 'radii': [0.040, 0.052, 0.024], 'exponent': 2.0}})
+    # neck join, broad and soft over the cleared region's lower shoulder (smaller, it left a collar crease round the
+    # throat, sculpt-90)
+    P.append({'part': 'head', 'kind': 'mass', 'blend': 0.036, 'params': {
+        'center': [0, -0.130, 0.345], 'radii': [0.062, 0.070, 0.058], 'exponent': 2.0}})
+    # the back of the skull into the nape, so the cranium's sides run back into the kept neck without a crease
+    # behind the eyes (sculpt-91, 92: a crease from the horn down to the jaw in the three-quarter view)
+    P.append({'part': 'head', 'kind': 'mass', 'blend': 0.030, 'params': {
+        'center': [0, -0.078, 0.440], 'radii': [0.075, 0.045, 0.072], 'exponent': 2.0}})
+    # eye apertures: the face opened in front of each eye along its gaze, so the eyes stand out of the face as the
+    # sheet's do (the appeal floor, docs/design/creature-appeal.md: eyes first); the head's volumes wrapped them to
+    # slots
+    import math
+    g = math.radians(20)
+    for sx in (1, -1):
+        c = [sx*(0.043+0.022*math.sin(g)), -0.199-0.022*math.cos(g), 0.436]
+        P.append({'part': 'eyes', 'kind': 'mass', 'op': 'carve', 'blend': 0.006, 'params': {
+            'center': [round(v, 5) for v in c], 'radii': [0.034, 0.034, 0.034], 'exponent': 2.0}})
+    P.append({'part': 'head', 'kind': 'mass', 'mirror': 'x', 'blend': 0.016, 'params': {
+        'center': [0.090, -0.083, 0.515], 'radii': [0.032, 0.022, 0.024], 'exponent': 2.0}})
+    return spec
+
+
 def chest(spec):
     """Chest: the brisket between the forelegs raised (critics 2 to 4: in the front view the chest bottom between
     the forelegs sits 0.24 H above the ground against the sheet's 0.277 H, so the forelegs read short). A narrow
@@ -557,7 +622,7 @@ def tail(spec):
     return spec
 
 
-REPAIRS = {'mouthrebuild': mouthrebuild, 'lowerface': lowerface, 'chest': chest, 'smooth': smooth, 'toes': toes, 'lids': lids, 'bridge': bridge, 'details': details, 'tail': tail, 'proportions': proportions, 'horn': horn, 'crown': crown, 'skin': skin, 'face': face, 'mouth': mouth, 'nose': nose, 'eyes': eyes}
+REPAIRS = {'headrebuild': headrebuild, 'mouthrebuild': mouthrebuild, 'lowerface': lowerface, 'chest': chest, 'smooth': smooth, 'toes': toes, 'lids': lids, 'bridge': bridge, 'details': details, 'tail': tail, 'proportions': proportions, 'horn': horn, 'crown': crown, 'skin': skin, 'face': face, 'mouth': mouth, 'nose': nose, 'eyes': eyes}
 
 
 def build(base, names):

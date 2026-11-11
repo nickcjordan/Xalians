@@ -1,0 +1,6 @@
+{
+ "note": "Hypnopet sheet views at world scale (experiment X33): col0 is the image column of world 0 on the horizontal axis (x for front, y for side), ground the image row of z 0, mPerPx meters per pixel. Front: ground-to-skull-top scale. Side: anchored on the eye center (y -0.199 at column 312).",
+ "front": {"sheet": "C:/dev/art-data/studio/blockout/hypnopet/targets/flesh-front.png", "col0": 576, "ground": 1287, "mPerPx": 0.0005226},
+ "side": {"sheet": "C:/dev/art-data/studio/blockout/hypnopet/targets/flesh-side.png", "col0": 660.997, "ground": 1177, "mPerPx": 0.0005702},
+ "back": {"sheet": "C:/dev/art-data/studio/blockout/hypnopet/targets/flesh-back.png", "col0": 570, "ground": 1290, "mPerPx": 0.0005226}
+}

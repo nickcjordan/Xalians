@@ -116,3 +116,11 @@ python art/studio/recon/grid_soften.py --grid $R/grid-skin-4g.npz --out $R/grid-
   --at 0,0.215,0.240,0.020,0.006,1 \
   --at 0.184,-0.079,0.424,0.016,0.004,1 \
   --at 0.019,-0.115,0.074,0.016,0.004
+
+# 6h (head rebuild, 2026-11-11; Nick: "sure" to rebuilding the head below the horn): the reconstruction's head is
+# cleared inside an ellipsoid (the ears kept by a connectivity mask cut at x 0.095) and sculpt.py's headrebuild
+# authors a cranium, face, lower face, neck join and ear roots in its place
+python art/studio/recon/grid_mask.py --grid $R/grid-skin-5g.npz --seed 0.168,-0.065,0.42 \
+    --box 0.095,0.30,-0.20,0.10,0.0,0.60 --out $R/mask-ear-5g.npz --dilate 0.006 --smooth 0.003
+python art/studio/recon/grid_clear.py --grid $R/grid-skin-5g.npz --out $R/grid-skin-6h.npz \
+    --ellipsoid 0,-0.178,0.445,0.115,0.125,0.125 --fade 0.18 --protect $R/mask-ear-5g.npz
