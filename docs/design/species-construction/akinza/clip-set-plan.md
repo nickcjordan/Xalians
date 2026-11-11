@@ -64,3 +64,4 @@ Each batch: research per motion (real-animal video, mechanism note), setup check
   - the shoulder pressing the throat at f14 to f16 and f21;
   - the top-tail kinks.
   Fix pass 5 is in the batch 2 brief, queued after faint's clay render.
+- 2026-11-10 19:45, my look at the batch 3 fix pass 3 setup sheet (the builder took about 1.5 h and 0.63M tokens). Move passes and goes to its clay render. The light and heavy wind-ups no longer put the paws in front of the face, but my fix pass 3 wording ("elbow up and back") put the paw beside the jaw. At 192, light f7 reads as a paw at the throat, and heavy f8 to f13 read as hands raised beside the face (a surrender pose in three-quarter). Fix pass 4 (my decision, overridable): the wind-ups go back and low, with the paw behind the back at chest or waist height. A two-variant pose test comes before any bake. Batch 3 also gets its own frozen copy of `ear_line_capped`, so batch 2's edits can't move its ears.
