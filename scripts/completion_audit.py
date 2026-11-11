@@ -255,6 +255,10 @@ def seal(root, session, relative):
 
 
 def hook(payload, root):
+    # Honor removed hooks even when an open session cached the command.
+    hook_config = root / '.codex' / 'hooks.json'
+    if hook_config.is_file() and read(hook_config).get('hooks') == {}:
+        return {}
     event = payload.get('hook_event_name')
     path = state_path(root, payload.get('session_id'))
     if event == 'UserPromptSubmit':
