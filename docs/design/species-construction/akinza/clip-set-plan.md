@@ -81,3 +81,5 @@ Each batch: research per motion (real-animal video, mechanism note), setup check
   - light's f11, which still reads as a straight-arm reach;
   - move_in's two-footed hop at in3 to in4.
   A setup sheet comes first, then the clay, my check and a narrow blind critic on these points only.
+
+- 2026-11-11 morning: the overnight renders died (the machine hit its process limit while the slot was held by another session), and the builder sessions ended. I relaunched the queue (`anim/queue-morning.sh`). Faint fix pass 4 sheet: ground contact passes (every resting part within 3 mm, knees land within 8 mm of the end pose); the near ear fails in both poses (a broadside cap over the skull at the knee landing, a flat lid over the neck at the end that hides the face at 192), so the ears turn edge-on and trail off the skull line, then the full clip goes to clay. Batch 3 fix pass 5 sheet: light's rake, heavy's split paws and move_in's push all pass; heavy f13 to f16 stays to be judged in motion. New builders started for both batches from their briefs.
