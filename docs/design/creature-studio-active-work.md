@@ -40,4 +40,10 @@ Nick, 2026-10-12: "I dont want you to do anything with Akinza, that model is bei
 
 ## Next unfinished action
 
-Nick reviewed the overnight round on 2026-10-25: "front view for eyes is what we want but the face still needs work". Now: rebuild Hypnopet's lower face around the sheet's mouth (the open item every sculpt critic has named; carving alone has not got there), then the feet, then a final sculpt critic and deformation audit before the surface (fur) stage, which waits for Nick's go on the bare body.
+Hypnopet head rebuilt as authored volumes (sculpt-94, 2026-11-11; review page linked from the session's last message). Waiting on Nick: may the upper lip pads hang about 1.5 cm lower in profile (the sheet's side view) at the cost of a shorter mouth opening from the front? Then: chin and throat, mouth corners that curl up, the eye check below, the rig test on the new head, then the sculpt critic and deformation audit before any surface work.
+
+Lessons offered by the Luceras retro (2026-11-11, branch creature-pipeline, `docs/design/creature-pipeline-retro-luceras.md`), applied from the next build:
+- Eye as geometry first: the opening wider than the iris so white shows at both corners, lid cover over the top of the iris, a catchlight at sprite size. Hypnopet's eye material runs the iris to the lid line (`packet_render.py`, irisDeg = opening - 5), the failure Luceras found ("a button"); check against the sheet, whose eyes show a pale ring round the iris.
+- Settle head scale, carriage and eye shape before fur; build parts as anatomy with numbers; name a cause only after a measurement.
+- Before surface work, a painted target sprite at game size in the shared studio light, side facing, approved by Nick; compare renders to it.
+- A fresh builder agent per build; renders through the shared render queue; at most two working scenes per variant on disk (Hypnopet: 6.5 GB under art-data now).
