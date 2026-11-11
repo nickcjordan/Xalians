@@ -119,25 +119,31 @@
       "closedAt": "2026-10-16T14:08:03Z"
     },
     "07-surface": {
-      "state": "open",
-      "approval": null,
-      "evidence": [],
-      "openedAt": "2026-10-16T14:08:03Z"
+      "state": "closed",
+      "approval": "N-01M75HMQJN3MVBN3VGA119NWVF",
+      "evidence": [
+        "https://claude.ai/artifact/YUmgYBZvCMivUZv3L1umat check 17, pass 9"
+      ],
+      "openedAt": "2026-10-16T14:08:03Z",
+      "closedAt": "2026-11-11T14:54:32Z"
     },
     "08-rig": {
       "state": "closed",
-      "approval": "N-01M5D1AXTEVVFCH5GYNXCTMCBJ",
+      "approval": "N-01M75HN5APVFZ4MJH8ZFGZYK7N",
       "evidence": [
-        "2fdecf8562aac8dfabcefa3686931730f3c100d800ed12b367c2d787a53c7ed8,e84d4f58a038d349c85181fddd63cf41448aeaecf774dce03d4764e0c5e3db5b"
+        "Check 17 shows the rig in motion on the surfaced scene of record (845bd41c); the surface stage closing marked the rig stale, and this approval re-closes it on the same rig"
       ],
-      "openedAt": "2026-10-16T17:42:04Z",
-      "closedAt": "2026-10-20T16:12:35Z"
+      "openedAt": "2026-11-11T14:54:39Z",
+      "closedAt": "2026-11-11T14:54:42Z"
     },
     "09-animate": {
-      "state": "open",
-      "approval": null,
-      "evidence": [],
-      "openedAt": "2026-10-20T16:11:59Z"
+      "state": "closed",
+      "approval": "N-01M75HMY72V8W6K991VSDXNBHD",
+      "evidence": [
+        "https://claude.ai/artifact/YUmgYBZvCMivUZv3L1umat check 17: idle, signature and both transitions in motion, pass 9"
+      ],
+      "openedAt": "2026-10-20T16:11:59Z",
+      "closedAt": "2026-11-11T14:54:43Z"
     },
     "10-export": {
       "state": "not-started",

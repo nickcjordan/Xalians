@@ -1,0 +1,17 @@
+{
+  "id": "N-01M75HN5APVFZ4MJH8ZFGZYK7N",
+  "alias": "ekrd",
+  "stage": "08-rig",
+  "who": "nick",
+  "words": "i think it is probably good enough for now",
+  "date": "2026-11-11",
+  "kind": "approval",
+  "binds": {
+    "build": "B-01M74862A0TBE29VHYY3BNZJ2E",
+    "evidence": [
+      "Check 17 shows the rig in motion on the surfaced scene of record (845bd41c); the surface stage closing marked the rig stale, and this approval re-closes it on the same rig"
+    ]
+  },
+  "amount": null,
+  "createdAt": "2026-11-11T14:54:39Z"
+}

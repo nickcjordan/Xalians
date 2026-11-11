@@ -1,0 +1,23 @@
+{
+  "tokens": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0
+  },
+  "byRole": {},
+  "blenderMinutes": 0.0,
+  "codexTokens": 0,
+  "buildCount": 7,
+  "buildsWithoutTranscripts": [
+    "78vx",
+    "6kf7",
+    "378v",
+    "bafy",
+    "j6jh",
+    "sntv",
+    "hzy8"
+  ],
+  "closedAt": "2026-11-11T14:54:43Z",
+  "approval": "N-01M75HMY72V8W6K991VSDXNBHD"
+}

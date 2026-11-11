@@ -1,0 +1,15 @@
+{
+  "id": "N-01M75HMQ1XKSGXGGK4RFVACXD2",
+  "alias": "nt7s",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "D-2nx5 accepted, not fixed: Nick's check 16 (applied as recommended, not undone) ships the check 13 eye. Three later eye passes lost every blind comparison to the check 13 eye. The fix (an opening wider than the iris with white at both corners) moves to the model-sheet stage for later creatures.",
+  "date": "2026-11-11",
+  "kind": "ruling",
+  "binds": {
+    "defect": "D-01M71QMGTF7Y119WEABJC8MENP",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-11T14:54:24Z"
+}
