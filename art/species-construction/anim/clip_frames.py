@@ -93,6 +93,13 @@ p.add_argument('--ground', action='store_true', help='clip set batch 2 (faint li
                'than 1, 5 and 10 mm under it (the fur is not collided with the floor), into fur-checks.json')
 p.add_argument('--crops', default=None, help='clay close views, name:azimuth:elevation:joint:half size (rig metres), comma separated; '
                'each renders as view crop_<name> at --size px')
+p.add_argument('--tail-floor-squash', type=float, default=0., help='batch 2 faint fix pass 8, fur look (mm): the tail plumes rest on '
+               'their fur (akinza_clipset_b2 lifts each tail until its fur envelope, the reach past the skin compressed by '
+               'FAINT4 tail_fur_comp, meets the floor), and the fur, which is not collided, still reaches that share under it. Per '
+               'frame, the points of strands rooted on the tail bones (tail_a/b/c, not the root) below this height over the floor '
+               '(z = 0) are pressed up linearly, the band from the deepest tail fur point of the frame to this height mapped onto the '
+               'floor to this height, so the tail fur ends on the floor; strands of every other region, every point above the band '
+               'and every frame whose tail fur stays over the floor are untouched. 0 (default) leaves the fur as before')
 a = p.parse_args(sys.argv[sys.argv.index('--')+1:])
 BOX_VIEWS = {'side': (90., 3.), 'front': (0., 3.), 'threequarter': (45., 8.), 'back': (180., 8.)}   # fitted to --box, square --size px
 t0 = time.time()
@@ -212,6 +219,30 @@ to_m = lambda X: s*(X-off)
 from_m = lambda X: X/s+off
 REST_M = to_m(skin_rest)
 SHAPES = ac.load_shapes(a.bake)          # pass 2: the breath key, driven by each frame's shapes['breath']
+SQUASH = None
+if a.tail_floor_squash > 0 and binding is not None:
+    _names = rc.ANIM_NAMES
+    _rb = np.array([_names[b] for b in idx[:, 0][binding['Tr'][:, 0]]])        # each strand's root bone (its root vertex's strongest)
+    _tail = np.array([n.startswith(('tail_a', 'tail_b', 'tail_c')) for n in _rb])
+    SQUASH = dict(points=np.flatnonzero(_tail[binding['curve_of']]), band=a.tail_floor_squash/1000)
+    print('tail floor squash', a.tail_floor_squash, 'mm on', int(_tail.sum()), 'strands', len(SQUASH['points']), 'points', flush=True)
+
+
+def squash_tail_fur(pts):
+    """Fix pass 8: the tail strands' points under the band height pressed up so the deepest lands on the floor (see
+    --tail-floor-squash). Returns the points and the depth pressed out (rig metres, 0 when nothing is under the floor)."""
+    h = SQUASH['band']
+    ix = SQUASH['points']
+    z = s*(pts[ix, 2]-off[2])                                  # rig metres over the floor
+    d = max(0., -float(z.min()))
+    if d == 0.:
+        return pts, 0.
+    lo = z < h
+    out = pts.copy()
+    out[ix[lo], 2] = h*(z[lo]+d)/(h+d)/s+off[2]               # [-d, h] onto [0, h]
+    return out, d
+
+
 # batch 2 faint fix pass 6: the hind claws follow the toe-curl keys (toe_corrective.py turns the toes up about the toe joint's X
 # axis; a claw on the foot bone stayed put and went 10 to 19 mm into the floor). The keys weigh zero in every other clip, so
 # their claws are placed exactly as before. A frame may also carry `claws` (side -> degrees): the claws retracted further about the
@@ -420,6 +451,9 @@ def apply(fr, clip):
         set_world_co(o, from_m(Xm@Rb.T+tb))
     if binding is not None:
         pts = fur_bind.rebuild(binding, Px)
+        if SQUASH is not None:
+            pts, dq = squash_tail_fur(pts)
+            print('tail floor squash', clip, fr['frame'], 'deepest tail fur', round(dq*1000, 2), 'mm pressed onto the floor', flush=True)
         fur_bind.write(binding, pts)
         if a.fur_checks:
             t1 = time.time()

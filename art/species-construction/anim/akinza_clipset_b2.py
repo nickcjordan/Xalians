@@ -1631,6 +1631,24 @@ FAINT4 = dict(
     # (fix pass 6: tail b's third bone went 2 mm into the floor at .022, .017; fix pass 7: per tail, the fourth joint lower so
     # each tail's end lies on the floor (with .014 the fourth and fifth bones' lowest skin stood 4.6 to 7.3 mm over it at rest))
     tail_clear={'a': (.026, .025, .021, .0087, .006), 'b': (.026, .025, .021, .0090, .006), 'c': (.026, .025, .021, .0096, .006)},
+    # fix pass 8 (the plumes sank through the floor in fur, 37 px at 720 from f25 on: the skin lay on the floor, the plume fur
+    # did not): each tail rests on its fur. tail_fur_profile is the fur envelope of the surface fur-steps/s12-29c-legs3b per tail
+    # bone (tail_fur_profile.py: per 10 mm along the bone, the fur's and the skin's largest distance from the bone's line; the
+    # plume fur reaches 92 to 126 mm from the line on bones 2 to 4, the skin 9 to 27 mm), and drape_tail_dirs raises any bone
+    # from tail_fur_from to the tip whose envelope, its fur's reach past the skin compressed by tail_fur_comp, would go under the
+    # floor, keeping its heading. The envelope is the fur's largest reach all round the bone, so the fur under it reaches the
+    # floor short of that: at rest the deepest tail fur is 22 to 28 mm under the floor uncompressed (.25 left it 18 to 23).
+    # The fur render presses that share onto the floor (clip_frames.py --tail-floor-squash). The fork bones (1) are left to
+    # the skin clearances: lifted on their fur they drew tails b and c to 53 mm apart at rest and 42 at 29 (pass 7: 57, 49).
+    # The skin clearances (tail_clear, pass 7's) still hold under it all
+    tail_fur_profile=HERE.parents[2]/'untracked/species-construction/akinza/anim/clipset2/bake-f8/tail-fur-profile.json',
+    tail_fur_comp=.3, tail_fur_from=2,
+    # fix pass 8: lifted onto their fur, tails a and c passed through the kneeling feet at rest (tail a's third bone 12 mm into
+    # the near foot, tail c's fourth 18 mm into the far foot; at pass 7 tail a was 7 mm into the near foot): their bones 2 to 5
+    # turn this many degrees back about the vertical at E (a toward the back from its splay to the camera side, c from its
+    # splay away), so they pass behind the feet (tail c 36 mm clear of the far foot at rest; turning the second bones out
+    # instead put tail c 14 mm into the far foot)
+    tail_back_turn=15.,
     # toe keys (toe_corrective.py): the toes curl back 40 degrees as the shin swings from 95 to 112; the foot turns the same angle
     # about its toe joint so the toes stay where they stand
     toe_curl=(95., 112., 40.),
@@ -1825,9 +1843,29 @@ def toe_curl_of(shin_swing):
     return ang*min(1., max(0., (shin_swing-lo)/(hi-lo)))
 
 
-def drape_tail_dirs(rig, pose, lift, dirs, clear):
+def fur_low(bins, comp, pj, dv):
+    """Fix pass 8: the lowest point (rig z) of a tail bone's fur envelope with its head at pj and world direction dv: each bin of the
+    profile (tail_fur_profile.py) a ring of radius r about the bone's line from s0 to s1, the fur's reach past the skin compressed
+    by comp (r = r_skin + (1 - comp) * (r_fur - r_skin)); a ring reaches r * sqrt(1 - dz^2) under the line."""
+    c = math.sqrt(max(0., 1-dv[2]*dv[2]))
+    lo = math.inf
+    for s0, s1, rf, rk, _ in bins:
+        r = rk+(1-comp)*(rf-rk)
+        lo = min(lo, pj[2]+min(s0*dv[2], s1*dv[2])-r*c)
+    return lo
+
+
+def _raise_to(dv, dz):
+    hz = np.array([dv[0], dv[1], 0.])
+    hz = hz/np.linalg.norm(hz) if np.linalg.norm(hz) > 1e-9 else np.array([0., 1., 0.])
+    return np.array([hz[0]*math.sqrt(1-dz*dz), hz[1]*math.sqrt(1-dz*dz), dz])
+
+
+def drape_tail_dirs(rig, pose, lift, dirs, clear, fur=None, comp=0., fur_from=1):
     """Tails by world direction per bone; down each chain a joint that would go under its own clearance over the floor is raised
-    to lie on it, keeping its heading."""
+    to lie on it, keeping its heading. Fix pass 8: with `fur` (the tail fur profile, {bone: {'bins': ...}}), a bone whose fur
+    envelope (compressed by comp, fur_low) would reach under the floor is then raised, keeping its heading, until it rests on it
+    (bones fur_from to the tip)."""
     tg = {b: _unit(v) for b, v in dirs.items()}
     T = rc.bone_transforms(rig.J, rc.pose_from_directions(rig.J, {'tail_root': tg['tail_root']}, base=pose, bones=B), bones=B,
                            root_translate=tuple(rc.lift_vec(lift)))
@@ -1848,9 +1886,39 @@ def drape_tail_dirs(rig, pose, lift, dirs, clear):
                 hz = hz/np.linalg.norm(hz) if np.linalg.norm(hz) > 1e-9 else np.array([0., 1., 0.])
                 dv = np.array([hz[0]*math.sqrt(1-dz*dz), hz[1]*math.sqrt(1-dz*dz), dz])
                 tg[b] = dv
+            if fur is not None and k >= fur_from and fur_low(fur[b]['bins'], comp, pj, dv) < 0:
+                # the smallest rise of the bone's height share that puts its envelope on the floor (scan, then bisect)
+                lo_, hi_ = float(dv[2]), None
+                for dz in np.arange(lo_+.01, 1.0001, .01):
+                    if fur_low(fur[b]['bins'], comp, pj, _raise_to(dv, min(1., dz))) >= 0:
+                        hi_ = min(1., float(dz))
+                        break
+                    lo_ = float(dz)
+                if hi_ is None:
+                    hi_ = 1.
+                for _ in range(30):
+                    mid = (lo_+hi_)/2
+                    if fur_low(fur[b]['bins'], comp, pj, _raise_to(dv, mid)) >= 0:
+                        hi_ = mid
+                    else:
+                        lo_ = mid
+                dv = _raise_to(dv, hi_)
+                tg[b] = dv
             pj = pj+L*dv
     order = ['tail_root']+[f'tail_{tn}{k}' for tn in rc.TAILS for k in range(1, rc.TAIL_BONES+1)]
     return {k: [float(x) for x in v] for k, v in rc.pose_from_directions(rig.J, {b: tg[b] for b in order}, base=pose, bones=B).items()}
+
+
+def tails_E_turned():
+    """Fix pass 8: FAINT4 tails_E with tails a and c's bones 2 to 5 turned tail_back_turn degrees back about the vertical (a
+    from +X toward +Y, c from -X toward +Y); tail b and the bones before them as they are."""
+    E = {k: list(v) for k, v in FAINT4['tails_E'].items()}
+    for tn, sg in (('a', 1.), ('c', -1.)):
+        f = math.radians(sg*FAINT4['tail_back_turn'])
+        for k in range(2, rc.TAIL_BONES+1):
+            x, y, z = E[f'tail_{tn}{k}']
+            E[f'tail_{tn}{k}'] = [x*math.cos(f)-y*math.sin(f), x*math.sin(f)+y*math.cos(f), z]
+    return E
 
 
 def _world(rig, pose, b):
@@ -2439,7 +2507,8 @@ def faint4_frame(rig, skin, f, cache):
     ear_info['headAxis'] = round(math.degrees(math.atan2(yh[2], yh[1])), 2)
     # tails: each bone's world direction from idle's to E's, draped on the floor; idle's twist eases out
     tt = tr('tails')
-    tdir = {b: _slerp_dir(cache['tails0'][b], P['tails_E'][b], tt) for b in cache['tails0']}
+    tE = tails_E_turned()
+    tdir = {b: _slerp_dir(cache['tails0'][b], tE[b], tt) for b in cache['tails0']}
     tb = tr('bounce_late')
     if tb:
         tdir['tail_root'] = rot([P['bounce_tail'][0]*tb, 0., 0.])@tdir['tail_root']
@@ -2447,7 +2516,10 @@ def faint4_frame(rig, skin, f, cache):
     if tl:
         Rl = rot([P['tail_lift_deg']*tl, 0., 0.])
         tdir = {b: Rl@v for b, v in tdir.items()}
-    tbody = drape_tail_dirs(rig, dict(body), lift, tdir, P['tail_clear'])
+    if 'fur' not in cache:
+        cache['fur'] = json.loads(Path(P['tail_fur_profile']).read_text())
+    tbody = drape_tail_dirs(rig, dict(body), lift, tdir, P['tail_clear'], fur=cache['fur'], comp=P['tail_fur_comp'],
+                            fur_from=P['tail_fur_from'])
     wt = min(1., tt/P['tail_twist_in'])
     for b in tdir:
         body[b] = slerp_e(ip.get(b, [0., 0., 0.]), tbody[b], wt)
