@@ -744,14 +744,17 @@ def act_frame(rig, name, f):
 ACTS['light'] = dict(
     frames=27, hit=11, recover=21, side='L', arms=('L',), reach_declared=.35, fore_lead={'forearm': 0., 'hand': 0.},
     # Fix pass 3 (the critic: the raised paw sat in front of the face, hand to mouth at 192; the arm is too short to clear the head):
-    # the wind-up cocks back behind the body line. The striking arm's chain: 0 idle, 1 the cock (the upper arm back and out, 65
-    # degrees of swing, the elbow up and back, bent 73 from rest, the forearm up so the paw is at shoulder to chin height behind the
-    # back of the neck, the claws turned back), 2 the arc's middle (the arm out to the side at shoulder height, the forearm coming
+    # the wind-up cocks back behind the body line. Fix pass 4 (the orchestrator: with the elbow at shoulder height and the forearm
+    # up, the paw sat beside the jaw, a paw at the throat at 192; variant A of the pose test picked): back and low. The striking
+    # arm's chain: 0 idle, 1 the cock (the upper arm swung back, 46 degrees of swing, the elbow behind the back at mid-chest height,
+    # the forearm level and pointing back, the wrist cocked back so the claws open; the paw at chest height about 20 cm behind the
+    # back with background between, above the top tail; the upper arm turned so its elbow bends out and up, which took the
+    # shoulder's creases from 28 and 65 to 3 and 5), 2 the arc's middle (the arm out to the side at shoulder height, the forearm coming
     # forward and down, the paw leading), 3 the hit (forward of the chest at belly to chest height, the elbow nearly straight, the
     # wrist hooked so the claws lead), 4 the follow-through (down and back across the body, the paw by the hip), 5 the settle (a
     # little open: the overshoot), 6 idle again. Directions in the chest's frame; the elbow a hinge (hinged_arm); every upper arm
     # swing under 75 degrees (the overhead keys stay at 0)
-    arm_keys=[(8, dict(d1=(.55, .75, -.1), pole=(.5, 0., 1.), elbow=100., wrist=-15.)),
+    arm_keys=[(8, dict(d1=(.3, .8, -.52), pole=(.5, .3, .8), elbow=60., wrist=-25.)),
               (10, dict(d1=(.9, -.25, -.35), pole=(-.1, -.8, .4), elbow=55., wrist=4.)),
               (11, dict(d1=(.15, -.85, -.5), pole=(-.6, -.3, .74), elbow=25., wrist=14.)),
               (13, dict(d1=(.2, .15, -.97), pole=(-.9, -.3, .2), elbow=45., wrist=10.)),
@@ -830,13 +833,14 @@ ACTS['heavy'] = dict(
     frames=42, hit=19, recover=33, side='L', arms=('L', 'R'), reach_declared=.40,
     # Fix pass 3 (the critic: the raised paws covered the face from 10 to 16; the arms are too short to clear the head): a full-body
     # coil with both arms drawn back behind the body line, a hop, a wide two-arm swing forward and down into the hit, a deeper
-    # landing. Both arms' chain: 0 idle, 1 the coil (the upper arms back and out, the elbows back and up, bent 68 from rest, the paws
-    # at shoulder height behind the chest, the wrists bent back so the claws open), 2 the coil on the toes (a little higher and
-    # further back), 3 the arms swung out to the sides below the head, 4 the wide arc (out at the sides at shoulder height, sweeping
+    # landing. Fix pass 4 (variant A of the pose test: back and low, the paws no longer raised by the face, a surrender pose in
+    # three-quarter). Both arms' chain: 0 idle, 1 the coil (the upper arms swung back, 54 degrees of swing, further than light's,
+    # the forearms level and pointing back, the wrists cocked back so the claws open, the paws at chest height about 11 cm behind
+    # the back, the upper arms turned so the elbows bend out and up), 2 the coil on the toes (a little further back, 57 degrees), 3 the arms swung out to the sides below the head, 4 the wide arc (out at the sides at shoulder height, sweeping
     # forward), 5 the hit (both arms forward and angled down, the elbows nearly straight, the paws open, reaching 0.51 m), 6 the
     # landing (the elbows giving), 7 the paws drawn back to the chest, 8 idle again. Every upper arm swing under 75 degrees (the overhead keys stay at 0; they stay in the rig, unused by this clip)
-    arm_keys=[(6, dict(d1=(.5, .8, -.3), pole=(.5, 0., 1.), elbow=85., wrist=-20.)),
-              (12, dict(d1=(.55, .78, -.2), pole=(.5, 0., 1.), elbow=82., wrist=-20.)),
+    arm_keys=[(6, dict(d1=(.3, .85, -.43), pole=(.8, .4, .45), elbow=60., wrist=-25.)),
+              (12, dict(d1=(.3, .88, -.36), pole=(.8, .4, .45), elbow=62., wrist=-25.)),
               (14, dict(d1=(.92, .3, -.25), pole=(-.1, -.4, .9), elbow=50., wrist=-15.)),
               (16, dict(d1=(.95, -.1, -.3), pole=(-.2, -.7, .6), elbow=35., wrist=-10.)),
               (19, dict(d1=(.12, -.92, -.38), pole=(-.85, -.2, .5), elbow=16., wrist=-10.)),
@@ -955,12 +959,12 @@ def bake(rig_dir, out, clips=None):
 # ---------------------------------------------------------------- setup check
 
 SETUP = {
-    # fix pass 3: the light swipe's cock, hit and follow-through, heavy's coil, rise, swing, hit and landing, the run's straight
+    # fix pass 3 and 4: the light swipe's cock, hit and follow-through, heavy's coil, rise, swing, hit and landing, the run's straight
     # push-off and folded pass, and the exit's brake
-    'lightCock': ('light', 7, 'light f7: the cock (the paw back and up behind the neck, the elbow up and back)'),
+    'lightCock': ('light', 7, 'light f7: the cock (fix pass 4: the arm drawn back and low, the forearm level, the paw at chest height behind the back)'),
     'lightHit': ('light', 11, 'light f11: the hit (forward of the chest, the claws leading, at the end of the arc)'),
     'lightFollow': ('light', 13, 'light f13: the follow-through (down and back across the body, the paw by the hip)'),
-    'heavyCoil': ('heavy', 8, 'heavy f8: the coil (leaned back and sunk, both arms drawn back behind the body line)'),
+    'heavyCoil': ('heavy', 8, 'heavy f8: the coil (leaned back and sunk, both arms drawn back and low, the paws at chest height behind the back)'),
     'heavyRise': ('heavy', 12, 'heavy f12: on the toes, still coiled back'),
     'heavySwingOut': ('heavy', 13, 'heavy f13: the arms swinging out to the sides as the hop starts'),
     'heavySwing': ('heavy', 16, 'heavy f16: the wide arc, the arms out at the sides sweeping forward'),
