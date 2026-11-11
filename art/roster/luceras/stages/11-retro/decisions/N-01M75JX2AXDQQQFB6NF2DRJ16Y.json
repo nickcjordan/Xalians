@@ -1,0 +1,14 @@
+{
+  "id": "N-01M75JX2AXDQQQFB6NF2DRJ16Y",
+  "alias": "x5zv",
+  "stage": "11-retro",
+  "who": "orchestrator",
+  "words": "Retro written (docs/design/creature-pipeline-retro-luceras.md) and the design amended (section 11, rules P1 to P10; decision 1 sprites first). Stage 10 export deferred until a game needs the sprites. Superseded working data deleted on Nick's instruction (about 58 GB).",
+  "date": "2026-11-11",
+  "kind": "ruling",
+  "binds": {
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-11T15:16:27Z"
+}

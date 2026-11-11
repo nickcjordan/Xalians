@@ -151,9 +151,10 @@
       "evidence": []
     },
     "11-retro": {
-      "state": "not-started",
+      "state": "open",
       "approval": null,
-      "evidence": []
+      "evidence": [],
+      "openedAt": "2026-11-11T15:16:26Z"
     }
   }
 }

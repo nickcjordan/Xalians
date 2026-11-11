@@ -14,7 +14,7 @@ Terms are defined in the audit's vocabulary paragraph and on first use below. Th
 
 | # | Assumption / Decision | Confidence | Supporting Evidence |
 |---|---|---|---|
-| 1 | The shipped asset is glTF 2.0 with a deformation skeleton, skinned mesh, clips with named events, KTX2-compressed textures and meshopt or Draco mesh compression; sprite atlases are rendered from it | 95%: Nick's ruling 2026-10-14 | this doc's Context; audit section 1 |
+| 1 | (Amended 2026-10-16 by Nick and at the Luceras retro, section 11: sprites first. The primary delivery is a Cycles strand-fur sprite atlas; the glTF below is built when a game needs the live model.) The shipped asset is glTF 2.0 with a deformation skeleton, skinned mesh, clips with named events, KTX2-compressed textures and meshopt or Draco mesh compression; sprite atlases are rendered from it | 95%: Nick's ruling 2026-10-14 | this doc's Context; audit section 1 |
 | 2 | (Amended 2026-10-14 by measurement; see section 9.) Budgets are set per scene and derived per creature, as levers. Scene: twelve creatures on screen (Duel and Reclamation rosters), under 60 draw calls and 150,000 triangles for creatures, under 12 MB downloaded for a full roster. Per creature: 6,000 to 12,000 triangles, one 1024 texture set (base color, normal, packed occlusion-roughness-metallic, optional emissive) in KTX2, one material plus one for eyes or emissive parts, at most 60 deformation joints, 4 influences per vertex, at most 8 blend shapes, clips sampled at 30 fps with keyframe optimization and meshopt compression, under 400 KB per creature compressed. No LODs for now (fixed close cameras) | 65%: standard mobile practice, untested on this roster; the first creature measures real frame time on Nick's phone and the numbers move | audit G1, G3, G17 |
 | 3 | Authoring in Blender 5.2 under WSL, scripted through `bpy`, metric units, creature height from the species size band at the 50th percentile, origin on the floor, facing Blender's front view; the glTF exporter converts Z-up to Y-up | 90%: Blender is installed and proven; units were arbitrary before | audit G13; `art/creature-motion-comparison/README.md` |
 | 4 | Rigs are not six fixed skeletons but parametric modules assembled per species: spine, neck and head, limb chain with a leg-count parameter (2, 4, 6, 8, 16), arm, wing, tail or tentacle chain, ear chain, jaw, horn or crest attachment; plus locomotion archetypes (biped gait, quadruped gait, wave gait for many legs, undulation, hover, flap). Body plan still orders the work: biped 11 species, quadruped 8, multiped 6, serpentine 2 plus the piscine Fathomaw, floating 2, avian, amorphous and swarm 1 each. Wings cross four plans. Vespersyn is a lead figure plus instanced minors with its own route | 75%: counted from the v5 records; the cold challenge showed body plan is the wrong grouping key | `docs/species-templates/v5/*.json`; audit G4, G21 |
@@ -145,3 +145,22 @@ Process decisions, the pipeline owner's:
 | Reconstruction (Hunyuan3D-2) | GPU under the 6.5 GB cap | exactly 1, never beside a Blender render | the same slot lock, GPU class |
 | Builder agents | tokens | 2 to 3 | each heavy launch goes through the slot lock, so parallel agents cannot stack heavy work |
 | Any heavy launch | | | the runner checks load and free memory first and waits instead of piling on |
+
+## 11. Amendments from the Luceras retro (2026-11-11)
+
+Source: [creature-pipeline-retro-luceras.md](creature-pipeline-retro-luceras.md). These rules apply from creature two on and override the stage table in section 2 where they differ.
+
+| # | Rule | Stage |
+|---|---|---|
+| P1 | The model sheet specifies the eye as geometry: an opening wider than the iris with white at both corners, lid cover over the iris top, a catchlight that survives at sprite size, no pale line under the eye. | 3 |
+| P2 | Part briefs state anatomy with numbers: section profiles, bone layout for feet and hands, station profiles (tone and width) along long parts. Small multi-digit parts are built from the skeleton outward. | 3, 5, 7 |
+| P3 | Sculpt is a repair list on the reconstruction. Every join gets a curvature check. Every look stage starts with the reconstruction-versus-sculpt comparison. | 5 |
+| P4 | Every groom ends with a coverage table per region (roots per cm2, length, lift, visible skin share against a far control) and a whole-creature 4x region read. | 7 |
+| P5 | Furred regions are gated in fur at the sprite camera. Clay counts are diagnostics only. Every deformation gate pairs its counts with pose limits from real-animal reference. | 8, 9 |
+| P6 | The orchestrator and an independent critic each write a full defect list from the large deformation and region boards before Nick sees anything. | 8, 9 |
+| P7 | Fix on preview boards until a whole-creature read finds nothing, then render the sprites once per round. | 9, 10 |
+| P8 | Name a cause only after a measurement shows it (view-space trace, station plot, coverage count). | all |
+| P9 | Builders keep one working scene per variant and at most two on disk. Superseded scenes are deleted at stage close, not archived on the same drive. | all |
+| P10 | Stage 10 exports the sprite atlas (split so no sheet exceeds 4,096 px) and builds the glTF only when a game needs the live model. | 10 |
+
+Tooling changes owed before creature two: the cost collector must match every build (tag in the first message, wall hours, tokens and Blender minutes in every report); closing a stage marks stale only the later stages that consume what changed; and these rules are reconciled with Creature Studio's reuse rules so the next creature runs one process.
