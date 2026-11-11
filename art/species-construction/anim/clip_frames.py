@@ -212,6 +212,25 @@ to_m = lambda X: s*(X-off)
 from_m = lambda X: X/s+off
 REST_M = to_m(skin_rest)
 SHAPES = ac.load_shapes(a.bake)          # pass 2: the breath key, driven by each frame's shapes['breath']
+# batch 2 faint fix pass 6: the hind claws follow the toe-curl keys (toe_corrective.py turns the toes up about the toe joint's X
+# axis; a claw on the foot bone stayed put and went 10 to 19 mm into the floor). The keys weigh zero in every other clip, so
+# their claws are placed exactly as before. A frame may also carry `claws` (side -> degrees): the claws retracted further about the
+# toe joint (faint: the foot rolled onto its toe pads pushed them into the floor); no other clip's frames carry it
+TOE = json.loads((R/'toe-corrective.json').read_text())['params'] if (R/'toe-corrective.json').exists() else None
+
+
+def toe_turned(X, vals, side, extra=0.):
+    """Rest-space points of a hind claw turned up with the toes by the toe keys' share of their angle, plus the frame's own
+    retraction (`extra`, a faint frame's `claws`); unchanged when both are off."""
+    if TOE is None:
+        return X
+    ang = float(TOE['angle'])*(vals.get(f'toe_curl.{side}', 0.)+float(TOE['mid_share'])*vals.get(f'toe_curl_mid.{side}', 0.))+extra
+    if ang <= 0:
+        return X
+    j = np.array(J[f'toe.{side}'])
+    c, sn = math.cos(math.radians(-ang)), math.sin(math.radians(-ang))
+    Rx = np.array([[1., 0., 0.], [0., c, -sn], [0., sn, c]])
+    return (X-j)@Rx.T+j
 
 
 def strand_lengths(pts):
@@ -395,7 +414,10 @@ def apply(fr, clip):
         side = 'L' if '+1' in nm else 'R'
         bone = f'hand.{side}' if 'fore claw' in nm else f'foot.{side}' if 'hind claw' in nm else 'head'
         Rb, tb = T[bone]
-        set_world_co(o, from_m(to_m(others[o.name])@Rb.T+tb))
+        Xm = to_m(others[o.name])
+        if 'hind claw' in nm:
+            Xm = toe_turned(Xm, vals, side, float(fr.get('claws', {}).get(side, 0.)))
+        set_world_co(o, from_m(Xm@Rb.T+tb))
     if binding is not None:
         pts = fur_bind.rebuild(binding, Px)
         fur_bind.write(binding, pts)

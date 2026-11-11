@@ -18,7 +18,13 @@ Groups (each key also needs the vertex to be that part's skin, so nothing else m
   neck  neck, the band where the chest and the neck, head and jaw share the weight (the head tucked down); rise0 NECK_RISE0;
   head  head, the band where the chest and the head and jaw share the weight (no skin is weighted to the neck bone), as the neck
         group's but driven by the head's own swing (faint fix pass 4: the head turned far back against the neck to lie on its
-        jaw and cheek); rise0 HEAD_RISE0.
+        jaw and cheek); rise0 HEAD_RISE0;
+  belly chest, the band where the spine and the chest share the weight, with the pelvis (faint fix pass 6: the trunk curling
+        forward 28 to 42 degrees stacked fine pleats across the lower belly); rise0 BELLY_RISE0.
+--mid-sculpt poses.json:frame (faint fix pass 6) sculpts the mid keys at that frame of a clip instead of at the sculpt pose with
+only the driving bone turned back, and puts the mid angle at that frame's swing: the in-between frames of the fall, where every
+other bone is also on its way, are what the mid key has to clean (the hip and tail mid keys sculpted at the end pose left a
+pinched pit at the hip and a spike at the tail root at faint frames 23 to 26).
 --rise0 group:degrees,... overrides a group's rise0 (faint fix pass 4: batch 3's move now bends the shin 91.3 degrees, past the
 knee's 88, so the knee keys rise from 95).
 The rise0 angles sit above the largest swing any approved or current clip uses (idle, Night Stalk, batch 1, batch 2's displaced
@@ -50,6 +56,7 @@ import rig_core as rc  # noqa: E402
 import akinza_clips as ac  # noqa: E402
 
 KNEE_RISE0, HIP_RISE0, TAIL_RISE0, NECK_RISE0, HEAD_RISE0 = 88., 82., 25., 25., 30.
+BELLY_RISE0 = 17.     # above every approved or current clip's chest swing (batch 3's move: 15.0) and faint's rest (15.9)
 p = argparse.ArgumentParser()
 p.add_argument('rig', type=Path)
 p.add_argument('rest', type=Path)
@@ -59,12 +66,13 @@ p.add_argument('--rounds', type=int, default=100)
 p.add_argument('--fine', type=int, default=4)
 p.add_argument('--relax', type=int, default=2000)
 p.add_argument('--mid-share', type=float, default=.5, help='the mid key sits this share of the way from rise0 to the full angle')
-p.add_argument('--radii', default='knee:.04:.12,hip:.06:.16,tail:.05:.12,neck:.04:.12,head:.04:.12', help='group:r0:r1, the mask (m) round the blend band')
+p.add_argument('--mid-sculpt', default=None, help='poses.json:frame: sculpt the mid keys at this clip frame (its swing is the mid angle)')
+p.add_argument('--radii', default='knee:.04:.12,hip:.06:.16,tail:.05:.12,neck:.04:.12,head:.04:.12,belly:.05:.14', help='group:r0:r1, the mask (m) round the blend band')
 p.add_argument('--check-bakes', default='')
 p.add_argument('--dry-run', action='store_true')
 p.add_argument('--rise0', default='', help='group:degrees,... overriding the defaults')
 a = p.parse_args()
-RISE0 = dict(knee=KNEE_RISE0, hip=HIP_RISE0, tail=TAIL_RISE0, neck=NECK_RISE0, head=HEAD_RISE0)
+RISE0 = dict(knee=KNEE_RISE0, hip=HIP_RISE0, tail=TAIL_RISE0, neck=NECK_RISE0, head=HEAD_RISE0, belly=BELLY_RISE0)
 RISE0.update({g: float(v) for g, v in (x.split(':') for x in a.rise0.split(',') if x)})
 
 B = rc.ANIM_BONES
@@ -120,6 +128,8 @@ def spec(group, sd):
         return 'neck', (['chest'], ['neck', 'head', 'jaw']), ['chest', 'neck', 'head', 'jaw']
     if group == 'head':     # (no skin is weighted to the neck bone: the neck's skin blends the chest's and the head's)
         return 'head', (['chest'], ['neck', 'head', 'jaw']), ['chest', 'neck', 'head', 'jaw']
+    if group == 'belly':
+        return 'chest', (['spine'], ['chest']), ['pelvis', 'spine', 'chest']
     return 'tail_root', (['pelvis'], ['tail_root']+TAILB), ['pelvis', 'glute.L', 'glute.R', 'tail_root']+TAILB
 
 
@@ -145,6 +155,7 @@ def load_pose(arg):
 
 
 full_pose, lift = load_pose(a.sculpt)
+MID = load_pose(a.mid_sculpt) if a.mid_sculpt else None
 SM_REST = smooth(rest, a.fine)-smooth(rest, a.rounds)
 new_keys, report = [], {}
 for group in GROUPS:
@@ -167,14 +178,20 @@ for group in GROUPS:
                 hi_ = m_
         mid_pose = dict(full_pose)
         mid_pose[bone] = ac.share_of(full_pose[bone], .5*(lo_+hi_))
+        mid_lift = lift
+        if MID is not None:
+            mid_pose, mid_lift = MID
         ang_mid = rc.swing_deg(J, mid_pose, bone, B)
+        if not rise0+2 < ang_mid < ang_full-2:
+            raise SystemExit(f'{group} {sd}: the mid pose bends {bone} {ang_mid:.1f} degrees, not between rise0 {rise0} and {ang_full:.1f}')
         m, nb = mask(group, sd if sd != 'C' else 'L')
         tag = '' if sd == 'C' else f'.{sd}'
-        for gname, pose, rise, fall in ((f'{group}_deep_mid', mid_pose, [rise0, ang_mid], ang_full),
-                                        (f'{group}_deep', full_pose, [ang_mid, ang_full], None)):
+        for gname, pose, plift, rise, fall in ((f'{group}_deep_mid', mid_pose, mid_lift, [rise0, ang_mid], ang_full),
+                                               (f'{group}_deep', full_pose, lift, [ang_mid, ang_full], None)):
             k = dict(name=f'{gname}{tag}', group=gname, bone=bone, rise=[float(x) for x in rise], fall=None if fall is None else float(fall),
-                     pose=f'faint heap end pose ({Path(a.sculpt).parent.name})' + (f', {bone} at its mid angle' if gname.endswith('mid') else ''))
-            P, Rv, _ = rc.posed_skin(rest, idx, w, J, pose, lift, keys=keys+new_keys, deltas=deltas)
+                     pose=(f'clip frame {a.mid_sculpt}' if gname.endswith('mid') and MID is not None else
+                           f'faint heap end pose ({Path(a.sculpt).parent.name})' + (f', {bone} at its mid angle' if gname.endswith('mid') else '')))
+            P, Rv, _ = rc.posed_skin(rest, idx, w, J, pose, plift, keys=keys+new_keys, deltas=deltas)
             base = smooth(P, a.rounds)
             if a.relax:
                 sel = np.where(m > 1e-4)[0]
