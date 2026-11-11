@@ -14,7 +14,12 @@ light, heavy). PIL, no Blender. New beside compose_clipset.py (batches 1 and 2),
       clips.json for batch 3: frames, events, travel, reach, entry and exit rules, the per-clip check summaries and per-frame
       numbers (checks-skin.json from clipset_checks_b3.py), the ear line per frame (ear-line.json), the render measures
       (measure-render.json) and any render logs or extra json given.
+  python art/species-construction/anim/compose_clipset_b3.py knee <rig dir> <bake dir> <out png> <clip> <frames> <label:frames dir>...
+      The near knee close-up (fix pass 5, after the deep knee keys moved from 88 to 95 degrees): per frame (comma separated), a crop
+      of the side 720 render centred on the near knee (knee.L projected through the side camera, as clipset_measure.py builds it),
+      3x, one column per frames dir (an earlier render beside the current one), with the frame's shin bends and its knee keys.
 """
+import math
 import json
 import sys
 from pathlib import Path
@@ -210,6 +215,57 @@ def clips_json_b3(bake, out, extra):
     print('wrote', out)
 
 
+def knee(rig_dir, bake, out, clip, frames, cols, box='-0.5375,-0.5567,-0.987,0.6738,0.7639,0.932', half=80, scale=3):
+    """Near knee crops of the side 720 frames: one row per frame, one column per (label, frames dir)."""
+    import numpy as np
+    sys.path.insert(0, str(HERE.parent))
+    import rig_core as rc
+    rig = json.loads((rig_dir/'rig.json').read_text())
+    J = json.loads((rig_dir/'joints.json').read_text())
+    keys = json.loads((rig_dir/'correctives.json').read_text())['keys']
+    s, off = rig['transform']['scale'], np.array(rig['transform']['offset'])
+    # the side camera as clipset_measure.Cam builds it: azimuth 90, elevation 3, fitted to the box (1.08), 720 px
+    b = np.array([float(v) for v in box.split(',')])
+    lo, hi = b[:3], b[3:]
+    ar, er = math.radians(90.), math.radians(3.)
+    f_ = -np.array([math.sin(ar)*math.cos(er), -math.cos(ar)*math.cos(er), math.sin(er)])
+    r = np.cross(f_, [0, 0, 1.])
+    r /= np.linalg.norm(r)
+    u = np.cross(r, f_)
+    corners = np.array([[hi[0] if k & 1 else lo[0], hi[1] if k & 2 else lo[1], hi[2] if k & 4 else lo[2]] for k in range(8)])
+    xs, ys = corners@r, corners@u
+    ortho = max(xs.max()-xs.min(), ys.max()-ys.min())*1.08
+    cx, cy, pps = (xs.max()+xs.min())/2, (ys.max()+ys.min())/2, 720/ortho
+    poses = json.loads((bake/clip/'poses.json').read_text())
+    C = 2*half*scale
+    out_im = Image.new('RGB', (len(cols)*C, 44+len(frames)*(C+50)), (12, 12, 12))
+    dr = ImageDraw.Draw(out_im)
+    dr.text((8, 6), f'Akinza {clip}: the near knee (side 720, crop {2*half} px around knee.L, {scale}x)', fill=(235, 235, 235), font=font(16))
+    dr.text((8, 24), 'columns: '+', '.join(lab for lab, _ in cols), fill=(235, 235, 235), font=font(14))
+    y = 44
+    for f in frames:
+        fr = poses[f]
+        T = rc.bone_transforms(J, fr['pose'], bones=rc.ANIM_BONES, root_translate=tuple(rc.lift_vec(fr['lift'])))
+        kn = T['thigh.L'][0]@np.array(J['knee.L'])+T['thigh.L'][1]
+        X = kn/s+off
+        px, py = int(round((X@r-cx)*pps+360)), int(round(360-(X@u-cy)*pps))
+        kv = rc.corrective_values(J, fr['pose'], [k for k in keys if k['name'].startswith(('knee_', 'toe_curl'))], rc.ANIM_BONES)
+        on = {k: round(v, 3) for k, v in kv.items() if v > 0}
+        sh = [round(rc.swing_deg(J, fr['pose'], bn, rc.ANIM_BONES), 1) for bn in ('shin.L', 'shin.R')]
+        dr.text((8, y+2), f'{clip} f{f}: shin bend near {sh[0]}, far {sh[1]} degrees', fill=(250, 210, 90), font=font(16))
+        dr.text((8, y+20), 'knee and toe keys on with the current rig: '+(', '.join(f'{k} {v}' for k, v in sorted(on.items())) or 'none'),
+                fill=(205, 205, 205), font=font(13))
+        y += 40
+        for i, (lab, d) in enumerate(cols):
+            im = Image.open(Path(d)/clip/'side'/f'{f:04d}.png').convert('RGB')
+            im = im.crop((px-half, py-half, px+half, py+half)).resize((C, C), Image.LANCZOS)
+            ImageDraw.Draw(im).text((6, 6), lab, fill=(255, 230, 90), font=font(16))
+            out_im.paste(im, (i*C, y))
+        y += C+10
+    out_im.save(out)
+    print('knee sheet', out, out_im.size)
+
+
 if __name__ == '__main__':
     cmd = sys.argv[1]
     if cmd == 'seq':
@@ -220,3 +276,6 @@ if __name__ == '__main__':
         setup(Path(sys.argv[2]), sys.argv[3], Path(sys.argv[4]), sys.argv[5])
     elif cmd == 'json3':
         clips_json_b3(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4:])
+    elif cmd == 'knee':
+        knee(Path(sys.argv[2]), Path(sys.argv[3]), Path(sys.argv[4]), sys.argv[5], [int(v) for v in sys.argv[6].split(',')],
+             [tuple(c.split(':', 1)) for c in sys.argv[7:]])
