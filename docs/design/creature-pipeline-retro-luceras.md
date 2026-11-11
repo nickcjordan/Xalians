@@ -89,6 +89,21 @@ Stages 1 to 6 took a fifth of the hours and a twentieth of the new tokens. The r
 | P9 | Builders keep one working scene per variant and at most two on disk; superseded scenes are deleted at stage close, not archived on the same drive | all | lesson 55 |
 | P10 | Delivery is sprites first; stage 10 exports the sprite atlas now and the glTF when a game needs the live model | 10 | Nick, 2026-10-16 |
 
+## Second pass: process changes behind the patterns (2026-11-11)
+
+The first ten changes answer each defect pattern where it showed. A second look at why the patterns recurred adds eight more, written into design section 11 as P11 to P18.
+
+| # | Change | Evidence |
+|---|---|---|
+| P11 | Product first: a crude end-to-end sprite right after the game mesh; surface, rig and motion iterate as one loop against it | Stages 7 to 9 reopened each other for three weeks. The nape, forearm, shank and tail shaft defects showed only in sprite passes, 3 to 4 weeks after the parts were built |
+| P12 | A painted target sprite at ship size and light, approved by Nick, as the comparison for every render | The T4 painted target was what fixed appeal (lesson 48). The tail color was changed and withdrawn (lesson 52). The painting-versus-render comparison was never fair |
+| P13 | Proportions, head scale, carriage and eye geometry settled at the blockout | The head scale and carriage changes in stage 7 reopened the nape groom (lesson 50). The eye's iris-to-opening ratio was a blockout-level fact found at the end (lesson 49) |
+| P14 | One fresh builder per build | B-525v used 942K tokens in 0.95 h, mostly carried context from a resumed builder. The eye-region builder went on to run the tail work and pass 9. Builders wrote 171M tokens to cache against 1.5M of output |
+| P15 | Detached, resumable render and gate jobs | Pass 9's gate B stopped at idle f76 when the session ended overnight and needed a hand-merged resume |
+| P16 | One render queue across sessions, with spillover to the Mac mini | Every Luceras render ran on this PC, and pass 9 waited on the Akinza session's slot until 07:42; the mini spillover route exists (`xalians-mini-blender-compute`) and was never used |
+| P17 | Standard data layout and a cleanup script at stage close | 33 ad hoc `luceras-*` folders held 66 GB, and the scratch archive kept superseded scenes on the same drive |
+| P18 | Measure the rules and prune them; at most five rules per brief | The log holds 56 lessons and briefs grew with them. Creature Studio reached the same rule independently (`creature-studio-reuse.md` decision 9) |
+
 ## Fixes to the tooling before creature two
 
 1. **Cost collector.** Every builder's first message carries its `[build B-xxxx]` tag and every build report carries wall hours, tokens and Blender minutes, so stage cost comes from the records, not from transcripts afterward.

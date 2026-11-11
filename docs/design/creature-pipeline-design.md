@@ -162,5 +162,13 @@ Source: [creature-pipeline-retro-luceras.md](creature-pipeline-retro-luceras.md)
 | P8 | Name a cause only after a measurement shows it (view-space trace, station plot, coverage count). | all |
 | P9 | Builders keep one working scene per variant and at most two on disk. Superseded scenes are deleted at stage close, not archived on the same drive. | all |
 | P10 | Stage 10 exports the sprite atlas (split so no sheet exceeds 4,096 px) and builds the glTF only when a game needs the live model. | 10 |
+| P11 | Product first. Right after the game mesh, render a crude end-to-end sprite (rough groom, quick rig, one clip) at ship size. Every later change is judged on that product. Surface, rig and motion run as one loop against the product, not three gates in sequence. | 6 to 9 |
+| P12 | A target sprite. Before surface work, Nick approves a painted target at sprite size, in the studio light, side facing. Renders are compared to it, not to the full-size sheet painting. Each region is marked "match the target" or "open". | 3, 7 |
+| P13 | Settle proportions, head scale, carriage and eye geometry at the blockout, checked against the target sprite, before any groom exists. | 4 |
+| P14 | One fresh builder per build, started from its brief and a handoff file. Never resume a long-lived builder into a new build. | all |
+| P15 | Long jobs (renders, every-frame gates) run detached and resumable: a job script with a manifest of finished frames, outside the agent's lifetime. The agent launches the job, then reads the results. | 9, 10 |
+| P16 | Every render goes through the shared render queue across sessions, with spillover to the Mac mini Blender VM. | 7 to 10 |
+| P17 | One data layout, `<creature>/<stage>/<build alias>/`, with the scene of record in one fixed place. A cleanup script runs at every stage close and keeps only the outputs the records hash. | all |
+| P18 | Rules are measured and pruned. A brief carries at most five rules, chosen for its part. Each retro counts the defects Nick finds first (target zero), renders per round (target one) and builds per defect, and retires any rule that no build cited. | 11 |
 
 Tooling changes owed before creature two: the cost collector must match every build (tag in the first message, wall hours, tokens and Blender minutes in every report); closing a stage marks stale only the later stages that consume what changed; and these rules are reconciled with Creature Studio's reuse rules so the next creature runs one process.
