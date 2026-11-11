@@ -12,6 +12,7 @@ import blobs  # noqa: E402
 import cost  # noqa: E402
 import derive  # noqa: E402
 from common import (  # noqa: E402
+    dependents,
     STAGES, Refusal, creature_dir, find_record, list_records, load_creature, new_alias, new_id,
     norm_stage, now_iso, read_json, repo_root, save_creature, save_record, sha256_file,
     stage_dir, write_json,
@@ -118,7 +119,7 @@ def cmd_stage_close(a):
         cost.aggregate_stage(a.key, st), closedAt=now_iso(), approval=dec["id"]))
     c["stages"][st].update(state="closed", approval=dec["id"], evidence=ev, closedAt=now_iso())
     stale = []
-    for later in STAGES[STAGES.index(st) + 1:]:
+    for later in dependents(st):
         if c["stages"][later]["state"] == "closed":
             c["stages"][later]["state"] = "stale"
             stale.append(later)
@@ -166,8 +167,10 @@ def _brief(key, st, b, holds, defect):
         lines.append("  (none pinned)")
     left = derive.budget_left(key)
     lines.append("Budget: %s" % ("builds left after this one: %d" % (left) if left is not None else "no budget set"))
-    lines.append("Report (JSON): outputs [{name, hash}] (required), blockedBy (required, 'nothing' allowed), defectResult, newDefects, cost; no scores")
-    lines.append("Tag your agent description with: [build B-%s]" % b["alias"])
+    lines.append("Report (JSON): outputs [{name, hash}] (required), blockedBy (required, 'nothing' allowed), defectResult, newDefects, "
+                 "cost {wall_h (required), blenderSeconds, codexTokens when Codex built it}; no scores")
+    lines.append("Builder: a fresh agent for this build only (rule P14), never a resumed one from another build")
+    lines.append("Tag your agent description and its first message with: [build B-%s]" % b["alias"])
     return "\n".join(lines)
 
 
@@ -233,10 +236,18 @@ def cmd_build_report(a):
             blocked = r[k]
     if blocked is None or (isinstance(blocked, str) and not blocked.strip()):
         raise Refusal("report refused: 'blockedBy' is required (write 'nothing' if nothing blocked you)")
+    rc = r.get("cost")
+    wall = rc.get("wall_h") if isinstance(rc, dict) else None
+    if isinstance(wall, bool) or not isinstance(wall, (int, float)) or wall < 0:
+        raise Refusal("report refused: cost.wall_h (wall hours, a number) is required; add blenderSeconds and, for a Codex build, codexTokens")
     b.update(outputs=outs, report=r, blockedBy=blocked, validators=r.get("validators"),
              checks=r.get("checks", []), status="reported", reportedAt=now_iso())
+    if not getattr(a, "no_collect", False):
+        b["cost"] = cost.scan(b["alias"], since=b.get("createdAt"))
     save_record(a.key, st, "B", b)
-    print("report recorded for build B-%s (%d outputs)" % (b["alias"], len(outs)))
+    cv = b.get("cost") or {}
+    print("report recorded for build B-%s (%d outputs); Claude transcripts matched: %s" % (
+        b["alias"], len(outs), cv.get("transcriptsMatched", "not collected")))
 
 
 # ---------------------------------------------------------------- defect, hold, decision
@@ -505,6 +516,7 @@ def build_parser():
     s.add_argument("--defect"); s.add_argument("--kind", default="build", choices=["preview", "build", "image", "run"])
     s.add_argument("--input", action="append"); s.set_defaults(fn=cmd_build_plan)
     s = b.add_parser("report"); s.add_argument("key"); s.add_argument("build"); s.add_argument("--file", required=True)
+    s.add_argument("--no-collect", dest="no_collect", action="store_true", help="skip the transcript cost scan (tests, or a Codex-only build)")
     s.set_defaults(fn=cmd_build_report)
 
     d = sub.add_parser("defect").add_subparsers(dest="action", required=True)

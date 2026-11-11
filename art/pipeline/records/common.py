@@ -11,6 +11,35 @@ STAGES = [
     "06-gamemesh", "07-surface", "08-rig", "09-animate", "10-export", "11-retro",
 ]
 STAGE_STATES = ("not-started", "open", "closed", "stale")
+
+# What each stage consumes (design section 2, "Input" column). Closing a stage marks stale only the
+# closed stages that consume it, directly or through another stage (retro lesson 56).
+STAGE_INPUTS = {
+    "01-intake": [],
+    "02-vision": ["01-intake"],
+    "03-sheet": ["02-vision"],
+    "04-blockout": ["03-sheet"],
+    "05-sculpt": ["03-sheet", "04-blockout"],
+    "06-gamemesh": ["05-sculpt"],
+    "07-surface": ["02-vision", "05-sculpt", "06-gamemesh"],
+    "08-rig": ["06-gamemesh"],
+    "09-animate": ["08-rig"],
+    "10-export": ["07-surface", "08-rig", "09-animate"],
+    "11-retro": ["10-export"],
+}
+
+
+def dependents(stage):
+    """Every stage that consumes `stage`, directly or transitively, in pipeline order."""
+    out, todo = set(), [stage]
+    while todo:
+        s = todo.pop()
+        for st, ins in STAGE_INPUTS.items():
+            if s in ins and st not in out:
+                out.add(st)
+                todo.append(st)
+    return [s for s in STAGES if s in out]
+
 KIND_DIRS = {"B": "builds", "D": "defects", "H": "holds", "N": "decisions"}
 CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 ALIAS_CHARS = "abcdefghjkmnpqrstvwxyz23456789"

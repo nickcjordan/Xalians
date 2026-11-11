@@ -65,7 +65,7 @@ art/roster/<key>/
 
 Ids are `<kind>-<26 chars>`: ten Crockford base32 characters of the millisecond time, sixteen random, so they sort by creation. Every record also has a four-character lowercase `alias`, unique within the creature. Kinds: C creature, B build, D defect, H hold, N decision, R review entry.
 
-Stage states: `not-started`, `open`, `closed`, `stale`. Closing a stage marks later closed stages stale. Stages: 01-intake, 02-vision, 03-sheet, 04-blockout, 05-sculpt, 06-gamemesh, 07-surface, 08-rig, 09-animate, 10-export, 11-retro.
+Stage states: `not-started`, `open`, `closed`, `stale`. Closing a stage marks stale only the closed stages that consume it, directly or through another stage (`STAGE_INPUTS` and `dependents()` in `common.py`). Stages: 01-intake, 02-vision, 03-sheet, 04-blockout, 05-sculpt, 06-gamemesh, 07-surface, 08-rig, 09-animate, 10-export, 11-retro.
 
 ## Blob store
 
@@ -73,7 +73,7 @@ Stage states: `not-started`, `open`, `closed`, `stale`. Closing a stage marks la
 
 ## Cost
 
-Tag each builder agent's description or first message with `[build B-xxxx]` (the alias the plan prints). `cost collect` scans every `*.jsonl` under `~/.claude/projects` (override: `XALIANS_PROJECTS`), matches the tag in the first user message or the sibling `.meta.json` description, and sums usage per role (the meta `agentType`) deduplicated by `message.id`. The result goes in the build's `cost` block; `uncovered: true` means no transcript carried the tag. Blender seconds and Codex tokens come from the report. The orchestrator's own share is not collected here.
+Tag each builder agent's description or first message with `[build B-xxxx]` (the alias the plan prints). `build report` refuses a report without `cost.wall_h` and runs the scan itself (skip with `--no-collect`); `cost collect` re-runs it. The scan reads only transcripts written since the build was planned, and in a builder transcript a later user message carrying a build tag opens or closes that build's window, so a resumed builder's tokens split by tag. Stage totals add each report's wall hours, Blender seconds and Codex tokens. It scans every `*.jsonl` under `~/.claude/projects` (override: `XALIANS_PROJECTS`), matches the tag in the first user message or the sibling `.meta.json` description, and sums usage per role (the meta `agentType`) deduplicated by `message.id`. The result goes in the build's `cost` block; `uncovered: true` means no transcript carried the tag. Blender seconds and Codex tokens come from the report. The orchestrator's own share is not collected here.
 
 ## Tests
 

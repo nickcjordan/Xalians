@@ -6,7 +6,7 @@ Read this first when resuming the creature pipeline. Design of record: [creature
 
 - **Status 2026-11-11:** Luceras's sprite slice is approved (check 17, N-7bxn; stages 7 to 9 closed). Stage 11 retro written: [creature-pipeline-retro-luceras.md](creature-pipeline-retro-luceras.md); its ten rules are design section 11. Stage 10 (export) is deferred until a game needs the sprites.
 - **Scene of record:** `C:/dev/art-data/pipeline/codex-stream/luceras-final/final/scene.blend` (sha 845bd41c...), previous kept as `final_pretail`; final sprites in `luceras-sprites/pass9`. Superseded scenes and sprite passes 1 to 8 were deleted 2026-11-11 on Nick's instruction to clean up.
-- **Next unfinished action:** the tooling owed before creature two (design section 11): cost collector, dependent-only stage staleness, and one rule set with Creature Studio.
+- **Next unfinished action:** none for the pipeline itself. Creature Studio carries creature two ([creature-pipeline-studio-merge.md](creature-pipeline-studio-merge.md)); this branch holds Luceras's records and the phase 2 tools until the Hypnopet session ports them. Optional Luceras work if a game needs it: stage 10 export.
 - **Earlier standing state (2026-10-15)** is superseded; the dated entries and lessons below keep the history.
 
 ## Costs to date

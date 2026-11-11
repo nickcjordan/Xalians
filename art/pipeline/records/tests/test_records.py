@@ -73,7 +73,7 @@ class Base(unittest.TestCase):
 
     def report(self, hashes=None, **extra):
         r = {"outputs": [{"name": "o", "hash": h} for h in (hashes or [self.blob("out%d" % id(extra))])],
-             "blockedBy": "nothing"}
+             "blockedBy": "nothing", "cost": {"wall_h": 0.1}}
         r.update(extra)
         f = self.t / ("rep%d.json" % len(list(self.t.glob("rep*.json"))))
         f.write_text(json.dumps(r))
@@ -482,6 +482,69 @@ class TestCost(Base):
         self.assertEqual(rec["cost"]["tokens"]["output_tokens"], 5)
         self.assertEqual(rec["cost"]["messages"], 1)
         self.assertFalse(rec["cost"]["uncovered"])
+
+
+    def test_report_needs_wall_hours(self):
+        self.ok("init", "fixo")
+        self.ok("stage", "open", "fixo", "01-intake")
+        b = self.alias_of(self.ok("build", "plan", "fixo", "01-intake", "--goal", "g", "--scope", "s").split("Tag your agent")[1])
+        self.refused("build", "report", "fixo", b, "--file", self.report(cost={"tokens": 5}), contains="wall_h")
+        self.refused("build", "report", "fixo", b, "--file", self.report(cost=None), contains="wall_h")
+        self.ok("build", "report", "fixo", b, "--file", self.report(cost={"wall_h": 0.5, "codexTokens": "1,200"}))
+
+    def test_resumed_builder_split_by_tag(self):
+        sub = self.proj / "proj" / "sess" / "subagents"
+        sub.mkdir(parents=True)
+        lines = [self.line("user", None, 0, 0, text="first job [build B-aaaa]"),
+                 self.line("a", "m1", 1, 10),
+                 self.line("user", None, 0, 0, text="[build B-bbbb] resume for the next build"),
+                 self.line("a", "m2", 1, 20),
+                 self.line("a", "m3", 1, 30)]
+        (sub / "agent-r.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        self.assertEqual(cost.scan("aaaa")["tokens"]["output_tokens"], 10)
+        r = cost.scan("bbbb")
+        self.assertEqual(r["tokens"]["output_tokens"], 50)
+        self.assertFalse(r["uncovered"])
+
+    def test_orchestrator_notice_does_not_count(self):
+        d = self.proj / "proj"
+        d.mkdir(parents=True)
+        (d / "sess.jsonl").write_text("\n".join([self.line("user", None, 0, 0, text="status?"),
+                                                 self.line("user", None, 0, 0, text="agent finished [build B-cccc]"),
+                                                 self.line("a", "m9", 1, 99)]) + "\n", encoding="utf-8")
+        self.assertTrue(cost.scan("cccc")["uncovered"])
+
+    def test_since_skips_older_transcripts(self):
+        sub = self.proj / "p" / "s" / "subagents"
+        sub.mkdir(parents=True)
+        f = sub / "agent-old.jsonl"
+        f.write_text(self.line("user", None, 0, 0, text="[build B-dddd]") + "\n" + self.line("a", "m1", 1, 7) + "\n", encoding="utf-8")
+        os.utime(f, (1_000_000_000, 1_000_000_000))
+        self.assertTrue(cost.scan("dddd", since="2026-01-01T00:00:00Z")["uncovered"])
+        self.assertFalse(cost.scan("dddd")["uncovered"])
+
+
+class TestStaleness(Base):
+    def test_close_marks_only_dependents_stale(self):
+        self.assertEqual(common.dependents("07-surface"), ["10-export", "11-retro"])
+        self.assertEqual(common.dependents("06-gamemesh"), ["07-surface", "08-rig", "09-animate", "10-export", "11-retro"])
+        self.ok("init", "fixo")
+        c = common.load_creature("fixo")
+        for s in ("08-rig", "09-animate", "10-export"):
+            c["stages"][s]["state"] = "closed"
+        common.save_creature("fixo", c)
+        self.ok("stage", "open", "fixo", "07-surface")
+        b = self.alias_of(self.ok("build", "plan", "fixo", "07-surface", "--goal", "g", "--scope", "s").split("Tag your agent")[1])
+        h = self.blob(b"surface-out")
+        self.ok("build", "report", "fixo", b, "--file", self.report(hashes=[h], cost={"wall_h": 1.5, "codexTokens": 300, "blenderSeconds": 120}))
+        n = self.alias_of(self.ok("decision", "add", "fixo", "07-surface", "--who", "nick", "--kind", "approval",
+                                  "--words", "ok", "--build", b, "--evidence", h))
+        out = self.ok("stage", "close", "fixo", "07-surface", "--approval", n)
+        self.assertIn("marked stale: 10-export", out)
+        st = common.load_creature("fixo")["stages"]
+        self.assertEqual((st["08-rig"]["state"], st["09-animate"]["state"], st["10-export"]["state"]), ("closed", "closed", "stale"))
+        agg = json.loads((self.ros / "fixo/stages/07-surface/cost.json").read_text())
+        self.assertEqual((agg["wallHours"], agg["codexTokens"], agg["blenderMinutes"], agg["buildsWithoutCost"]), (1.5, 300, 2.0, []))
 
 
 if __name__ == "__main__":
