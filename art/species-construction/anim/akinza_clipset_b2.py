@@ -151,6 +151,13 @@ DISPLACED = dict(
     # swings forward (7, 8), one small bob with the wobble (9 to 11); 3 and 14 untouched
     # (the bob's 4 degrees at 10 folded the ear root 57 against the approved 50; at 2, 45)
     ear_follow=[0, 0, 0, 0, 4, 13, 7, -5, -9, -3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    # fix pass 5 (critic pass 4: against the head the ear still swung only about 8 degrees over 4 to 13): from frame 4 the ear is
+    # a rigid ear_1 swing against the head itself, frame 4's ear (relative to the head) turned about the head's own side axis by
+    # ear_rel degrees (+ further back and down): it keeps travelling 1 to 2 frames after the head reverses at 6 to 7, deepest at
+    # 8, springs back past frame 4's pose at 10 to 11 and settles; ear_rel_w blends it in from the line's ear (ear_follow) and
+    # hands back to the release at 13
+    ear_rel=[0, 0, 0, 0, 0, 5, 10, 13, 14, 5, -8, -7, -3, 0, 0, 0, 0, 0, 0, 0, 0],
+    ear_rel_w=[0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, .6, 0, 0, 0, 0, 0, 0, 0, 0],
     ears_toward_idle_from=12,
     ear_cap=1., ear_inside=20.,
     # tails: lag and swing with the lurch (degrees per bone lift, a lag down each chain and between the tails)
@@ -161,6 +168,9 @@ DISPLACED = dict(
     idle_a=[(0, 'linear', 1.), (3, 'smooth', 0.)],
     idle_b=[(13, 'linear', 0.), (18, 'smooth', 1.)],
 )
+
+
+_DISP_CACHE = {}
 
 
 def displaced_frame(rig, f):
@@ -191,6 +201,16 @@ def displaced_frame(rig, f):
     else:
         ear_line_capped(rig, pose, P['ears'][f], P['ear_cap'], inside=P['ear_inside'])
     ear_follow(rig, pose, P['ear_follow'][f])
+    w_ = P['ear_rel_w'][f]
+    if w_ > 0 and f != 4:
+        if 'ear4' not in _DISP_CACHE:
+            f4 = displaced_frame(rig, 4)['pose']
+            _DISP_CACHE['ear4'] = {b: f4[b] for b in cb.EAR_ROOTS}
+        a = math.radians(P['ear_rel'][f])
+        Rx = np.array([[1., 0., 0.], [0., math.cos(a), math.sin(a)], [0., -math.sin(a), math.cos(a)]])
+        for b in cb.EAR_ROOTS:
+            rel = [float(v) for v in rc.euler_from_matrix(Rx@rot(_DISP_CACHE['ear4'][b]))]
+            pose[b] = slerp_e(pose[b], rel, w_)
     fade = 1-cp.window(f, *P['tail_fade'])
     for t in rc.TAILS:
         for k in range(1, rc.TAIL_BONES+1):
@@ -265,7 +285,7 @@ HELD = dict(
         dict(name='forward lunge', t0=1, wind=2, hold=3, k=1., lean=7., twist=0., bend=0., rise=0., fwd=.035, shrug=(-.5, -.5),
              head=-2., jerk=-8., jerk_yaw=3., press=(0., 0.), elbow_out=5., duck=0.,
              flick=[(2, 0.), (3, 6.), (4, 10.), (5, 8.), (6, 3.), (7, 0.)]),
-        dict(name='yank back and twist', t0=11, wind=2, hold=6, k=1., lean=-5., twist=-12., bend=-5., rise=0., fwd=-.01,
+        dict(name='yank back and twist', t0=11, wind=2, hold=6, k=1., lean=-7.5, twist=-9., bend=-5., rise=0., fwd=-.022,
              shrug=(-.5, -1.), head=-4., jerk=-10., jerk_yaw=0., press=(5.5, 0.), elbow_out=5.5, duck=0.,
              flick=[(3, 0.), (4, 7.), (5, 12.), (6, 5.), (7, 2.), (8, 8.), (9, 3.), (10, 0.)]),
         dict(name='pull down and under', t0=30, wind=2, hold=5, k=1., lean=5., twist=4., bend=-2., rise=-.035, fwd=.012,
@@ -281,17 +301,21 @@ HELD = dict(
     # hips yaw, a sideways shake of the root, the forearms (the arms tremble with the torso), the clavicles; the neck takes back
     # neck of the trunk's pitch
     # (fix pass 4: doubled in the holds, the critic's 6 to 8 px at 720; `rest` the share left between the strains)
-    tremor=dict(period=2.5, trunk=4.4, roll=3.6, hips=2., shake=.006, arms=2.4, shoulder=1.6, rest=.15, neck=.25),
-    # fix pass 4 (critic pass 3: a dead rest at 24 to 30 and 42 to 1): a pant in the rests, a 3-frame breath (15 a loop), full
-    # where no strain is moving (env from the strains' summed size: 1 at 0, 0 at env_off and above): the chest heaves (chest
-    # pitch, degrees, + back), the shoulders rise (clavicle raise), the breath key; the neck and head take back the chest's
-    # heave so the head keeps its line
-    pant_rest=dict(period=3., chest=9., clav=2., key=.6, env_off=.35),
+    # (fix pass 5: the tremble in the ribcage: the neck takes back neck of the chest's and spine's shake, pitch and side to side,
+    # so the head shakes no more than the chest)
+    tremor=dict(period=2.5, trunk=4.4, roll=3.6, hips=2., shake=.006, arms=2.4, shoulder=1.6, rest=.15, neck=.85),
+    # fix pass 5 (critic pass 4: the fix pass 4 pant, a 3-frame heave, bobbed the head and neck about 20 px at 720 while the
+    # chest moved 2 to 5: a buzz, not breathing): in the rests (full where no strain is moving: env from the strains' summed
+    # size, 1 at 0, 0 at env_off and above) the loop's own breath (pant, a 7.5-frame cycle, 6 a loop) grows into a chest-and-belly
+    # breath: the breath key (the ribcage and belly rise and swell), the ribcage lifting (chest pitch back, degrees), the
+    # shoulders with it (clavicle raise); the neck takes back the chest's turn so the head only rides along with the chest
+    pant_rest=dict(chest=3.2, clav=1., key=1.5, env_off=.5),
     # the arms' counter-turns that keep the elbows at the ribs and the hands at the thighs: the upper arm takes back all of the
     # clavicle's raise and (fix pass 4) all of the trunk's lean and three fifths of its twist, and the forearm turns in as the
     # elbow presses out (degrees per degree, near and far), so the paws stay on the thighs through the lunges (the near paw
     # left the thigh by up to 70 mm in the yank back without them)
     arm_counter=dict(lean=1., shrug=1., twist=.6, elbow=(1.2, .9)),
+    clav_back=1.5, clav_back_twist=1.2,
     pant=dict(cycles=6, key=.35),
     # both paws planted the whole loop (critic pass 2 K6); the far heel lifts in the forward lunge (the toes stay down)
     near_foot=[(0, 0., 0., 0.), (45, 0., 0., 0.)],
@@ -307,6 +331,12 @@ HELD = dict(
     # the chain (chain_smooth: the share of a joint's bend shared with its neighbours, passes), so the bend changes from joint to
     # joint smoothly
     tail_lag_p4=.7, whip_smooth=2, chain_smooth=(.5, 2),
+    # fix pass 5 (critic pass 4: the top tail still bent 70 to 90 degrees over a short span at 8 to 9, 23 to 25 and 39: the
+    # pass 4 smoothing evened the added lash, not the bends the tail shows, which include its own rest curve): every frame,
+    # the bends between neighbouring bones as the tail is posed (world turn from each bone to the next) are evened along the
+    # chain keeping their sum (so the tip points where it did), passes of share `tail_spread` until no joint bends more than
+    # twice the mean of its neighbours
+    tail_spread=(.5, 12, 1.8),
 )
 
 
@@ -434,7 +464,7 @@ def held_loop_body(rig, f):
     # the pant in the rests (fix pass 4): full where the strains are still, a 3-frame breath
     PR = P['pant_rest']
     env = max(0., 1.-sum(abs(v) for v, _ in sts)/PR['env_off'])
-    pr = math.sin(2*math.pi*f/PR['period'])
+    pb = .5-.5*math.cos(2*math.pi*P['pant']['cycles']*f/n)          # the loop's breath, 0 out to 1 in
     # the shiver: full in a hold, low between the strains; a 2.5-frame period, so no two frames match; the parts out of phase
     T = P['tremor']
     amp = 1. if holding else T['rest']
@@ -442,12 +472,16 @@ def held_loop_body(rig, f):
     tr, tr2, tr3 = (amp*math.sin(ph+o) for o in (0., 1.9, 3.7))
     lift = lift+np.array([T['shake']*tr3, 0., 0.])
     turn(pose, 'pelvis', [.3*ln, 0., T['hips']*tr2])
-    turn(pose, 'spine', [.4*ln, .5*bd+T['roll']*tr2, .4*tw])
-    turn(pose, 'chest', [.3*ln+T['trunk']*tr-env*PR['chest']*pr, .5*bd+.6*T['roll']*tr3, .6*tw])
-    pc = env*PR['clav']*.5*pr
+    # (fix pass 5: the tremble's pitch moved from the chest to the spine, whose turn about the waist carries the whole ribcage)
+    turn(pose, 'spine', [.4*ln+T['trunk']*tr, .5*bd+T['roll']*tr2, .4*tw])
+    turn(pose, 'chest', [.3*ln-env*PR['chest']*pb, .5*bd+.6*T['roll']*tr3, .6*tw])
+    pc = env*PR['clav']*pb
     cl = {'L': sh[0]-T['shoulder']*abs(tr)-pc, 'R': -sh[1]+T['shoulder']*abs(tr)+pc}      # the clavicles' raise (Y; - raises the near one)
-    turn(pose, 'clavicle.L', [0., cl['L'], 0.])
-    turn(pose, 'clavicle.R', [0., cl['R'], 0.])
+    # (fix pass 5: the shrug goes up and back: the clavicles turn back a little the whole loop, and the near one further back
+    # as the trunk twists away (the yank's twist carried the near shoulder ball forward against the throat at 14 to 21))
+    cbk = P['clav_back']+P['clav_back_twist']*max(0., -tw)
+    turn(pose, 'clavicle.L', [0., cl['L'], cbk])
+    turn(pose, 'clavicle.R', [0., cl['R'], -P['clav_back']])
     # the elbows stay clamped to the ribs and the hands on the thighs: the upper arms take back the shrug's outward swing and a
     # little of the trunk's lean; the hands press harder in each strain and the forearms tremble with the torso
     ca = P['arm_counter']
@@ -461,8 +495,11 @@ def held_loop_body(rig, f):
     # strain's own head pitch and the jerk (chin up only: a chin-down head needs the ear past f18's swing and folds the ear root);
     # the head turns against the trunk's twist and side bend so its world turn and roll stay small
     hl = P['head_level']
-    turn(pose, 'neck', [.4*(hd+jk)-.5*hl*ln-T['neck']*T['trunk']*tr+.6*env*PR['chest']*pr, -.5*bd, .4*jy-.5*tw])
-    turn(pose, 'head', [.6*(hd+jk)-.5*hl*ln+.4*env*PR['chest']*pr, -.5*bd, .6*jy-.5*tw])
+    # (fix pass 5: the neck takes .3 of the head's own pitch and the head .7, was .4 and .6: the chin-up toss at the yank's stop
+    # creased the back of the neck at 15)
+    turn(pose, 'neck', [.3*(hd+jk)-.5*hl*ln-T['neck']*T['trunk']*tr+env*PR['chest']*pb, -.5*bd-T['neck']*(T['roll']*tr2+.6*T['roll']*tr3),
+                        .4*jy-.5*tw])
+    turn(pose, 'head', [.7*(hd+jk)-.5*hl*ln, -.5*bd, .6*jy-.5*tw])
     # the ears on stalk f18's line; each strain's flick (fix pass 4) a rigid swing back and down past the line and back
     # (ear_follow), its own keys by frame from the lunge's start
     e = P['ear_base']
@@ -497,15 +534,81 @@ def held_loop_body(rig, f):
             raw = (1-s_)*raw+s_*.5*(pad[:-2]+pad[2:])
         for k in range(1, rc.TAIL_BONES+1):
             turn(pose, f'tail_{tn}{k}', [float(x) for x in raw[k-1]])
+    spread_tail_bends(rig, pose, P['tail_spread'])
     nf = _keys_periodic(P['near_foot'], f, n)
     ff = _keys_periodic(P['far_foot'], f, n)
     feet = {'L': dict(t=(0., nf[0], nf[1]), pitch=nf[2], pivot='toe'),
             'R': dict(t=(0., ff[0], ff[1]), pitch=ff[2], pivot='toe')}
     planted = {'L': True, 'R': True}
     pant = .5-.5*math.cos(2*math.pi*P['pant']['cycles']*f/n)
-    breath = P['pant']['key']*pant+.4*holding+env*PR['key']*(.5+.5*pr)    # a panting breath, a caught one in each hold, the rest's pant
+    breath = P['pant']['key']*pant+.4*holding+env*PR['key']*pb    # a panting breath, a caught one in each hold, the rest's deeper breath
     return pose, lift, feet, breath, dict(strains=[round(v, 4) for v, _ in sts], holding=holding, flick=round(fd, 2), tremor=round(tr, 3),
                                           jerk=round(jk, 3), pant=round(env, 3), elbows_out=round(eo, 2), planted=planted)
+
+
+def _rotvec(R):
+    ang = math.acos(max(-1., min(1., (np.trace(R)-1)/2)))
+    if ang < 1e-9:
+        return np.zeros(3)
+    v = np.array([R[2, 1]-R[1, 2], R[0, 2]-R[2, 0], R[1, 0]-R[0, 1]])
+    return v/(2*math.sin(ang))*ang
+
+
+def _axrot(v):
+    ang = float(np.linalg.norm(v))
+    if ang < 1e-12:
+        return np.eye(3)
+    k = v/ang
+    K = np.array([[0, -k[2], k[1]], [k[2], 0, -k[0]], [-k[1], k[0], 0]])
+    return np.eye(3)+math.sin(ang)*K+(1-math.cos(ang))*K@K
+
+
+def tail_bends(rig, pose):
+    """Per tail, the world bend (degrees) at each joint between neighbouring tail bones, root to tip."""
+    T = rc.bone_transforms(rig.J, pose, bones=B)
+    out = {}
+    for tn in rc.TAILS:
+        d = [_unit(T[f'tail_{tn}{k}'][0]@rc.bone_axis(rig.J, f'tail_{tn}{k}', B)) for k in range(1, rc.TAIL_BONES+1)]
+        out[tn] = [math.degrees(math.acos(max(-1., min(1., float(a@b))))) for a, b in zip(d, d[1:])]
+    return out
+
+
+def spread_tail_bends(rig, pose, spec):
+    """Even the bends along each tail (fix pass 5): the turn from each bone's world direction to the next as rotation vectors,
+    shared with their neighbours (the sum kept) until no joint carries more than `limit` times its neighbours' mean, the bones
+    then set to the new directions from the first."""
+    share_, passes, limit = spec
+    T = rc.bone_transforms(rig.J, pose, bones=B)
+    tg = {}
+    for tn in rc.TAILS:
+        bs = [f'tail_{tn}{k}' for k in range(1, rc.TAIL_BONES+1)]
+        d = [_unit(T[b][0]@rc.bone_axis(rig.J, b, B)) for b in bs]
+        r = []
+        for a, b in zip(d, d[1:]):
+            ax = np.cross(a, b)
+            s_ = np.linalg.norm(ax)
+            ang = math.atan2(s_, float(a@b))
+            r.append(ax/s_*ang if s_ > 1e-12 else np.zeros(3))
+        r = np.array(r)
+        for _ in range(passes):
+            m = np.linalg.norm(r, axis=1)
+            nb = np.array([np.mean([m[j] for j in (i-1, i+1) if 0 <= j < len(m)]) for i in range(len(m))])
+            if np.all(m <= limit*np.maximum(nb, math.radians(2.))):
+                break
+            pad = np.vstack([r[:1], r, r[-1:]])
+            lap = .5*(pad[:-2]+pad[2:])-r
+            lap[0] = .5*(r[1]-r[0])
+            lap[-1] = .5*(r[-2]-r[-1])
+            r = r+share_*lap
+        nd = [d[0]]
+        for v in r:
+            nd.append(_unit(_axrot(v)@nd[-1]))
+        for b, v in zip(bs, nd):
+            tg[b] = v
+    order = [f'tail_{tn}{k}' for tn in rc.TAILS for k in range(1, rc.TAIL_BONES+1)]
+    new = rc.pose_from_directions(rig.J, {b: tg[b] for b in order}, base=pose, bones=B)
+    for b in order:
+        pose[b] = [float(x) for x in new[b]]
 
 
 def held_frame(rig, f):
@@ -542,9 +645,13 @@ IDLE_FEET = {'L': dict(t=(0., 0., 0.), pitch=0., pivot='toe'), 'R': dict(t=(0., 
 # frame 5, so loop frame 0 follows
 # (the ears' elevation on screen 86, 47, 10, -20, -26: steps of 38, 37, 30 and 6 degrees)
 HELD_IN = {'arms': [0., .8, 1.05, 1.01, 1., 1.], 'body': [0., .15, .7, .95, 1., 1.], 'ears': [0., .22, .48, .88, 1., 1.],
-           'tails': [0., .25, .6, .85, .97, 1.], 'jolt': [0., 1., .35, .1, 0., 0.]}
+           'tails': [0., .25, .6, .85, .97, 1.], 'jolt': [0., 1., .35, .1, 0., 0.],
+           # (fix pass 5: the far ear mirrored on the near one (share) and dropped further (degrees) through the seize; the first and
+           # last frames keep idle's and loop frame 44's ears)
+           'far_mirror': [0., 1., 1., 1., .5, 0.], 'far_down': [0., 16., 16., 14., 8., 0.]}
 HELD_IN_JOLT = (0., .015, .02)            # root (x, y back, z up) at the jolt's peak, on top of the blend
-HELD_IN_HEELS = 14.                       # the heels up (degrees about the toe pads) at the jolt's peak
+HELD_IN_HEELS = 0.                        # the heels up (degrees about the toe pads) at the jolt's peak (fix pass 5: 14 lifted the near
+                                          # heel 10 px at 720; pinned)
 # at the jolt's peak, on top of the blend: the shoulders snap up and in, the trunk and head jerk back
 HELD_IN_SNAP = {'clavicle.L': [0., -8., -5.], 'clavicle.R': [0., 8., 5.], 'spine': [-3., 0., 0.], 'chest': [-3., 0., 0.],
                 'neck': [-3., 0., 0.], 'head': [-4., 0., 0.]}
@@ -556,8 +663,25 @@ HELD_IN_SNAP = {'clavicle.L': [0., -8., -5.], 'clavicle.R': [0., 8., 5.], 'spine
 # (`unclamp`), so from frame 2 held_out's arms move as pass 3's did)
 HELD_OUT = {'idle': [0., .05, .18, .38, .6, .78, .9, .97, .995, 1.], 'ears': [0., .12, .42, .72, .9, .98, 1., 1., 1., 1.],
             'burst': [0., .7, 1., .75, .4, .15, .04, 0., 0., 0.], 'shake': [0., 8., -9., 5., -2.5, 1., 0., 0., 0., 0.],
-            'unclamp': [0., .7, 1., 1., 1., 1., 1., 1., 1., 1.]}
+            'unclamp': [0., .7, 1., 1., 1., 1., 1., 1., 1., 1.], 'far_mirror': [0., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
+            'far_down': [0., 16., 24., 18., 16., 8., 2., 0., 0., 0.]}
 HELD_OUT_ARMS = {'upperarm.L': [-18., -30., 0.], 'upperarm.R': [-14., 26., 0.], 'forearm.L': [-22., 0., 0.], 'forearm.R': [-18., 0., 0.]}
+
+
+def mirror_far_ear(rig, pose, down=0., share=1.):
+    """Fix pass 5 (critic pass 4: at held_in 1 and held_out 2 the far ear stood above the near one, a clamshell): the far ear
+    swings as the near one does, mirrored across the body's midline in the world (so a rolled head does not lift it), then
+    `down` degrees further back and down in the picture's plane, so in the side view it stays behind or below the near ear."""
+    if 'ear_1.L' not in pose:
+        return
+    T = rc.bone_transforms(rig.J, pose, bones=B)
+    Wh = T['head'][0]
+    M = np.diag([-1., 1., 1.])
+    Wf = M@(Wh@rot(pose['ear_1.L']))@M
+    if down:
+        a = math.radians(down)
+        Wf = np.array([[1., 0., 0.], [0., math.cos(a), math.sin(a)], [0., -math.sin(a), math.cos(a)]])@Wf
+    pose['ear_1.R'] = slerp_e(pose.get('ear_1.R', [0., 0., 0.]), [float(v) for v in rc.euler_from_matrix(Wh.T@Wf)], share)
 
 
 def held_in_frame(rig, k):
@@ -569,6 +693,7 @@ def held_in_frame(rig, k):
     for b, d in HELD_IN_SNAP.items():
         turn(pose, b, d, e['jolt'])
     ear_line_capped(rig, pose, e['ears']*HELD['ear_base'], HELD['ear_cap'], inside=HELD['ear_inside'])
+    mirror_far_ear(rig, pose, HELD_IN['far_down'][k], HELD_IN['far_mirror'][k])
     lift = (1-e['body'])*ilift+e['body']*hlift+e['jolt']*np.asarray(HELD_IN_JOLT)
     feet = _blend_feet(IDLE_FEET, hfeet, e['body'])
     for sd in 'LR':
@@ -594,6 +719,7 @@ def held_out_frame(rig, k):
     turn(pose, 'neck', [0., 0., -.5*e['shake']])
     ear_line_capped(rig, pose, (1-e['ears'])*HELD['ear_base'], HELD['ear_cap'], toward=ip if e['ears'] > 0 else None,
                     inside=HELD['ear_inside'])
+    mirror_far_ear(rig, pose, HELD_OUT['far_down'][k], HELD_OUT['far_mirror'][k])
     lift = (1-e['idle'])*hlift+e['idle']*ilift
     feet = _blend_feet(hfeet, IDLE_FEET, e['idle'])
     full, targets = cb.solve_feet(rig, pose, lift, feet)
