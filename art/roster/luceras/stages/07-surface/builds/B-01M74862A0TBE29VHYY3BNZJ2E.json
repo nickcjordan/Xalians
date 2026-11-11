@@ -8,12 +8,223 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-sprites/pass9/report.json",
+      "hash": "de038e051e1b730dad358cce641626ce81f9f9bb0ee058ff4cb58d4b8b34dad1"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/gate.json",
+      "hash": "66ec6289ea2b755962ade21b27d77b1c42c6478ba93db8801c3e525b0388c9c7"
+    },
+    {
+      "name": "luceras-sprites/pass9/sheets/idle.png",
+      "hash": "1185a81cab5fac9c41522aa4377f533fb373fd8198c2ebaa576513471fcf0aa6"
+    },
+    {
+      "name": "luceras-sprites/pass9/sheets/idle.json",
+      "hash": "ad0d5ea223dd0331a316b8a92f20700610a043a7227a3a0487d6188445fa7032"
+    },
+    {
+      "name": "luceras-sprites/pass9/sheets/sig.horns-first-descent.png",
+      "hash": "9c1f2fb39ed3ac077c9d7d1266da37a2094067417a2fe92eb2f50582d1c3e94c"
+    },
+    {
+      "name": "luceras-sprites/pass9/sheets/sig.horns-first-descent.json",
+      "hash": "cf9bb5f369875167a05e436690f8eb58b391370000477027109aef9caf16ea58"
+    },
+    {
+      "name": "luceras-sprites/pass9/sheets/trans.idle-to-sig.png",
+      "hash": "19bcae65662de593ff18f8a49660a4816b71c069bb8c261044dd417e19bfb064"
+    },
+    {
+      "name": "luceras-sprites/pass9/sheets/trans.idle-to-sig.json",
+      "hash": "adb7538f236f5700185a0a00a76af4e0d1a23b442d149533cdcb2343d91d3df4"
+    },
+    {
+      "name": "luceras-sprites/pass9/sheets/trans.sig-to-idle.png",
+      "hash": "c9ab4ea0e2d35e0b3e423007c4f6af8122314f449fb8c38f31c7066c2dc5d43d"
+    },
+    {
+      "name": "luceras-sprites/pass9/sheets/trans.sig-to-idle.json",
+      "hash": "ef74e32040df876366fdab2ce1af81d851985229687e80b32efbd85671419036"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/tail_check.json",
+      "hash": "6557219cc0793b58da8585c0788982fb1eb4acb4d823e79e94a2a44817465556"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/tail_check_pass8.json",
+      "hash": "94f94f85cfb90f69bfda49c3283a4b27aa7892314788909a885a666945416076"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/tail_ground.json",
+      "hash": "fd70b3cd27a29d85f89d95538a349cd5a9ba17fed06eb8045c5fbf4a1b7cc7d0"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/diff_vs_pass8.json",
+      "hash": "f46e7944b20f09e0bc9524b34c177afcfe7f97f8948faeef6a671271efa1ff95"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/cov_gate_A.json",
+      "hash": "45bb961b79e130fc0486009071a60587407bc0f2c4102b47e151535594dad636"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/cov_gate_B.json",
+      "hash": "351a7ffb420db5ceccbbfbc8f1cab60b4c31e821c2dc5ff3e3aa0c8a4a3f9825"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/cov_gate_C.json",
+      "hash": "438be761bdc0bb704559eb791a922648c7b9c6f2ad79fc7911b400f02e7eaee7"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/notes.json",
+      "hash": "c62f4907f7f641b15a9f0cc3d7f5e88a6531fff397789cb948d1713c0797bfe2"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/motion/sig_f22-f36_1x.webp",
+      "hash": "4a77b0cafa41eb6db20249b8a7d0d37b53debd5e671c06a1cfd53753b444384a"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/motion/sig_f22-f36_2x.webp",
+      "hash": "c28b5cb22a208c8dc18f21dc55ff400d7340840a479d280cc5a73d6f82bd93cb"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/motion/sig_f22-f36_contact.png",
+      "hash": "1eef7d99dc708ebc7b17cdf3f11790c954d442098f64b0411462d575d1bbeb64"
+    },
+    {
+      "name": "luceras-sprites/pass9/work/motion/tail_sig_f11-f40_2x.png",
+      "hash": "420e315b191494fd6fc08b729321a13068c27eb1095c21a11a1066ed3d936221"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-sprites/pass9/report.json",
+        "hash": "de038e051e1b730dad358cce641626ce81f9f9bb0ee058ff4cb58d4b8b34dad1"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/gate.json",
+        "hash": "66ec6289ea2b755962ade21b27d77b1c42c6478ba93db8801c3e525b0388c9c7"
+      },
+      {
+        "name": "luceras-sprites/pass9/sheets/idle.png",
+        "hash": "1185a81cab5fac9c41522aa4377f533fb373fd8198c2ebaa576513471fcf0aa6"
+      },
+      {
+        "name": "luceras-sprites/pass9/sheets/idle.json",
+        "hash": "ad0d5ea223dd0331a316b8a92f20700610a043a7227a3a0487d6188445fa7032"
+      },
+      {
+        "name": "luceras-sprites/pass9/sheets/sig.horns-first-descent.png",
+        "hash": "9c1f2fb39ed3ac077c9d7d1266da37a2094067417a2fe92eb2f50582d1c3e94c"
+      },
+      {
+        "name": "luceras-sprites/pass9/sheets/sig.horns-first-descent.json",
+        "hash": "cf9bb5f369875167a05e436690f8eb58b391370000477027109aef9caf16ea58"
+      },
+      {
+        "name": "luceras-sprites/pass9/sheets/trans.idle-to-sig.png",
+        "hash": "19bcae65662de593ff18f8a49660a4816b71c069bb8c261044dd417e19bfb064"
+      },
+      {
+        "name": "luceras-sprites/pass9/sheets/trans.idle-to-sig.json",
+        "hash": "adb7538f236f5700185a0a00a76af4e0d1a23b442d149533cdcb2343d91d3df4"
+      },
+      {
+        "name": "luceras-sprites/pass9/sheets/trans.sig-to-idle.png",
+        "hash": "c9ab4ea0e2d35e0b3e423007c4f6af8122314f449fb8c38f31c7066c2dc5d43d"
+      },
+      {
+        "name": "luceras-sprites/pass9/sheets/trans.sig-to-idle.json",
+        "hash": "ef74e32040df876366fdab2ce1af81d851985229687e80b32efbd85671419036"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/tail_check.json",
+        "hash": "6557219cc0793b58da8585c0788982fb1eb4acb4d823e79e94a2a44817465556"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/tail_check_pass8.json",
+        "hash": "94f94f85cfb90f69bfda49c3283a4b27aa7892314788909a885a666945416076"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/tail_ground.json",
+        "hash": "fd70b3cd27a29d85f89d95538a349cd5a9ba17fed06eb8045c5fbf4a1b7cc7d0"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/diff_vs_pass8.json",
+        "hash": "f46e7944b20f09e0bc9524b34c177afcfe7f97f8948faeef6a671271efa1ff95"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/cov_gate_A.json",
+        "hash": "45bb961b79e130fc0486009071a60587407bc0f2c4102b47e151535594dad636"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/cov_gate_B.json",
+        "hash": "351a7ffb420db5ceccbbfbc8f1cab60b4c31e821c2dc5ff3e3aa0c8a4a3f9825"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/cov_gate_C.json",
+        "hash": "438be761bdc0bb704559eb791a922648c7b9c6f2ad79fc7911b400f02e7eaee7"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/notes.json",
+        "hash": "c62f4907f7f641b15a9f0cc3d7f5e88a6531fff397789cb948d1713c0797bfe2"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/motion/sig_f22-f36_1x.webp",
+        "hash": "4a77b0cafa41eb6db20249b8a7d0d37b53debd5e671c06a1cfd53753b444384a"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/motion/sig_f22-f36_2x.webp",
+        "hash": "c28b5cb22a208c8dc18f21dc55ff400d7340840a479d280cc5a73d6f82bd93cb"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/motion/sig_f22-f36_contact.png",
+        "hash": "1eef7d99dc708ebc7b17cdf3f11790c954d442098f64b0411462d575d1bbeb64"
+      },
+      {
+        "name": "luceras-sprites/pass9/work/motion/tail_sig_f11-f40_2x.png",
+        "hash": "420e315b191494fd6fc08b729321a13068c27eb1095c21a11a1066ed3d936221"
+      }
+    ],
+    "blockedBy": "nothing (session end stopped gate B overnight at idle f76; resumed from f77 and merged, 166 unique rows asserted)",
+    "defectResult": "Pass 9 renders the V4 tail (scene 845bd41c). Pale line inside the shaft: 0 frames (pass 8: every frame). Club: widest station at most 1.06x the first (pass 8: 1.34x). Flicker: no frame with two or more flickering stations (pass 8: 13). Zero changed pixels outside the tail zone vs pass 8 in all 166 frames at 2x. Orchestrator read of read_cmp idle f30 2x and the sig f11-f40 tail strip agrees: even dark gray whip, no club, plume unchanged.",
+    "newDefects": [],
+    "checks": [
+      "scale 283.30 px/m, 582x618 cell, pivots and clearance identical to pass 8",
+      "no pops in any part or plume, any clip",
+      "head seams identical to pass 8",
+      "fringe 0.0367 (pass 8 0.0525)",
+      "no alpha below ground; tail never lower than pass 8",
+      "coverage gates A, B, C over 166 frames: forearm, shank, lower hind leg, distal foot 0 failures; nape same as pass 8",
+      "tail shaft bare share 0.259 to 0.315 (pass 8 0.406 to 0.441)",
+      "pale-line metric narrowed to an interior bright line with darker fur on both sides, root stations over 1.8x width excluded and counted; pass 8 baseline re-run with the same rules",
+      "game loop composed at 1x for check 17 (gameloop.py)"
+    ],
+    "cost": {
+      "wall_h": 4.2,
+      "agent_tokens": 239308,
+      "note": "resumed run tokens as reported by the harness; the overnight render portion was reported before the session ended"
+    }
+  },
+  "blockedBy": "nothing (session end stopped gate B overnight at idle f76; resumed from f77 and merged, 166 unique rows asserted)",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-11T02:49:53Z",
-  "briefSha256": "64fee51b4401b895b006fffad0e0341535a7dbdb23770daa5e1bc27108e1db5e"
+  "briefSha256": "64fee51b4401b895b006fffad0e0341535a7dbdb23770daa5e1bc27108e1db5e",
+  "checks": [
+    "scale 283.30 px/m, 582x618 cell, pivots and clearance identical to pass 8",
+    "no pops in any part or plume, any clip",
+    "head seams identical to pass 8",
+    "fringe 0.0367 (pass 8 0.0525)",
+    "no alpha below ground; tail never lower than pass 8",
+    "coverage gates A, B, C over 166 frames: forearm, shank, lower hind leg, distal foot 0 failures; nape same as pass 8",
+    "tail shaft bare share 0.259 to 0.315 (pass 8 0.406 to 0.441)",
+    "pale-line metric narrowed to an interior bright line with darker fur on both sides, root stations over 1.8x width excluded and counted; pass 8 baseline re-run with the same rules",
+    "game loop composed at 1x for check 17 (gameloop.py)"
+  ],
+  "reportedAt": "2026-11-11T14:51:48Z"
 }

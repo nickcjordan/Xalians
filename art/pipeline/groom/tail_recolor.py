@@ -59,6 +59,8 @@ for name in ('Tail shaft coat', 'Luceras interpolated coat'):
     sel = ok & (t >= rb[0]) & (t <= pb[1]) if name != 'Tail shaft coat' else ok
     w = sst(rb[0], rb[1], t) * (1 - sst(pb[0], pb[1], t)); w[~sel] = 0
     Lu = Lu0 + (Lu1 - Lu0) * sst(ur[0], ur[1], t); tr_ = g('top_ramp', [2.0, 3.9]); Ltt = Lt + (g('L_top_plume', Lt) - Lt) * sst(tr_[0], tr_[1], t)
+    if g('top_points', None):
+        tp_ = np.array(g('top_points', None), float); Ltt = np.interp(t, tp_[:, 0], tp_[:, 1])      # piecewise top value along the tail
     L = Lu + (Ltt - Lu) * sst(sb[0], sb[1], sd)
     col = arr(d.attributes['coat_color'].data, 'color', 4); old = col.copy()
     tgt = np.c_[np.outer(L, hue), col[:, 3]]; col[:, :3] = old[:, :3] + (tgt[:, :3] - old[:, :3]) * w[:, None]
