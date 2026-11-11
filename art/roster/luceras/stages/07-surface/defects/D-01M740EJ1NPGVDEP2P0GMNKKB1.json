@@ -7,6 +7,7 @@
   "region": "hind foot, toe base (about 0.78 to 0.80 of the metatarsal bone)",
   "origin": "pass 8 motion strip read (builder), confirmed by orchestrator 2026-11-10",
   "attempts": [],
-  "status": "open",
-  "createdAt": "2026-11-11T00:34:42Z"
+  "status": "closed",
+  "createdAt": "2026-11-11T00:34:42Z",
+  "closedAt": "2026-11-11T01:43:25Z"
 }

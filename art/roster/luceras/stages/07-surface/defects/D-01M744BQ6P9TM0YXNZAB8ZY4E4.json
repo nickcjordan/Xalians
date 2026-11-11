@@ -1,0 +1,14 @@
+{
+  "id": "D-01M744BQ6P9TM0YXNZAB8ZY4E4",
+  "alias": "87g5",
+  "stage": "07-surface",
+  "description": "Tail shaft tone and thickness uneven: near-black and club-thick from the root through the middle, then thin and paler toward the plume (light-dark-light along the shaft with the pale root blend). The sheet's shaft is one even mid-dark gray (top luma 94/91/90 at the quarter, half and three-quarter stations) with a gentle taper from root to plume",
+  "camera": "side sprite 2x and 4x, idle f0 and f30, sig f11, f16, f29, f40, trans in f4",
+  "region": "tail shaft from the root to the plume base",
+  "origin": "orchestrator read of B-gnqp boards at 2x and 4x, 2026-11-10",
+  "attempts": [
+    "B-01M744RQB6YX3BZ8HDZ6JNT2WN"
+  ],
+  "status": "open",
+  "createdAt": "2026-11-11T01:43:04Z"
+}

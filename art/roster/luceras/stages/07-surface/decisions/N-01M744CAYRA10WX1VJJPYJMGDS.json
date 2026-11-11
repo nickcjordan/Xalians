@@ -1,0 +1,16 @@
+{
+  "id": "N-01M744CAYRA10WX1VJJPYJMGDS",
+  "alias": "rm7g",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Stall audit D-a3hs (three builds). Outcome: rescope and close. The described fault (a thin pale line at game size) is gone after B-gnqp: the shaft reads as a dark gray furred whip at 2x. What remains is tone and thickness evenness, filed as D-87g5. For D-87g5: (1) lift the inferred hold 'keep the C7 fur colors' for the shaft top fur only; it was the orchestrator's inference in the B-gnqp brief, while Nick's words (2026-11-10, 'sure' to matching the sheet) ask for the sheet's tone; (2) change method: the root-weighted extra density and edge lift the B-gnqp brief prescribed made the root-to-middle club, so density and lift run even along the shaft with only the sheet's gentle taper; (3) replace the absolute outer-width gate, which counts the 3D fringe against a drawn edge and measured +35/+56 percent on pass 8 while the shaft read thin, with a relative taper gate against the sheet's own profile. Plume tufts stay held.",
+  "date": "2026-11-11",
+  "kind": "audit",
+  "binds": {
+    "build": "B-01M740EXT9CQRKWY8TQMDRA9JT",
+    "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-11T01:43:24Z"
+}

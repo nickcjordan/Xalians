@@ -1,0 +1,16 @@
+{
+  "id": "N-01M744CBQVHP6TA4PZ87PZTK0Z",
+  "alias": "ghkr",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "D-3d96 closed per ruling N-m8rw item 5: the surface-ID pass at sig f22, f25, f28 puts the pale patch above the claws on the toe pads seen edge-on as the foot curls (green pad band in glint_vs_ids.png; one pixel over the glint threshold in three frames). Pads are anatomy, not a coat fault, and stay as approved.",
+  "date": "2026-11-11",
+  "kind": "audit",
+  "binds": {
+    "build": "B-01M740EXT9CQRKWY8TQMDRA9JT",
+    "defect": "D-01M740EJ1NPGVDEP2P0GMNKKB1",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-11T01:43:25Z"
+}

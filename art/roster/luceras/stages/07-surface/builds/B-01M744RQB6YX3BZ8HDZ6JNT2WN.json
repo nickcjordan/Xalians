@@ -1,0 +1,19 @@
+{
+  "id": "B-01M744RQB6YX3BZ8HDZ6JNT2WN",
+  "alias": "525v",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Even the tail shaft's tone and thickness to the sheet: one mid-dark gray (top luma within 10 percent of the sheet at every station from 0.15 to 0.70 of the shaft), a gentle monotone taper, no club and no pale return toward the plume; pale line stays gone",
+  "scope": "Tail shaft top fur color (C7 hold lifted for the shaft top only), Tail tuft coat density and lift made even along the shaft; matte skin, plume tufts, other curves, body and rig held",
+  "defect": "D-01M744BQ6P9TM0YXNZAB8ZY4E4",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-11T01:50:10Z",
+  "briefSha256": "d3121c095e34279ce552e695623470942c895edfaf2a6f0b2e9b8f30facc2bee"
+}
