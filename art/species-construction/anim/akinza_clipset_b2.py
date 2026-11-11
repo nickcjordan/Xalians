@@ -1573,7 +1573,8 @@ def crumple_frames(rig, skin):
 # onto its jaw only as the floor takes it (no turn in the air); the elbows bend from 20 so the forearms fall flat and trail the
 # chest, and at rest the near forearm lies back and out along the floor so the side of the paw shows (it pointed at the camera);
 # the ears sag from 11 as a rigid swing that trails the head and reaches its rest by the landing (it stood pricked to 27 and
-# flipped 80 degrees after `down`); the rest ear is one of three options (EAR_REST, Nick picks), B by default; the paws and fore
+# flipped 80 degrees after `down`); the rest ear is one of three options (EAR_REST; Nick picked A, 2026-11-11: "option A for
+# the ears"), A by default; the paws and fore
 # claws are kept out of the floor; the hind claws follow the toe keys in the renders (clip_frames.py) and retract by a per-frame
 # `claws` turn while the foot rolls onto its toe pads, so they leave the floor; the heels rise 40 degrees, not 70, so the toes lie
 # flat; the hip and tail deep keys were re-sculpted on this clip's own in-between frames and belly keys added
@@ -1645,7 +1646,7 @@ FAINT4 = dict(
     # fix pass 6: the ears stay as they stand in the world while the head drops (they lag it), then droop back from 11 (ear_sag)
     # and drop, splay and turn about their length to their rest (ear_turn, from 20), reached at the head's touchdown (25) and held
     # still in the world while the head turns onto its jaw. The rest is one of EAR_REST's options
-    ear_sag=[(11, 'linear', 0.), (21, 'smooth', .25), (25, 'in', 1.)], ear_turn=[(20, 'linear', 0.), (25, 'smooth', 1.)], ear_rest='B', far_down=8.,
+    ear_sag=[(11, 'linear', 0.), (21, 'smooth', .25), (25, 'in', 1.)], ear_turn=[(20, 'linear', 0.), (25, 'smooth', 1.)], ear_rest='A', far_down=8.,
     neck=[(14, 'linear', 0.), (22, 'smooth', 1.)],                               # the neck bends (chin in) as the chest starts down
     # arms: idle -> K's limp hang (fall), hanging down in the world from the landing (trailing the body as it tips), to E's on
     # the floor once the chest is falling
