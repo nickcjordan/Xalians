@@ -420,7 +420,7 @@ MOVE_IN = dict(
     near_air=[(3, -.11, .1, 28.), (4, -.19, .085, 20.), (5, -.215, .03, 13.)],
     # the far (R) foot: planted on 0 to 4, the heel rising as the leg extends (the push), then its path off the floor
     far_planted=5, far_pitch=[0., 0., 6., 20., 40.],
-    far_air=[(5, .215, .07, 58.)],
+    far_air=[(5, .25, .11, 58.)],
 )
 
 
@@ -866,8 +866,10 @@ ACTS['heavy'] = dict(
     tracks={
         # the coil over 1 to 6, held and raised onto the toes to 12; the wide swing accelerates over 13 to 19 (the hit); the landing
         # 20 to 22; the paws back to the chest by 26; idle's arms by 39
-        'chain': [(0, 'linear', 0.), (3, 'smooth', .5), (6, 'smooth', 1.), (9, 'smooth', 1.5), (12, 'out', 2.), (13, 'in', 2.4), (14, 'in', 3.), (15, 'in', 3.5),
-                  (16, 'in', 4.), (17, 'in', 4.35), (18, 'in', 4.7), (19, 'in', 5.), (20, 'out', 5.4), (22, 'smooth', 6.), (26, 'smooth', 7.), (32, 'smooth', 7.4),
+        # (fix pass 5: spread so the claw tips speed up into the hit, 91, 130, 162, 166, 160, 248 and 210 mm a frame from 12 to 19;
+        # with the open elbows the old spacing flung the paws out fastest at 13 to 14)
+        'chain': [(0, 'linear', 0.), (3, 'smooth', .5), (6, 'smooth', 1.), (9, 'smooth', 1.5), (12, 'out', 2.), (13, 'in', 2.2), (14, 'in', 2.55), (15, 'in', 3.),
+                  (16, 'in', 3.5), (17, 'in', 4.), (18, 'in', 4.5), (19, 'in', 5.), (20, 'out', 5.4), (22, 'smooth', 6.), (26, 'smooth', 7.), (32, 'smooth', 7.4),
                   (39, 'smooth', 8.)],
         'extra': [(0, 'linear', 0.)],
         # the root: the coil's sink, the rise on the toes, the hop (top at 15), the landing on 19 and a deep crouch (21), the recovery
