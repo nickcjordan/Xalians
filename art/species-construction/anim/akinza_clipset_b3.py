@@ -47,13 +47,44 @@ import rig_core as rc  # noqa: E402
 import clip_primitives as cp  # noqa: E402
 import akinza_clips as ac  # noqa: E402
 import akinza_clipset_b1 as cb  # noqa: E402
-import akinza_clipset_b2 as c2  # noqa: E402
 
 B = rc.ANIM_BONES
 NAMES = rc.ANIM_NAMES
 IDLE_N = ac.IDLE['frames']
 turn, rot, slerp_e, table = cb.turn, cb.rot, cb.slerp_e, cb.table
-ordered = c2.ordered
+
+
+# ---------------------------------------------------------------- frozen from akinza_clipset_b2.py
+# Fix pass 4 (the orchestrator): batch 2's builder is still editing akinza_clipset_b2.py, so the three helpers this module used
+# from it are copied here as they stood at commit bf326b31, and the module no longer imports it; batch 2's edits cannot change
+# these clips.
+
+def ordered(pose):
+    """The pose in the rig's bone order (deterministic bytes), floats only."""
+    return {b: [float(x) for x in pose[b]] for b in NAMES if b in pose}
+
+
+def _rot_angle(M):
+    return math.degrees(math.acos(max(-1., min(1., (np.trace(M)-1)/2))))
+
+
+def ear_line_capped(rig, pose, e, cap, toward=None, inside=0.):
+    """set_ear_line (the ears on Night Stalk's line on screen at share e), then each ear_1 pulled back toward the share e of f18's
+    own pose relative to the head until it is at most `cap` degrees from it (the ear root folds past f18's pose). With `inside`
+    (degrees), a line that asks for less swing than that share (the ear turned less from its rest than the share is: the head
+    tipped back) is followed up to `inside` degrees from it, uncapped (less swing folds the ear root less)."""
+    if e <= 0:
+        return
+    cb.set_ear_line(rig, pose, e, toward=toward)
+    for b in cb.EAR_ROOTS:
+        ref = ac.share_of(rig.body[b], e)
+        R = rot(pose.get(b, [0., 0., 0.]))
+        ang = _rot_angle(rot(ref).T@R)
+        lim = inside if inside > 0 and _rot_angle(R) < _rot_angle(rot(ref)) else cap
+        if ang > lim:
+            pose[b] = slerp_e(ref, pose[b], lim/ang)
+
+
 LEG_BASES = ('thigh', 'shin', 'foot')
 
 # the foot's contact point at rest (rig metres, y and z; x is the ankle's): the hind claws' lowest point, 2.8 mm over the floor at
@@ -65,7 +96,7 @@ ON_FLOOR = -CONTACT['z']                     # the contact point's move (z) that
 
 
 def frame_dict(f, pose, lift, breath, info, belly=None):
-    return c2.frame_dict(f, pose, lift, breath, info, belly)
+    return cb.frame_dict(f, ordered(pose), lift, breath, info, belly)
 
 
 def periodic(keys, f, n):
@@ -682,7 +713,7 @@ def act_frame(rig, name, f):
     # idle ears (one frame through the sweep's middle each way)
     e = tr['ears']
     if f < P['ears_release_from'] and e >= .8:
-        c2.ear_line_capped(rig, pose, e, P.get('ear_cap', 1.), inside=P.get('ear_inside', 20.))
+        ear_line_capped(rig, pose, e, P.get('ear_cap', 1.), inside=P.get('ear_inside', 20.))
     else:
         cb.set_ear_line(rig, pose, e, toward=ipose)
     # tails: lifts per bone at the tail track's value, lagged down each chain and between the tails
