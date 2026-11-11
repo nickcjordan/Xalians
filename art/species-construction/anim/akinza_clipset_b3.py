@@ -160,50 +160,79 @@ MOVE = dict(
     # fix pass 2 (critic: upright and prancing): a longer stride, 58 mm a frame (1.74 m/s; contact 0.41 m a step), the foot
     # landing further ahead
     speed=.058,
-    mid_y=-.095,                               # the contact point's y at mid-stance (between the 4th and 5th planted frames)
+    # (fix pass 3: 20 mm further back than fix pass 2's -.095, so the pushing leg can straighten behind the body)
+    mid_y=-.075,                               # the contact point's y at mid-stance (between the 4th and 5th planted frames)
     # the heel's pitch over the stance (phase frame, degrees): landing on the claws with the heel a little up, then the push-off
     # rolling onto the toes (heel 50 to 62 degrees up at frames 6 and 7) as the leg extends
-    stance_pitch=[(0, 12.), (2, 16.), (4, 26.), (5, 36.), (6, 50.), (7, 62.)],
+    # (fix pass 3: the heel rises later, 52 degrees at the toe-off, so the leg is long when the toes roll off last)
+    stance_pitch=[(0, 12.), (2, 14.), (4, 20.), (5, 26.), (6, 36.), (7, 52.)],
     # the swing (phase frames 7 to 24): the contact point's height and the foot's pitch, smooth keys; its y is a Hermite curve from
     # the toe-off to the next touchdown with the ground speed at both ends, plus swing_dy. Fix pass 2: the heel tucks high under
     # the hip right after the toe-off (the heel 160 to 260 mm up, 68 to 110 px at 720, on frames 8 to 11) while the thigh stays
     # back, then the thigh swings forward with the leg folded (the knee 85 at most, under the deep keys' 88) and the leg reaches
     # ahead bent; the foot's pitch kept low in the air (late swing 9 to 12) so the ankle points 32 degrees at most (the heel
     # ridge evade showed comes at 40)
-    swing_z=[(7, 0.), (8, .06), (9, .1), (10, .13), (11, .14), (12, .125), (14, .095), (16, .08), (18, .07), (20, .065), (22, .045), (23.2, .016), (24, 0.)],
-    swing_pitch=[(7, 62.), (8, 70.), (9, 74.), (10, 76.), (11, 74.), (12, 68.), (14, 52.), (16, 38.), (18, 22.), (20, 12.), (22, 9.), (24, 12.)],
-    swing_dy=[(7, 0.), (9, .03), (10, .045), (11, .045), (12, .03), (14, 0.), (18, 0.), (20, .02), (22, .035), (23, .022), (24, 0.)],
+    # Fix pass 3 (the critic: the heel dropped as the foot passed under the body, a shin hanging under a raised knee): the foot held
+    # high and behind the hip through the pass (the contact 130 to 135 mm up and 60 mm back on phase frames 12 to 16, the foot in line
+    # with the shin, pointing 15 to 21 degrees), so the heel stays 96 to 101 px up at 720 under the body with the knee folded (to 92,
+    # knee_deep_mid on a little) and the thigh only part way forward; then the shin unfolds forward for the contact (pointing 20 to 23
+    # degrees in the late swing)
+    swing_z=[(7, 0.), (8, .045), (9, .08), (10, .105), (11, .12), (12, .13), (14, .135), (15, .135), (16, .13), (17, .12), (18, .105), (19, .09), (20, .078),
+             (21, .064), (22, .042), (23.2, .014), (24, 0.)],
+    swing_pitch=[(7, 52.), (8, 58.), (9, 60.), (10, 60.), (12, 58.), (14, 55.), (16, 50.), (17, 44.), (18, 36.), (19, 24.), (20, 12.), (21, 6.), (22, 5.),
+                 (23, 7.), (24, 12.)],
+    swing_dy=[(7, 0.), (9, .03), (11, .05), (13, .06), (15, .06), (17, .035), (19, .015), (20, .03), (21, .04), (22, .035), (23, .02), (24, 0.)],
     # the hips (root move, z): the bob, lowest about 2.5 frames after each touchdown, highest in the flight (step frames)
-    bob=[(0, 0.), (2.5, -.022), (5, -.008), (7.5, .016), (9.25, .018), (12, 0.)],
+    # (fix pass 3: the hips rise 64 mm into the toe-off, so the pushing leg straightens behind the body, knee 13 degrees from rest at
+    # the last contact frame against 50 before, and settle before the touchdown so the reaching leg gets there)
+    bob=[(0, 0.), (2.5, -.02), (4.5, .008), (6., .042), (7., .064), (8., .06), (9., .044), (10, .024), (11, .008), (12, 0.)],
     root_y=0.,
     # fix pass 2: the trunk leaned 27 to 28 degrees forward of vertical (the pelvis joint to the neck's base), the head held level
     # in the world (the neck takes .38 of the lean, the head the rest). (Measured on the folds: the spine past 10 folds the belly,
     # approved 0; the neck taking .45 of a 36-degree lean folded it 46 to 53 against the approved 44; the pelvis at 16 folded the
     # tail fork 62 at a push, taken out by the tail root turned down 11 and toward the pushing leg 6, below)
-    lean={'pelvis': 16., 'spine': 9., 'chest': 11.},
-    lean_bob=1.5,                              # the trunk pitches a little further forward as it sinks (degrees at the bottom)
+    # (fix pass 3: the pelvis 12, the chest 14: with the pushing leg straight behind, a 16 degree pelvis folded the tail fork 63
+    # against the approved 52; the trunk 25 degrees)
+    lean={'pelvis': 12., 'spine': 10., 'chest': 14.},
+    lean_bob=.5,                              # the trunk pitches a little further forward as it sinks (degrees at the bottom)
     pelvis_yaw=4., chest_counter=.8,
     # the pelvis rolls 8 degrees toward the swing side, taken back half by the chest and half by the neck
-    pelvis_roll=8., roll_back={'chest': .5, 'neck': .5},
+    pelvis_roll=9., roll_back={'chest': .5, 'neck': .5},
     neck_share=.38, head_nod=1.2, head_nod_lag=2.,             # a small nod of the head (degrees, world) 2 frames behind the bob
-    tail_root_turn=(-11., -6., 0.),
+    tail_root_turn=(-8., -1., 0.),
     # arms (fix pass 2): low with the elbows bent (55 to 70 degrees of swing), pumping 25 degrees either way against the same-side
     # leg (the near arm back with the near leg forward, frame 0)
     upper_back=6., upper_out=5., fore_bend=-62., hand_bend=-8.,
     arm_swing=25., fore_swing=8., arm_lag=1.,
     # ears (fix pass 2, the critic: half way along the sweep the ear stood level and broadside, a held cap): on stalk f18's line
     # on screen at .94 of the sweep, lagging .03 either way a frame or two after each contact
-    ears=.94, ear_dip=.03, ear_lag=2., ear_cap=1., ear_inside=20.,
+    ears=.94, ear_dip=.03, ear_lag=2., ear_cap=1., ear_inside=20.,      # (fix pass 2's pinned line, kept for the record; unused)
+    # ears (fix pass 3, the art director's 'ears half back', F44): tipped back 40 degrees from upright on screen (idle 16), the share
+    # .11 of the sweep from idle's ear to f18's line, a rigid bounce of .03 (6 to 7 degrees, never near horizontal) lagging each
+    # foot_down by 2 frames
+    ears_half=.11, ear_bounce=.03, ear_bounce_lag=2.,
     # tails: lifted toward the horizontal (degrees per bone, +X lifts; bones 2 and 3 also take back the tail root's turn down),
     # bobbing behind the body on their own phases (fix pass 2: 1.3 frames apart they bobbed together). The tips' low points (their
     # height on screen, the body's bob included) fall on frames 3 and 16 (a), 6 and 19 (b), 9 and 23 (c): 3 frames apart, found by
     # a search over the lags (the body's bob holds the top tail's low on 3 whatever its own lag). The first bone takes half the bob
     # (the full bob there folded the tail fork 53 against the approved 52)
     tail_lift={'a': (0., 3., 3., 0., 2.), 'b': (2., 12., 12., 4., 1.), 'c': (3., 17., 16., 6., 3.)},
-    tail_bob={'a': 5., 'b': 6., 'c': 6.5}, tail_bob_lag={'a': 0., 'b': 3., 'c': 5.}, tail_chain_lag=1.1, tail_bob_root=.5,
+    # (fix pass 3: the hips' larger bob carried all three tips down together, so each tail's own bob is larger, 9 to 11 degrees, the
+    # lows on frames 4 and 15 (a), 9 and 23 (b), 1 and 11 (c), 3 frames apart at least; the first bone takes .3 of it)
+    tail_bob={'a': 9., 'b': 10., 'c': 11.}, tail_bob_lag={'a': 1., 'b': 4., 'c': 7.}, tail_chain_lag=1.1, tail_bob_root=.3,
     tail_sway={'a': 2.5, 'b': 3.5, 'c': 3.}, tail_sway_phase={'a': 0., 'b': .37, 'c': .71},
     pant=.3,
 )
+
+
+_IDLE0 = {}
+
+
+def idle0(rig):
+    """Idle frame 0's body pose (the run's ears are set from its ear on screen)."""
+    if id(rig) not in _IDLE0:
+        _IDLE0[id(rig)] = cb.idle_pose(rig, 0)[0]
+    return _IDLE0[id(rig)]
 
 
 def move_feet(f):
@@ -287,8 +316,8 @@ def move_body(rig, f):
     set_head_world(rig, pose, pitch=-nod+P['head_nod']*.5, yaw=0., bone='head')
     # ears (fix pass 2): on Night Stalk f18's line on screen (the approved pinned ear, rule 1), a small rigid lag around it after each
     # contact; capped at 1 degree past f18's own pose relative to the head (batch 2: past it the ear root folds)
-    e = P['ears']+P['ear_dip']*math.cos(2*math.pi*((f % st)-P['ear_lag'])/st)
-    c2.ear_line_capped(rig, pose, e, P['ear_cap'], inside=P['ear_inside'])
+    e = P['ears_half']+P['ear_bounce']*math.cos(2*math.pi*((f % st)-P['ear_bounce_lag'])/st)
+    cb.set_ear_line(rig, pose, e, toward=idle0(rig))
     # tails: lifted toward the horizontal, bobbing behind the body on their own phases, swaying side to side once a loop
     for t in rc.TAILS:
         for k in range(1, rc.TAIL_BONES+1):
@@ -348,14 +377,13 @@ MOVE_IN = dict(
     # the body: the share of the way from idle (on idle's clock from frame 0) to the run (the loop body at frame k-6)
     body=[0., .1, .25, .5, .78, .93],
     dip=[0., -.012, -.02, -.008, .003, .002],       # the anticipation's dip and the push's rise (root z, m), on top of the blend
-    ears=[0., .45, .88, 1., 1., 1.],                # shares of the run's own ear line (the loop's at frame k-6)
-    ears_capped_from=.8,
+    ears=[0., .3, .6, .85, 1., 1.],                 # shares of the run's own ear set (the loop's at frame k-6; fix pass 3: half back)
     # the near (L) foot: planted on 0 to 2 (flat, the heel lifting 8 degrees on 2), then (frame, contact move y, height, pitch)
     near_planted=3, near_pitch=[0., 0., 8.],
-    near_air=[(3, -.06, .055, 24.), (4, -.175, .07, 20.), (5, -.232, .026, 13.)],
+    near_air=[(3, -.05, .055, 24.), (4, -.16, .07, 20.), (5, -.215, .03, 13.)],
     # the far (R) foot: planted on 0 to 3, the heel rising as the leg extends (the push), then its path off the floor
     far_planted=4, far_pitch=[0., 0., 6., 24.],
-    far_air=[(4, .155, .015, 54.), (5, .235, .095, 66.)],
+    far_air=[(4, .155, .015, 54.), (5, .245, .105, 60.)],
 )
 
 
@@ -372,10 +400,8 @@ def move_in_frame(rig, k):
     set_head_world(rig, pose, pitch=(1-e)*p0+e*pl, yaw=(1-e)*y0+e*yl, bone='head')
     # the ears: from idle's onto the run's line on screen (frame 1 the one frame through the sweep's middle)
     s = P['ears'][k]
-    if s >= P['ears_capped_from']:
-        c2.ear_line_capped(rig, pose, s*linfo['ears'], MOVE['ear_cap'], inside=MOVE['ear_inside'])
-    elif s > 0:
-        cb.set_ear_line(rig, pose, s*linfo['ears'], toward=ip)
+    if s > 0:
+        cb.set_ear_line(rig, pose, s*linfo['ears'], toward=idle0(rig))
     lift = (1-e)*np.asarray(ilift)+e*np.asarray(llift)+np.array([0., 0., P['dip'][k]])
     g = P['ground'](k)
     feet, planted = {}, {}
@@ -396,42 +422,39 @@ def move_in_frame(rig, k):
     return frame_dict(k, full, lift, (1-e)*ib+e*lb, info, belly=(1-e)*ib)
 
 
-# move_out (8 frames, from loop frame 0's pose; idle frame 0 follows). Fix pass 2 (the critic: running poses that stand up): a
-# braking pull-up. The near (L) foot, landing on loop frame 0 well ahead, stays down and takes the weight, its heel lowering flat by
-# frame 2 and its knee giving (the hips sink 20 mm by 3); the trunk pulls up out of the run's 28 degree lean and past upright, a brief
-# lean back of about 6 degrees on 3 over the planted foot, then settles; the arms come forward a little to catch the balance; the
-# tails, still carried forward, lift and settle; the far (R) foot swings through low and sets down on 4 a little ahead of its idle
-# spot. The run's pose is held from loop frame 0 (no more pumping arms or cycling legs) and blended into idle (the clock that lands on
-# idle frame 89 on the last frame). The ground under the planted feet slows from the run's speed to still (the game slows the sprite
-# over the exit), so the planted feet end on their idle spots. The ears stay on the run's line through 2 and are released late.
+# move_out (10 frames, from loop frame 0's pose; idle frame 0 follows). Fix pass 2: a braking pull-up instead of running poses that
+# stand up. Fix pass 3 (the critic: the body snapped upright in two frames, the head moving 47 and 65 px a frame; lengthened to 10
+# frames as the brief allows): the near (L) foot, landing on loop frame 0 well ahead, stays down and takes the weight, its heel
+# lowering flat by frame 2 with the body still behind it, leaning back over it to brake; the trunk straightens over frames 1 to 5
+# and leans back past upright on 5 to 7, then settles; the knee gives (the hips sink 26 mm by 4); the arms come forward a little to
+# catch the balance; the tails, still carried forward, lift and settle; the far (R) foot swings through low and sets down beside on 6.
+# The run's pose is held from loop frame 0 and blended into idle (the clock that lands on idle frame 89 on the last frame). The ground
+# under the planted feet slows from the run's speed to still over 9 frames (the game slows the sprite over the exit), so the planted
+# feet end on their idle spots. The ears hold the run's half-back set through frame 2, then come up to idle's over 3 to 7.
 MOVE_OUT = dict(
-    frames=8,
-    # (eased in over frames 1 and 2: a quarter of the way on frame 1 started the pull-up with a jolt of 92 mm a frame at the head
-    # against the loop's own 62 at most)
-    body=[0., .12, .36, .63, .83, .94, .985, 1.],        # the share of the way from loop frame 0's body (held) to idle
-    back=[0., -1., -10., -24., -17., -6., -1.5, 0.],     # the lean back (degrees over the trunk) on top of the blend
+    frames=10,
+    body=[0., .08, .2, .36, .54, .7, .83, .93, .985, 1.],     # the share of the way from loop frame 0's body (held) to idle
+    back=[0., -1., -3., -6., -9., -13., -15., -9., -2.5, 0.],  # the lean back (degrees over the trunk) on top of the blend
     back_split={'pelvis': .3, 'spine': .3, 'chest': .4},
-    brake=[0., -.008, -.022, -.028, -.016, -.005, -.001, 0.],    # the planted leg giving (root z, m)
-    arms=[0., .4, 1., .8, .4, .12, 0., 0.],              # the arms' forward catch (share of brake_arm, local degrees)
+    brake=[0., -.006, -.014, -.022, -.026, -.022, -.014, -.006, -.002, 0.],    # the planted leg giving (root z, m)
+    arms=[0., .2, .5, .8, 1., .8, .5, .2, .05, 0.],                    # the arms' forward catch (share of brake_arm, local degrees)
     brake_arm={'upperarm': -12., 'forearm': -10.},
-    # the tails' lift (share of tail_deg per bone), each tail later than the last; done by frame 5 with every lag (lagged longer, the
-    # last frame missed idle frame 89 by 8.8 mm)
-    tails=[0., .35, 1., .55, -.1, 0., 0., 0.],
+    # the tails' lift (share of tail_deg per bone), each tail later than the last; done by frame 8 with every lag
+    tails=[0., .25, .7, 1., .75, .35, -.08, 0., 0., 0.],
     tail_deg=(2., 4., 6., 7., 8.), tail_order={'a': 0., 'b': .4, 'c': .8}, tail_chain_lag=.25,
-    # the run's ear line released into idle's over 3 to 5 (through the sweep's middle once, on 4); still 8 percent out on 6, the ear
-    # tips moved 44 mm into the last frame
-    ears=[1., 1., 1., .85, .5, .15, 0., 0.],
-    near_pitch=[12., 5., 1.5, 0., 0., 0., 0., 0.],       # the near heel lowering flat
+    ears=[1., 1., 1., .8, .55, .3, .12, 0., 0., 0.],     # the run's ear set (loop frame 0's) released into idle's
+    near_pitch=[12., 6., 2., 0., 0., 0., 0., 0., 0., 0.],      # the near heel lowering flat
     # the far (R) foot: (contact move y, height, pitch) in the air from its loop frame 0 path; y None: down, moving with the ground
-    far=[None, (.16, .105, 52.), (.08, .072, 34.), (0., .034, 16.), (None, 0., 3.), (None, 0., .8), (None, 0., 0.), (None, 0., 0.)],
+    far=[None, (.215, .12, 52.), (.155, .10, 42.), (.095, .075, 30.), (.04, .045, 18.), (-.005, .018, 8.), (None, 0., 2.), (None, 0., .5),
+         (None, 0., 0.), (None, 0., 0.)],
 )
 
 
 def move_out_ground(k):
-    """The ground's move back under the planted feet from frame 0 (metres): from the run's speed to still over 7 frames, ending
-    where the near foot's loop touchdown spot reaches its idle spot."""
+    """The ground's move back under the planted feet from frame 0 (metres): from the run's speed to still over the clip's last 9
+    frames, ending where the near foot's loop touchdown spot reaches its idle spot."""
     D = -(MOVE['mid_y']-CONTACT['y']-MOVE['speed']*3.5)
-    u = min(1., k/7.)
+    u = min(1., k/(MOVE_OUT['frames']-1.))
     return D*(1-(1-u)**2)
 
 
@@ -459,15 +482,15 @@ def move_out_frame(rig, k):
     # the ears: the run's own line and flick carried on (the loop's share at frame k, so the ear tips do not stop dead on frame 1),
     # released into idle's from frame 3
     s = P['ears'][k]
-    ek = MOVE['ears']+MOVE['ear_dip']*math.cos(2*math.pi*((k % MOVE['step'])-MOVE['ear_lag'])/MOVE['step'])
+    ek = MOVE['ears_half']+MOVE['ear_bounce']*math.cos(2*math.pi*((k % MOVE['step'])-MOVE['ear_bounce_lag'])/MOVE['step'])
     if s >= 1:
-        c2.ear_line_capped(rig, pose, ek, MOVE['ear_cap'], inside=MOVE['ear_inside'])
+        cb.set_ear_line(rig, pose, ek, toward=idle0(rig))
     else:
         cb.set_ear_line(rig, pose, ek*s, toward=ip)
     lift = (1-e)*np.asarray(llift)+e*np.asarray(ilift)+np.array([0., 0., P['brake'][k]])
     loop_feet, _ = move_feet(0)
     g = move_out_ground(k)
-    D = move_out_ground(7)
+    D = move_out_ground(n-1)
     pt = P['near_pitch'][k]
     feet = {'L': dict(t=(0., -D+g, ON_FLOOR*min(1., pt/10.)), pitch=pt)}
     fr_ = P['far'][k]
@@ -689,34 +712,35 @@ def act_frame(rig, name, f):
 # released late.
 ACTS['light'] = dict(
     frames=27, hit=11, recover=21, side='L', arms=('L',), reach_declared=.35, fore_lead={'forearm': 0., 'hand': 0.},
-    # the striking arm's chain: 0 idle, 1 the wind-up (the upper arm out and forward at shoulder height, 76 degrees of swing, under
-    # the 76.9 where the rig's armpit_fwd key falls off; turned in, the pole inward and up, so the forearm stands up by the cheek with
-    # the paw cocked back: turned out, the shoulder folded 131 to 378 triangles against the approved 5), 2 the rake's middle (the
-    # forearm coming down in front of the face, the paw leading), 3 the hit (the arm forward at chest height, the elbow nearly
-    # straight, the wrist hooked so the claws lead), 4 the fold back (the elbow 76 from straight, the paw drawn back toward the
-    # chest), 5 the settle (opened a little), 6 idle again. Directions in the chest's frame; the elbow a hinge (hinged_arm)
-    arm_keys=[(8, dict(d1=(.76, -.65, -.02), pole=(-.8, .2, 1.), elbow=76., wrist=-15.)),
-              (10, dict(d1=(.5, -.82, -.25), pole=(-.75, -.1, .8), elbow=48., wrist=4.)),
-              (11, dict(d1=(.17, -.90, -.40), pole=(-.6, -.3, .74), elbow=22., wrist=12.)),
-              (14, dict(d1=(.30, -.70, -.65), pole=(-.8, -.2, .55), elbow=76., wrist=8.)),
-              (16, dict(d1=(.27, -.62, -.74), pole=(-.8, -.2, .55), elbow=64., wrist=4.))],
+    # Fix pass 3 (the critic: the raised paw sat in front of the face, hand to mouth at 192; the arm is too short to clear the head):
+    # the wind-up cocks back behind the body line. The striking arm's chain: 0 idle, 1 the cock (the upper arm back and out, 65
+    # degrees of swing, the elbow up and back, bent 73 from rest, the forearm up so the paw is at shoulder to chin height behind the
+    # back of the neck, the claws turned back), 2 the arc's middle (the arm out to the side at shoulder height, the forearm coming
+    # forward and down, the paw leading), 3 the hit (forward of the chest at belly to chest height, the elbow nearly straight, the
+    # wrist hooked so the claws lead), 4 the follow-through (down and back across the body, the paw by the hip), 5 the settle (a
+    # little open: the overshoot), 6 idle again. Directions in the chest's frame; the elbow a hinge (hinged_arm); every upper arm
+    # swing under 75 degrees (the overhead keys stay at 0)
+    arm_keys=[(8, dict(d1=(.55, .75, -.1), pole=(.5, 0., 1.), elbow=100., wrist=-15.)),
+              (10, dict(d1=(.9, -.25, -.35), pole=(-.1, -.8, .4), elbow=55., wrist=4.)),
+              (11, dict(d1=(.15, -.85, -.5), pole=(-.6, -.3, .74), elbow=25., wrist=14.)),
+              (13, dict(d1=(.2, .15, -.97), pole=(-.9, -.3, .2), elbow=45., wrist=10.)),
+              (15, dict(d1=(.3, .02, -.95), pole=(-.9, -.3, .2), elbow=34., wrist=4.))],
     tracks={
-        # chain position: the wind-up builds over 1 to 8 (the paw up by 8, held into 9), the rake 9 to 11 (accelerating), the fold
-        # back 12 to 14 (decelerating), the settle on 16, the recovery from 17, back on balance at 21 (`recover`), idle's arm by 25
-        'chain': [(0, 'linear', 0.), (2, 'in', .08), (4, 'smooth', .42), (6, 'smooth', .82), (8, 'out', 1.), (9, 'in', 1.25), (10, 'in', 1.8), (11, 'in', 3.),
-                  (12, 'out', 3.55), (13, 'out', 3.9), (14, 'out', 4.), (16, 'smooth', 5.), (18, 'smooth', 5.15), (21, 'smooth', 5.6), (25, 'smooth', 6.)],
-        # the weight back in the wind-up (root y, + back), into the strike after it, and down into the knees with the strike; the
-        # body up a little with the paw in the wind-up
+        # chain position: the cock builds over 1 to 8 (held into 9), the arc 9 to 11 (accelerating), the follow-through 12 and 13
+        # (decelerating), the settle on 15, the recovery from 16, back on balance at 21 (`recover`), idle's arm by 25
+        'chain': [(0, 'linear', 0.), (2, 'in', .08), (4, 'smooth', .42), (6, 'smooth', .82), (8, 'out', 1.), (9, 'in', 1.25), (10, 'in', 1.85), (11, 'in', 3.),
+                  (12, 'out', 3.6), (13, 'out', 4.), (15, 'smooth', 5.), (18, 'smooth', 5.2), (21, 'smooth', 5.6), (25, 'smooth', 6.)],
+        # the weight back in the wind-up (root y, + back), into the strike after it, and down into the knees with the strike
         'shift_y': [(0, 'linear', 0.), (3, 'smooth', .01), (8, 'smooth', .028), (10, 'smooth', .012), (12, 'out', -.02), (15, 'smooth', -.016),
                     (21, 'smooth', -.002), (25, 'smooth', 0.)],
-        'shift_z': [(0, 'linear', 0.), (8, 'smooth', .004), (12, 'out', -.026), (15, 'smooth', -.022), (21, 'smooth', -.005), (25, 'smooth', 0.)],
+        'shift_z': [(0, 'linear', 0.), (8, 'smooth', -.006), (12, 'out', -.026), (15, 'smooth', -.022), (21, 'smooth', -.005), (25, 'smooth', 0.)],
         # the chest turns away in the wind-up (+: the near shoulder back) and into the strike (-); the trunk leans back a little, then
-        # into the hit and stays over it (the critic: the chest tipped back at the hit)
-        'yaw': [(0, 'linear', 0.), (8, 'smooth', 14.), (10, 'in', 4.), (12, 'out', -12.), (14, 'smooth', -13.), (21, 'smooth', -3.), (25, 'smooth', 0.)],
+        # into the hit and stays over it
+        'yaw': [(0, 'linear', 0.), (8, 'smooth', 16.), (10, 'in', 4.), (12, 'out', -12.), (14, 'smooth', -13.), (21, 'smooth', -3.), (25, 'smooth', 0.)],
         'lean': [(0, 'linear', 0.), (8, 'smooth', -3.), (11, 'out', 8.), (13, 'smooth', 10.), (16, 'smooth', 9.), (21, 'smooth', 2.), (25, 'smooth', 0.)],
         'off': [(0, 'linear', 0.), (8, 'smooth', 1.), (12, 'out', -.8), (16, 'smooth', -.6), (24, 'smooth', 0.)],
         'head': [(0, 'linear', 0.), (3, 'smooth', 1.), (20, 'linear', 1.), (25, 'smooth', 0.)],
-        # ears: onto f18's line in two frames (through the sweep's middle once, on 3), a flick forward with the rake and back with the
+        # ears: onto f18's line in two frames (through the sweep's middle once, on 3), a flick forward with the arc and back with the
         # hit, held on the line, released into idle's in two frames (21 and 22)
         'ears': [(0, 'linear', 0.), (2, 'linear', 0.), (3, 'linear', .5), (4, 'out', .95), (8, 'smooth', .95), (10, 'smooth', .88), (12, 'out', 1.), (14, 'smooth', .93),
                  (17, 'smooth', .95), (20, 'linear', .95), (21, 'linear', .5), (22, 'out', .06), (23, 'smooth', 0.)],
@@ -748,7 +772,9 @@ def light_frame(rig, f):
 HEAVY_FEET = dict(
     # the heels' pitch (degrees, about the claws) and the contact point's height (m) for both feet
     heel=[(0, 'linear', 0.), (5, 'linear', 0.), (10, 'smooth', 24.), (12, 'smooth', 38.), (13, 'smooth', 48.), (16, 'smooth', 44.), (18, 'smooth', 30.),
-          (19, 'smooth', 22.), (21, 'out', 6.), (23, 'smooth', 0.)],
+          (19, 'smooth', 22.), (21, 'out', 22.), (23, 'smooth', 20.), (26, 'smooth', 17.), (30, 'smooth', 7.), (33, 'smooth', 0.)],
+    # (fix pass 3: the heels stay up 17 to 22 degrees through the deeper landing crouch, 21 to 26; flat, the ankles bent 28 degrees
+    # toward the shins, past the approved crouch's 22)
     z=[(12, 'linear', 0.), (13, 'out', .014), (15, 'out', .045), (17, 'in', .03), (18, 'in', .01), (19, 'in', 0.)],
 )
 
@@ -771,53 +797,53 @@ OVERHEAD_KEY = dict(d1=(.75, -.2, .63), pole=(-.6, -.1, .8), elbow=70.)
 
 ACTS['heavy'] = dict(
     frames=42, hit=19, recover=33, side='L', arms=('L', 'R'), reach_declared=.40,
-    # Fix pass 2 (the critic: the arms held forward like a sleepwalker; mine to decide, decided: the overhead keys): both arms' chain
-    # 0 idle, 1 the dip (the arms back and down), 2 the rise (the upper arms out to the side at shoulder height, 72 degrees of swing,
-    # under the overhead keys, the elbows bent up), 3 the top (OVERHEAD_KEY: the arms raised out, forward and up, 107.7 degrees, the
-    # elbows bent inward over the head, the paws by the crown; the overhead keys full on), 4 the strike (both arms out toward the
-    # opponent at chest height, nearly straight, the wrists hooked so the claws lead), 5 the soften (the elbows giving, the arms a
-    # little lower: no thin stiff hang), 6 idle again (chest-frame directions, the elbow a hinge). The rise goes out to the side and
-    # then up along the overhead pose's own direction, so the keys' mid stage is met on the arm path it was sculpted on
-    arm_keys=[(5, dict(d1=(.42, .28, -.86), pole=(-.3, -.6, .75), elbow=34.)),
-              (10, dict(d1=(.85, -.2, 0.), pole=(-.6, -.1, .8), elbow=62.)),
-              (14, OVERHEAD_KEY),
-              (19, dict(d1=(.12, -.96, -.25), pole=(-.85, -.2, .5), elbow=20., wrist=14.)),
-              (21, dict(d1=(.22, -.78, -.55), pole=(-.85, -.2, .5), elbow=62., wrist=6.))],
+    # Fix pass 3 (the critic: the raised paws covered the face from 10 to 16; the arms are too short to clear the head): a full-body
+    # coil with both arms drawn back behind the body line, a hop, a wide two-arm swing forward and down into the hit, a deeper
+    # landing. Both arms' chain: 0 idle, 1 the coil (the upper arms back and out, the elbows back and up, bent 68 from rest, the paws
+    # at shoulder height behind the chest, the wrists bent back so the claws open), 2 the coil on the toes (a little higher and
+    # further back), 3 the arms swung out to the sides below the head, 4 the wide arc (out at the sides at shoulder height, sweeping
+    # forward), 5 the hit (both arms forward and angled down, the elbows nearly straight, the paws open, reaching 0.51 m), 6 the
+    # landing (the elbows giving), 7 the paws drawn back to the chest, 8 idle again. Every upper arm swing under 75 degrees (the overhead keys stay at 0; they stay in the rig, unused by this clip)
+    arm_keys=[(6, dict(d1=(.5, .8, -.3), pole=(.5, 0., 1.), elbow=85., wrist=-20.)),
+              (12, dict(d1=(.55, .78, -.2), pole=(.5, 0., 1.), elbow=82., wrist=-20.)),
+              (14, dict(d1=(.92, .3, -.25), pole=(-.1, -.4, .9), elbow=50., wrist=-15.)),
+              (16, dict(d1=(.95, -.1, -.3), pole=(-.2, -.7, .6), elbow=35., wrist=-10.)),
+              (19, dict(d1=(.12, -.92, -.38), pole=(-.85, -.2, .5), elbow=16., wrist=-10.)),
+              (22, dict(d1=(.25, -.55, -.8), pole=(-.85, -.2, .5), elbow=55., wrist=0.)),
+              (26, dict(d1=(.3, -.15, -.94), pole=(-.8, -.4, .45), elbow=74., wrist=10.))],
     arm_lag={'R': .15}, fore_lead={'forearm': 0., 'hand': 0.},
     tracks={
-        # the arms rise over 5 to 14 (out to the side by 10, overhead by 14), hold overhead through the hop's top (14 to 16), the
-        # strike accelerates down and forward into the hit on 19, softens on 20 to 22, and returns to idle's arms by 39
-        'chain': [(0, 'linear', 0.), (3, 'smooth', .6), (5, 'smooth', 1.), (8, 'smooth', 1.6), (10, 'smooth', 2.), (12, 'smooth', 2.6), (14, 'out', 3.),
-                  (16, 'linear', 3.), (17, 'in', 3.25), (18, 'in', 3.6), (19, 'in', 4.), (20, 'out', 4.5), (21, 'smooth', 5.), (28, 'smooth', 5.3),
-                  (33, 'smooth', 5.7), (39, 'smooth', 6.)],
-        # the strike's overshoot past the strike pose (additive arm turns, arm_extra) and its settle
-        'extra': [(19, 'linear', 0.), (20, 'out', .6), (22, 'smooth', -.2), (24, 'smooth', 0.)],
-        # the root: the dip, the rise on the toes, the hop (top at 15), the landing on 19 and the squash (21), the settle and recovery
-        'shift_z': [(0, 'linear', 0.), (3, 'smooth', -.03), (5, 'smooth', -.04), (9, 'smooth', 0.), (12, 'out', .035), (13, 'out', .06), (15, 'out', .085),
-                    (17, 'in', .06), (18, 'in', .028), (19, 'in', -.018), (21, 'out', -.046), (23, 'smooth', -.036), (25, 'smooth', -.041), (33, 'smooth', -.01),
+        # the coil over 1 to 6, held and raised onto the toes to 12; the wide swing accelerates over 13 to 19 (the hit); the landing
+        # 20 to 22; the paws back to the chest by 26; idle's arms by 39
+        'chain': [(0, 'linear', 0.), (3, 'smooth', .5), (6, 'smooth', 1.), (9, 'smooth', 1.5), (12, 'out', 2.), (13, 'in', 2.4), (14, 'in', 3.), (15, 'in', 3.5),
+                  (16, 'in', 4.), (17, 'in', 4.35), (18, 'in', 4.7), (19, 'in', 5.), (20, 'out', 5.4), (22, 'smooth', 6.), (26, 'smooth', 7.), (32, 'smooth', 7.4),
+                  (39, 'smooth', 8.)],
+        'extra': [(0, 'linear', 0.)],
+        # the root: the coil's sink, the rise on the toes, the hop (top at 15), the landing on 19 and a deep crouch (21), the recovery
+        'shift_z': [(0, 'linear', 0.), (3, 'smooth', -.03), (6, 'smooth', -.05), (9, 'smooth', -.02), (12, 'out', .035), (13, 'out', .06), (15, 'out', .085),
+                    (17, 'in', .06), (18, 'in', .028), (19, 'in', -.025), (21, 'out', -.095), (23, 'smooth', -.085), (25, 'smooth', -.088), (33, 'smooth', -.02),
                     (39, 'smooth', 0.)],
-        # the body lunges forward with the strike (root y, - forward) over the planted feet, giving the arms their reach
-        'shift_y': [(0, 'linear', 0.), (5, 'smooth', .01), (12, 'smooth', 0.), (15, 'smooth', -.01), (19, 'out', -.04), (21, 'smooth', -.036), (30, 'smooth', -.006),
+        # the body back over the heels in the coil, then driving forward over the arms at the hit (root y, - forward)
+        'shift_y': [(0, 'linear', 0.), (6, 'smooth', .02), (12, 'smooth', .01), (15, 'smooth', -.01), (19, 'out', -.085), (21, 'smooth', -.08), (30, 'smooth', -.015),
                     (39, 'smooth', 0.)],
-        # the trunk: forward in the dip, arched back on the rise, over the strike (+ forward; folded further than 15 the chest-height
-        # arms' swing passed 90 at the hit)
-        'lean': [(0, 'linear', 0.), (4, 'smooth', 8.), (8, 'smooth', -4.), (12, 'smooth', -10.), (15, 'smooth', -8.), (17, 'in', 4.), (19, 'out', 12.),
-                 (21, 'smooth', 15.), (24, 'smooth', 13.), (33, 'smooth', 5.), (39, 'smooth', 0.)],
+        # the trunk: leaned back in the coil, then driving forward and curling over the hit (+ forward)
+        'lean': [(0, 'linear', 0.), (3, 'smooth', -4.), (6, 'smooth', -8.), (9, 'smooth', -6.), (12, 'smooth', -6.), (15, 'smooth', -2.), (17, 'in', 8.),
+                 (19, 'out', 24.), (21, 'smooth', 28.), (23, 'smooth', 24.), (28, 'smooth', 12.), (33, 'smooth', 5.), (39, 'smooth', 0.)],
         'head': [(0, 'linear', 0.), (3, 'smooth', 1.), (33, 'linear', 1.), (39, 'smooth', 0.)],
-        # ears: onto f18's line in two frames (through the sweep's middle once, on 3); a lift forward at the hop's top and in the fall,
-        # whipped back onto the line by the impact, a rebound; released into idle's in two frames (32 and 33)
-        'ears': [(0, 'linear', 0.), (2, 'linear', 0.), (3, 'linear', .5), (4, 'out', .95), (11, 'smooth', .95), (14, 'smooth', .88), (17, 'smooth', .86),
-                 (19, 'linear', .9), (20, 'out', 1.), (22, 'smooth', .9), (25, 'smooth', .96), (31, 'linear', .95), (32, 'linear', .5), (33, 'out', .06),
-                 (34, 'smooth', 0.)],
-        # tails: drooping in the rise, floating at the top, lifted in the fall, whipped down after the impact, a rebound, a settle
+        # ears: onto f18's line in two frames (through the sweep's middle once, on 3); lifted a little through the hop, then a rigid
+        # dip of about 6 degrees down onto the line one to two frames after the landing, a rebound, held; released in two frames
+        'ears': [(0, 'linear', 0.), (2, 'linear', 0.), (3, 'linear', .5), (4, 'out', .95), (12, 'smooth', .95), (15, 'smooth', .88), (19, 'smooth', .86),
+                 (21, 'out', 1.), (23, 'smooth', .86), (26, 'smooth', .95), (31, 'linear', .95), (32, 'linear', .5), (33, 'out', .06), (34, 'smooth', 0.)],
+        # tails: drooping in the coil, floating at the top, lifted in the fall, whipped down after the impact, a rebound, a settle
         'tails': [(0, 'linear', 0.), (4, 'smooth', -.2), (10, 'smooth', -.6), (14, 'smooth', .3), (17, 'smooth', .7), (19, 'linear', .6), (21, 'out', -1.),
                   (23, 'smooth', .35), (26, 'smooth', -.15), (30, 'smooth', 0.)],
         'breath_off': [(0, 'linear', 0.), (5, 'smooth', 1.), (33, 'linear', 1.), (39, 'smooth', 0.)],
     },
     lean_split={'pelvis': .3, 'spine': .3, 'chest': .4}, neck_share=.45,
-    arm_extra={'upperarm': [-8., 0., 0.], 'hand': [8., 0., 0.]},
+    arm_extra={},
     ears_release_from=32, ear_cap=1., ear_inside=20.,
-    tail_deg={'a': (5., 6., 7., 8., 9.), 'b': (5., 6., 7., 8., 9.), 'c': (4., 5., 6., 7., 8.)}, tail_order={'a': 0., 'b': .5, 'c': 1.}, tail_lag=.8,
+    # the three tails 2.5 frames apart (the critic: in step)
+    tail_deg={'a': (5., 6., 7., 8., 9.), 'b': (5., 6., 7., 8., 9.), 'c': (4., 5., 6., 7., 8.)}, tail_order={'a': 0., 'b': 2.5, 'c': 5.}, tail_lag=.8,
     idle_a=[(0, 'linear', 1.), (4, 'smooth', 0.)], idle_b=[(31, 'linear', 0.), (39, 'smooth', 1.)],
     feet=heavy_feet,
 )
@@ -879,8 +905,8 @@ def bake(rig_dir, out, clips=None):
                                                  'speeds up from still to the run\'s speed by frame 4 (the game ramps the sprite\'s speed over move_in)')),
                           exit=dict(clip='move_out', frames=MOVE_OUT['frames'], rule="the game finishes the current loop (frame 23), then plays move_out "
                                     "(its frame 0 is loop frame 0's pose and plays in its place; its last frame is idle frame 89's pose), then idle from frame 0",
-                                    travel=dict(distanceM=round(move_out_ground(7), 4), rule='the ground under the planted feet slows from the run\'s speed '
-                                                'to still over frames 0 to 7 (the game slows the sprite over move_out)')),
+                                    travel=dict(distanceM=round(move_out_ground(MOVE_OUT['frames']-1), 4), rule='the ground under the planted feet slows from the run\'s speed '
+                                                'to still over frames 0 to 9 (the game slows the sprite over move_out)')),
                           params=dict(MOVE=MOVE, CONTACT=CONTACT)),
                 move_in=dict(frames=MOVE_IN['frames'], loop=False, events=[], partOf='move (see move.entry)', startsOn='idle frame 0',
                              params={k: v for k, v in MOVE_IN.items() if k != 'ground'}),
@@ -898,20 +924,21 @@ def bake(rig_dir, out, clips=None):
 # ---------------------------------------------------------------- setup check
 
 SETUP = {
-    # fix pass 2: the run's push, tuck and reach, the entry's push and the exit's brake, the light swipe's wind-up, hit and fold
-    # back, and heavy's arms through the overhead keys' range (the rise in the middle stage, the top, the strike leaving it, the hit)
-    'moveInPush': ('move_in', 3, 'move_in f3: the push (the far foot planted with its heel rising behind, the near foot stepping off)'),
-    'movePush': ('move', 5, 'move f5: the near leg\'s push-off (on the toes, the leg extending, the trunk leaned 28 degrees)'),
-    'moveTuck': ('move', 10, 'move f10: the near heel tucked high under the hip (the swing\'s fold)'),
-    'movePoint': ('move', 22, 'move f22: the near foot reaching for the touchdown (the late swing\'s pointing)'),
-    'moveOutBrake': ('move_out', 3, 'move_out f3: the brake (the trunk leaned back over the planted near foot, the knee giving)'),
-    'lightWindup': ('light', 8, 'light f8: the wind-up (the paw cocked up by the side of the head, the elbow out)'),
-    'lightHit': ('light', 11, 'light f11: the hit (the arm forward at chest height, the claws leading)'),
-    'lightFold': ('light', 14, 'light f14: the arm folded back after the hit (the elbow 76 degrees from straight)'),
-    'heavyRise': ('heavy', 12, 'heavy f12: the arms rising (92 degrees of upper-arm swing: the overhead keys\' middle stage)'),
-    'heavyOverhead': ('heavy', 15, 'heavy f15: the hop\'s top, both arms overhead (107.7 degrees of swing: the overhead keys full on)'),
-    'heavyStrikeStart': ('heavy', 17, 'heavy f17: the strike leaving the top (the arms coming forward and down at 104 to 107 degrees)'),
-    'heavyHit': ('heavy', 19, 'heavy f19: the hit on the landing, both arms out at chest height (80 to 85 degrees of swing)'),
+    # fix pass 3: the light swipe's cock, hit and follow-through, heavy's coil, rise, swing, hit and landing, the run's straight
+    # push-off and folded pass, and the exit's brake
+    'lightCock': ('light', 7, 'light f7: the cock (the paw back and up behind the neck, the elbow up and back)'),
+    'lightHit': ('light', 11, 'light f11: the hit (forward of the chest, the claws leading, at the end of the arc)'),
+    'lightFollow': ('light', 13, 'light f13: the follow-through (down and back across the body, the paw by the hip)'),
+    'heavyCoil': ('heavy', 8, 'heavy f8: the coil (leaned back and sunk, both arms drawn back behind the body line)'),
+    'heavyRise': ('heavy', 12, 'heavy f12: on the toes, still coiled back'),
+    'heavySwingOut': ('heavy', 13, 'heavy f13: the arms swinging out to the sides as the hop starts'),
+    'heavySwing': ('heavy', 16, 'heavy f16: the wide arc, the arms out at the sides sweeping forward'),
+    'heavyStrike': ('heavy', 18, 'heavy f18: the arms coming down into the hit'),
+    'heavyHit': ('heavy', 19, 'heavy f19: the hit on the landing, both arms forward and angled down, reaching 0.51 m'),
+    'heavyLand': ('heavy', 22, 'heavy f22: the deep landing crouch'),
+    'movePush': ('move', 6, 'move f6: the push (the near leg straightening behind the body)'),
+    'movePass': ('move', 15, 'move f15: the near foot passing under the body, the heel folded high'),
+    'moveOutBrake': ('move_out', 2, 'move_out f2: the brake (the near foot planted ahead, the body behind it)'),
 }
 
 
