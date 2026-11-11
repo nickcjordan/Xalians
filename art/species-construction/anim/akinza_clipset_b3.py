@@ -413,7 +413,10 @@ MOVE_IN = dict(
     body=[0., .1, .25, .5, .78, .93],
     # (fix pass 5, the critic: in3 and in4 were a small two-footed hop: the far toes stay down through 4 with the leg extending,
     # knee 10 degrees from rest at 4, the hips rising 45 mm into it; the near foot steps higher and further at 3)
-    dip=[0., -.012, -.02, .006, .045, .03],         # the anticipation's dip and the push's rise (root z, m), on top of the blend
+    # (fix pass 6, the critic: the head rose 18 px above idle's at in4 and dropped 35 px into loop frame 0, a pop up rather than a
+    # drive forward: the hips 28, 35 and 24 mm lower on 3, 4 and 5, the head top 67, 61 and 72 px down at 720 (idle's 65, loop f0's
+    # 81), the far knee bending 35 degrees at 4 as it pushes)
+    dip=[0., -.012, -.02, -.022, .01, .006],        # the anticipation's dip and the push's rise (root z, m), on top of the blend
     ears=[0., .3, .6, .85, 1., 1.],                 # shares of the run's own ear set (the loop's at frame k-6; fix pass 3: half back)
     # the near (L) foot: planted on 0 to 2 (flat, the heel lifting 8 degrees on 2), then (frame, contact move y, height, pitch)
     near_planted=3, near_pitch=[0., 0., 8.],
@@ -766,22 +769,33 @@ ACTS['light'] = dict(
               # (fix pass 5, the critic: frozen, f11 was still a straight-arm reach: the wrist hooked down 40 degrees so the claws point
               # down, the paw 25 px lower at 720 and a little across the body, the shoulder dropped into it by arm_extra's clavicle
               # turn; the wrist stays hooked through the follow-through so the claws stay open at 12, not a mitten)
-              (11, dict(d1=(.14, -.86, -.48), pole=(-.6, -.3, .74), elbow=28., wrist=-40.)),
-              (13, dict(d1=(.2, .15, -.97), pole=(-.9, -.3, .2), elbow=45., wrist=-30.)),
-              (15, dict(d1=(.3, .02, -.95), pole=(-.9, -.3, .2), elbow=34., wrist=4.))],
+              # (fix pass 6, the critic: f11 still read as a straight-arm reach, and the rake down happened in one frame, f11 to f12 the
+              # paw dropping 50 px and swinging 90 px back to the hip; then f13 to f19 the paw, its 30 to 40 degree hook held while the
+              # arm hung beside the body, went into the hip, 1100 to 1600 forearm and paw vertices inside the skin): the elbow bent 45
+              # degrees from straight at the hit (its rest bend is 26; it was 28), a new key at 12 (the paw 35 px lower and 13 px
+              # forward of f11's, the wrist hooked 40 as at the hit, so the claws rake down through the target; 55 collapsed 2 wrist
+              # triangles), 13 lower again and coming back with the hook released (wrist -10), and the settle on 15 with the arm out to
+              # the side and a little forward, so the paw passes outside the hip (60 mm or more from the skin from 12 to 26; idle's 66)
+              (11, dict(d1=(.14, -.86, -.48), pole=(-.6, -.3, .74), elbow=45., wrist=-40.)),
+              (12, dict(d1=(.16, -.82, -.55), pole=(-.6, -.3, .74), elbow=36., wrist=-40.)),
+              (13, dict(d1=(.22, -.62, -.75), pole=(-.8, -.3, .5), elbow=40., wrist=-10.)),
+              (15, dict(d1=(.5, -.2, -.84), pole=(-.9, -.3, .2), elbow=34., wrist=4.))],
     tracks={
-        # chain position: the cock builds over 1 to 8 (held into 9), the arc 9 to 11 (accelerating), the follow-through 12 and 13
+        # chain position: the cock builds over 1 to 8 (held into 9), the arc 9 to 11 (accelerating), the rake 12 and 13
         # (decelerating), the settle on 15, the recovery from 16, back on balance at 21 (`recover`), idle's arm by 25
         'chain': [(0, 'linear', 0.), (2, 'in', .08), (4, 'smooth', .42), (6, 'smooth', .82), (8, 'out', 1.), (9, 'in', 1.25), (10, 'in', 1.85), (11, 'in', 3.),
-                  (12, 'out', 3.6), (13, 'out', 4.), (15, 'smooth', 5.), (18, 'smooth', 5.2), (21, 'smooth', 5.6), (25, 'smooth', 6.)],
+                  (12, 'out', 4.), (13, 'out', 5.), (15, 'smooth', 6.), (18, 'smooth', 6.2), (21, 'smooth', 6.6), (25, 'smooth', 7.)],
         # the weight back in the wind-up (root y, + back), into the strike after it, and down into the knees with the strike
-        'shift_y': [(0, 'linear', 0.), (3, 'smooth', .01), (8, 'smooth', .028), (10, 'smooth', .012), (12, 'out', -.02), (15, 'smooth', -.016),
-                    (21, 'smooth', -.002), (25, 'smooth', 0.)],
+        # (fix pass 6: f11's own value kept as a key, then 5 cm forward on the rake at 12 so the paw stays forward of f11's)
+        'shift_y': [(0, 'linear', 0.), (3, 'smooth', .01), (8, 'smooth', .028), (10, 'smooth', .012), (11, 'out', -.012), (12, 'out', -.05),
+                    (15, 'smooth', -.018), (21, 'smooth', -.002), (25, 'smooth', 0.)],
         'shift_z': [(0, 'linear', 0.), (8, 'smooth', -.006), (12, 'out', -.026), (15, 'smooth', -.022), (21, 'smooth', -.005), (25, 'smooth', 0.)],
         # the chest turns away in the wind-up (+: the near shoulder back) and into the strike (-); the trunk leans back a little, then
         # into the hit and stays over it
         'yaw': [(0, 'linear', 0.), (8, 'smooth', 16.), (10, 'in', 4.), (12, 'out', -12.), (14, 'smooth', -13.), (21, 'smooth', -3.), (25, 'smooth', 0.)],
-        'lean': [(0, 'linear', 0.), (8, 'smooth', -3.), (11, 'out', 8.), (13, 'smooth', 10.), (16, 'smooth', 9.), (21, 'smooth', 2.), (25, 'smooth', 0.)],
+        # (fix pass 6: 14 on the rake at 12, then back to 11)
+        'lean': [(0, 'linear', 0.), (8, 'smooth', -3.), (11, 'out', 8.), (12, 'out', 14.), (13, 'smooth', 11.), (16, 'smooth', 9.), (21, 'smooth', 2.),
+                 (25, 'smooth', 0.)],
         'off': [(0, 'linear', 0.), (8, 'smooth', 1.), (12, 'out', -.8), (16, 'smooth', -.6), (24, 'smooth', 0.)],
         'head': [(0, 'linear', 0.), (3, 'smooth', 1.), (20, 'linear', 1.), (25, 'smooth', 0.)],
         # ears: onto f18's line in two frames (through the sweep's middle once, on 3), a flick forward with the arc and back with the
