@@ -1,0 +1,19 @@
+{
+  "id": "B-01M74862A0TBE29VHYY3BNZJ2E",
+  "alias": "n9hs",
+  "stage": "07-surface",
+  "kind": "run",
+  "goal": "Sprite pass 9, the final render of Luceras from the promoted scene (tail finish): idle, sig.horns-first-descent, both transitions; full every-frame gate and whole-creature region read at 4x and 2x",
+  "scope": "Render and gate only; no scene edits. Scene luceras-final/final/scene.blend sha 845bd41c",
+  "defect": null,
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-11T02:49:53Z",
+  "briefSha256": "64fee51b4401b895b006fffad0e0341535a7dbdb23770daa5e1bc27108e1db5e"
+}

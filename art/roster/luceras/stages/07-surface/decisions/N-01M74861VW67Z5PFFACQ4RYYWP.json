@@ -1,0 +1,16 @@
+{
+  "id": "N-01M74861VW67Z5PFFACQ4RYYWP",
+  "alias": "kqz6",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "D-87g5 closed on read. The top-luma miss at 0.40 to 0.55 (+14 to +17 percent) is accepted: the shaft is 7 to 9 px wide at 1x, adjacent stations scatter by about 10 luma on the render line, and no lighter stretch shows at 2x or 4x on any board frame. Another 25 min round would chase measurement noise. Candidate V4 promoted to the scene of record (luceras-final/final, sha 845bd41c...; previous final kept as final_pretail). Go for sprite pass 9, the final render: full every-frame gate plus whole-creature region read on the new scene.",
+  "date": "2026-11-11",
+  "kind": "audit",
+  "binds": {
+    "build": "B-01M744RQB6YX3BZ8HDZ6JNT2WN",
+    "defect": "D-01M744BQ6P9TM0YXNZAB8ZY4E4",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-11T02:49:52Z"
+}

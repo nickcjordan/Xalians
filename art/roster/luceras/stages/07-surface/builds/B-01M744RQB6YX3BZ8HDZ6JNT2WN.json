@@ -8,12 +8,235 @@
   "defect": "D-01M744BQ6P9TM0YXNZAB8ZY4E4",
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-final/final/scene.blend",
+      "hash": "845bd41cee7cfe40bfd2aa9b10356b2c9b2cd4ad5bc35cd650246915be05c728"
+    },
+    {
+      "name": "luceras-final/final/shaft_colour_params.json",
+      "hash": "0907975a0f9f803769685684dde011d8ea174e0a3bf8b2999f68459713e7d732"
+    },
+    {
+      "name": "luceras-final/final/tuft_params.json",
+      "hash": "a20035d7e441b933d2752780768be2b85f9cec22016241f9b3cfe41f8f1285cb"
+    },
+    {
+      "name": "luceras-final/final/tuft_trim.json",
+      "hash": "0468551675c14519cce9a204bf4f71fb2d0e8963743ae6426b652f386a57bd00"
+    },
+    {
+      "name": "luceras-tailfinish/spec.md",
+      "hash": "dde58897a4ea0864f9055c983e222b07bfffcc0f7203ce5571198c5d0795642f"
+    },
+    {
+      "name": "luceras-tailfinish/work/prof_v4_1x.json",
+      "hash": "6e7375e255c689c9f07016c2f85e6156bebc5b63def22d7eedc9184042f5fdef"
+    },
+    {
+      "name": "luceras-tailfinish/work/prof_v4_2x.json",
+      "hash": "1fba0a713a620cffce9c84dac385ca2a1dc54aca1d829e10da4bd28b6b06f801"
+    },
+    {
+      "name": "luceras-tailfinish/work/prof_sheet.json",
+      "hash": "a3e4d1f852f8ee814d06f9073e7c61ea9cb9b31991d538d601eb7e0ef4b1d4ab"
+    },
+    {
+      "name": "luceras-tailfinish/work/digest_diff_V3.json",
+      "hash": "2d8cb83df731c7bd3e565e625b74111f0bcc527a9ecf88553dd31e5cd7cca0d8"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/board_tail_2x_0.png",
+      "hash": "e1320a4fcb8277dfdffeb816367633544b459a3d6d83bb273991dcea7acf48ae"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/board_tail_2x_1.png",
+      "hash": "f152aa832210fb6af1dc9027c1656daff6a26627d5733738d689480d0cd0666f"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/board_tail_4x_0.png",
+      "hash": "d4df5936df27d0cbd0e523c4bb3014c6f078c87dabc5e3556b976d5b7b1faf80"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/board_tail_4x_1.png",
+      "hash": "277c2c5a9cbbca45eea724fe547d2e8d8723d754dce864ef41fde60684de0396"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/board_whole_2x.png",
+      "hash": "7143f02ee5411c646004a384c64e0b7e5c78d123f05629be472ee7576c321e17"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/flight_0.png",
+      "hash": "bae5d8d2067152e55d9a743db1318d18d6ec2826d30f65fb1bb685c4ab66e1eb"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/flight_1.png",
+      "hash": "c288d718914218a03890497b28e3e78ea8327700ea85fb923232fa01b29362c5"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/flight_2.png",
+      "hash": "ece7c1a21f092a3c16f35d19bfd04a1ed602d200a4b4d1204893d75be027d3e6"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/flight_3.png",
+      "hash": "2e0eb82664c4540f862b10128ea22538ae1b25496556a51de0fce0f467262309"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/flight_4.png",
+      "hash": "f3a3729048ca621438158754f75ec69fcaf9bfa6f0d43953c2d1c20a068ed2d4"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/flight_5.png",
+      "hash": "d32dcba93841bffcf9f5150fdb5a9cda567e64320770f77a04493a6598ba3789"
+    },
+    {
+      "name": "luceras-tailfinish/V/v4boards/station_plot.png",
+      "hash": "ee60198910bd28744d0759a40b528db57b0b46d3d8b3b925161733bbede654ce"
+    },
+    {
+      "name": "art/pipeline/groom/tail_recolor.py",
+      "hash": "7a8286c8fcc934903e96a679f7d155b59d895e155708f6ca7fb99494e9436f25"
+    },
+    {
+      "name": "luceras-tailfinish/work/station_profile.py",
+      "hash": "3c9c736c7d06b017f1ceb2620452125804c9012b50b0305218e5477a9f484e97"
+    },
+    {
+      "name": "luceras-tailfinish/work/station_plot.py",
+      "hash": "9cff3d9b99d56db8316ba78b757961739740351e40d78302d1c82f8a48220025"
+    },
+    {
+      "name": "luceras-tailfinish/report_B-525v.json",
+      "hash": "f4df3713876f37812870c19f901d23449085d2a1103184b99699f407f339ec50"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-final/final/scene.blend",
+        "hash": "845bd41cee7cfe40bfd2aa9b10356b2c9b2cd4ad5bc35cd650246915be05c728"
+      },
+      {
+        "name": "luceras-final/final/shaft_colour_params.json",
+        "hash": "0907975a0f9f803769685684dde011d8ea174e0a3bf8b2999f68459713e7d732"
+      },
+      {
+        "name": "luceras-final/final/tuft_params.json",
+        "hash": "a20035d7e441b933d2752780768be2b85f9cec22016241f9b3cfe41f8f1285cb"
+      },
+      {
+        "name": "luceras-final/final/tuft_trim.json",
+        "hash": "0468551675c14519cce9a204bf4f71fb2d0e8963743ae6426b652f386a57bd00"
+      },
+      {
+        "name": "luceras-tailfinish/spec.md",
+        "hash": "dde58897a4ea0864f9055c983e222b07bfffcc0f7203ce5571198c5d0795642f"
+      },
+      {
+        "name": "luceras-tailfinish/work/prof_v4_1x.json",
+        "hash": "6e7375e255c689c9f07016c2f85e6156bebc5b63def22d7eedc9184042f5fdef"
+      },
+      {
+        "name": "luceras-tailfinish/work/prof_v4_2x.json",
+        "hash": "1fba0a713a620cffce9c84dac385ca2a1dc54aca1d829e10da4bd28b6b06f801"
+      },
+      {
+        "name": "luceras-tailfinish/work/prof_sheet.json",
+        "hash": "a3e4d1f852f8ee814d06f9073e7c61ea9cb9b31991d538d601eb7e0ef4b1d4ab"
+      },
+      {
+        "name": "luceras-tailfinish/work/digest_diff_V3.json",
+        "hash": "2d8cb83df731c7bd3e565e625b74111f0bcc527a9ecf88553dd31e5cd7cca0d8"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/board_tail_2x_0.png",
+        "hash": "e1320a4fcb8277dfdffeb816367633544b459a3d6d83bb273991dcea7acf48ae"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/board_tail_2x_1.png",
+        "hash": "f152aa832210fb6af1dc9027c1656daff6a26627d5733738d689480d0cd0666f"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/board_tail_4x_0.png",
+        "hash": "d4df5936df27d0cbd0e523c4bb3014c6f078c87dabc5e3556b976d5b7b1faf80"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/board_tail_4x_1.png",
+        "hash": "277c2c5a9cbbca45eea724fe547d2e8d8723d754dce864ef41fde60684de0396"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/board_whole_2x.png",
+        "hash": "7143f02ee5411c646004a384c64e0b7e5c78d123f05629be472ee7576c321e17"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/flight_0.png",
+        "hash": "bae5d8d2067152e55d9a743db1318d18d6ec2826d30f65fb1bb685c4ab66e1eb"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/flight_1.png",
+        "hash": "c288d718914218a03890497b28e3e78ea8327700ea85fb923232fa01b29362c5"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/flight_2.png",
+        "hash": "ece7c1a21f092a3c16f35d19bfd04a1ed602d200a4b4d1204893d75be027d3e6"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/flight_3.png",
+        "hash": "2e0eb82664c4540f862b10128ea22538ae1b25496556a51de0fce0f467262309"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/flight_4.png",
+        "hash": "f3a3729048ca621438158754f75ec69fcaf9bfa6f0d43953c2d1c20a068ed2d4"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/flight_5.png",
+        "hash": "d32dcba93841bffcf9f5150fdb5a9cda567e64320770f77a04493a6598ba3789"
+      },
+      {
+        "name": "luceras-tailfinish/V/v4boards/station_plot.png",
+        "hash": "ee60198910bd28744d0759a40b528db57b0b46d3d8b3b925161733bbede654ce"
+      },
+      {
+        "name": "art/pipeline/groom/tail_recolor.py",
+        "hash": "7a8286c8fcc934903e96a679f7d155b59d895e155708f6ca7fb99494e9436f25"
+      },
+      {
+        "name": "luceras-tailfinish/work/station_profile.py",
+        "hash": "3c9c736c7d06b017f1ceb2620452125804c9012b50b0305218e5477a9f484e97"
+      },
+      {
+        "name": "luceras-tailfinish/work/station_plot.py",
+        "hash": "9cff3d9b99d56db8316ba78b757961739740351e40d78302d1c82f8a48220025"
+      },
+      {
+        "name": "luceras-tailfinish/report_B-525v.json",
+        "hash": "f4df3713876f37812870c19f901d23449085d2a1103184b99699f407f339ec50"
+      }
+    ],
+    "blockedBy": "nothing (stopped at the 1 h cap)",
+    "defectResult": "D-87g5 fixed on read: the shaft reads as one even mid-dark gray whip with a gentle taper at 2x and 4x in idle f0 and f30, sig f11, f16, f29, f40 and trans in f4; no club, no pale line, no pale return before the plume's own tufts, edge in small tufts. Tail tuft coat rebuilt at 5,023 strands with one even density (140 per cm2), length and lift tapering 13-16 mm at 40 degrees to 7-9 mm at 22 degrees; shaft top color fitted per station, sides take the top color. Taper gate passes (largest rise +3 percent; half station +14 percent at 2x). Top luma misses at 0.40 to 0.55 (+14 to +17 percent) on a 7 to 9 px feature whose adjacent stations already scatter by about 10 luma; no lighter stretch shows on the boards. Matte skin, plume, other curves, body and rig unchanged from F3n (digest_diff_V4.json).",
+    "newDefects": [],
+    "checks": [
+      "flight sig f11 to f30 and f40 at 4x: nothing lifts, gaps or passes through the plume or legs",
+      "ground: lowest new strand 65.6 mm above ground in all 166 frames",
+      "station plot of top luma and normalized core width against the sheet (station_plot.png)"
+    ],
+    "cost": {
+      "wall_h": 0.95,
+      "agent_tokens": 941810,
+      "note": "as reported by the harness for this resumed builder run (42 tool uses); it carries the resumed session's context"
+    }
+  },
+  "blockedBy": "nothing (stopped at the 1 h cap)",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-11T01:50:10Z",
-  "briefSha256": "d3121c095e34279ce552e695623470942c895edfaf2a6f0b2e9b8f30facc2bee"
+  "briefSha256": "d3121c095e34279ce552e695623470942c895edfaf2a6f0b2e9b8f30facc2bee",
+  "checks": [
+    "flight sig f11 to f30 and f40 at 4x: nothing lifts, gaps or passes through the plume or legs",
+    "ground: lowest new strand 65.6 mm above ground in all 166 frames",
+    "station plot of top luma and normalized core width against the sheet (station_plot.png)"
+  ],
+  "reportedAt": "2026-11-11T02:49:52Z"
 }
