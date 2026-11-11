@@ -1344,6 +1344,24 @@ def _slerp_dir(a, b, t):
     return (math.sin((1-t)*om)*a+math.sin(t*om)*b)/math.sin(om)
 
 
+SPLAY_MAX = 80.
+
+
+def _side_out_blend(a, b, t, sd, splay=0.):
+    """Fix pass 7: a downward arm direction from a to b with its two angles eased evenly: its lean in the side view (back from
+    straight down) and its splay out to its own side (a great-circle blend kept the side view's lean until late and then swung
+    it forward 38 degrees in one frame)."""
+    sx = 1. if sd == 'L' else -1.
+
+    def ang(v):
+        v = _unit(v)
+        return math.atan2(v[1], -v[2]), math.asin(max(-1., min(1., sx*v[0])))
+    (s0, o0), (s1, o1) = ang(a), ang(b)
+    s_, o_ = s0+(s1-s0)*t, o0+(o1-o0)*t
+    o_ += splay*(math.radians(SPLAY_MAX)-o_)          # (splay: further out to the side, toward SPLAY_MAX degrees)
+    return np.array([sx*math.sin(o_), math.cos(o_)*math.sin(s_), -math.cos(o_)*math.cos(s_)])
+
+
 def _gravity(u):
     """Half a steady fall, half an accelerating one: it starts at once and gathers speed."""
     u = min(1., max(0., u))
@@ -1610,7 +1628,9 @@ FAINT4 = dict(
              'tail_b3': [0., .5736, -.8192], 'tail_b4': [0., .9703, -.2419], 'tail_b5': [0, .96, .22], 'tail_c1': [-.25, .5, -.83],
              'tail_c2': [-.2873, .1991, -.9369], 'tail_c3': [-.4104, .0318, -.9114], 'tail_c4': [-.5145, .2933, -.8058],
              'tail_c5': [-.47, .84, .26]},
-    tail_clear=(.026, .025, .021, .014, .006),          # (fix pass 6: tail b's third bone went 2 mm into the floor at .022, .017)
+    # (fix pass 6: tail b's third bone went 2 mm into the floor at .022, .017; fix pass 7: per tail, the fourth joint lower so
+    # each tail's end lies on the floor (with .014 the fourth and fifth bones' lowest skin stood 4.6 to 7.3 mm over it at rest))
+    tail_clear={'a': (.026, .025, .021, .0087, .006), 'b': (.026, .025, .021, .0090, .006), 'c': (.026, .025, .021, .0096, .006)},
     # toe keys (toe_corrective.py): the toes curl back 40 degrees as the shin swings from 95 to 112; the foot turns the same angle
     # about its toe joint so the toes stay where they stand
     toe_curl=(95., 112., 40.),
@@ -1646,7 +1666,15 @@ FAINT4 = dict(
     # fix pass 6: the ears stay as they stand in the world while the head drops (they lag it), then droop back from 11 (ear_sag)
     # and drop, splay and turn about their length to their rest (ear_turn, from 20), reached at the head's touchdown (25) and held
     # still in the world while the head turns onto its jaw. The rest is one of EAR_REST's options
-    ear_sag=[(11, 'linear', 0.), (21, 'smooth', .25), (25, 'in', 1.)], ear_turn=[(20, 'linear', 0.), (25, 'smooth', 1.)], ear_rest='A', far_down=8.,
+    # fix pass 7 (critic 7: the ear stood locked upright to 21, then swung about 90 degrees to flat over 22 to 25, a flop): one
+    # eased sag from 8 trailing the head, its elevation and its turn about its length on their own tracks, at the rest by the
+    # head's touchdown (25); and its twist against the head (about its own length, the swing-twist split of ear_1's turn)
+    # past the rest's own twist kept to ear_twist_keep of what holding it still in the world gives: that alone twisted it 57
+    # to 77 degrees against the head at 23 to 25 while the head was still pitched 52 to 54 (the rest: 39), which sheared the ear
+    # root's blend into a flat pale plate. (Clamping the twist at 45 instead turned the ear 19 degrees in the world at 26, as
+    # the head turned up under it.)
+    ear_sag=[(8, 'linear', 0.), (25, 'in', 1.)], ear_turn=[(14, 'linear', 0.), (25, 'in', 1.)], ear_twist_keep=.3,
+    ear_rest='A', far_down=8.,
     neck=[(14, 'linear', 0.), (22, 'smooth', 1.)],                               # the neck bends (chin in) as the chest starts down
     # arms: idle -> K's limp hang (fall), hanging down in the world from the landing (trailing the body as it tips), to E's on
     # the floor once the chest is falling
@@ -1658,12 +1686,29 @@ FAINT4 = dict(
     # the elbows bend, the upper arm down and a little out, the forearm and paw swinging back and out toward flat so they trail
     # the chest; then to their rest by world direction as the chest comes down (the paw put on the floor only when it would reach it)
     arm_fold=[(19, 'linear', 0.), (22, 'smooth', 1.)],
-    arm_fold_dirs={'upperarm': [.3, .45, -.85], 'forearm': [.55, .75, -.35], 'hand': [.45, .8, -.4]},
-    arms=[(23, 'linear', 0.), (27, 'smooth', 1.)],                             # (and further whenever a hanging paw would reach the floor)
+    # fix pass 7 (critic 7: at 22 to 24 an S-shaped kink, the forearm doubling back against the thigh; the forearm set by world
+    # direction trailing back bent the elbow backward, +33 to +61 degrees about X where the guard flexes it -73): one hanging
+    # bend, the upper arm by world direction a little back of straight down, the elbow by its own turn (flexing the way it
+    # bends), the wrist straight
+    arm_fold_dirs={'upperarm': [.3, .55, -.78]}, arm_fold_turns={'forearm': [-10., 0., 0.], 'hand': [0., 0., 0.]},
+    # then from 18 the upper arm eases evenly (its lean in the side view and its splay out) to its rest direction and the elbow
+    # and wrist to their rest turns; a paw that would reach the floor first splays the arm out to the side (seen end-on), and
+    # only past that swings it on ahead of the track
+    arms=[(18, 'linear', 0.), (25, 'linear', 1.)],
+    # fix pass 7 (critic 7: at 25 the upper arm stood upright under the shoulder for a frame, an elbow prop): before `down`
+    # the upper arm's drop toward the floor is held to this track (it was solved to put the paw on the floor, 0.77 at 25, the
+    # upper arm 21 degrees from vertical in the side view), so the elbow folds forward under the chest as it comes down
+    arm_drop_cap=[(19, 'linear', .9), (23, 'smooth', .72), (25, 'linear', .64), (26, 'linear', .52), (27, 'linear', .32)],
+    # fix pass 7 (critic 7: the shoulder mass jammed into the jaw at 23 and 24): the shoulders drawn back and down from 21 and
+    # let go again by the rest (27), so the rest pose is unchanged; near side's turn, the far side's mirrored
+    clav=[(20, 'linear', 0.), (23, 'smooth', 1.), (25, 'linear', 1.), (27, 'smooth', 0.)], clav_rot=[0., 0., -12.],
     # fix pass 6: the arms at rest by world direction (near side; the far arm mirrored): the upper arm out and a little forward
     # along the floor from the shoulder, the forearm back and out flat on the floor, the paw on back along it, palm down, so the
     # camera sees the forearm at an angle and the side of the paw (pointing out at the camera it read as a cut stump)
     arm_dirs_E={'upperarm': [.85, -.45, -.27], 'forearm': [.8, .6, -.05], 'hand': [.3, .95, -.1]}, arm_rest_mm=.5,
+    # fix pass 7: the elbow and wrist turns those directions give at rest (frame 27, near side), the target their turns ease
+    # toward on the way down
+    arm_rest_turns={'forearm': [-23.0, 32.8, -19.7], 'hand': [-36.5, 11.0, -10.1]},
     tails=[(4, 'linear', 0.), (16, 'smooth', .4), (25, 'in', 1.)],
     # the tails held up off the floor while the hips slide back (their tips slid 38 px along it), set down as the hips settle
     tail_lift=[(12, 'linear', 0.), (17, 'smooth', 1.), (23, 'linear', 1.), (27, 'smooth', 0.)], tail_lift_deg=15.,
@@ -1786,7 +1831,10 @@ def drape_tail_dirs(rig, pose, lift, dirs, clear):
     tg = {b: _unit(v) for b, v in dirs.items()}
     T = rc.bone_transforms(rig.J, rc.pose_from_directions(rig.J, {'tail_root': tg['tail_root']}, base=pose, bones=B), bones=B,
                            root_translate=tuple(rc.lift_vec(lift)))
+    clear_all = clear
     for tn in rc.TAILS:
+        # (fix pass 7: `clear` may give each tail its own clearances, {tail: (...)})
+        clear = clear_all[tn] if isinstance(clear_all, dict) else clear_all
         _, _, h0, _ = BONE_OF[f'tail_{tn}1']
         pj = T['tail_root'][0]@np.array(rig.J[h0])+T['tail_root'][1]
         for k in range(1, rc.TAIL_BONES+1):
@@ -1950,6 +1998,47 @@ def set_ear_head(rig, skin, pose, sd, theta, psi, phi):
         pose[f'ear_{i}.{sd}'] = [0., 0., 0.]
 
 
+def _axis_angle(k, deg):
+    a = math.radians(deg)
+    K = np.array([[0., -k[2], k[1]], [k[2], 0., -k[0]], [-k[1], k[0], 0.]])
+    return np.eye(3)+math.sin(a)*K+(1-math.cos(a))*K@K
+
+
+def ear_twist(rig, pose, sd):
+    """Fix pass 7: ear_1's twist against its parent (the head), degrees, signed about the bone's rest axis: the twist part of
+    the swing-twist split of its local turn (rig_core.swing_deg is the swing part)."""
+    u = np.asarray(rc.bone_axis(rig.J, f'ear_1.{sd}', B), float)
+    R = rot(pose.get(f'ear_1.{sd}', [0., 0., 0.]))
+    v = R@u
+    w = np.cross(u, v)
+    n = float(np.linalg.norm(w))
+    Rs = np.eye(3) if n < 1e-9 else _axis_angle(w/n, math.degrees(math.acos(max(-1., min(1., float(u@v))))))
+    Rt = Rs.T@R
+    ax = np.array([Rt[2, 1]-Rt[1, 2], Rt[0, 2]-Rt[2, 0], Rt[1, 0]-Rt[0, 1]])
+    return math.degrees(math.atan2(float(ax@u)/2, (float(np.trace(Rt))-1)/2))
+
+
+def set_ear_twist(rig, skin, pose, sd, deg):
+    """ear_1 turned about the ear's own root-to-tip line (so the ear points where it pointed, only its dish turns) until its
+    twist against the head is deg (bisection over the turn)."""
+    a, _ = _ear_frames(skin)[sd]
+    R0 = rot(pose.get(f'ear_1.{sd}', [0., 0., 0.]))
+    q = dict(pose)
+
+    def tw(d):
+        q[f'ear_1.{sd}'] = _euler(R0@_axis_angle(a, d))
+        return ear_twist(rig, q, sd)
+    lo, hi = -120., 120.
+    s = 1. if tw(5.) > tw(-5.) else -1.
+    for _ in range(40):
+        mid = .5*(lo+hi)
+        if s*(tw(mid)-deg) < 0:
+            lo = mid
+        else:
+            hi = mid
+    pose[f'ear_1.{sd}'] = _euler(R0@_axis_angle(a, .5*(lo+hi)))
+
+
 # fix pass 6, the rest ear (held forever in the game; Nick picks): A the fix pass 5 ear, the approved ear's own turn swung in the
 # picture's plane to `above` degrees over the head's long axis (flat back over the crown and nape: a hood at 192); B back and
 # down about 45 degrees from A, turned about its length so its edge, not its dish, faces the camera, clear of the skull; C out to
@@ -2081,6 +2170,11 @@ def faint4_frame(rig, skin, f, cache):
     bo = tr('bounce')
     for b, e in P['bounce_rot'].items():
         turn(body, b, e, bo)
+    cl = tr('clav')
+    if cl:
+        cr = P['clav_rot']
+        turn(body, 'clavicle.L', cr, cl)
+        turn(body, 'clavicle.R', [cr[0], -cr[1], -cr[2]], cl)
     body['root'] = slerp_e(slerp_e([0., 0., 0.], [K['pitch'], 0., 0.], fa), [E['pitch'], 0., 0.], tp)
 
     def mirror(v, sd):
@@ -2096,12 +2190,19 @@ def faint4_frame(rig, skin, f, cache):
     # fix pass 6: then the elbows bend from 20, the forearms and paws swinging back and out toward flat (trailing the chest)
     af = tr('arm_fold')
     if af > 0:
-        fd = {f'{b}.{sd}': _unit(mirror(P['arm_fold_dirs'][b], sd)) for sd in ('L', 'R') for b in ARMS}
+        # fix pass 7: the upper arm by world direction, the elbow and wrist by their own turns (the elbow flexing the way it
+        # bends, -X as in the guard; set by world direction the forearm trailing back bent the elbow backward 33 to 61 degrees
+        # at 22 to 24, the S-shaped rubbery kink)
+        fd = {f'upperarm.{sd}': _unit(mirror(P['arm_fold_dirs']['upperarm'], sd)) for sd in ('L', 'R')}
         T0 = rc.bone_transforms(rig.J, body, bones=B)
         tg = {b: _slerp_dir(T0[b][0]@rc.bone_axis(rig.J, b, B), fd[b], af) for b in fd}
         fold = rc.pose_from_directions(rig.J, tg, base=body, bones=B)
         for b in fd:
             body[b] = [float(x) for x in fold[b]]
+        for sd in ('L', 'R'):
+            for b in ('forearm', 'hand'):
+                e = P['arm_fold_turns'][b]
+                body[f'{b}.{sd}'] = slerp_e(body.get(f'{b}.{sd}', [0., 0., 0.]), [e[0], e[1]*(1 if sd == 'L' else -1), e[2]*(1 if sd == 'L' else -1)], af)
     p_idle = cache['idle0'][1]+np.array(rig.J['pelvis'])
     pw = p_idle+(np.asarray(K['pelvis'])-p_idle)*fa+(np.asarray(E['pelvis'])-np.asarray(K['pelvis']))*tr('slide')
     lift = pw-rot(body['root'])@np.array(rig.J['pelvis'])
@@ -2161,15 +2262,27 @@ def faint4_frame(rig, skin, f, cache):
     fc = fore_claws(skin)
     dirs_E = {f'{b}.{sd}': _unit(mirror(P['arm_dirs_E'][b], sd)) for sd in ('L', 'R') for b in ARMS}
 
-    def arms_at(t_):
+    def arms_at(t_, splay=0.):
         # the arm bones from their hang (or fold) to their rest by world direction; the lowest point of the forearm and paw skin
         # and of the fore claws (fix pass 6)
+        # (fix pass 7: only the upper arm by world direction; the elbow and wrist turn from their fold to their rest turns, so
+        # the elbow keeps bending its own way on the way down instead of passing through a backward bend)
         base = dict(body, **arm_from)
+        pzE = rc.pose_from_directions(rig.J, dirs_E, base=base, bones=B)
         T0 = rc.bone_transforms(rig.J, base, bones=B)
-        tg = {b: _slerp_dir(T0[b][0]@rc.bone_axis(rig.J, b, B), dirs_E[b], t_) for b in dirs_E}
+        tg = {b: (dirs_E[b] if t_ >= 1 else _side_out_blend(T0[b][0]@rc.bone_axis(rig.J, b, B), dirs_E[b], t_, b[-1], splay))
+              for b in dirs_E if b.startswith('upperarm')}
         pz = rc.pose_from_directions(rig.J, tg, base=base, bones=B)
-        for b in tg:
-            body[b] = [float(x) for x in pz[b]]
+        for b in dirs_E:
+            if b in tg:
+                body[b] = [float(x) for x in pz[b]]
+            elif t_ >= 1 and f >= P['down']:
+                body[b] = [float(x) for x in pzE[b]]
+            else:
+                # toward the rest's own elbow and wrist turns (arm_rest_turns; the turns that reach dirs_E from an upper arm
+                # still pointing down bend the elbow backward)
+                e = P['arm_rest_turns'][rc.base_of(b)]
+                body[b] = slerp_e(arm_from[b], [e[0], e[1]*(1 if b.endswith('L') else -1), e[2]*(1 if b.endswith('L') else -1)], t_)
         low = min(float(cache['arm_parts'][sd].posed(body, lift)[:, 2].min()) for sd in ('L', 'R'))
         if len(fc['L']):
             Tw = rc.bone_transforms(rig.J, body, bones=B, root_translate=tuple(rc.lift_vec(lift)))
@@ -2192,8 +2305,23 @@ def faint4_frame(rig, skin, f, cache):
         else:
             hi = mid
     arm_drop = .5*(lo+hi)
+    if f < P['down']:
+        arm_drop = min(arm_drop, tr('arm_drop_cap'))
     rest_low(arm_drop)
-    if f < P['down'] and arms_at(tpa) < .0005:
+    splay = 0.
+    if f < P['down'] and arms_at(tpa) < .0005 and arms_at(tpa, 1.) >= .0005:
+        # fix pass 7: a hanging paw that would reach the floor splays out to the side (the share that keeps it off the floor),
+        # seen end-on from the side camera, instead of swinging forward ahead of its track (that reached forward like a brace
+        # at 23)
+        lo, hi = 0., 1.
+        for _ in range(14):
+            mid = .5*(lo+hi)
+            if arms_at(tpa, mid) < .0005:
+                lo = mid
+            else:
+                hi = mid
+        splay = hi
+    elif f < P['down'] and arms_at(tpa) < .0005:
         # a hanging paw would reach the floor: it swings on toward its rest instead (the share that keeps it on the floor)
         lo, hi = tpa, 1.
         for _ in range(14):
@@ -2203,8 +2331,27 @@ def faint4_frame(rig, skin, f, cache):
             else:
                 hi = mid
         tpa = max(hi, cache.get('tpa', 0.))
+        if arms_at(tpa) < .0005:
+            # fix pass 7: still on or under the floor with the elbow and wrist at their rest turns: the upper arm lies flatter
+            # (its drop lowered until the paw is on the floor)
+            lo, hi = 0., arm_drop
+            for _ in range(14):
+                mid = .5*(lo+hi)
+                for sd in ('L', 'R'):
+                    dirs_E[f'upperarm.{sd}'] = _unit(mirror([ux/hz*math.sqrt(1-mid*mid), uy/hz*math.sqrt(1-mid*mid), -mid], sd))
+                if arms_at(tpa) > P['arm_rest_mm']/1000.:
+                    lo = mid
+                else:
+                    hi = mid
+            arm_drop = lo
+            for sd in ('L', 'R'):
+                dirs_E[f'upperarm.{sd}'] = _unit(mirror([ux/hz*math.sqrt(1-lo*lo), uy/hz*math.sqrt(1-lo*lo), -lo], sd))
     cache['tpa'] = tpa
-    arm_low = arms_at(tpa)
+    if f < P['down']:
+        # (once splayed it stays out, letting go by half a frame as the arm nears its rest, never below what clears the floor)
+        splay = max(splay, cache.get('splay', 0.)*(.5 if tpa > .6 else 1.))
+    cache['splay'] = splay
+    arm_low = arms_at(tpa, splay)
     # the head: pitched only (profile), its world pitch on the head_pitch track (idle's own head turn eased out over the first
     # frames); fix pass 6: it turns toward E's only as the floor takes it (or past head_reach), then on head_land from the touchdown
     Wi = _world(rig, dict(ip, root=[0., 0., 0.]), 'head')
@@ -2262,6 +2409,11 @@ def faint4_frame(rig, skin, f, cache):
         q = dict(body)
         q['head'] = _euler(_world(rig, q, 'neck').T@cache['WE'])
         cache['ear_rest'] = ear_rest_world(rig, skin, q, ip)
+        # fix pass 7: the rest ear's twist against the head (degrees, magnitude), the soft limit's start
+        cache['ear_rest_twist'] = {}
+        for sd in ('L', 'R'):
+            set_ear_world(rig, skin, q, sd, *cache['ear_rest'][sd])
+            cache['ear_rest_twist'][sd] = abs(ear_twist(rig, q, sd))+.05
     rest = cache['ear_rest']
     ear_info = {}
     for sd in ('L', 'R'):
@@ -2269,12 +2421,19 @@ def faint4_frame(rig, skin, f, cache):
         # 15 to 20 degrees over the skull's back line by 21), then from 20 it drops, splays and turns about its length to its rest
         # (ear_turn). Easing all three together from 11 opened the dish to the camera over the crown at 18 to 20; the shortest
         # turn laid it flat on the side of the skull at 20 to 22; swinging it all the way back first laid it over the crown at 17
-        # to 21)
+        # to 21. Fix pass 7: the elevation eases in from 8 and the turn from 14, both to the rest by 25, then the twist limit)
         e0, e1 = cache['ear0'][sd], rest[sd]
         wt_ = tr('ear_turn')
         prm = (e0[0]+(e1[0]-e0[0])*ws,)+_lerp_params(e0[1:], e1[1:], wt_)
         if f > 0:
             set_ear_world(rig, skin, body, sd, *prm)
+            # fix pass 7: the ear's twist against the head past the rest's twist kept to ear_twist_keep of it (the ear turned
+            # back about its own length; the rest frames' twists are under the rest's, so they are untouched)
+            tw = ear_twist(rig, body, sd)
+            c0 = cache['ear_rest_twist'][sd]
+            if abs(tw) > c0:
+                set_ear_twist(rig, skin, body, sd, math.copysign(c0+(abs(tw)-c0)*P['ear_twist_keep'], tw))
+            ear_info[sd+'twist'] = round(tw, 2)
         ear_info[sd] = [round(x, 2) for x in prm]
     yh = _world(rig, body, 'head')@np.array([0., 1., 0.])
     ear_info['headAxis'] = round(math.degrees(math.atan2(yh[2], yh[1])), 2)
@@ -2293,7 +2452,7 @@ def faint4_frame(rig, skin, f, cache):
     for b in tdir:
         body[b] = slerp_e(ip.get(b, [0., 0., 0.]), tbody[b], wt)
     full, targets = kneel_legs(rig, skin, body, lift, heel, pole, curl)
-    info = dict(time=round(t, 4), fall=round(fa, 4), tip=round(tp, 4), arms=round(tpa, 4), armLow_mm=round(arm_low*1000, 2),
+    info = dict(time=round(t, 4), fall=round(fa, 4), tip=round(tp, 4), arms=round(tpa, 4), splay=round(splay, 4), armLow_mm=round(arm_low*1000, 2),
                 neckTuck=round(tuck, 2), armHang=round(ah, 4), armFold=round(af, 4), heel=round(heel, 2), curl=round(curl, 2),
                 headLand=round(s_head, 3), headAir=round(s_air, 3), reachTurn=round(reach_turn, 3), earSag=round(ws, 3), ears=ear_info,
                 tails=round(tt, 3), bounce=round(bo, 4), armDrop=round(arm_drop, 4), kneeLow_mm=round(kl*1000, 2), kneeFix_mm=round(knee_fix*1000, 2),
