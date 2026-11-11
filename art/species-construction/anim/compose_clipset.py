@@ -41,8 +41,18 @@ from compose_clips import font  # noqa: E402
 FPS = 30
 
 
-def place(src, dst):
+def place(src, dst, size=None):
+    """Copy a frame; with size (w, h) larger than the frame (a clip rendered in a cell widened forward, clip_frames.py
+    --front-px), the frame is set at the right of a canvas that size filled with its own top-left pixel, as the atlas shifts
+    the other clips right (batch 2 faint)."""
     dst.unlink(missing_ok=True)
+    if size is not None:
+        im = Image.open(src)
+        if im.size != tuple(size):
+            can = Image.new(im.mode, tuple(size), im.getpixel((0, 0)))
+            can.paste(im, (size[0]-im.width, size[1]-im.height))
+            can.save(dst)
+            return
     shutil.copyfile(src, dst)
 
 
@@ -81,11 +91,12 @@ def seq(frames, idle, out, clip, scale=3, tag='clay'):
         big = out/f'{clip}-{tag}'/f'{view}{scale}x' if view.startswith('sprite') else None
         if big is not None:
             big.mkdir(parents=True, exist_ok=True)
+        size = Image.open(frames/clip/view/'0000.png').size      # the clip's frame size (faint's cell is widened forward)
         for i, (c, k) in enumerate(order):
             src = (idle/'idle'/view if c == 'idle' else frames/c/view)/f'{k:04d}.png'
-            place(src, od/f'{i:04d}.png')
+            place(src, od/f'{i:04d}.png', size)
             if big is not None:
-                im = Image.open(src)
+                im = Image.open(od/f'{i:04d}.png')
                 im.resize((im.width*scale, im.height*scale), Image.NEAREST).save(big/f'{i:04d}.png')
         print('seq', clip, view, len(order))
     (out/f'{clip}-{tag}'/'order.json').write_text(json.dumps(dict(fps=FPS, order=[f'{c}:{k}' for c, k in order]), indent=0))
@@ -103,9 +114,11 @@ def sheet(frames, clip, spec, out, refs):
                  +[(f'{clip}_out', k, 'out ') for k in range(count(frames, f'{clip}_out'))])
     for c, k, pre in parts:
         im = Image.open(frames/c/'side'/f'{k:04d}.png').convert('RGB')
-        im = im.resize((W, W), Image.LANCZOS)                 # the whole frame: evade's tails reach the right edge's last 70 px
+        im = im.resize((W, W), Image.LANCZOS) if im.width == im.height else im.resize((W, round(W*im.height/im.width)), Image.LANCZOS)
+        # (the whole frame: evade's tails reach the right edge's last 70 px; a frame widened forward, batch 2 faint, keeps its
+        # aspect inside the tile)
         t = Image.new('RGB', (W, W+28), (20, 20, 20))
-        t.paste(im, (0, 0))
+        t.paste(im, (0, W-im.height))
         dr = ImageDraw.Draw(t)
         ev = events.get(k) if c == clip else None
         lab = f'{pre}f{k}' + (f'  {ev}' if ev else '')
@@ -343,7 +356,7 @@ def clips_json_b2(bake, out, extra):
         sp = spec.get(clip) or dict(frames=len(chk[clip]['frames']) if clip in chk else None, loop=False, events=[],
                                     partOf='held (see held.entry and held.exit)')
         entry = dict(frames=sp['frames'], loop=sp['loop'], events=sp['events'])
-        for k in ('startsOn', 'endsOn', 'entry', 'exit', 'partOf', 'candidate'):
+        for k in ('startsOn', 'endsOn', 'entry', 'exit', 'partOf', 'candidate', 'cell'):
             if k in sp:
                 entry[k] = sp[k]
         if clip in chk:

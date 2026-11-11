@@ -73,6 +73,23 @@ class SkinSampler:
         P, _, _ = rc.posed_skin(self.rest, self.idx, self.w, self.J, pose, lift, self.keys, self.deltas)
         return P
 
+    def part(self, bones):
+        """A sampler for the skin with more than half its weight on these bones only (fix pass 3: the faint's tails and ears kept
+        off the floor one by one, posing only their own skin)."""
+        dense = np.zeros(len(self.rest))
+        for k in range(self.idx.shape[1]):
+            dense += np.where(np.isin(self.idx[:, k], [NAMES.index(b) for b in bones]), self.w[:, k], 0.)
+        ids = np.flatnonzero(dense > .5)
+        remap = -np.ones(len(self.rest), int)
+        remap[ids] = np.arange(len(ids))
+        sub = SkinSampler.__new__(SkinSampler)
+        sub.rest, sub.idx, sub.w, sub.J, sub.keys = self.rest[ids], self.idx[ids], self.w[ids], self.J, self.keys
+        sub.deltas = {}
+        for k, (kid, dl) in self.deltas.items():
+            m = remap[kid] >= 0
+            sub.deltas[k] = (remap[kid][m], dl[m])
+        return sub
+
 
 # ---------------------------------------------------------------- displaced
 
@@ -1029,6 +1046,287 @@ def bake_setup(rig_dir, out, rest, names='K,S'):
 
 # ---------------------------------------------------------------- bake
 
+# ---------------------------------------------------------------- faint (fix pass 3: a crumple)
+
+# Loses consciousness and crumples where it stands (fix pass 3; the orchestrator's mechanism, real loss of consciousness): tone
+# goes from the top down. The head droops first (the neck gives); then the knees buckle and the body drops nearly straight down
+# under gravity, the feet staying where they stand (they roll onto their toes); it lands sitting on its folded legs; then the
+# trunk, no longer held up, tips forward over the folded legs: the forearms land, then the chest, then the head last; the ears and
+# tails fall limp; it ends as a heap on the folded legs (end pose A of the setup check, with the end pose decision's head: on the
+# jaw and far cheek, the snout forward in profile). Built from three states of the whole body: STAND (idle frame 0), SIT (on the
+# folded legs, the hips where HEAP has them, the trunk slumped a little), HEAP (the end pose): the trunk, head and arms slerp
+# STAND to SIT with the drop and SIT to HEAP with the tip; the root turns about the hips; the legs by the rig's two-bone IK to
+# ankle targets set by feet that roll on their own soles (foot_roll: no point of the foot that is on the floor moves while it
+# is on the floor); the deep knee, hip, tail-root and neck bends on the rig's deep-flexion keys (deepflex_corrective.py); the
+# tails by world direction, so they only ever fall; the ears from stalk f18's line to their rest on the body as rigid ear_1
+# swings.
+#   f0 to 4    the head droops, chin down, the neck giving; the ears onto stalk f18's line (one in-between); no lean back
+#   f3 to 15   the knees buckle and the hips drop under gravity (accelerating) to SIT, the feet rolling onto their toes; a small
+#              settle to 18
+#   f15 to 27  the trunk tips forward over the folded legs, accelerating: the forearms land, then the chest, the head on 27
+#              (`down`); a small bounce; still from 31 (the game holds the last frame)
+FAINT_FRONT_PX = 8     # D: faint's farthest pixel past the 192 cell's front edge plus 4 px, rounded up to 8 (end pose decision)
+CRUMPLE = dict(
+    frames=36, down=27, still_from=31,
+    # SIT: on the folded legs (the hips at HEAP's point, the heels up), the trunk slumped forward a little, the head hanging, the
+    # arms hanging limp beside the body
+    SIT=dict(pitch=18., body={'spine': [8., 0., 0.], 'chest': [6., 0., 0.], 'neck': [18., 0., 0.], 'head': [12., 0., 0.]},
+             arms={'upperarm.L': [-4., -6., 0.], 'upperarm.R': [-4., 6., 0.], 'forearm.L': [-10., 0., 0.], 'forearm.R': [-10., 0., 0.]}),
+    # HEAP: the end pose (clipset2/setup3/bake/faintA after the end pose decision; the setup sheet's creases passed): root pitch,
+    # the hips' world point, the heels' roll, the knees' pole, every non-leg non-tail bone, the tails' world directions
+    HEAP=None,
+    heel_pole_sit=(0., -1., -1.),
+    droop=[(0, 'linear', 0.), (1, 'linear', .2), (4, 'out', 1.)],
+    droop_rot={'neck': [10., 0., 0.], 'head': [8., 0., 0.]},
+    drop=[(0, 'linear', 0.), (3, 'linear', 0.), (15, 'in', 1.)],
+    # (a settle that rebounds above the sit raised the centroid 2.3 mm at 17: it now only sinks and eases back while the trunk tips)
+    settle=[(15, 'linear', 0.), (16, 'out', -.008), (17, 'smooth', -.005), (19, 'smooth', 0.)],
+    tip=(15, 26),                           # the trunk and chest down on 26, the head (held up a little) on 27
+    arms_lead=2.5,                          # frames the arms run ahead of the trunk's tip (they reach the floor first)
+    head_hold=[(15, 'linear', 0.), (20, 'smooth', 1.), (26, 'linear', 1.), (27, 'in', 0.)],
+    # the head held a little up until the trunk is down, so it lands last: lifted by the neck with its own turn kept (a chin-up turn
+    # of the head pushed the far ear, behind the rolled head, 26 mm into the floor at 26)
+    head_hold_neck=[-8., 0., 0.],
+    ears_line=[(0, 'linear', 0.), (1, 'linear', 0.), (2, 'linear', .55), (3, 'linear', .97)],
+    ears_lie=[(17, 'linear', 0.), (28, 'smooth', 1.)],
+    tails=[(2, 'linear', 0.), (26, 'in', 1.)],
+    tail_clear=(.026, .022, .017, .012, .007), tail_twist_in=.2,    # each tail joint's clearance over the floor (the tail's thickness there, rest skin)
+    bounce=[(27, 'linear', 0.), (28, 'out', 1.), (29, 'smooth', -.35), (30, 'smooth', .1), (31, 'smooth', 0.)],
+    bounce_rot={'jaw': [3., 0., 0.]}, bounce_lift=.006,
+)
+
+
+CRUMPLE['HEAP'] = dict(
+    pitch=120.0, pelvis=[0.0, -0.17, 0.3336], heel=55.0, pole=[0.0, -1.0, -1.0],
+    body={'spine': [6.0, 0.0, 0.0], 'chest': [5.0, 0.0, 0.0], 'neck': [-30.0, 0.0, 0.0],
+          'head': [-82.14, -9.096, 48.874], 'upperarm.L': [-43.412, -27.488, -12.632],
+          'forearm.L': [18.87, -1.269, 2.911], 'hand.L': [-4.361, -2.778, 0.207],
+          'upperarm.R': [-43.412, 27.488, 12.632], 'forearm.R': [18.87, 1.269, -2.911],
+          'hand.R': [-4.361, 2.778, -0.207], 'ear_1.L': [153.375, 72.368, -156.842], 'ear_2.L': [0.0, -0.0, 0.0],
+          'ear_3.L': [0.0, -0.0, 0.0], 'ear_4.L': [0.0, -0.0, 0.0], 'ear_1.R': [32.893, -20.389, -52.938],
+          'ear_2.R': [0.0, -0.0, 0.0], 'ear_3.R': [0.0, -0.0, 0.0], 'ear_4.R': [0.0, -0.0, 0.0]},
+    tail_dirs={'tail_root': [-0.0, 0.932, -0.3624], 'tail_a1': [0.2873, 0.8457, -0.4497],
+               'tail_a2': [0.2425, 0.4555, -0.8566], 'tail_a3': [0.2873, 0.1991, -0.9369],
+               'tail_a4': [0.4472, 0.5257, -0.7236], 'tail_a5': [0.5145, 0.8563, -0.0449],
+               'tail_b1': [0.0, 0.766, -0.6428], 'tail_b2': [0.0, 0.4226, -0.9063], 'tail_b3': [0.0, 0.5736, -0.8192],
+               'tail_b4': [0.0, 0.9703, -0.2419], 'tail_b5': [-0.0, 1.0, -0.0], 'tail_c1': [-0.2873, 0.7548, -0.5897],
+               'tail_c2': [-0.2873, 0.1991, -0.9369], 'tail_c3': [-0.4104, 0.0318, -0.9114],
+               'tail_c4': [-0.5145, 0.2933, -0.8058], 'tail_c5': [-0.5145, 0.8058, -0.2933]})
+
+
+def _unit(v):
+    v = np.asarray(v, float)
+    return v/np.linalg.norm(v)
+
+
+def _slerp_dir(a, b, t):
+    """Unit vectors: the great-circle blend from a to b."""
+    a, b = _unit(a), _unit(b)
+    om = math.acos(max(-1., min(1., float(a@b))))
+    if om < 1e-6:
+        return a
+    return (math.sin((1-t)*om)*a+math.sin(t*om)*b)/math.sin(om)
+
+
+def _gravity(u):
+    """Half a steady fall, half an accelerating one: it starts at once and gathers speed."""
+    u = min(1., max(0., u))
+    return .5*u+.5*u*u
+
+
+_ROLL = {}
+
+
+def foot_roll(skin, sd, theta, step=.25):
+    """The foot rolled heel up by theta degrees on its own sole, as a rigid body turning about X: (rotation, translation (y, z))
+    so a rest foot point v goes to Rx(theta) v + (0, ty, tz). Built in small steps, each a turn about the front-most point on the
+    floor, the foot then set down on its lowest point: a point of the foot on the floor stays where it is while it is on it (the
+    toe pads do not slide back; the setup's turn about a fixed pivot slid them 2.7 mm and pushed the toe tips 5.5 mm into the
+    floor)."""
+    key = (sd, round(float(theta), 4))
+    if key in _ROLL:
+        return _ROLL[key]
+    dom = skin.idx[:, 0]
+    V = skin.rest[dom == NAMES.index(f'foot.{sd}')][:, 1:3]
+    z0 = float(V[:, 1].min())
+    n = int(math.ceil(abs(theta)/step)) if theta else 0
+    d = math.radians(theta/n) if n else 0.
+    cR, sR = math.cos(d), math.sin(d)
+    R2 = np.array([[cR, -sR], [sR, cR]])
+    phi, t = 0., np.zeros(2)
+    for _ in range(n):
+        c_, s_ = math.cos(phi), math.sin(phi)
+        p = V@np.array([[c_, s_], [-s_, c_]])+t
+        zmin = p[:, 1].min()
+        on = p[:, 1] < zmin+2e-4
+        c = p[on][np.argmin(p[on][:, 0])]                 # the front-most point on the floor (the creature faces -y)
+        t = R2@(t-c)+c
+        phi += d
+        c_, s_ = math.cos(phi), math.sin(phi)
+        p = V@np.array([[c_, s_], [-s_, c_]])+t
+        t[1] += z0-p[:, 1].min()
+    out = (rot([math.degrees(phi), 0., 0.]), np.array([0., t[0], t[1]]))
+    _ROLL[key] = out
+    return out
+
+
+def _tail_dirs(rig, pose, lift):
+    T = rc.bone_transforms(rig.J, pose, bones=B, root_translate=tuple(rc.lift_vec(lift)))
+    return {b: _unit(T[b][0]@rc.bone_axis(rig.J, b, B)) for b in ['tail_root']+[f'tail_{t}{k}' for t in rc.TAILS for k in range(1, rc.TAIL_BONES+1)]}
+
+
+def crumple_legs(rig, skin, body, lift, heel, pole):
+    """The legs by IK to ankle targets from the rolled feet, the feet turned to their roll."""
+    targets, Rfs = {}, {}
+    for sd in 'LR':
+        Rf, t = foot_roll(skin, sd, heel)
+        targets[sd] = Rf@np.array(rig.J[f'ankle.{sd}'], float)+t
+        Rfs[sd] = Rf
+    poles = {sd: [pole[0]*(1 if sd == 'L' else -1), pole[1], pole[2]] for sd in 'LR'}
+    full = rc.plant_legs(rig.J, body, lift, {sd: targets[sd].tolist() for sd in 'LR'}, poles, bones=B)
+    T = rc.bone_transforms(rig.J, full, bones=B, root_translate=tuple(rc.lift_vec(lift)))
+    for sd in 'LR':
+        full[f'foot.{sd}'] = rc.euler_from_matrix(T[f'shin.{sd}'][0].T@Rfs[sd])
+    return full, targets, poles
+
+
+def crumple_frame(rig, skin, f, cache):
+    P = CRUMPLE
+    SIT, HEAP = P['SIT'], P['HEAP']
+    tr = lambda k: ac.track(P[k], f)
+    if 'stand' not in cache:
+        i0, l0, _ = cb.idle_pose(rig, 0)
+        cache['stand'] = (i0, np.asarray(l0, float))
+        cache['tails0'] = _tail_dirs(rig, i0, np.asarray(l0, float))
+    ip, ilift, ib = cb.idle_pose(rig, f)
+    d = tr('drop')
+    t0, t1 = P['tip']
+    tp = _gravity((f-t0)/(t1-t0)) if f > t0 else 0.
+    tpa = _gravity((f+P['arms_lead']-t0)/(t1-t0)) if f+P['arms_lead'] > t0 else 0.
+    body = {k: list(v) for k, v in ip.items() if rc.base_of(k) not in ('thigh', 'shin', 'foot') and not k.startswith('tail') and k != 'root'}
+    for b, e in P['droop_rot'].items():
+        turn(body, b, e, tr('droop')*(1-d))
+    names = sorted(set(body) | set(SIT['body']) | set(SIT['arms']) | set(HEAP['body']))
+    out = {}
+    for b in names:
+        if b.startswith('ear_'):
+            continue
+        a0 = body.get(b, [0., 0., 0.])
+        s_ = SIT['body'].get(b, SIT['arms'].get(b, [0., 0., 0.]))
+        h_ = HEAP['body'].get(b, [0., 0., 0.])
+        arm = rc.base_of(b) in ('clavicle', 'upperarm', 'forearm', 'hand')
+        out[b] = slerp_e(slerp_e(a0, s_, d), h_, tpa if arm else tp)
+    for b in body:
+        if b.startswith('ear_'):
+            out[b] = body[b]
+    body = out
+    hh = tr('head_hold')
+    if hh > 0:
+        # the neck lifts the head; the head keeps its world turn exactly (its own turn undoes the neck's)
+        Wh = rc.bone_transforms(rig.J, body, bones=B)['head'][0]
+        turn(body, 'neck', P['head_hold_neck'], hh)
+        Wn = rc.bone_transforms(rig.J, body, bones=B)['neck'][0]
+        body['head'] = [float(v) for v in rc.euler_from_matrix(Wn.T@Wh)]
+    pitch = slerp_e(slerp_e([0., 0., 0.], [SIT['pitch'], 0., 0.], d), [HEAP['pitch'], 0., 0.], tp)
+    body['root'] = pitch
+    stand_pelvis = cache['stand'][1]+np.array(rig.J['pelvis'])
+    pw = stand_pelvis+(np.asarray(HEAP['pelvis'])-stand_pelvis)*d+np.array([0., 0., tr('settle')])
+    lift = pw-rot(body['root'])@np.array(rig.J['pelvis'])
+    # the ears: onto stalk f18's line as the head droops, then from that line (relative to the head) to their rest on the body
+    el = tr('ears_lie')
+    if tr('ears_line') > 0:
+        # (the line uncapped pressed the ears 4 mm into the skull at 14 to 18 as the head hung chin down; capped as the other clips)
+        ear_line_capped(rig, body, tr('ears_line'), 1., inside=20.)
+    ear_from = {b: list(body.get(b, [0., 0., 0.])) for b in HEAP['body'] if b.startswith('ear_')}
+    if el > 0:
+        for b in ear_from:
+            body[b] = slerp_e(ear_from[b], HEAP['body'][b], el)
+    # the tails: each bone's world direction from the idle's to the heap's on a great circle (they only ever fall); a tail that
+    # would reach through the floor before the body is down (the root still high and pitched back) lies on it instead: down each
+    # chain, a joint that would go under its own thickness above the floor has the bone into it turned up to horizontal enough to
+    # rest there, keeping its heading (cutting the whole tail's share back, the tails crowded to 26 mm apart)
+    tt = tr('tails')
+    for b in cache['tails0']:
+        body.pop(b, None)
+    if 'ear_parts' not in cache:
+        cache['ear_parts'] = {sd: skin.part([f'ear_{i}.{sd}' for i in range(1, 5)]) for sd in 'LR'}
+    tdir = {b: _slerp_dir(cache['tails0'][b], HEAP['tail_dirs'][b], tt) for b in cache['tails0']}
+    lift_est = pw-rot(body['root'])@np.array(rig.J['pelvis'])
+    T = rc.bone_transforms(rig.J, rc.pose_from_directions(rig.J, {'tail_root': tdir['tail_root']}, base=body, bones=B), bones=B,
+                           root_translate=tuple(rc.lift_vec(lift_est)))
+    bone_of = {x[0]: x for x in B}
+    tail_lift = {}
+    for tn in rc.TAILS:
+        _, _, h0, _ = bone_of[f'tail_{tn}1']
+        pj = T['tail_root'][0]@np.array(rig.J[h0])+T['tail_root'][1]
+        for k in range(1, rc.TAIL_BONES+1):
+            b = f'tail_{tn}{k}'
+            _, _, h, tl_ = bone_of[b]
+            L = float(np.linalg.norm(np.array(rig.J[tl_])-np.array(rig.J[h])))
+            dv = tdir[b]
+            r_ = P['tail_clear'][k-1]
+            if pj[2]+L*dv[2] < r_:
+                dz = max(-1., min(1., (r_-pj[2])/L))
+                hz = np.array([dv[0], dv[1], 0.])
+                hz = hz/np.linalg.norm(hz) if np.linalg.norm(hz) > 1e-9 else np.array([0., 1., 0.])
+                nd = np.array([hz[0]*math.sqrt(1-dz*dz), hz[1]*math.sqrt(1-dz*dz), dz])
+                tail_lift[b] = round(math.degrees(math.acos(max(-1., min(1., float(nd@dv))))), 1)
+                tdir[b] = nd
+                dv = nd
+            pj = pj+L*dv
+    body = {k: [float(x) for x in v] for k, v in rc.pose_from_directions(rig.J, tdir, base=body, bones=B).items()}
+    # (set by direction a tail loses the idle's own twist about its length, 2.5 to 4 degrees: so it eases in from the idle's
+    # tail pose over the first fifth of the fall, and frame 0 is idle frame 0 exactly)
+    wt = min(1., tt/P['tail_twist_in'])
+    for b in tdir:
+        body[b] = slerp_e(ip.get(b, [0., 0., 0.]), body[b], wt)
+    bo = tr('bounce')
+    for b, e in P['bounce_rot'].items():
+        turn(body, b, e, bo)
+    lift = lift+np.array([0., 0., P['bounce_lift']*max(0., bo)])
+    # an ear that would reach through the floor before the head is down stops short on it (its lie share cut back)
+    ear_cut = {}
+    if el > 0:
+        for sd in 'LR':
+            bs = [b for b in ear_from if b.endswith('.'+sd)]
+
+            def ear_low(s_):
+                for b in bs:
+                    body[b] = slerp_e(ear_from[b], HEAP['body'][b], s_)
+                return float(cache['ear_parts'][sd].posed(body, lift)[:, 2].min())
+            if ear_low(el) < 0:
+                # the nearest share to the track's that keeps the ear on the floor (the line's ear can reach through the floor
+                # as well as the rest's, so both ways are tried)
+                cands = sorted(set(round(x, 3) for x in np.linspace(0., 1., 21)), key=lambda s_: abs(s_-el))
+                best = min(cands, key=lambda s_: (ear_low(s_) < 0, abs(s_-el)))
+                ear_low(best)
+                ear_cut[sd] = round(el-best, 3)
+    heel = HEAP['heel']*d
+    pole = _unit(np.array([0., -1., 0.])*(1-d)+np.asarray(P['heel_pole_sit'], float)*d)
+    pole = _unit(pole*(1-tp)+np.asarray(HEAP['pole'], float)*tp)
+    full, targets, poles = crumple_legs(rig, skin, body, lift, heel, pole)
+    # nothing under the floor: the whole body raised over the rolled feet (the IK keeps them down)
+    raised = 0.
+    Pz = skin.posed(full, lift)
+    low = float(Pz[:, 2].min())
+    raised_by = None
+    if low < -2e-4:
+        raised = -low
+        raised_by = NAMES[int(skin.idx[int(np.argmin(Pz[:, 2])), 0])]
+        lift = lift+np.array([0., 0., raised])
+        full, targets, poles = crumple_legs(rig, skin, body, lift, heel, pole)
+    info = dict(drop=round(d, 4), tip=round(tp, 4), tipArms=round(tpa, 4), heel=round(heel, 2), earsLine=round(tr('ears_line'), 3),
+                earsLie=round(el, 3), tails=round(tt, 3), bounce=round(bo, 4), raised_mm=round(raised*1000, 2), raised_by=raised_by, tailLift=tail_lift, earCut=ear_cut, planted=dict(L=True, R=True),
+                targets={sd: [round(float(x), 6) for x in targets[sd]] for sd in 'LR'})
+    breath = ib*(1-d)
+    return frame_dict(f, full, lift, breath, info, belly=breath)
+
+
+def crumple_frames(rig, skin):
+    cache = {}
+    return [crumple_frame(rig, skin, f, cache) for f in range(CRUMPLE['frames'])]
+
+
 CLIPS = {'displaced': (displaced_frame, DISPLACED['frames']), 'held': (held_frame, HELD['frames']),
          'held_in': (held_in_frame, HELD['entry_frames']), 'held_out': (held_out_frame, HELD['exit_frames'])}
 ORDER = ['displaced', 'held', 'held_in', 'held_out', 'faint']
@@ -1036,7 +1334,7 @@ ORDER = ['displaced', 'held', 'held_in', 'held_out', 'faint']
 
 def events():
     return {'displaced': [dict(name='impact', frame=DISPLACED['impact']), dict(name='settle', frame=DISPLACED['settle'])],
-            'held': [], 'held_in': [], 'held_out': [], 'faint': [dict(name='down', frame=FAINT['down'])]}
+            'held': [], 'held_in': [], 'held_out': [], 'faint': [dict(name='down', frame=CRUMPLE['down'])]}
 
 
 def bake(rig_dir, out, clips=None, rest=DEFAULT_REST):
@@ -1045,7 +1343,7 @@ def bake(rig_dir, out, clips=None, rest=DEFAULT_REST):
     clips = clips or ORDER
     for name in clips:
         if name == 'faint':
-            frames = faint_frames(rig, SkinSampler(rig_dir, rest))
+            frames = crumple_frames(rig, SkinSampler(rig_dir, rest))
         else:
             fn, n = CLIPS[name]
             frames = [fn(rig, f) for f in range(n)]
@@ -1064,10 +1362,11 @@ def bake(rig_dir, out, clips=None, rest=DEFAULT_REST):
                                     "plays held_out (its frame 0 is loop frame 0's pose and plays in its place; its last frame is idle frame "
                                     "89's pose), then idle from frame 0"),
                           params=dict(HELD=HELD, HELD_IN=HELD_IN, HELD_OUT=HELD_OUT, HELD_OUT_ARMS=HELD_OUT_ARMS)),
-                faint=dict(frames=FAINT['frames'], loop=False, events=ev['faint'], startsOn='idle frame 0',
-                           endsOn='lying still (frames 31 to 35 are one pose); the game holds the last frame', candidate=FAINT['candidate'],
-                           params=dict(FAINT=FAINT, LIMP_KNEEL=LIMP_KNEEL, LIE_PITCH=LIE_PITCH, LIE_EARS=LIE_EARS, LIE_TAIL_X1=LIE_TAIL_X1,
-                                       LIE_DRAPE=LIE_DRAPE)))
+                faint=dict(frames=CRUMPLE['frames'], loop=False, events=ev['faint'], startsOn='idle frame 0',
+                           endsOn='lying still (frames 31 to 35 are one pose); the game holds the last frame',
+                           cell=dict(front_px=FAINT_FRONT_PX, note='faint renders in a cell widened forward by front_px sprite pixels '
+                                     '(clip_frames.py --front-px); at the atlas the other clips offsets and anchor shift right by it'),
+                           params=dict(CRUMPLE=CRUMPLE)))
     (out/'clipset-spec.json').write_text(json.dumps(spec, indent=1, default=str))
 
 
