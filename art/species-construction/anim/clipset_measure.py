@@ -76,6 +76,20 @@ def series(view, clip, n):
     return [mask(a.frames/clip/view/f'{k:04d}.png') for k in range(n)]
 
 
+def fit(m, shape):
+    """An idle mask set into a clip's frame. clip_frames.py --front-px (faint's widened cell) widens the side, sprite
+    and three-quarter frames on the left, the front, at the same scale and ground line, so the idle frame is the
+    right-hand part of the wider one; pad it on the left so the two compare pixel for pixel."""
+    if m.shape == shape:
+        return m
+    out = np.zeros(shape, bool)
+    out[-m.shape[0]:, -m.shape[1]:] = m
+    return out
+
+
+EXTRA = {}      # per view: the px the current clip's frame is wider than idle's (the rig projections shift right by it)
+
+
 # ---- rig: travel, feet and the body's front and back
 R = a.rig
 rig = json.loads((R/'rig.json').read_text())
@@ -149,6 +163,7 @@ def landmarks(P, fr):
                knee_L_bend_deg=round(math.degrees(math.acos(max(-1., min(1., u@v/np.linalg.norm(u)/np.linalg.norm(v))))), 1))
     for cam, c in CAMS.items():
         q = c.px(np.array([mu, paw, jt('pelvis', 'pelvis')]))
+        q[:, 0] += EXTRA.get(cam, 0)
         out[f'muzzle_over_paw_{cam}_px'] = round(float(q[1, 1]-q[0, 1]), 1)
         out[f'pelvis_{cam}_px'] = [round(float(x), 1) for x in q[2]]
     return out
@@ -162,10 +177,12 @@ for clip in a.clips.split(','):
     C = dict(perFrame={}, summary={})
     for view in MM:
         ms = series(view, clip, n)
+        EXTRA[view] = ms[0].shape[1]-idle_m[view][0].shape[1]
+        idle_f = [fit(m, ms[0].shape) for m in idle_m[view]]
         head_h = int(round(130*ms[0].shape[0]/720))     # the critic's head band (clipset1/critic/ear.py): top 130 px at 720
         F = [feats(m, head_h) for m in ms]
         for k in range(n):
-            F[k]['changed_px'] = int((ms[k] ^ ms[k-1]).sum()) if k else int((ms[0] ^ idle_m[view][1]).sum())
+            F[k]['changed_px'] = int((ms[k] ^ ms[k-1]).sum()) if k else int((ms[0] ^ idle_f[1]).sum())
         C['perFrame'][view] = F
         S = {}
         for key in ('snout', 'crown', 'ear_tip', 'tail_rear', 'lowest', 'centroid'):
@@ -179,8 +196,9 @@ for clip in a.clips.split(','):
         S['ear_angle'] = dict(frame0=F[0]['ear_angle'], max=max(f['ear_angle'] for f in F), min=min(f['ear_angle'] for f in F),
                               per_frame=[f['ear_angle'] for f in F])
         S['changed_px_per_frame'] = [f['changed_px'] for f in F]
-        S['handback_last_to_idle0_changed_px'] = int((idle_m[view][0] ^ ms[n-1]).sum())
+        S['handback_last_to_idle0_changed_px'] = int((idle_f[0] ^ ms[n-1]).sum())
         S['idle_89_to_0_changed_px'] = int((idle_m[view][0] ^ idle_m[view][1]).sum())
+        S['frame_wider_than_idle_px'] = EXTRA[view]
         S['entry_idle89_to_frame0_changed_px'] = F[0]['changed_px']
         S['snout_path_px'] = [F[k]['snout'] for k in range(n)]
         S['centroid_speed_px_per_frame'] = [round(float(np.hypot(F[k]['centroid'][0]-F[k-1]['centroid'][0], F[k]['centroid'][1]-F[k-1]['centroid'][1])), 2)

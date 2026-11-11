@@ -337,6 +337,18 @@ HELD = dict(
     # chain keeping their sum (so the tip points where it did), passes of share `tail_spread` until no joint bends more than
     # twice the mean of its neighbours
     tail_spread=(.5, 12, 1.8),
+    # fix pass 6 (critic pass 5: the top tail still hooked 90 to 100 degrees over its last third at 9 to 11, 24 to 27 and 40 to 42
+    # as the side view sees it: its last three bones fan out toward the camera there (world x .86 to .9), so on screen they are
+    # short and turn down hard): the top tail's last bones turned back about the vertical (yaw_back degrees at the tip, by
+    # yaw_back_shares root to tip), then its bends as the side view sees them (each bone's angle in the y-z plane) shared along
+    # the chain in proportion to the bones' length on screen, the sum kept, so the curl spreads toward the root (each bone turned
+    # about world x, its depth kept). (+ yaw_back turns a bone pointing at the camera toward the back; 45 left 55 degrees of turn
+    # in a third of the tail on screen at 26 to 28, 55 leaves 51; before, 96 to 101)
+    tail_a_side=dict(yaw_back=55., yaw_back_shares=(0., .25, .6, 1., 1.), spread=1.),
+    # fix pass 6 (critic pass 5: at 7 to 11 the middle tail's tip landed on the lower tail, a closed loop with a spike at 192;
+    # it also crossed it on screen at 28 to 31): the middle tail turned up about world x at its root (degrees, by keys of
+    # (frame, share), smoothstep between): 16 left its tip 38 mm from the lower tail on screen, 24 leaves 65 or more)
+    tail_b_clear=dict(deg=24., keys=[(3, 0.), (6, 1.), (12, 1.), (15, 0.), (24, 0.), (27, 1.), (32, 1.), (35, 0.)]),
 )
 
 
@@ -535,6 +547,7 @@ def held_loop_body(rig, f):
         for k in range(1, rc.TAIL_BONES+1):
             turn(pose, f'tail_{tn}{k}', [float(x) for x in raw[k-1]])
     spread_tail_bends(rig, pose, P['tail_spread'])
+    tail_side_fix(rig, pose, f)
     nf = _keys_periodic(P['near_foot'], f, n)
     ff = _keys_periodic(P['far_foot'], f, n)
     feet = {'L': dict(t=(0., nf[0], nf[1]), pitch=nf[2], pivot='toe'),
@@ -611,6 +624,66 @@ def spread_tail_bends(rig, pose, spec):
         pose[b] = [float(x) for x in new[b]]
 
 
+def _keys_smooth_periodic(keys, f, n):
+    """(frame, value) keys, smoothstep between them, periodic in n (the last key's value past it)."""
+    f = f % n
+    for k0, k1 in zip(keys, keys[1:]):
+        if k0[0] <= f <= k1[0]:
+            u = (f-k0[0])/(k1[0]-k0[0]) if k1[0] > k0[0] else 1.
+            u = u*u*(3-2*u)
+            return k0[1]+(k1[1]-k0[1])*u
+    return keys[-1][1] if f > keys[-1][0] else keys[0][1]
+
+
+def tail_side_fix(rig, pose, f):
+    """Fix pass 6: the top tail's turn back and its side-view bends spread (HELD['tail_a_side']); the middle tail turned up
+    clear of the lower one (HELD['tail_b_clear'])."""
+    P = HELD
+    A_ = P['tail_a_side']
+    T = rc.bone_transforms(rig.J, pose, bones=B)
+    bs = [f'tail_a{k}' for k in range(1, rc.TAIL_BONES+1)]
+    d = [_unit(T[b][0]@rc.bone_axis(rig.J, b, B)) for b in bs]
+    tg = {}
+    if A_['yaw_back']:
+        nd = []
+        for v, sh in zip(d, A_['yaw_back_shares']):
+            a = math.radians(A_['yaw_back']*sh)
+            Rz = np.array([[math.cos(a), -math.sin(a), 0.], [math.sin(a), math.cos(a), 0.], [0., 0., 1.]])
+            nd.append(Rz@v)
+        d = nd
+    if A_['spread']:
+        th = np.unwrap([math.atan2(v[2], v[1]) for v in d])
+        t = np.diff(th)
+        Lp = np.array([math.hypot(v[1], v[2])*float(np.linalg.norm(np.array(rig.J[BONE_OF[b][3]])-np.array(rig.J[BONE_OF[b][2]]))) for b, v in zip(bs, d)])
+        wk = .5*(Lp[:-1]+Lp[1:])
+        t = (1-A_['spread'])*t+A_['spread']*t.sum()*wk/wk.sum()
+        th2 = np.r_[th[0], th[0]+np.cumsum(t)]
+        nd = []
+        for v, a0, a1 in zip(d, th, th2):
+            ph = a1-a0
+            Rx = np.array([[1., 0., 0.], [0., math.cos(ph), -math.sin(ph)], [0., math.sin(ph), math.cos(ph)]])
+            nd.append(Rx@v)
+        d = nd
+    if A_['yaw_back'] or A_['spread']:
+        tg.update({b: v for b, v in zip(bs, d)})
+    Bc = P['tail_b_clear']
+    k = _keys_smooth_periodic(Bc['keys'], f, P['frames'])
+    if Bc['deg'] and k > 0:
+        a = math.radians(Bc['deg']*k)
+        Rx = np.array([[1., 0., 0.], [0., math.cos(a), -math.sin(a)], [0., math.sin(a), math.cos(a)]])
+        for j in range(1, rc.TAIL_BONES+1):
+            b = f'tail_b{j}'
+            tg[b] = Rx@_unit(T[b][0]@rc.bone_axis(rig.J, b, B))
+    if tg:
+        order = [b for b in [f'tail_{tn}{j}' for tn in rc.TAILS for j in range(1, rc.TAIL_BONES+1)] if b in tg]
+        new = rc.pose_from_directions(rig.J, {b: tg[b] for b in order}, base=pose, bones=B)
+        for b in order:
+            pose[b] = [float(x) for x in new[b]]
+
+
+BONE_OF = {x[0]: x for x in B}
+
+
 def held_frame(rig, f):
     body, lift, feet, breath, info = held_loop_body(rig, f)
     full, targets = cb.solve_feet(rig, body, lift, feet)
@@ -648,8 +721,12 @@ HELD_IN = {'arms': [0., .8, 1.05, 1.01, 1., 1.], 'body': [0., .15, .7, .95, 1., 
            'tails': [0., .25, .6, .85, .97, 1.], 'jolt': [0., 1., .35, .1, 0., 0.],
            # (fix pass 5: the far ear mirrored on the near one (share) and dropped further (degrees) through the seize; the first and
            # last frames keep idle's and loop frame 44's ears)
-           'far_mirror': [0., 1., 1., 1., .5, 0.], 'far_down': [0., 16., 16., 14., 8., 0.]}
-HELD_IN_JOLT = (0., .015, .02)            # root (x, y back, z up) at the jolt's peak, on top of the blend
+           'far_mirror': [0., 1., 1., 1., .5, 0.], 'far_down': [0., 4., 0., 4., 8., 0.], 'far_twist': [0., 45., 60., 60., 0., 0.]}
+# (fix pass 6: far_down 16, 16, 14 left the far ear 53 to 745 px below the near ear's outline at 720 in frames 1 to 3, the lip
+# at 192; with the blade turned 45 to 60 degrees about its length and 0 to 4 down: 76, 73 and 9 px below, 221, 228 and 284
+# above; idle frame 0's own far ear shows 4 below and 435 above)
+HELD_IN_JOLT = (0., .015, .01)            # root (x, y back, z up) at the jolt's peak, on top of the blend (fix pass 6: the rise
+                                          # halved, .02 to .01: at .02 both feet left the floor 2.4 and 2.8 px at 720 on frame 1)
 HELD_IN_HEELS = 0.                        # the heels up (degrees about the toe pads) at the jolt's peak (fix pass 5: 14 lifted the near
                                           # heel 10 px at 720; pinned)
 # at the jolt's peak, on top of the blend: the shoulders snap up and in, the trunk and head jerk back
@@ -664,14 +741,19 @@ HELD_IN_SNAP = {'clavicle.L': [0., -8., -5.], 'clavicle.R': [0., 8., 5.], 'spine
 HELD_OUT = {'idle': [0., .05, .18, .38, .6, .78, .9, .97, .995, 1.], 'ears': [0., .12, .42, .72, .9, .98, 1., 1., 1., 1.],
             'burst': [0., .7, 1., .75, .4, .15, .04, 0., 0., 0.], 'shake': [0., 8., -9., 5., -2.5, 1., 0., 0., 0., 0.],
             'unclamp': [0., .7, 1., 1., 1., 1., 1., 1., 1., 1.], 'far_mirror': [0., 1., 1., 1., 1., 1., 1., 1., 1., 1.],
-            'far_down': [0., 16., 24., 18., 16., 8., 2., 0., 0., 0.]}
+            'far_down': [0., 4., 6., 3., 4., 4., 2., 0., 0., 0.], 'far_twist': [0., 60., 75., 45., 30., 15., 0., 0., 0., 0.]}
+# (fix pass 6: far_down 16, 24, 18, 16 left 1603, 476 and more px of far ear below the near ear's outline at 720 in frames 1 to
+# 3 and a sliver above at 4; turned 60 degrees about its length and 4 to 8 down, see the fix pass 6 report for the counts)
 HELD_OUT_ARMS = {'upperarm.L': [-18., -30., 0.], 'upperarm.R': [-14., 26., 0.], 'forearm.L': [-22., 0., 0.], 'forearm.R': [-18., 0., 0.]}
 
 
-def mirror_far_ear(rig, pose, down=0., share=1.):
+def mirror_far_ear(rig, pose, down=0., share=1., twist=0.):
     """Fix pass 5 (critic pass 4: at held_in 1 and held_out 2 the far ear stood above the near one, a clamshell): the far ear
     swings as the near one does, mirrored across the body's midline in the world (so a rolled head does not lift it), then
-    `down` degrees further back and down in the picture's plane, so in the side view it stays behind or below the near ear."""
+    `down` degrees further back and down in the picture's plane, so in the side view it stays behind or below the near ear.
+    Fix pass 6 (critic pass 5: it hung below the near ear as a second lip at held_in 1 to 3 and held_out 1 to 3, a sliver above
+    at held_out 4): also turned `twist` degrees about its own length, so its blade is edge-on to the side camera and its
+    outline narrow enough to stay inside the near ear's."""
     if 'ear_1.L' not in pose:
         return
     T = rc.bone_transforms(rig.J, pose, bones=B)
@@ -681,6 +763,9 @@ def mirror_far_ear(rig, pose, down=0., share=1.):
     if down:
         a = math.radians(down)
         Wf = np.array([[1., 0., 0.], [0., math.cos(a), math.sin(a)], [0., -math.sin(a), math.cos(a)]])@Wf
+    if twist:
+        ax = Wf@_unit(np.array(rig.J['ear4.R'])-np.array(rig.J['ear0.R']))
+        Wf = _axrot(ax*math.radians(twist))@Wf
     pose['ear_1.R'] = slerp_e(pose.get('ear_1.R', [0., 0., 0.]), [float(v) for v in rc.euler_from_matrix(Wh.T@Wf)], share)
 
 
@@ -693,7 +778,7 @@ def held_in_frame(rig, k):
     for b, d in HELD_IN_SNAP.items():
         turn(pose, b, d, e['jolt'])
     ear_line_capped(rig, pose, e['ears']*HELD['ear_base'], HELD['ear_cap'], inside=HELD['ear_inside'])
-    mirror_far_ear(rig, pose, HELD_IN['far_down'][k], HELD_IN['far_mirror'][k])
+    mirror_far_ear(rig, pose, HELD_IN['far_down'][k], HELD_IN['far_mirror'][k], HELD_IN['far_twist'][k])
     lift = (1-e['body'])*ilift+e['body']*hlift+e['jolt']*np.asarray(HELD_IN_JOLT)
     feet = _blend_feet(IDLE_FEET, hfeet, e['body'])
     for sd in 'LR':
@@ -719,7 +804,7 @@ def held_out_frame(rig, k):
     turn(pose, 'neck', [0., 0., -.5*e['shake']])
     ear_line_capped(rig, pose, (1-e['ears'])*HELD['ear_base'], HELD['ear_cap'], toward=ip if e['ears'] > 0 else None,
                     inside=HELD['ear_inside'])
-    mirror_far_ear(rig, pose, HELD_OUT['far_down'][k], HELD_OUT['far_mirror'][k])
+    mirror_far_ear(rig, pose, HELD_OUT['far_down'][k], HELD_OUT['far_mirror'][k], HELD_OUT['far_twist'][k])
     lift = (1-e['idle'])*hlift+e['idle']*ilift
     feet = _blend_feet(hfeet, IDLE_FEET, e['idle'])
     full, targets = cb.solve_feet(rig, pose, lift, feet)

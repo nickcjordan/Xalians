@@ -15,7 +15,12 @@ Groups (each key also needs the vertex to be that part's skin, so nothing else m
   knee  shin.L / shin.R, the band where the thigh and the shin share the weight; leg skin; rise0 KNEE_RISE0;
   hip   thigh.L / thigh.R, the band where the hip (pelvis, glute) and the thigh share the weight, with the belly; rise0 HIP_RISE0;
   tail  tail_root, the band where the pelvis and the tail root and first tail bones share the weight; rise0 TAIL_RISE0;
-  neck  neck, the band where the chest and the neck, head and jaw share the weight (the head tucked down); rise0 NECK_RISE0.
+  neck  neck, the band where the chest and the neck, head and jaw share the weight (the head tucked down); rise0 NECK_RISE0;
+  head  head, the band where the chest and the head and jaw share the weight (no skin is weighted to the neck bone), as the neck
+        group's but driven by the head's own swing (faint fix pass 4: the head turned far back against the neck to lie on its
+        jaw and cheek); rise0 HEAD_RISE0.
+--rise0 group:degrees,... overrides a group's rise0 (faint fix pass 4: batch 3's move now bends the shin 91.3 degrees, past the
+knee's 88, so the knee keys rise from 95).
 The rise0 angles sit above the largest swing any approved or current clip uses (idle, Night Stalk, batch 1, batch 2's displaced
 and held, batch 3's move: shin 83.1, thigh 77.3, tail_root 17.0, neck 17.4 degrees), so every key is exactly 0 over all of them:
 their skins are unchanged bit for bit. The groups are
@@ -44,7 +49,7 @@ sys.path.insert(0, str(HERE))
 import rig_core as rc  # noqa: E402
 import akinza_clips as ac  # noqa: E402
 
-KNEE_RISE0, HIP_RISE0, TAIL_RISE0, NECK_RISE0 = 88., 82., 25., 25.
+KNEE_RISE0, HIP_RISE0, TAIL_RISE0, NECK_RISE0, HEAD_RISE0 = 88., 82., 25., 25., 30.
 p = argparse.ArgumentParser()
 p.add_argument('rig', type=Path)
 p.add_argument('rest', type=Path)
@@ -54,10 +59,13 @@ p.add_argument('--rounds', type=int, default=100)
 p.add_argument('--fine', type=int, default=4)
 p.add_argument('--relax', type=int, default=2000)
 p.add_argument('--mid-share', type=float, default=.5, help='the mid key sits this share of the way from rise0 to the full angle')
-p.add_argument('--radii', default='knee:.04:.12,hip:.06:.16,tail:.05:.12,neck:.04:.12', help='group:r0:r1, the mask (m) round the blend band')
+p.add_argument('--radii', default='knee:.04:.12,hip:.06:.16,tail:.05:.12,neck:.04:.12,head:.04:.12', help='group:r0:r1, the mask (m) round the blend band')
 p.add_argument('--check-bakes', default='')
 p.add_argument('--dry-run', action='store_true')
+p.add_argument('--rise0', default='', help='group:degrees,... overriding the defaults')
 a = p.parse_args()
+RISE0 = dict(knee=KNEE_RISE0, hip=HIP_RISE0, tail=TAIL_RISE0, neck=NECK_RISE0, head=HEAD_RISE0)
+RISE0.update({g: float(v) for g, v in (x.split(':') for x in a.rise0.split(',') if x)})
 
 B = rc.ANIM_BONES
 NAMES = rc.ANIM_NAMES
@@ -110,6 +118,8 @@ def spec(group, sd):
         return f'thigh.{sd}', (['pelvis', f'glute.{sd}'], [f'thigh.{sd}']), ['pelvis', 'spine', f'glute.{sd}', f'thigh.{sd}']
     if group == 'neck':
         return 'neck', (['chest'], ['neck', 'head', 'jaw']), ['chest', 'neck', 'head', 'jaw']
+    if group == 'head':     # (no skin is weighted to the neck bone: the neck's skin blends the chest's and the head's)
+        return 'head', (['chest'], ['neck', 'head', 'jaw']), ['chest', 'neck', 'head', 'jaw']
     return 'tail_root', (['pelvis'], ['tail_root']+TAILB), ['pelvis', 'glute.L', 'glute.R', 'tail_root']+TAILB
 
 
@@ -142,7 +152,7 @@ for group in GROUPS:
     for sd in sides:
         bone, _, _ = spec(group, sd if sd != 'C' else 'L')
         ang_full = rc.swing_deg(J, full_pose, bone, B)
-        rise0 = {'knee': KNEE_RISE0, 'hip': HIP_RISE0, 'tail': TAIL_RISE0, 'neck': NECK_RISE0}[group]
+        rise0 = RISE0[group]
         if ang_full <= rise0+4:
             raise SystemExit(f'{group} {sd}: the sculpt pose bends {bone} {ang_full:.1f} degrees, not past rise0 {rise0}')
         # the mid key's pose: the bone turned the share of its sculpt turn whose swing is --mid-share of the way from rise0 to
@@ -201,7 +211,7 @@ def bake_values(path):
     return dict(frames=len(frames), swing_max_deg=sw, deep_key_value_max=round(max(vals.values()), 6))
 
 
-rep = dict(params={k: str(v) for k, v in vars(a).items()}, rise0=dict(knee=KNEE_RISE0, hip=HIP_RISE0, tail=TAIL_RISE0, neck=NECK_RISE0), keys=new_keys,
+rep = dict(params={k: str(v) for k, v in vars(a).items()}, rise0=RISE0, keys=new_keys,
            sculpt=report, clips={str(Path(b).parent.parent.name)+'/'+str(Path(b).parent.name): bake_values(b) for b in a.check_bakes.split(',') if b})
 print(json.dumps(rep['clips']), flush=True)
 if not a.dry_run:
