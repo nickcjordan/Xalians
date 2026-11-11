@@ -1545,77 +1545,84 @@ def crumple_frames(rig, skin):
     return [crumple_frame(rig, skin, f, cache) for f in range(CRUMPLE['frames'])]
 
 
-# ---------------------------------------------------------------- faint, fix pass 4
+# ---------------------------------------------------------------- faint, fix pass 4 and 5
 
 # Faint fix pass 4 (critic pass 4 on faint, then the orchestrator's look at the setup4 sheet): the body kneels down onto the
 # floor instead of floating on its toe tips. Two poses posed on the bare rig at the setup check (clipset2/setup4): K, the knee
 # landing at frame 16 (the knees just down, the toes curled under on the toe keys, the hips over the knees, the trunk slumped a
-# little, the head hanging, the arms limp), and E, the end pose from frame 27 (`down`) (the knees and shins on the floor, the
-# hips back over the heels, the spine rounded, the chest, near forearm and paw, jaw and cheek and tail tips on the floor). The
-# legs reach both by the rig's IK to the rolled feet (each foot rolled heel up on its sole, then turned about its toe joint
-# while the toe keys curl the toes back by the same angle, so it kneels on the balls of its feet). The ears are set by their
-# world direction (ear_1 a rigid swing, 2 to 4 straight): turned about their length so the side camera sees the blade edge-on
-# (the dish faces down, toward the body), trailing back and out (K) and lying back along the neck (E).
+# little, the arms limp), and E, the end pose from frame 27 (`down`) (the knees and shins on the floor, the hips back over the
+# heels, the spine rounded, the chest, near forearm and paw, jaw and tail tips on the floor). The legs reach both by the rig's
+# IK to the rolled feet (each foot rolled heel up on its sole, then turned about its toe joint while the toe keys curl the toes
+# back by the same angle, so it kneels on the balls of its feet).
+# Fix pass 5 (blind critic pass 5 on faint): the head stays in profile (no roll; pitched only, chin toward the chest through
+# the fall, lying on its jaw and chin with the snout forward at rest: E's 38 degree roll onto the far cheek is gone); the ears
+# keep the approved ear's own shape and are swung only in the picture's plane: they hold still in the world for the first
+# frames while the head drops (they lag it), then angle up and back off the skull at a set angle above the skull's back line
+# (the side view's line from the head's highest skin point to its rearmost); the heels stay down until the knees have broken;
+# the trunk tips from the knee landing on with no pause, the spine rounding as the chest drops; the arms hang in the world and
+# trail the body until the chest is falling, then swing forward to the floor; the tails land late (they slid while the hips
+# went back) with a slight upward curl at the tips; the head's reach stays 15 px inside the widened frame.
 FAINT4 = dict(
     frames=36, down=27, knees=16, still_from=31,
     K=dict(pitch=12., pelvis=[0., -.25, .2625], heel=70., pole=[0., -1., -1.],
-           body={'spine': [5., 0., 0.], 'chest': [5., 0., 0.], 'neck': [18., 0., 0.], 'head': [22., 0., 0.],
+           body={'spine': [5., 0., 0.], 'chest': [5., 0., 0.], 'neck': [18., 0., 0.],
                  'upperarm.L': [-4., -6., 0.], 'upperarm.R': [-4., 6., 0.], 'forearm.L': [-10., 0., 0.], 'forearm.R': [-10., 0., 0.]}),
-    E=dict(pitch=89.372, pelvis=[0., -.117, .19336], heel=70., pole=[.3, -1., -.6],
-           body={'spine': [15.873, 0., 0.], 'chest': [15.873, 0., 0.], 'neck': [-.1953, 0., 0.], 'head': [-102.9067, 10.0024, 37.1608],
+    # E's head: pitched 10 degrees snout down in profile, the neck bent 45 so the jaw and chin rest on the floor (pitched 20 its
+    # front reached y -0.787, past the 15 px margin; 0 left the head 4 mm off the floor at the neck's limit)
+    E=dict(pitch=89.372, pelvis=[0., -.117, .19336], heel=70., pole=[.3, -1., -.6], head_pitch=10.,
+           body={'spine': [15.873, 0., 0.], 'chest': [15.873, 0., 0.], 'neck': [45., 0., 0.],
                  'upperarm.L': [175.6478, -35.9811, -96.4001], 'forearm.L': [-42.7506, 1.551, -8.7796], 'hand.L': [-3.9258, 8.0757, -2.2335],
                  'upperarm.R': [132.1604, 76.8013, 135.3943], 'forearm.R': [1.0574, -26.42, 6.7151], 'hand.R': [12.8953, -14.8194, -.0995]}),
-    # the tails' world directions at E (they drape to the floor) and each joint's clearance over it
+    # the tails' world directions at E (they drape to the floor, the last bone of each curling up a little) and each joint's
+    # clearance over it
     tails_E={'tail_root': [0, .55, -.83], 'tail_a1': [.25, .5, -.83], 'tail_a2': [.2425, .4555, -.8566], 'tail_a3': [.2873, .1991, -.9369],
-             'tail_a4': [.4472, .5257, -.7236], 'tail_a5': [.51, .85, -.08], 'tail_b1': [0, .5, -.87], 'tail_b2': [0., .4226, -.9063],
-             'tail_b3': [0., .5736, -.8192], 'tail_b4': [0., .9703, -.2419], 'tail_b5': [0, .97, -.24], 'tail_c1': [-.25, .5, -.83],
+             'tail_a4': [.4472, .5257, -.7236], 'tail_a5': [.45, .84, .3], 'tail_b1': [0, .5, -.87], 'tail_b2': [0., .4226, -.9063],
+             'tail_b3': [0., .5736, -.8192], 'tail_b4': [0., .9703, -.2419], 'tail_b5': [0, .96, .22], 'tail_c1': [-.25, .5, -.83],
              'tail_c2': [-.2873, .1991, -.9369], 'tail_c3': [-.4104, .0318, -.9114], 'tail_c4': [-.5145, .2933, -.8058],
-             'tail_c5': [-.5145, .8058, -.2933]},
+             'tail_c5': [-.47, .84, .26]},
     tail_clear=(.026, .022, .017, .012, .005),
     # toe keys (toe_corrective.py): the toes curl back 40 degrees as the shin swings from 95 to 112; the foot turns the same angle
     # about its toe joint so the toes stay where they stand
     toe_curl=(95., 112., 40.),
-    # ears by world direction (el: degrees above horizontal pointing back, psi: splayed out to the ear's own side, phi: the dish
-    # turned about the ear's length from facing straight down). K: trailing back 15 below horizontal (28 above the skull line,
-    # the head's highest point to its rearmost in the side view), splayed 45 out, the dish down: a slim blade past the back of
-    # the skull (splayed 70 it is foreshortened to 2760 px but lies inside the head's outline, one dome again at 192);
-    # E: back along the neck and shoulder, 27 down, splayed 40 out, resting on the neck (the lowest swing whose skin stays within
-    # 3 mm of the body's surface). The far ear mirrors the near one, far_down degrees further down so the camera's 3 degree
-    # elevation does not lift it above the near one, and splayed far_psi away from the camera (straight away, it stays behind
-    # the head as the head rolls: at 70 it showed 700 px below the near ear at 21 and 22); it goes to the setup's hidden place
-    # behind the head as the head lands.
-    ear_pose=dict(K=(-15., 45., 0.), E=(-26.6, 40., -15.), far_down=14., far_psi=88., far_E=[-113.4184, 22.132, -45.1124]),
     # tracks (frame, ease into the key, value)
     fall=[(0, 'linear', 0.), (2, 'linear', .02), (16, 'in', 1.)],              # idle -> K: the knees buckle, the body drops onto them
-    heel=[(1, 'linear', 0.), (16, 'out', 1.)],                                   # the heels rise as the knees go forward
-    tip=[(15, 'linear', 0.), (27, 'in', 1.)],                                    # K -> E: the trunk tips forward (root pitch)
-    slide=[(15, 'linear', 0.), (26, 'smooth', 1.)],                              # the hips slide back over the heels as it tips
-    round=[(15, 'linear', 0.), (25, 'smooth', 1.)],                              # the spine and chest round as the chest goes forward
-    spine_lead=1.5,                                                               # the spine bends ahead of the chest (it rounds progressively)
-    # the arms swing forward and down at an even pace from the landing and reach the floor a frame before the chest (on the
-    # trunk's accelerating tip they swept 180 to 220 mm a frame at 25 and 26)
-    arms=[(14, 'linear', 0.), (26, 'smooth', 1.)],
-    droop=[(0, 'linear', 0.), (1, 'linear', .05), (4, 'out', .45), (16, 'smooth', 1.)],   # the head: idle -> K's hanging turn
-    hang=[(16, 'linear', 0.), (22, 'smooth', 1.)], hang_rot=[10., 0., 0.],      # it keeps hanging further as the trunk tips
-    head_land=[(23, 'linear', 0.), (27, 'in', 1.)],                              # (and wherever the floor pushes it sooner)
-    head_reach=-.785,                    # nor past E's front (y, m), so it stays inside faint's widened cell (D = 8)
-    ears=[(0, 'linear', 0.), (1, 'linear', .08), (6, 'smooth', 1.)],              # idle -> K's ear (in the world) over frames 1 to 6
-    # through the swing down the ear points at the camera (splayed 88 out), so it is foreshortened to its cross-section while
-    # the blade turns edge-on; with the splay held at 60 to 70, frames 2 to 4 drew it as a cap over the skull (4400 to 5700 px)
-    ears_turn=[(0, 'linear', 0.), (1, 'linear', .1), (4, 'smooth', .55), (6, 'smooth', 1.)],
-    ears_splay=[(0, 'linear', 0.), (1, 'linear', .4), (2, 'out', 1.), (4, 'linear', 1.), (7, 'smooth', 0.)], ears_splay_to=88.,
-    ears_E=[(16, 'linear', 0.), (28, 'in', 1.)],                                  # a frame behind the body
-    # the far ear goes to its hidden place behind the head in one step at 26 (hidden before and after: 1 and 374 px, idle's own
-    # is 388; any blend between passes it through the far arm, 500 to 870 vertices, and shows 900 to 2600 px of it)
-    far_E=[(25, 'linear', 0.), (26, 'linear', 1.)],
-    tails=[(4, 'linear', 0.), (16, 'smooth', .55), (27, 'in', 1.)],              # droop from 4, K's share at the landing, down at 27
+    heel=[(5, 'linear', 0.), (16, 'out', 1.)],                                   # the heels stay down until the knees have broken
+    tip=[(14, 'linear', 0.), (17, 'in', .08), (27, 'in', 1.)],                   # K -> E: the trunk tips forward (root pitch)
+    # the hips slide back over the heels from the landing (later, the trunk carried the head 16 px past the frame's margin)
+    slide=[(13, 'linear', 0.), (21, 'smooth', 1.)],
+    round=[(14, 'linear', 0.), (24, 'smooth', 1.)],                              # the spine and chest round as the chest goes down
+    curl=[(16, 'linear', 0.), (22, 'smooth', 1.), (27, 'smooth', 0.)], curl_rot={'spine': [12., 0., 0.], 'chest': [12., 0., 0.]},
+    spine_lead=1.5,                                                               # the spine bends ahead of the chest
+    # the head's world pitch (degrees snout down, no roll): the chin drops from frame 1 and keeps hanging; it turns to E's only as
+    # the floor takes it (never back up while it is in the air), and its front stays behind head_reach (y, m: 15 px inside the
+    # widened 750 px frame)
+    head_pitch=[(0, 'linear', 0.), (1, 'linear', 3.), (4, 'out', 20.), (16, 'smooth', 45.), (21, 'smooth', 50.)],
+    head_idle=[(0, 'linear', 0.), (1, 'linear', .5), (3, 'smooth', 1.)],        # idle's own head turn eases out
+    head_land=[(23, 'linear', 0.), (27, 'in', 1.)], head_reach=-.772,
+    neck_tuck_cap=[(0, 'linear', 50.), (24, 'linear', 50.), (27, 'smooth', 0.)], neck_tuck_rate=12.,
+    # ears: the approved ear (idle's own, unturned) held at its idle angle in the world while the head drops (they lag it), then
+    # swung in the picture's plane to ear_above degrees above the skull's back line (the head's long axis pointing back, level
+    # at idle) as it was ear_delay frames before, so they trail the head; at rest ear_above_rest. (Set by world direction and
+    # splayed 45 to 70 the ear lay over the crown as a cap or a horizontal blade; held to the skull's crown-to-occiput line it
+    # pointed down the back of the head.)
+    ear_lag=[(3, 'linear', 0.), (12, 'smooth', 1.)], ear_above=[(0, 'linear', 36.), (24, 'linear', 36.), (28, 'smooth', 30.)],
+    ear_delay=2, far_down=8.,
+    neck=[(14, 'linear', 0.), (22, 'smooth', 1.)],                               # the neck bends (chin in) as the chest starts down
+    # arms: idle -> K's limp hang (fall), hanging straight down in the world from the landing (trailing the body as it tips),
+    # forward to E's on the floor once the chest is falling
+    arm_hang=[(16, 'linear', 0.), (19, 'smooth', 1.)], arm_hang_dir=[0., .2, -1.],
+    arms=[(22, 'linear', 0.), (27, 'smooth', 1.)],                             # (and further whenever a hanging paw would reach the floor)
+    tails=[(4, 'linear', 0.), (16, 'smooth', .4), (25, 'in', 1.)],
+    # the tails held up off the floor while the hips slide back (their tips slid 38 px along it), set down as the hips settle
+    tail_lift=[(12, 'linear', 0.), (17, 'smooth', 1.), (23, 'linear', 1.), (27, 'smooth', 0.)], tail_lift_deg=15.,
     tail_twist_in=.15,
     settle=[(16, 'linear', 0.), (17, 'out', 1.), (19, 'smooth', 0.)], settle_rot={'spine': [2.5, 0., 0.], 'chest': [2., 0., 0.]},
-    # the bounce: the shoulders, neck and head lift off the floor a little at 28 and drop back; the ears and tails a frame behind
+    # the bounce: the shoulders, neck and head lift off the floor a little at 28 and drop back; the tails a frame behind (the
+    # ears trail it through their delay)
     bounce=[(27, 'linear', 0.), (28, 'out', 1.), (29, 'smooth', .25), (30, 'smooth', -.08), (31, 'smooth', 0.)],
     bounce_rot={'chest': [-3., 0., 0.], 'neck': [-3., 0., 0.]},
     bounce_late=[(28, 'linear', 0.), (29, 'out', 1.), (30, 'smooth', .2), (31, 'smooth', 0.)],
-    bounce_ear_el=-4., bounce_tail=[-6., 0., 0.],
+    bounce_tail=[-6., 0., 0.],
 )
 
 
@@ -1754,6 +1761,33 @@ def _euler(R):
     return [float(v) for v in rc.euler_from_matrix(R)]
 
 
+def ear_side_elevation(rig, skin, pose, sd='L', lift=(0., 0., 0.)):
+    """The ear's root-to-tip axis in the side view: degrees above horizontal, pointing back (+Y)."""
+    a, _ = _ear_frames(skin)[sd]
+    d = rc.bone_transforms(rig.J, pose, bones=B)[f'ear_1.{sd}'][0]@a
+    return math.degrees(math.atan2(d[2], d[1]))
+
+
+def ear_swing_to(rig, skin, pose, sd, el):
+    """ear_1 swung rigidly about the world's X axis (the side camera's line of sight, so the swing is in the picture's plane and
+    the ear keeps its own turn about its length) until its side-view elevation is el."""
+    T = rc.bone_transforms(rig.J, pose, bones=B)
+    a, _ = _ear_frames(skin)[sd]
+    W1, Wh = T[f'ear_1.{sd}'][0], T['head'][0]
+    d = W1@a
+    da = math.radians(el-math.degrees(math.atan2(d[2], d[1])))
+    Rx = np.array([[1., 0., 0.], [0., math.cos(da), -math.sin(da)], [0., math.sin(da), math.cos(da)]])
+    pose[f'ear_1.{sd}'] = _euler(Wh.T@Rx@W1)
+
+
+def skull_back_line(Ph):
+    """The skull's back line in the side view from the head's skin (head and jaw): from its highest point to its rearmost,
+    degrees above horizontal pointing back (it points down, so negative)."""
+    crown, back = Ph[np.argmax(Ph[:, 2])], Ph[np.argmax(Ph[:, 1])]
+    v = back-crown
+    return math.degrees(math.atan2(v[2], v[1]))
+
+
 def faint4_frame(rig, skin, f, cache):
     P = FAINT4
     K, E = P['K'], P['E']
@@ -1762,99 +1796,154 @@ def faint4_frame(rig, skin, f, cache):
         i0, l0, _ = cb.idle_pose(rig, 0)
         cache['idle0'] = (i0, np.asarray(l0, float))
         cache['tails0'] = _tail_dirs(rig, i0, np.asarray(l0, float))
-        cache['ears0'] = {sd: ear_world_params(rig, skin, i0, sd) for sd in 'LR'}
         cache['head_parts'] = skin.part(['head', 'jaw'])
         cache['knee_parts'] = {sd: skin.part([f'thigh.{sd}', f'shin.{sd}']) for sd in 'LR'}
         cache['curl'] = 0.
         cache['s_head'] = 0.
-        kp = dict(K['body'], root=[K['pitch'], 0., 0.])
-        ep = dict(E['body'], root=[E['pitch'], 0., 0.])
-        cache['WK'], cache['WE'] = _world(rig, kp, 'head'), _world(rig, ep, 'head')
+        cache['backline'] = {}
+        cache['WE'] = rot([E['head_pitch'], 0., 0.])
     ip, ilift, ib = cb.idle_pose(rig, f)
     fa, tp = tr('fall'), tr('tip')
     trs = tr('round', f+P['spine_lead'])
     tpa = tr('arms')
-    # trunk, neck and arms by their local turns: idle -> K (fall) -> E (tip)
+    ARMS = ('upperarm', 'forearm', 'hand')
+    # trunk and neck by their local turns: idle -> K (fall) -> E (tip); arms idle -> K for now
     body = {k: list(v) for k, v in ip.items() if rc.base_of(k) not in ('thigh', 'shin', 'foot') and not k.startswith('tail')
-            and not k.startswith('ear_') and k != 'root'}
+            and k != 'root'}
     for b in sorted(set(body) | set(K['body']) | set(E['body'])):
+        if b.startswith('ear_'):
+            continue
         a0 = body.get(b, [0., 0., 0.])
-        arm = rc.base_of(b) in ('clavicle', 'upperarm', 'forearm', 'hand')
-        t2 = tpa if arm else (trs if b == 'spine' else (tr('round') if b == 'chest' else tp))
-        body[b] = slerp_e(slerp_e(a0, K['body'].get(b, [0., 0., 0.]), fa), E['body'].get(b, [0., 0., 0.]), t2)
+        k_ = slerp_e(a0, K['body'].get(b, [0., 0., 0.]), fa)
+        if rc.base_of(b) in ARMS:
+            body[b] = k_
+            continue
+        t2 = trs if b == 'spine' else (tr('round') if b == 'chest' else (tr('neck') if b == 'neck' else tp))
+        body[b] = slerp_e(k_, E['body'].get(b, [0., 0., 0.]), t2)
     for b, e in P['settle_rot'].items():
         turn(body, b, e, tr('settle'))
+    for b, e in P['curl_rot'].items():
+        turn(body, b, e, tr('curl'))
     bo = tr('bounce')
     for b, e in P['bounce_rot'].items():
         turn(body, b, e, bo)
     body['root'] = slerp_e(slerp_e([0., 0., 0.], [K['pitch'], 0., 0.], fa), [E['pitch'], 0., 0.], tp)
+    # arms: hanging straight down in the world from the landing, then forward to E's once the chest is falling
+    ah = tr('arm_hang')
+    if ah > 0:
+        dv = _unit(P['arm_hang_dir'])
+        hang = rc.pose_from_directions(rig.J, {f'{b}.{sd}': dv for sd in 'LR' for b in ('upperarm', 'forearm')}, base=body, bones=B)
+        for sd in 'LR':
+            for b in ('upperarm', 'forearm'):
+                body[f'{b}.{sd}'] = slerp_e(body[f'{b}.{sd}'], [float(x) for x in hang[f'{b}.{sd}']], ah)
     p_idle = cache['idle0'][1]+np.array(rig.J['pelvis'])
     pw = p_idle+(np.asarray(K['pelvis'])-p_idle)*fa+(np.asarray(E['pelvis'])-np.asarray(K['pelvis']))*tr('slide')
     lift = pw-rot(body['root'])@np.array(rig.J['pelvis'])
-    # the head: its world turn from idle's to K's hanging turn (the chin drops from frame 1), hanging further as the trunk tips;
-    # then to E's as the floor takes it (the share the floor needs, never less than the landing track, never going back)
-    Wn = _world(rig, body, 'neck')
-    Wi = _world(rig, dict(ip, root=[0., 0., 0.]), 'head')
-    hb = _euler(rot([P['hang_rot'][0]*tr('hang'), 0., 0.])@rot(slerp_e(_euler(Wi), _euler(cache['WK']), tr('droop'))))
-    we_ = _euler(cache['WE'])
+    arm_from = {f'{b}.{sd}': list(body.get(f'{b}.{sd}', [0., 0., 0.])) for sd in 'LR' for b in ARMS}
 
-    def head_at(s_):
-        body['head'] = _euler(Wn.T@rot(slerp_e(hb, we_, s_)))
-        Ph = cache['head_parts'].posed(body, lift)
-        return min(float(Ph[:, 2].min())-.0005, float(Ph[:, 1].min())-P['head_reach'])
-    s_head = 1. if f >= P['down'] else max(cache['s_head'], tr('head_land'))
-    if s_head < 1 and head_at(s_head) < 0:
-        lo, hi = s_head, 1.
+    if 'arm_dirs_E' not in cache:
+        # E's arm bones' world directions (E's trunk with idle frame 0's clavicles)
+        ep = dict(cache['idle0'][0], **E['body'])
+        ep['root'] = [E['pitch'], 0., 0.]
+        Te = rc.bone_transforms(rig.J, ep, bones=B)
+        cache['arm_dirs_E'] = {f'{b}.{sd}': Te[f'{b}.{sd}'][0]@rc.bone_axis(rig.J, f'{b}.{sd}', B) for sd in 'LR' for b in ('upperarm', 'forearm')}
+
+    def arms_at(t_):
+        # (a blend of the local turns swung the near paw out ahead of the head, 25 px past the frame at 25: the arm bones now
+        # go from their hang to E's by world direction, the paw on a short path down and forward)
+        for b, v in arm_from.items():
+            body[b] = slerp_e(v, E['body'].get(b, [0., 0., 0.]), t_)
+        if 0 < t_ < 1:
+            T0 = rc.bone_transforms(rig.J, dict(body, **arm_from), bones=B)
+            tg = {}
+            for b in cache['arm_dirs_E']:
+                d0 = T0[b][0]@rc.bone_axis(rig.J, b, B)
+                tg[b] = _slerp_dir(d0, cache['arm_dirs_E'][b], t_)
+            pz = rc.pose_from_directions(rig.J, tg, base=body, bones=B)
+            for b in tg:
+                body[b] = [float(x) for x in pz[b]]
+        return min(float(cache['arm_parts'][sd].posed(body, lift)[:, 2].min()) for sd in 'LR')
+    if 'arm_parts' not in cache:
+        cache['arm_parts'] = {sd: skin.part([f'forearm.{sd}', f'hand.{sd}']) for sd in 'LR'}
+    if f < P['down'] and arms_at(tpa) < .0005:
+        # a hanging paw would reach the floor: it swings forward onto it instead (the share that keeps it on the floor)
+        lo, hi = tpa, 1.
         for _ in range(14):
             mid = .5*(lo+hi)
-            if head_at(mid) < 0:
+            if arms_at(mid) < .0005:
                 lo = mid
             else:
                 hi = mid
-        s_head = hi
+        tpa = max(hi, cache.get('tpa', 0.))
+    cache['tpa'] = tpa
+    arms_at(tpa)
+    # the head: pitched only (profile), its world pitch on the head_pitch track (idle's own head turn eased out over the first
+    # frames); then to E's as the floor takes it or its front reaches head_reach (never going back)
+    Wn = _world(rig, body, 'neck')
+    Wi = _world(rig, dict(ip, root=[0., 0., 0.]), 'head')
+    hb = slerp_e(_euler(Wi), [tr('head_pitch'), 0., 0.], tr('head_idle'))
+    we_ = _euler(cache['WE'])
+
+    neck0 = list(body['neck'])
+
+    def head_at(s_, n_=0.):
+        body['neck'] = list(neck0)
+        turn(body, 'neck', [n_, 0., 0.])
+        Wn_ = _world(rig, body, 'neck')
+        body['head'] = _euler(Wn_.T@rot(slerp_e(hb, we_, s_)))
+        Ph = cache['head_parts'].posed(body, lift)
+        return float(Ph[:, 2].min())-.0005, float(Ph[:, 1].min())-P['head_reach']
+
+    def solve(lo, hi, ok):
+        for _ in range(14):
+            mid = .5*(lo+hi)
+            if ok(mid):
+                hi = mid
+            else:
+                lo = mid
+        return hi
+    s_head = 1. if f >= P['down'] else max(cache['s_head'], tr('head_land'))
+    # its front past head_reach: the chin tucks (the neck bends further, the head keeps its turn), up to neck_tuck_cap degrees
+    tuck = 0.
+    if s_head < 1 and head_at(s_head)[1] < 0:
+        cap = min(tr('neck_tuck_cap'), cache.get('tuck', 0.)+P['neck_tuck_rate'])
+        tuck = solve(0., cap, lambda n_: head_at(s_head, n_)[1] >= 0)
+    # on the floor (or still past the reach at the cap): the head turns toward E's as the floor takes it
+    if s_head < 1 and min(head_at(s_head, tuck)) < 0:
+        s_head = solve(s_head, 1., lambda s_: min(head_at(s_, tuck)) >= 0)
     cache['s_head'] = s_head
-    head_at(s_head)
+    cache['tuck'] = tuck
+    head_at(s_head, tuck)
     if f >= P['down'] and bo:
         turn(body, 'head', [-3., 0., 0.], tr('bounce_late'))
-    # ears by world direction: idle -> K's (frames 1 to 6, then held in the world as the head falls) -> E's, a frame behind
+    # ears: the approved ear (idle's own ear turn relative to the head) swung in the picture's plane: held at idle's side-view
+    # angle in the world (lagging the head) until ear_lag starts, then to ear_above degrees above the skull's back line as it
+    # was ear_delay frames before
+    yh = _world(rig, body, 'head')@np.array([0., 1., 0.])
+    axis = math.degrees(math.atan2(yh[2], yh[1]))
+    cache['backline'][f] = axis
+    ax_late = cache['backline'].get(max(0, f-P['ear_delay']), axis)
+    wl = tr('ear_lag')
     ear_info = {}
-    we = tr('ears')
-    te = tr('ears_E')
-    kL, eL, fd = P['ear_pose']['K'], P['ear_pose']['E'], P['ear_pose']['far_down']
-    wt_ = tr('ears_turn')
-    sp_ = tr('ears_splay')
-
-    def mix(a, b):
-        el_, ps_, _ = _lerp_params(a, b, we)
-        return (el_, ps_+(P['ears_splay_to']-ps_)*sp_, _lerp_params(a, b, wt_)[2])
-    prmL = _lerp_params(mix(cache['ears0']['L'], kL), eL, te)
-    prmL = (prmL[0]-P['bounce_ear_el']*tr('bounce_late'), prmL[1], prmL[2])
-    set_ear_world(rig, skin, body, 'L', *prmL)
-    prmR = mix(cache['ears0']['R'], (kL[0]-fd, P['ear_pose']['far_psi'], kL[2]))
-    set_ear_world(rig, skin, body, 'R', *prmR)
-    tf = tr('far_E')
-    if tf > 0:
-        # (from the landing it swung up over the head at 22 to 26: it now follows the near one until the head is down, then
-        # goes by world direction to the setup's hidden place; a local blend showed 1900 to 3200 px of it at 23 to 28)
-        if 'farE' not in cache:
-            ep = dict(E['body'], root=[E['pitch'], 0., 0.])
-            ep['ear_1.R'] = list(P['ear_pose']['far_E'])
-            cache['farE'] = ear_world_params(rig, skin, ep, 'R')
-        set_ear_world(rig, skin, body, 'R', *_lerp_params(prmR, cache['farE'], tf))
-        if tf >= 1:
-            body['ear_1.R'] = list(P['ear_pose']['far_E'])
-    ear_info = dict(L=[round(x, 2) for x in prmL], R=[round(x, 2) for x in prmR])
-    if wt_ < 1:
-        for sd in 'LR':
-            for i in range(1, 5):
-                b = f'ear_{i}.{sd}'
-                body[b] = slerp_e(ip.get(b, [0., 0., 0.]), body[b], wt_)
-    # tails: each bone's world direction from idle's to E's (K's share at the landing), draped on the floor; idle's twist eases out
+    ipz = dict(ip, root=[0., 0., 0.])
+    for sd in 'LR':
+        e_idle = ear_side_elevation(rig, skin, ipz, sd)
+        target = ax_late+tr('ear_above')-(P['far_down'] if sd == 'R' else 0.)
+        el = e_idle+(target-e_idle)*wl
+        if f > 0:
+            ear_swing_to(rig, skin, body, sd, el)
+        ear_info[sd] = round(el, 2)
+    ear_info['headAxis'] = round(axis, 2)
+    # tails: each bone's world direction from idle's to E's, draped on the floor; idle's twist eases out
     tt = tr('tails')
     tdir = {b: _slerp_dir(cache['tails0'][b], P['tails_E'][b], tt) for b in cache['tails0']}
     tb = tr('bounce_late')
     if tb:
         tdir['tail_root'] = rot([P['bounce_tail'][0]*tb, 0., 0.])@tdir['tail_root']
+    tl = tr('tail_lift')
+    if tl:
+        Rl = rot([P['tail_lift_deg']*tl, 0., 0.])
+        tdir = {b: Rl@v for b, v in tdir.items()}
     tbody = drape_tail_dirs(rig, dict(body), lift, tdir, P['tail_clear'])
     wt = min(1., tt/P['tail_twist_in'])
     for b in tdir:
@@ -1890,8 +1979,8 @@ def faint4_frame(rig, skin, f, cache):
         knee_fix = hi
         lift = lift+np.array([0., 0., hi])
         full, targets = kneel_legs(rig, skin, body, lift, heel, pole, curl)
-    info = dict(fall=round(fa, 4), tip=round(tp, 4), tipArms=round(tpa, 4), heel=round(heel, 2), curl=round(curl, 2),
-                headLand=round(s_head, 3), ears=round(we, 3), earsE=round(te, 3), earParams=ear_info, tails=round(tt, 3),
+    info = dict(fall=round(fa, 4), tip=round(tp, 4), arms=round(tpa, 4), neckTuck=round(tuck, 2), armHang=round(ah, 4), heel=round(heel, 2), curl=round(curl, 2),
+                headLand=round(s_head, 3), earLag=round(wl, 3), ears=ear_info, tails=round(tt, 3),
                 bounce=round(bo, 4), kneeLow_mm=round(kl*1000, 2), kneeFix_mm=round(knee_fix*1000, 2), planted=dict(L=True, R=True),
                 targets={sd: [round(float(x), 6) for x in targets[sd]] for sd in 'LR'})
     breath = ib*(1-fa)
