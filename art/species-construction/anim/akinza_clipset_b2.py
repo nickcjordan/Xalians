@@ -1083,7 +1083,12 @@ CRUMPLE = dict(
     settle=[(15, 'linear', 0.), (16, 'out', -.008), (17, 'smooth', -.005), (19, 'smooth', 0.)],
     tip=(15, 26),                           # the trunk and chest down on 26, the head (held up a little) on 27
     arms_lead=2.5,                          # frames the arms run ahead of the trunk's tip (they reach the floor first)
-    head_hold=[(15, 'linear', 0.), (20, 'smooth', 1.), (26, 'linear', 1.), (27, 'in', 0.)],
+    # (the head swung out on the trunk's arc 16 sprite px past the cell's front at 22, held from 20 by the neck's lift; it now
+    # lags the falling trunk, the neck and head tipped back against it (lag), and comes down with the last of the fall, lifted
+    # only for the last frames so it lands after the chest; chin toward the chest instead swung it 22 px out)
+    head_hold=[(15, 'linear', 0.), (23, 'linear', 0.), (25, 'smooth', 1.), (26, 'linear', 1.), (27, 'in', 0.)],
+    curl=[(15, 'linear', 0.), (20, 'smooth', 1.), (24, 'smooth', 1.), (26, 'smooth', 0.)],
+    curl_rot={'neck': [-30., 0., 0.], 'head': [-22., 0., 0.]},
     # the head held a little up until the trunk is down, so it lands last: lifted by the neck with its own turn kept (a chin-up turn
     # of the head pushed the far ear, behind the rolled head, 26 mm into the floor at 26)
     head_hold_neck=[-8., 0., 0.],
@@ -1220,6 +1225,8 @@ def crumple_frame(rig, skin, f, cache):
         if b.startswith('ear_'):
             out[b] = body[b]
     body = out
+    for b, e in P['curl_rot'].items():
+        turn(body, b, e, tr('curl'))
     hh = tr('head_hold')
     if hh > 0:
         # the neck lifts the head; the head keeps its world turn exactly (its own turn undoes the neck's)
