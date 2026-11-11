@@ -1,0 +1,12 @@
+{
+  "id": "D-01M740EJ1NPGVDEP2P0GMNKKB1",
+  "alias": "3d96",
+  "stage": "07-surface",
+  "description": "Small blue-white glint at the front edge of the pale band just above the hind toes, sig f22 to f28, faint at 2x, not visible at 1x",
+  "camera": "side sprite 1x and 2x motion strip, sig f22 to f36",
+  "region": "hind foot, toe base (about 0.78 to 0.80 of the metatarsal bone)",
+  "origin": "pass 8 motion strip read (builder), confirmed by orchestrator 2026-11-10",
+  "attempts": [],
+  "status": "open",
+  "createdAt": "2026-11-11T00:34:42Z"
+}

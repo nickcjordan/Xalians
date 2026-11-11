@@ -8,12 +8,235 @@
   "defect": "D-01M721GWB0Z9V2NM6GEDP0VGK7",
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-final/cand_tailcolor/scene.blend",
+      "hash": "0f7509e4e6f9eda163b047d7ad764c2ecd606b7c65a1f96c2a9fd3f16f6b170f"
+    },
+    {
+      "name": "luceras-final/cand_tailcolor/tailcolor_params.json",
+      "hash": "daeeb2c150536db362cc0bb6434bff13c5c33d0fa201bcd92351d07ff8be7298"
+    },
+    {
+      "name": "luceras-final/cand_tailcolor/tailcolor_build.json",
+      "hash": "399cbcda68295c921c268300a0543d2d1f24157f0f24ac90c9f138dbcd5edfa4"
+    },
+    {
+      "name": "luceras-tailcolor/spec.md",
+      "hash": "6e00f177e54266d57f782d1a4f0424be9021259756629734033821151b7364a2"
+    },
+    {
+      "name": "luceras-tailcolor/work/sheet_sheetramp.json",
+      "hash": "8e8abc4bafc87ffe8ac6ebf33aefd6b5d664340397936b78d774c4a4d319b5ae"
+    },
+    {
+      "name": "luceras-tailcolor/work/pass8_1x.json",
+      "hash": "9c4410e17f32745131736236bcef6d0f815b3bd48e2c8a993a541f008977fb64"
+    },
+    {
+      "name": "luceras-tailcolor/work/pass8_2x.json",
+      "hash": "f6e28d1f05df1d8edd0843f07b9b4cc02f260768f322993552ae2b58a3a764df"
+    },
+    {
+      "name": "luceras-tailcolor/work/C7_1x.json",
+      "hash": "52329831ff56a4a1d2074c08fec6aa6d052f9553594cbedd251b49f6a4a70e68"
+    },
+    {
+      "name": "luceras-tailcolor/work/C7_2x.json",
+      "hash": "860b8076787af93a562fc802888c6ca6bf19bc15b418aa2f39c8e95e74ae5ce9"
+    },
+    {
+      "name": "luceras-tailcolor/work/digest_diff_C7.json",
+      "hash": "e389ba7b6569e7379acdab97345a641378eacea4477693a1da48b730d2afed0f"
+    },
+    {
+      "name": "luceras-tailcolor/work/strand_diff_C7.json",
+      "hash": "20bac441718a6f8ff87f8b4f56b9102365cb119ccfd1361c3f83efea25d21209"
+    },
+    {
+      "name": "luceras-tailcolor/work/flight_f19-22_C6C7.png",
+      "hash": "6f5457ca62399a42a7a01f4dcaafae3c4e26bffaa89d7e03dc18e9d9a52acd52"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/board_tail_2x_0.png",
+      "hash": "8a846f23a8a5a4959845314a2dca471a7727a02916e69cb23ff9e2dbbd609e22"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/board_tail_2x_1.png",
+      "hash": "a5c9a1491ffee67a0972adc1862b8cf75a40c08f694fb5daf0d99057502e01da"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/board_tail_4x_0.png",
+      "hash": "0ce4be71439ff74a13eeff9413571f7cb461eb82d8e4e1c1211c47262e220804"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/board_tail_4x_1.png",
+      "hash": "0cc9b86aa8ffedba112ff819fad373de1c78047242ff4b0a408968ec621335bd"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/board_whole_2x.png",
+      "hash": "2b243a330f4d38b1bef5b209f77f62d576c153e24b82acb75004a69261bc58db"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/flight_0.png",
+      "hash": "cffdb885e28e00602bc799aba58d1778c0e03004f696fda29f4a551560d0d538"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/flight_1.png",
+      "hash": "1953f1ca805fb8960657fd66f46264fd28242f666836e95787eb1b51156dcb15"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/flight_2.png",
+      "hash": "788196c6406db92ad428dc1ec61721ae4c032470306f68c572e02f683051b784"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/flight_3.png",
+      "hash": "49ecf446aa7862f50ad5ea819fc1330c9656e0dbc0c38fdba0f7ccbb9b8cc192"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/flight_4.png",
+      "hash": "602a042568622a040df76a2d3a0b687097b8cf6386eb8d0279b18c971bb213d8"
+    },
+    {
+      "name": "luceras-tailcolor/C7/boards/flight_5.png",
+      "hash": "b13a87930d62985d22fefc1e0b440973ca3600b66c7c7004ef5801f72a47fea8"
+    },
+    {
+      "name": "art/pipeline/groom/tail_recolor.py",
+      "hash": "ad454361ac888d20ba73d786f2cf71df8e665d33499f33693b9750cb1960524e"
+    },
+    {
+      "name": "luceras-tailcolor/report.json",
+      "hash": "d07ad37c0d754775e53a3b9300e940832b636e3a870d6b4e6b41b86d485c3be2"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-final/cand_tailcolor/scene.blend",
+        "hash": "0f7509e4e6f9eda163b047d7ad764c2ecd606b7c65a1f96c2a9fd3f16f6b170f"
+      },
+      {
+        "name": "luceras-final/cand_tailcolor/tailcolor_params.json",
+        "hash": "daeeb2c150536db362cc0bb6434bff13c5c33d0fa201bcd92351d07ff8be7298"
+      },
+      {
+        "name": "luceras-final/cand_tailcolor/tailcolor_build.json",
+        "hash": "399cbcda68295c921c268300a0543d2d1f24157f0f24ac90c9f138dbcd5edfa4"
+      },
+      {
+        "name": "luceras-tailcolor/spec.md",
+        "hash": "6e00f177e54266d57f782d1a4f0424be9021259756629734033821151b7364a2"
+      },
+      {
+        "name": "luceras-tailcolor/work/sheet_sheetramp.json",
+        "hash": "8e8abc4bafc87ffe8ac6ebf33aefd6b5d664340397936b78d774c4a4d319b5ae"
+      },
+      {
+        "name": "luceras-tailcolor/work/pass8_1x.json",
+        "hash": "9c4410e17f32745131736236bcef6d0f815b3bd48e2c8a993a541f008977fb64"
+      },
+      {
+        "name": "luceras-tailcolor/work/pass8_2x.json",
+        "hash": "f6e28d1f05df1d8edd0843f07b9b4cc02f260768f322993552ae2b58a3a764df"
+      },
+      {
+        "name": "luceras-tailcolor/work/C7_1x.json",
+        "hash": "52329831ff56a4a1d2074c08fec6aa6d052f9553594cbedd251b49f6a4a70e68"
+      },
+      {
+        "name": "luceras-tailcolor/work/C7_2x.json",
+        "hash": "860b8076787af93a562fc802888c6ca6bf19bc15b418aa2f39c8e95e74ae5ce9"
+      },
+      {
+        "name": "luceras-tailcolor/work/digest_diff_C7.json",
+        "hash": "e389ba7b6569e7379acdab97345a641378eacea4477693a1da48b730d2afed0f"
+      },
+      {
+        "name": "luceras-tailcolor/work/strand_diff_C7.json",
+        "hash": "20bac441718a6f8ff87f8b4f56b9102365cb119ccfd1361c3f83efea25d21209"
+      },
+      {
+        "name": "luceras-tailcolor/work/flight_f19-22_C6C7.png",
+        "hash": "6f5457ca62399a42a7a01f4dcaafae3c4e26bffaa89d7e03dc18e9d9a52acd52"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/board_tail_2x_0.png",
+        "hash": "8a846f23a8a5a4959845314a2dca471a7727a02916e69cb23ff9e2dbbd609e22"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/board_tail_2x_1.png",
+        "hash": "a5c9a1491ffee67a0972adc1862b8cf75a40c08f694fb5daf0d99057502e01da"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/board_tail_4x_0.png",
+        "hash": "0ce4be71439ff74a13eeff9413571f7cb461eb82d8e4e1c1211c47262e220804"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/board_tail_4x_1.png",
+        "hash": "0cc9b86aa8ffedba112ff819fad373de1c78047242ff4b0a408968ec621335bd"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/board_whole_2x.png",
+        "hash": "2b243a330f4d38b1bef5b209f77f62d576c153e24b82acb75004a69261bc58db"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/flight_0.png",
+        "hash": "cffdb885e28e00602bc799aba58d1778c0e03004f696fda29f4a551560d0d538"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/flight_1.png",
+        "hash": "1953f1ca805fb8960657fd66f46264fd28242f666836e95787eb1b51156dcb15"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/flight_2.png",
+        "hash": "788196c6406db92ad428dc1ec61721ae4c032470306f68c572e02f683051b784"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/flight_3.png",
+        "hash": "49ecf446aa7862f50ad5ea819fc1330c9656e0dbc0c38fdba0f7ccbb9b8cc192"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/flight_4.png",
+        "hash": "602a042568622a040df76a2d3a0b687097b8cf6386eb8d0279b18c971bb213d8"
+      },
+      {
+        "name": "luceras-tailcolor/C7/boards/flight_5.png",
+        "hash": "b13a87930d62985d22fefc1e0b440973ca3600b66c7c7004ef5801f72a47fea8"
+      },
+      {
+        "name": "art/pipeline/groom/tail_recolor.py",
+        "hash": "ad454361ac888d20ba73d786f2cf71df8e665d33499f33693b9750cb1960524e"
+      },
+      {
+        "name": "luceras-tailcolor/report.json",
+        "hash": "d07ad37c0d754775e53a3b9300e940832b636e3a870d6b4e6b41b86d485c3be2"
+      }
+    ],
+    "blockedBy": "nothing (the builder asked for rulings on shaft density and the shaft-rooted plume tufts; the orchestrator rules in the next build's brief)",
+    "defectResult": "partly fixed. Shaft strands recolored toward the sheet (12,166 Tail shaft coat and 7,909 interpolated strands), long root blend, plume and every other object bit-identical; 1,471 hidden u11 strands restored (shaft bare share 0.41-0.44 to 0.34-0.35). Top luma within 3 percent of the sheet at the quarter and half stations; the three-quarter station is 23 percent light because held plume tufts root on the shaft there. Orchestrator read at 2x and 4x: the shaft is darker but reads as a smooth tube with a pale glossy line along its middle (a cable, not the sheet's furred whip), thinner than the sheet with a smooth edge.",
+    "newDefects": [
+      "pale glossy line along the tail shaft at 2x and 4x in every clip: skin showing through about a third of the shaft, its highlight now standing out against the darker fur; the shaft edge is smooth where the sheet's breaks into short tufts"
+    ],
+    "checks": [
+      "flight sig f11 to f30 and f40 at 4x: nothing lifts, gaps or passes through the plume or legs",
+      "rig, actions and body checked against pass 8 in every saved variant"
+    ],
+    "cost": {
+      "wall_h": 0,
+      "agent_tokens": 0,
+      "note": "counted under B-87d4 (same builder session; 2.75 h overlapping pass 8's gates)"
+    }
+  },
+  "blockedBy": "nothing (the builder asked for rulings on shaft density and the shaft-rooted plume tufts; the orchestrator rules in the next build's brief)",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-10T21:45:45Z",
-  "briefSha256": "22b8db95b4679a317fc376b21fe26b91f7d2e1542417850e04ade56a80ceec82"
+  "briefSha256": "22b8db95b4679a317fc376b21fe26b91f7d2e1542417850e04ade56a80ceec82",
+  "checks": [
+    "flight sig f11 to f30 and f40 at 4x: nothing lifts, gaps or passes through the plume or legs",
+    "rig, actions and body checked against pass 8 in every saved variant"
+  ],
+  "reportedAt": "2026-11-11T00:34:42Z"
 }

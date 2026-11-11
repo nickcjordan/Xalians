@@ -1,0 +1,19 @@
+{
+  "id": "B-01M740EXT9CQRKWY8TQMDRA9JT",
+  "alias": "gnqp",
+  "stage": "07-surface",
+  "kind": "preview",
+  "goal": "Tail shaft reads at 2x as the sheet's dark furred whip with no pale line; toe-base glint diagnosed and fixed if it is skin under fur",
+  "scope": "on cand_tailcolor C7: skin under the shaft takes the fur root color and a matte finish; added shaft strands and tufted edge lift, mainly near the root; plume held; foot glint: name the surface, then the same skin fix on the foot's furred area only if it is skin; previews only, cap 1.5 h",
+  "defect": "D-01M740EHPVH6DAKP3TX2TCKSB8",
+  "holds": [],
+  "inputs": [],
+  "outputs": [],
+  "validators": null,
+  "report": null,
+  "blockedBy": null,
+  "cost": null,
+  "status": "planned",
+  "createdAt": "2026-11-11T00:34:54Z",
+  "briefSha256": "300bb8dc79ba04960fdfc3ee6b507ee05536c7d836aa7be6a1a76b6552b21996"
+}

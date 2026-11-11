@@ -1,0 +1,14 @@
+{
+  "id": "D-01M740EHPVH6DAKP3TX2TCKSB8",
+  "alias": "ag6h",
+  "stage": "07-surface",
+  "description": "Tail shaft reads as a smooth tube with a pale glossy line along its middle at 2x and 4x (a cable, not the sheet's dark furred whip): skin shows through about a third of the shaft and its highlight stands out against the darker fur; the shaft edge is smooth where the sheet's breaks into short tufts",
+  "camera": "side sprite 2x and 4x, idle f0 and f30, sig f11, f16, f29, f40, trans in f4",
+  "region": "tail shaft from the rump fur to the plume base",
+  "origin": "orchestrator read of B-cy8f boards (C7) against the sheet, 2026-11-10; builder read agrees",
+  "attempts": [
+    "B-01M740EXT9CQRKWY8TQMDRA9JT"
+  ],
+  "status": "open",
+  "createdAt": "2026-11-11T00:34:42Z"
+}

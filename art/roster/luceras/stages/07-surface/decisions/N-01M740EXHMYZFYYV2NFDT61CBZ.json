@@ -1,0 +1,16 @@
+{
+  "id": "N-01M740EXHMYZFYYV2NFDT61CBZ",
+  "alias": "m8rw",
+  "stage": "07-surface",
+  "who": "orchestrator",
+  "words": "Rulings on B-cy8f's questions. (1) Shaft density: yes. Nick's approved recommendation was 'dark gray on top, lighter underneath, a bit furrier', so more strands and tufted edge lift on the shaft are in scope. (2) Method change for the pale line: the line is skin highlight through the remaining gaps, so the skin under the shaft takes the local fur root color and a matte finish; density alone was shown not to change the read at 2x (B-ajd4, B-5mg8). (3) The plume tufts rooted on the shaft stay held (Nick 10-21, 10-24, and N-vsx4 keeps the plume); the three-quarter station is plume territory and drops out of the tone gate. (4) The quarter station's lighter underside from the long root blend is accepted; the short blend left a step in flight frames f19 to f22. (5) The toe-base glint (D-3d96) goes into the same preview build: name the surface that makes it first; if it is skin under fur, the same matte fur-colored skin fix applies to the foot's furred area with pads and claws excluded; if it is a pad or claw, leave it and report.",
+  "date": "2026-11-11",
+  "kind": "ruling",
+  "binds": {
+    "build": "B-01M73PS6GTYCSF4G2QPC8Y3M8D",
+    "defect": "D-01M740EHPVH6DAKP3TX2TCKSB8",
+    "evidence": []
+  },
+  "amount": null,
+  "createdAt": "2026-11-11T00:34:54Z"
+}

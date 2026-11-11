@@ -8,12 +8,121 @@
   "defect": null,
   "holds": [],
   "inputs": [],
-  "outputs": [],
+  "outputs": [
+    {
+      "name": "luceras-final/final/scene.blend",
+      "hash": "822a34a8eb4cc47c6dd650b10ec55f9bc6b5c7988b7d3639a7786ad37a0a34c2"
+    },
+    {
+      "name": "luceras-sprites/pass8/report.json",
+      "hash": "aecb954473134d683980a930dc1f4c5a87e70d7c797625daaff245065a241b72"
+    },
+    {
+      "name": "luceras-sprites/pass8/work/gate.json",
+      "hash": "2b6deae23e22e35f07538bbee48dcc88e037d8fb7a6fab09d2b615b3e7364ad3"
+    },
+    {
+      "name": "luceras-sprites/pass8/work/motion/sig_f22-f36_1x.webp",
+      "hash": "1ee9eaf34d35f56281bfa7e2d54201228012e60d08195c1850c29fb6cef22caa"
+    },
+    {
+      "name": "luceras-sprites/pass8/work/motion/sig_f22-f36_2x.webp",
+      "hash": "3ee518f69b0f5f4795f07a175f3287e8f1f85b245bb077b3a538de660971eee9"
+    },
+    {
+      "name": "luceras-sprites/pass8/work/motion/sig_f22-f36_contact.png",
+      "hash": "91b66c84d9dd74a9a5f73caa17c60c6d7a3b979de38942031e6539baf3bf6282"
+    },
+    {
+      "name": "luceras-sprites/pass8/work/motion/sig_f22-f36_foot_detail.png",
+      "hash": "d93189ed90b1e2d949e75d27709975c62b538f68324d4feb7366f380313a4e18"
+    },
+    {
+      "name": "luceras-sprites/pass8/sheets/idle.png",
+      "hash": "4f1f50cb10571f54e88a0e19f6419b907ae126b35d767d2d5051fb45c64408c2"
+    },
+    {
+      "name": "luceras-sprites/pass8/sheets/sig.horns-first-descent.png",
+      "hash": "8fe58af667f568b33d5dbe8066890c1312f0d312706e261bb98f42c3f0510646"
+    },
+    {
+      "name": "luceras-sprites/pass8/sheets/trans.idle-to-sig.png",
+      "hash": "761da90398c218088282139a1ac7b94e1857c7c0dfab1911bd045c5324710ce9"
+    },
+    {
+      "name": "luceras-sprites/pass8/sheets/trans.sig-to-idle.png",
+      "hash": "5014f9daf885ab076af344bdcaf4fc53d00a196b9c1e488f9e0c5af3da78bfca"
+    }
+  ],
   "validators": null,
-  "report": null,
-  "blockedBy": null,
+  "report": {
+    "outputs": [
+      {
+        "name": "luceras-final/final/scene.blend",
+        "hash": "822a34a8eb4cc47c6dd650b10ec55f9bc6b5c7988b7d3639a7786ad37a0a34c2"
+      },
+      {
+        "name": "luceras-sprites/pass8/report.json",
+        "hash": "aecb954473134d683980a930dc1f4c5a87e70d7c797625daaff245065a241b72"
+      },
+      {
+        "name": "luceras-sprites/pass8/work/gate.json",
+        "hash": "2b6deae23e22e35f07538bbee48dcc88e037d8fb7a6fab09d2b615b3e7364ad3"
+      },
+      {
+        "name": "luceras-sprites/pass8/work/motion/sig_f22-f36_1x.webp",
+        "hash": "1ee9eaf34d35f56281bfa7e2d54201228012e60d08195c1850c29fb6cef22caa"
+      },
+      {
+        "name": "luceras-sprites/pass8/work/motion/sig_f22-f36_2x.webp",
+        "hash": "3ee518f69b0f5f4795f07a175f3287e8f1f85b245bb077b3a538de660971eee9"
+      },
+      {
+        "name": "luceras-sprites/pass8/work/motion/sig_f22-f36_contact.png",
+        "hash": "91b66c84d9dd74a9a5f73caa17c60c6d7a3b979de38942031e6539baf3bf6282"
+      },
+      {
+        "name": "luceras-sprites/pass8/work/motion/sig_f22-f36_foot_detail.png",
+        "hash": "d93189ed90b1e2d949e75d27709975c62b538f68324d4feb7366f380313a4e18"
+      },
+      {
+        "name": "luceras-sprites/pass8/sheets/idle.png",
+        "hash": "4f1f50cb10571f54e88a0e19f6419b907ae126b35d767d2d5051fb45c64408c2"
+      },
+      {
+        "name": "luceras-sprites/pass8/sheets/sig.horns-first-descent.png",
+        "hash": "8fe58af667f568b33d5dbe8066890c1312f0d312706e261bb98f42c3f0510646"
+      },
+      {
+        "name": "luceras-sprites/pass8/sheets/trans.idle-to-sig.png",
+        "hash": "761da90398c218088282139a1ac7b94e1857c7c0dfab1911bd045c5324710ce9"
+      },
+      {
+        "name": "luceras-sprites/pass8/sheets/trans.sig-to-idle.png",
+        "hash": "5014f9daf885ab076af344bdcaf4fc53d00a196b9c1e488f9e0c5af3da78bfca"
+      }
+    ],
+    "blockedBy": "nothing (frames rendered at 52 to 67 s against pass 7's 37 to 44 s under outside CPU load; wall 4.3 h plus 1.5 h of coverage gates)",
+    "defectResult": "pass 8 is the Foot coat scene of record rendered with the full gate: scale, pops, clearance, head seams, fringe and alpha below the ground pass; forearm, shank, lower hind leg and distal foot coverage 0 fails in 166 frames; nape 69 frames over its far control in the idle head turn, identical to pass 6 and accepted on read. Region read at 4x and 2x finds nothing new. The sig f29 toe band in motion (f22 to f36): not visible at 1x; at 2x a faint paler stretch about 5 px long above the toes with a small blue-white glint at its front edge in f22 to f28, steady, no flicker. Orchestrator read of the foot strip agrees; the glint goes into the next preview build for diagnosis.",
+    "newDefects": [],
+    "checks": [
+      "full every-frame gate (pass8/work/gate.json)",
+      "whole-creature region read at 4x and 2x against pass 7 and the sheet"
+    ],
+    "cost": {
+      "wall_h": 5.8,
+      "agent_tokens": 764504,
+      "note": "one builder session covered B-87d4 and B-cy8f, overlapping; tokens are for the whole session"
+    }
+  },
+  "blockedBy": "nothing (frames rendered at 52 to 67 s against pass 7's 37 to 44 s under outside CPU load; wall 4.3 h plus 1.5 h of coverage gates)",
   "cost": null,
-  "status": "planned",
+  "status": "reported",
   "createdAt": "2026-11-10T18:45:05Z",
-  "briefSha256": "e6f0a6bc7c9d576ae00d2a5bd09ce1db6f11f95ab2febe87c36126838b6a82d4"
+  "briefSha256": "e6f0a6bc7c9d576ae00d2a5bd09ce1db6f11f95ab2febe87c36126838b6a82d4",
+  "checks": [
+    "full every-frame gate (pass8/work/gate.json)",
+    "whole-creature region read at 4x and 2x against pass 7 and the sheet"
+  ],
+  "reportedAt": "2026-11-11T00:34:42Z"
 }
