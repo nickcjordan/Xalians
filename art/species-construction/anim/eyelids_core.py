@@ -283,7 +283,12 @@ class Eye:
         bu = self.band_top(T, close, squint, 'upper')
         bl = self.band_top(T, close, squint, 'lower')
         inside = (T > self.thm) & (T < self.thl)
-        return inside & (((P >= pu) & (P <= pu+bu+0.3)) | ((P <= pl) & (P >= pl-bl-0.3)))
+        w = self.L['roll_deg']
+        # the bands, and each lid's dark rolled lip under them: fur from either lid crossing the margins is thinned there,
+        # so the closed line (lips and bands together) is not hidden under lid fur
+        bands = ((P >= pu) & (P <= pu+bu+0.3)) | ((P <= pl) & (P >= pl-bl-0.3))
+        lips = ((P <= pu) & (P >= pu-w-0.3)) | ((P >= pl) & (P <= pl+w+0.3))
+        return inside & (bands | lips)
 
     # ---------------------------------------------------------------- ribbon
     def ribbon(self, close, squint):

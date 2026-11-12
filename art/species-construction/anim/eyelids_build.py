@@ -45,7 +45,7 @@ LEVERS = dict(
     lid_columns=150, lid_theta_pad_deg=6.0,
     fur_density_per_mm2=0.30, fur_density_lower_per_mm2=0.70, fur_len_mm=7.0, fur_lift_deg=8.0, fur_root_mm=0.05, fur_clear_mm=0.12, fur_sink_mm=0.10,
     fur_emerge_deg=2.0, fur_radius_scale=0.9, fur_gamma_upper_deg=50.0, fur_gamma_lower_deg=40.0,
-    fur_seed=11, fur_profile_scale=1.0, ribbon_m0_deg=-0.9, ribbon_close_widen_upper=1.0, ribbon_close_upper_min_deg=3.5, ribbon_close_lower_min_deg=2.0, caps_pad_deg=0.6)
+    fur_seed=11, fur_profile_scale=1.0, ribbon_m0_deg=-0.9, ribbon_close_widen_upper=1.5, ribbon_close_upper_min_deg=7.0, ribbon_close_lower_min_deg=4.0, caps_pad_deg=0.6)
 LEVER_NOTES = {
     'delta_mm': 'lid height over the globe inside the opening (surface mm; x0.793 for rig mm)',
     'tuck_deg': 'open lid margin this far past the rim, under the skin',
