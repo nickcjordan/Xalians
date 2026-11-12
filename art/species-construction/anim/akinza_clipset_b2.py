@@ -3626,7 +3626,8 @@ NECK_FOLD = dict(angles=(60., 95., 130.), radius=35., board=(0., 45., 60., 95., 
 # the summed squares of the upper arm's, clavicle's and forearm's angles (every approved arm is 52 or more from every centre)
 GRIP_ARM = dict(radius=20., bones=('upperarm', 'clavicle', 'forearm'),
                 mask=dict(r0=.02, r1=.06, band_bones=['upperarm.{sd}', 'forearm.{sd}'], band_min=.3, near=['elbow.{sd}', .14],
-                          part_bones=['upperarm.{sd}', 'forearm.{sd}', 'hand.{sd}', 'clavicle.{sd}', 'chest', 'spine']))
+                          part_bones=['upperarm.{sd}', 'forearm.{sd}', 'clavicle.{sd}', 'chest', 'spine']))
+# (the paw is not in the part: with it in, the mush smoothed the knuckles away)
 
 
 def grip_arm_frames(frames, sd):

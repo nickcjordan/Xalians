@@ -146,7 +146,7 @@ for clip, f, appr in (('idle', 0, ANIM/'clips4'/'frames'/'clay'), ('hurt', 6, AN
 
 
 def board(rows, out, title, tile=None):
-    W = max(sum((tile or r[0].width) for r in rr) for _, rr in rows)
+    W = max(sum((tile or r.width) for r in rr) for _, rr in rows)
     H = sum((tile or rr[0].height)+18 for _, rr in rows)+24
     B_ = Image.new('RGB', (W, H), (14, 14, 14))
     dr = ImageDraw.Draw(B_)
