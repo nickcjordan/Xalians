@@ -379,11 +379,62 @@ HELD.update(
 )
 
 
+
+# Held fix pass 8 (blind critic h7: the trunk no longer writhes, but nothing in the frame stays put while the body pulls, the
+# pinned arms moving with the chest as one block; each strain starts and ends with a one-frame jump of 17 to 27 px at 720 and the
+# chest swings 8 to 12 px every frame inside it, so at 192 it reads as lurching and shivering). The design (orchestrator,
+# overridable by Nick): it is held from behind. An unseen grip holds both wrists beside and a little behind the hips: the
+# wrists stay at their grip points in the world and the arms reach them by IK from the shoulders as the body puts them
+# (held_grip_arms), so as the chest, head and hips pull forward away from them the elbows straighten and the shoulders are
+# drawn back (clav_pull): the stretch is the read of the grip. Every strain pulls forward, away from the grip, at its own
+# strength: it builds over 3 or 4 frames, stops dead against the hold, rebounds a little toward the grip, holds, and gives back
+# over 6 frames (no wind-up the other way). The tremor is half its size and slower (a 5-frame period). In the first two
+# strains the head turns and dips to look down at the near elbow and holds it through the hold; in the second the near elbow
+# pries out from the side while the paw stays held, the chest still for that beat, and is snapped back past the side. The
+# hips sink as it pulls (the legs push). The stops stay 10, 19 and 16 frames apart (5, 15, 34).
+for _st, _upd in zip(HELD['strains'], (
+        dict(name='pull forward, looking at the near elbow', t0=2, ramp=3, hold=2, give=6, k=1., lean=6., twist=0., bend=0.,
+             rise=-.014, fwd=.026, shrug=(-.6, -.6), head=0., jerk=0., jerk_yaw=0., press=(0., 0.), elbow_out=0., duck=0.,
+             look=22., dip=26., arm=None, elbow_push=0., ear_back=0.),
+        dict(name='pull forward and twist, the near arm prying', t0=12, ramp=3, hold=7, give=6, k=.85, lean=6., twist=-3.,
+             bend=-3., rise=-.01, fwd=.031, shrug=(-.6, -.8), head=0., jerk=0., jerk_yaw=0., press=(0., 0.), elbow_out=0.,
+             duck=0., look=18., dip=24., arm=None, elbow_push=0., ear_back=0., pry_at=5),
+        dict(name='pull down and forward', t0=30, ramp=4, hold=4, give=6, k=.9, lean=6., twist=3., bend=-2., rise=-.022,
+             fwd=.035, shrug=(-.5, -.5), head=2., jerk=0., jerk_yaw=0., press=(0., 0.), elbow_out=0., duck=0., look=0.,
+             dip=4., arm=None, elbow_push=0., ear_back=0.))):
+    _st.update(_upd)
+HELD.update(
+    rebound=.9, stop8=.95, ramp_gather=0., look_back=3,
+    # (the neck takes .6 of the look's yaw and dip, the head the rest: at .35 the 24 to 26 degree dip collapsed 6 throat
+    # triangles under the jaw at 4 to 8 and 14 to 23)
+    neck_look=.6,
+    tremor=dict(HELD['tremor'], period=5., trunk=2.2, roll=1.8, hips=1., shake=.003, arms=1.2, shoulder=.8),
+    # the grip (near side; the far side mirrored): the wrist's point in the world (m, after the root move) and the elbows' bend
+    # direction (out and a little back)
+    grip_wrist=(.19, .045, .72), grip_pole=(1., .25, 0.),
+    # the pry: the elbow's bend plane swung toward pry_pole (back and up: the elbow drives out behind the body's outline), then
+    # snapped back past grip_pole by pry_over toward pry_in (into the side); the chest's tremor held still by pry_still
+    pry_pole=(.3, 1., .6), pry_in=(-.3, .4, 0.), pry_over=.15, pry_still=.8,
+    # clav_pull: degrees of clavicle turn back per unit of the strains' summed pull. dip_ear: the share of the head's dip the
+    # ears swing back with it (at .7 the ear-root folds reached 69 at the glance and 68 in the third pull, at 0 the near ear rode
+    # forward to a flat cap at -2 degrees; .35 keeps it at about -11 to -15 and the folds near the approved 50). far_loop and
+    # far_loop_yaw: the far ear's swing below the near one's mirror, degrees, less per degree of the look's yaw toward the
+    # camera (fixed at 6 it hung below the near one at the looks, 1300 to 1600 px of it in view at 720 against idle's 377; at
+    # 1.5 less .6 per degree, 320 to 560)
+    clav_pull=6., dip_ear=.35, far_loop=1.5, far_loop_yaw=.6,
+)
+
+
 def _look_profile(u, st):
     """Fix pass 7: a strain's look share by frame u from its start: it turns to look through the wind-up and lunge, holds through
-    the hold and turns back with the recoil (0 outside)."""
-    w, h = st['wind'], st['hold']
-    keys = [(0., 0.), (w, .3), (w+2, 1.), (w+3+h, 1.), (w+5+h, .3), (w+7+h, 0.)]
+    the hold and turns back with the recoil (0 outside). Held fix pass 8: with the pull's ramp, it turns to look as the pull
+    builds, holds to the hold's end and turns back over look_back frames."""
+    if 'ramp' in st:
+        r, h = st['ramp'], st['hold']
+        keys = [(0., 0.), (r-1, 1.), (r+1+h, 1.), (r+1+h+HELD['look_back'], 0.)]
+    else:
+        w, h = st['wind'], st['hold']
+        keys = [(0., 0.), (w, .3), (w+2, 1.), (w+3+h, 1.), (w+5+h, .3), (w+7+h, 0.)]
     if u <= 0 or u >= keys[-1][0]:
         return 0.
     for (u0, v0), (u1, v1) in zip(keys, keys[1:]):
@@ -395,7 +446,17 @@ def _look_profile(u, st):
 def _arm_profile(u, st):
     """Fix pass 7: the arm pulling free, its share by frame u from the strain's start: out from the lunge's stop through the hold,
     snapped back to the side in one frame at the hold's end and stopped dead (a small rebound; snapped past the side by .15 the
-    paw went into the hip), then still."""
+    paw went into the hip), then still. Held fix pass 8 (pry): from pry_at frames after the strain's start the elbow drives out
+    over 3 frames, holds a frame, is snapped back past the side in one frame (pry_over) and settles the next."""
+    if 'pry_at' in st:
+        a = st['pry_at']
+        keys = [(0., 0.), (a, 0.), (a+3, 1.), (a+4, 1.), (a+5, -HELD['pry_over']), (a+6, 0.)]
+        if u <= 0 or u >= keys[-1][0]:
+            return 0.
+        for (u0, v0), (u1, v1) in zip(keys, keys[1:]):
+            if u0 <= u <= u1:
+                return v0+(v1-v0)*cp.ease('linear' if (u0, u1) == (a+4, a+5) else 'smooth', (u-u0)/(u1-u0))
+        return 0.
     w, h = st['wind'], st['hold']
     keys = [(0., 0.), (w+2, .1), (w+3, .4), (w+2+h, 1.), (w+3+h, 1.), (w+4+h, -.04), (w+5+h, .03), (w+6+h, 0.)]
     if u <= 0 or u >= keys[-1][0]:
@@ -449,8 +510,29 @@ def ear_follow(rig, pose, deg):
         pose[b] = [float(v) for v in rc.euler_from_matrix(Wh.T@Rx@Wh@rot(pose.get(b, [0., 0., 0.])))]
 
 
+def _strain_profile8(u, st):
+    """Held fix pass 8: a pull away from a grip behind it, its share at frame u from its start (0 outside it): it builds over
+    `ramp` frames (near steady, so no one frame jumps), stops dead against the hold at 1, rebounds toward the grip for a frame
+    (rebound), settles at `stop8` through the hold, then gives back over `give` frames. Returns (share, holding: 0 or 1)."""
+    P = HELD
+    r, h, g = st['ramp'], st['hold'], st['give']
+    keys = [(0., 0., 'linear'), (r, 1., 'ramp'), (r+1, P['rebound'], 'linear'), (r+2, P['stop8'], 'smooth'),
+            (r+1+h, P['stop8'], 'linear'), (r+1+h+g, 0., 'smooth')]
+    if u <= 0 or u >= keys[-1][0]:
+        return 0., 0.
+    for (u0, v0, _), (u1, v1, kind) in zip(keys, keys[1:]):
+        if u0 <= u <= u1:
+            x = (u-u0)/(u1-u0)
+            # (the ramp gathers a little speed and is stopped by the hold, not eased into it)
+            e = (x+P['ramp_gather']*x*x)/(1+P['ramp_gather']) if kind == 'ramp' else cp.ease(kind, x)
+            return v0+(v1-v0)*e, float(r+1 <= u <= r+1+h)
+    return 0., 0.
+
+
 def _strain_profile(u, st):
     """A tether strain's share of its full size at frame u from its start (0 outside it): (share, holding: 0 or 1)."""
+    if 'ramp' in st:
+        return _strain_profile8(u, st)
     P = HELD
     w, h = st['wind'], st['hold']
     keys = [(0., 0.), (w, P['wind_share']), (w+2, P['overshoot']), (w+3, P['stop']), (w+3+h, 1.), (w+5+h, P['recoil']), (w+7+h, 0.)]
@@ -497,6 +579,8 @@ def held_strains(f, n):
 
 def _jerk(f, st, n):
     """A strain's head-jerk share at frame f: jerk_profile from the frame the lunge starts (periodic in n)."""
+    if 'ramp' in st:
+        return 0.
     best = 0.
     xs, ys = zip(*HELD['jerk_profile'])
     for sh in (-n, 0, n):
@@ -504,6 +588,62 @@ def _jerk(f, st, n):
         if xs[0] <= u <= xs[-1]:
             best = max(best, float(np.interp(u, xs, ys)))
     return best
+
+
+def _aim_bone(rig, pose, b, d):
+    """Held fix pass 8: bone b turned by the smallest world rotation that points it along world d (its twist kept)."""
+    T = rc.bone_transforms(rig.J, pose, bones=B)
+    Wb = T[b][0]
+    Rp = T[BONE_OF[b][1]][0]
+    Rn = rc.align_rotation(Wb@rc.bone_axis(rig.J, b, B), np.asarray(d, float))@Wb
+    pose[b] = [float(v) for v in rc.euler_from_matrix(Rp.T@Rn)]
+
+
+_GRIP = {}
+
+
+def held_grip_arms(rig, pose, lift, pry=0.):
+    """Held fix pass 8 (held from behind): each wrist held at its grip point in the world (grip_wrist, near side; the far one
+    mirrored), the arm reaching it by two-bone IK from the shoulder as the body puts it (the elbow bending toward grip_pole, out
+    and a little back), and each paw kept at its grip turn in the world (the pin's own paw turn, so the paw stays where it is
+    held). When the body pulls past the arm's reach the arm is straight and the wrist trails by the excess (wrist_trail_mm).
+    pry (near arm): the elbow's bend plane swung from grip_pole toward pry_pole by that share (negative: past grip_pole toward
+    the body by pry_in), the wrist still held. Returns per side the shoulder-to-wrist reach share and the wrist's trail."""
+    P = HELD
+    J = rig.J
+    if 'hand' not in _GRIP:
+        # the paws' grip turn: the pin's paw turn in the world at the loop's rest (no strain, no tremor)
+        base = {}
+        for b, e in P['pin'].items():
+            turn(base, b, e)
+        T0 = rc.bone_transforms(J, base, bones=B)
+        _GRIP['hand'] = {sd: T0[f'hand.{sd}'][0] for sd in 'LR'}
+    out = {}
+    for sd in 'LR':
+        mx = np.array([1. if sd == 'L' else -1., 1., 1.])
+        Wt = np.asarray(P['grip_wrist'], float)*mx
+        T = rc.bone_transforms(J, pose, bones=B, root_translate=tuple(rc.lift_vec(lift)))
+        S = T[f'upperarm.{sd}'][0]@np.array(J[f'shoulder.{sd}'])+T[f'upperarm.{sd}'][1]
+        l1 = float(np.linalg.norm(np.subtract(J[f'elbow.{sd}'], J[f'shoulder.{sd}'])))
+        l2 = float(np.linalg.norm(np.subtract(J[f'wrist.{sd}'], J[f'elbow.{sd}'])))
+        d = Wt-S
+        Dw = float(np.linalg.norm(d))
+        D = min(Dw, (l1+l2)*(1-1e-6))
+        u = d/Dw
+        pole = _unit(np.asarray(P['grip_pole'], float)*mx)
+        if sd == 'L' and pry:
+            pole = _slerp_dir(pole, _unit(np.asarray(P['pry_pole' if pry > 0 else 'pry_in'], float)), abs(pry))
+        pp = pole-u*(u@pole)
+        pp /= np.linalg.norm(pp)
+        ca = max(-1., min(1., (l1*l1+D*D-l2*l2)/(2*l1*D)))
+        E = S+l1*(ca*u+math.sqrt(1-ca*ca)*pp)
+        W2 = S+u*D
+        _aim_bone(rig, pose, f'upperarm.{sd}', E-S)
+        _aim_bone(rig, pose, f'forearm.{sd}', W2-E)
+        Tf = rc.bone_transforms(J, pose, bones=B)[f'forearm.{sd}'][0]
+        pose[f'hand.{sd}'] = [float(v) for v in rc.euler_from_matrix(Tf.T@_GRIP['hand'][sd])]
+        out[sd] = dict(reach=round(Dw/(l1+l2), 4), trail_mm=round(max(0., Dw-D)*1000, 2))
+    return out
 
 
 def held_loop_body(rig, f, grip=True):
@@ -545,6 +685,13 @@ def held_loop_body(rig, f, grip=True):
     # the shiver: full in a hold, low between the strains; a 2.5-frame period, so no two frames match; the parts out of phase
     T = P['tremor']
     amp = 1. if holding else T['rest']
+    pry = 0.
+    for st in (P['strains'] if grip else ()):
+        if 'pry_at' in st:
+            pry += _periodic_share(_arm_profile, f, st, n)
+    if pry:
+        # held fix pass 8: the chest still while the arm pries
+        amp *= 1.-P['pry_still']*min(1., abs(pry))
     ph = 2*math.pi*f/T['period']
     tr, tr2, tr3 = (amp*math.sin(ph+o) for o in (0., 1.9, 3.7))
     lift = lift+np.array([T['shake']*tr3, 0., 0.])
@@ -577,8 +724,11 @@ def held_loop_body(rig, f, grip=True):
     # (fix pass 5: the shrug goes up and back: the clavicles turn back a little the whole loop, and the near one further back
     # as the trunk twists away (the yank's twist carried the near shoulder ball forward against the throat at 14 to 21))
     cbk = P['clav_back']+P['clav_back_twist']*max(0., -tw)
+    # held fix pass 8: the shoulders drawn back by the arms the grip holds as the body pulls away from it
+    pull = sum(max(0., v) for v, _ in sts)
+    cbk += P.get('clav_pull', 0.)*pull
     turn(pose, 'clavicle.L', [0., cl['L'], cbk])
-    turn(pose, 'clavicle.R', [0., cl['R'], -P['clav_back']])
+    turn(pose, 'clavicle.R', [0., cl['R'], -P['clav_back']-P.get('clav_pull', 0.)*pull])
     # the elbows stay clamped to the ribs and the hands on the thighs: the upper arms take back the shrug's outward swing and a
     # little of the trunk's lean; the hands press harder in each strain and the forearms tremble with the torso
     ca = P['arm_counter']
@@ -588,6 +738,7 @@ def held_loop_body(rig, f, grip=True):
     ce = ca.get('elbow', (0., 0.))
     turn(pose, 'forearm.L', [T['arms']*tr2, press[0]+ce[0]*eo, 0.])
     turn(pose, 'forearm.R', [T['arms']*tr3, -press[1]-ce[1]*eo, 0.])
+    grip_info = held_grip_arms(rig, pose, lift, pry) if P.get('grip_wrist') else None
     # rule 1, the head's world orientation first: the neck and head take back head_level of the trunk's lean, then turn by the
     # strain's own head pitch and the jerk (chin up only: a chin-down head needs the ear past f18's swing and folds the ear root);
     # the head turns against the trunk's twist and side bend so its world turn and roll stay small
@@ -609,7 +760,17 @@ def held_loop_body(rig, f, grip=True):
             u = f-(st['t0']+sh_)
             if xs[0] <= u <= xs[-1]:
                 fd += float(np.interp(u, xs, ys))
-    ear_follow(rig, pose, fd+ear_back)
+    # held fix pass 8: as the head dips to look at the grip, the ears swing back with it (dip_ear of the dip) so they keep
+    # their line instead of riding forward over the skull
+    ear_follow(rig, pose, fd+ear_back+P.get('dip_ear', 0.)*lk_d)
+    if P.get('far_loop'):
+        # held fix pass 8: the far ear swings with the near one (mirrored) and far_loop degrees further back and down, so the
+        # side view keeps it behind the near one when the head turns (it showed as a second outline at 14 to 23); as the head
+        # turns its snout toward the camera the far ear rises behind the near one (far_loop_yaw degrees per degree), lower
+        # it hung below the near one as a lip
+        # (mirrored against the head, not across the world's midline: mirrored in the world while the head turned 18 to 22
+        # degrees, the far ear sat turned against the head and folded its root 400 to 530 triangles)
+        mirror_far_ear_head(pose, P['far_loop']-P.get('far_loop_yaw', 0.)*lk_y)
     # the tails (fix pass 4): the waves and the whip as before, but a shorter lag down the chain, the whip low-passed in time,
     # and each frame's bends shared along the chain so no joint bends alone
     lagk = P['tail_lag_p4']
@@ -643,7 +804,8 @@ def held_loop_body(rig, f, grip=True):
     breath = P['pant']['key']*pant+.4*holding+env*PR['key']*pb    # a panting breath, a caught one in each hold, the rest's deeper breath
     return pose, lift, feet, breath, dict(strains=[round(v, 4) for v, _ in sts], holding=holding, flick=round(fd, 2), tremor=round(tr, 3),
                                           jerk=round(jk, 3), pant=round(env, 3), elbows_out=round(eo, 2), planted=planted,
-                                          push={k: round(v, 2) for k, v in push.items()}, look=[round(lk_y, 2), round(lk_d, 2)])
+                                          push={k: round(v, 2) for k, v in push.items()}, look=[round(lk_y, 2), round(lk_d, 2)],
+                                          pry=round(pry, 3), grip=grip_info)
 
 
 def _rotvec(R):
@@ -832,6 +994,27 @@ HELD_OUT = {'idle': [0., .05, .18, .38, .6, .78, .9, .97, .995, 1.], 'ears': [0.
 # (fix pass 6: far_down 16, 24, 18, 16 left 1603, 476 and more px of far ear below the near ear's outline at 720 in frames 1 to
 # 3 and a sliver above at 4; turned 60 degrees about its length and 4 to 8 down, see the fix pass 6 report for the counts)
 HELD_OUT_ARMS = {'upperarm.L': [-18., -30., 0.], 'upperarm.R': [-14., 26., 0.], 'forearm.L': [-22., 0., 0.], 'forearm.R': [-18., 0., 0.]}
+# Held fix pass 8: (item 7) the near ear passes the flat cap in one frame on the way in (held_in 2) and out (held_out 2) (it
+# held it two frames, held_in 1 and 2 and held_out 2 and 3); (item 8) the far ear is no longer turned about its length in the
+# seize and the shake (fix pass 6's 45 to 75 degree turn folded its root 647 and 685 triangles against the approved 50: the
+# folds the pass 9 builder took for a rig drift; 20 degrees of turn still folded 281 to 356); it is swung up behind the near
+# one a little instead (far_down), which leaves more of it in view in held_in 2 and 3 and held_out 1 and 2 than the turn
+# did (see the pass 8 report); (item 9) the hands' release
+# spread over the first three frames (they jumped 90 px at 720 from held_out 0 to 1): the arms leave the grip by world
+# direction (release, see held_out_frame) and the fling (burst) is smaller and slower
+HELD_IN.update(ears=[0., .4, .9, 1., 1., 1.], far_twist=[0.]*6, far_down=[0., 0., -8., -6., -2., 0.])
+HELD_OUT.update(ears=[0., .06, .5, .93, .99, 1., 1., 1., 1., 1.], far_twist=[0.]*10, far_down=[0., -8., -6., 0., 0., 0., 0., 0., 0., 0.],
+                burst=[0., .2, .45, .65, .6, .4, .2, .06, 0., 0.], unclamp=[0., .35, .8, 1., 1., 1., 1., 1., 1., 1.],
+                release=[0., .2, .45, .7, .88, .97, 1., 1., 1., 1.], release_local=[0., 0., 0., .05, .2, .45, .7, .9, 1., 1.])
+
+
+def mirror_far_ear_head(pose, down):
+    """Held fix pass 8: the far ear's turn against the head set to the near ear's, mirrored across the head's own midline, then
+    `down` degrees further back and down about the head's X axis."""
+    el_ = pose.get('ear_1.L', [0., 0., 0.])
+    dn = math.radians(down)
+    Rx = np.array([[1., 0., 0.], [0., math.cos(dn), math.sin(dn)], [0., -math.sin(dn), math.cos(dn)]])
+    pose['ear_1.R'] = [float(v) for v in rc.euler_from_matrix(Rx@rot([el_[0], -el_[1], -el_[2]]))]
 
 
 def mirror_far_ear(rig, pose, down=0., share=1., twist=0.):
@@ -865,6 +1048,9 @@ def held_in_frame(rig, k):
     for b, d in HELD_IN_SNAP.items():
         turn(pose, b, d, e['jolt'])
     ear_line_capped(rig, pose, e['ears']*HELD['ear_base'], HELD['ear_cap'], inside=HELD['ear_inside'])
+    # (held fix pass 8: the loop's far ear is mirrored on the near one and far_loop further down; held_in arrives on it)
+    if HELD.get('far_loop') and e['ears'] > 0:
+        mirror_far_ear_head(pose, HELD['far_loop']*e['ears'])
     mirror_far_ear(rig, pose, HELD_IN['far_down'][k], HELD_IN['far_mirror'][k], HELD_IN['far_twist'][k])
     lift = (1-e['body'])*ilift+e['body']*hlift+e['jolt']*np.asarray(HELD_IN_JOLT)
     feet = _blend_feet(IDLE_FEET, hfeet, e['body'])
@@ -889,8 +1075,34 @@ def held_out_frame(rig, k):
         turn(pose, b, d, e['burst'])
     turn(pose, 'chest', [0., 0., e['shake']])
     turn(pose, 'neck', [0., 0., -.5*e['shake']])
+    if HELD.get('grip_wrist') and 'release' in HELD_OUT:
+        # held fix pass 8 (item 9: the hands jumped 90 px at 720 from held_out 0 to 1; with the arms held behind by the grip,
+        # blending their local turns toward idle's swung the elbow 48 px one way and 23 the other): the grip lets go and the
+        # arms swing by each bone's world direction from where the grip held them toward idle's arms flung by the burst
+        # (release), then hand over to the plain blend's own turns (release_local) so the clip still ends on idle frame 89
+        ARMB = [f'{b}.{sd}' for sd in 'LR' for b in ('upperarm', 'forearm', 'hand')]
+        T0 = rc.bone_transforms(rig.J, hp, bones=B)
+        tp = dict(pose)
+        for b in ARMB:
+            tp[b] = list(ip.get(b, [0., 0., 0.]))
+        for b, d in HELD_OUT_ARMS.items():
+            turn(tp, b, d, e['burst'])
+        T1 = rc.bone_transforms(rig.J, tp, bones=B)
+        wr = HELD_OUT['release'][k]
+        tg = {b: _slerp_dir(T0[b][0]@rc.bone_axis(rig.J, b, B), T1[b][0]@rc.bone_axis(rig.J, b, B), wr) for b in ARMB}
+        # (aimed by the smallest turn from the held arm's own turn, so the twist the grip's IK gave it is kept and frame 0 is
+        # loop frame 0 exactly)
+        pz = dict(pose, **{b: list(hp.get(b, [0., 0., 0.])) for b in ARMB})
+        for b in ARMB:
+            _aim_bone(rig, pz, b, tg[b])
+        wl = HELD_OUT['release_local'][k]
+        for b in ARMB:
+            pose[b] = slerp_e([float(x) for x in pz[b]], pose[b], wl)
     ear_line_capped(rig, pose, (1-e['ears'])*HELD['ear_base'], HELD['ear_cap'], toward=ip if e['ears'] > 0 else None,
                     inside=HELD['ear_inside'])
+    # (held fix pass 8: it leaves from the loop's far ear, mirrored on the near one and far_loop further down)
+    if HELD.get('far_loop') and e['ears'] < 1:
+        mirror_far_ear_head(pose, HELD['far_loop']*(1-e['ears']))
     mirror_far_ear(rig, pose, HELD_OUT['far_down'][k], HELD_OUT['far_mirror'][k], HELD_OUT['far_twist'][k])
     lift = (1-e['idle'])*hlift+e['idle']*ilift
     feet = _blend_feet(hfeet, IDLE_FEET, e['idle'])
@@ -1939,6 +2151,47 @@ FAINT4.update(
 )
 
 
+# Fix pass 10 (blind critic f9; the orchestrator agrees the dead-weight drop is right): keep the gravity drop, the knee hit at
+# 12, the one-piece topple, the rest pose from 26, the start seam, `down` at 27 and the 16 px cell. Change: (1) the trunk is
+# already tipping during the drop (pushed at 3 so it reaches th_kick at the knee hit) and carries its turn through the knee
+# hit, so it never hangs upright on its knees; (2) the neck by its world pitch: little bend in the slack beat (the chin drop is
+# the head's own, no S-pinch under the jaw), folding down from the knee hit so the head hangs below the shoulders by 15, and
+# the head turning toward its rest during the fall (60 degrees snout down at most, 24 at the contact) so the landing needs no
+# big turn; (3) the chest squashes 3 px into its own contact frame (19) and the chest and head rebound 4 to 6 px over 20 and
+# 21; (4) the arms never brace: they hang, then trail back and out along the flanks from the knee hit (arm_fold), and until
+# the chest lands no part of an arm goes lower than half the chest's own height (arm_over_chest_share: the upper arm swings
+# further back and out, arm_guard_back), so no paw reaches the floor first; after the landing they flop out to their rest
+# by each bone's world direction over 19 to 23 (flop_dirs), on the floor, not through it; (5) the ear is idle's
+# own ear swung only in the picture's plane, upright while the head hangs and trailing back to rest A over 17 to 21; (6) the
+# tails' drop spread over 11 to 13 and their sag carried through the topple; no late tip flick.
+FAINT4.update(
+    topple=dict(f0=3, f1=19, length=.55, kick=12, th_kick=32.),
+    neck_world=[(0, 'linear', 0.), (1, 'linear', 6.), (3, 'out', 16.), (12, 'smooth', 36.), (13, 'out', 90.), (14, 'smooth', 135.),
+                (15, 'smooth', 162.), (16, 'smooth', 168.), (17, 'smooth', 170.)],
+    neck_world_w=[(0, 'linear', 0.), (1, 'linear', 1.), (19, 'linear', 1.), (21, 'smooth', 0.)],
+    head_pitch=[(0, 'linear', 0.), (1, 'linear', 8.), (3, 'out', 30.), (12, 'smooth', 42.), (13, 'out', 50.), (14, 'smooth', 56.),
+                (15, 'smooth', 58.), (16, 'smooth', 52.), (17, 'smooth', 42.), (18, 'smooth', 26.), (19, 'smooth', 12.),
+                (20, 'smooth', 10.)],
+    head_land=[(20, 'linear', 0.), (22, 'smooth', 1.)],
+    ear_plane=True, ear_rel_min=25.,
+    ear_el=[(0, 'linear', 85.8), (4, 'smooth', 82.), (12, 'linear', 82.), (15, 'smooth', 84.), (16, 'smooth', 80.), (17, 'smooth', 70.),
+            (18, 'smooth', 59.), (19, 'smooth', 49.), (20, 'smooth', 43.), (21, 'smooth', 40.)],
+    ear_far_in=[(0, 'linear', 0.), (6, 'smooth', 1.)], ear_rest_in=[(20, 'linear', 0.), (22, 'smooth', 1.)],
+    arm_buckle=None, arm_over_chest=8., arm_over_chest_share=.5, arm_guard_from=13, arm_guard_back=[.8, .55, -.1], arm_guard_back_land=[.8, .55, .05], flop_dirs=True, clav=[(0, 'linear', 0.)],
+    arm_fold=[(12, 'linear', 0.), (16, 'smooth', 1.)], arm_fold_dirs={'upperarm': [.4, .7, -.6]},
+    arm_fold_turns={'forearm': [-12., 0., 0.], 'hand': [0., 0., 0.]},
+    arms=[(19, 'linear', 0.), (23, 'linear', 1.)], arm_land=23,
+
+    tails=[(1, 'linear', 0.), (12, 'in', .5), (19, 'smooth', 1.)],
+    # (released by 15 the tails' fall pressed tails a and b to 32 mm apart at 15: they come down over 12 to 19 instead)
+    tail_lift=[(9, 'linear', 0.), (12, 'smooth', 1.), (13, 'smooth', .75), (16, 'smooth', .5), (19, 'smooth', 0.)],
+    tail_splay=[(11, 'linear', 0.), (14, 'smooth', 1.), (18, 'linear', 1.), (22, 'smooth', 0.)], tail_splay_deg=14.,
+    tail_bounce={'a': 0, 'b': 0, 'c': 0}, tail_bounce_deg=4.,
+    bounce=[(18, 'linear', 0.), (19, 'linear', -.25), (20, 'out', 1.), (21, 'smooth', .3), (22, 'smooth', -.05), (23, 'smooth', 0.)],
+    bounce_rot={'chest': [-6., 0., 0.], 'neck': [-2.5, 0., 0.]},
+)
+
+
 def _ear_frames(skin):
     """Per side: the ear's rest axis (root to tip) and its dish-facing normal (the blade's normal, signed toward the dish: rest
     vertex normals facing forward)."""
@@ -2447,6 +2700,16 @@ def faint4_frame(rig, skin, f, cache):
         turn(body, 'clavicle.L', cr, cl)
         turn(body, 'clavicle.R', [cr[0], -cr[1], -cr[2]], cl)
     body['root'] = slerp_e(slerp_e([0., 0., 0.], [K['pitch'], 0., 0.], fa), [E['pitch'], 0., 0.], tp)
+    if 'neck_world' in P:
+        # fix pass 10 (critic f9: the head sat far out in front on a long straight neck at 13 to 18, and an S-pinch under the
+        # jaw at 2 to 12, the neck bent 40 to 60 degrees with the head turned back against it): the neck by its world pitch
+        # (neck_world, degrees forward of its rest, pointing up), weighed in on neck_world_w: it bends little in the slack
+        # beat (the chin drop is the head's own), folds down as the knees hit so the head hangs below the shoulders, and
+        # gives way to the rest's own neck by the landing
+        nw = tr('neck_world_w')
+        if nw > 0:
+            loc = _euler(_world(rig, body, 'chest').T@rot([tr('neck_world'), 0., 0.]))
+            body['neck'] = slerp_e(body['neck'], loc, nw)
 
     def mirror(v, sd):
         return np.asarray(v, float)*np.array([1. if sd == 'L' else -1., 1., 1.])
@@ -2616,6 +2879,44 @@ def faint4_frame(rig, skin, f, cache):
         buckle = lo
         set_buckle(buckle)
         cache['buckle'] = buckle
+    arm_guard = None
+    if P.get('arm_over_chest') is not None and P['arm_guard_from'] <= f < ARM_LAND:
+        # fix pass 10 (critic f9: at 17 and 18 the arm went straight down and planted the paw under the chest like a push-up):
+        # from arm_guard_from until the chest lands, no part of the arm (forearm, paw, claws) goes lower than
+        # arm_over_chest_share of the chest's own lowest skin's height plus arm_over_chest mm, so no paw reaches the floor
+        # before the chest (and on it, not through it, while they flop out after the landing): the trailing upper arm swings
+        # further back along the flank toward arm_guard_back (the share
+        # that keeps it there, never given back before the landing), so the chest comes down onto the arm trailing under it
+        if 'chest_part' not in cache:
+            cache['chest_part'] = skin.part(['chest', 'spine'])
+        arm_guard = float(cache['chest_part'].posed(body, lift)[:, 2].min())*P['arm_over_chest_share']+P['arm_over_chest']/1000.
+        if f >= LAND:
+            # after the chest's landing, while the arms flop out to their rest, they lie on the floor (not through it)
+            arm_guard = P['arm_rest_mm']/1000.
+        Tg = rc.bone_transforms(rig.J, dict(body, **arm_from), bones=B)
+        ua0 = {sd: Tg[f'upperarm.{sd}'][0]@rc.bone_axis(rig.J, f'upperarm.{sd}', B) for sd in 'LR'}
+        af0 = {k_: list(v) for k_, v in arm_from.items()}
+
+        def set_back(u):
+            gb = P['arm_guard_back_land'] if f >= LAND else P['arm_guard_back']
+            dirs = {f'upperarm.{sd}': _slerp_dir(ua0[sd], _unit(mirror(gb, sd)), u) for sd in 'LR'}
+            pz = rc.pose_from_directions(rig.J, dirs, base=dict(body, **af0), bones=B)
+            for sd in 'LR':
+                arm_from[f'upperarm.{sd}'] = [float(x) for x in pz[f'upperarm.{sd}']]
+            return arms_at(tpa)
+        lo = cache.get('arm_back', 0.)
+        if set_back(lo) < arm_guard:
+            hi = 1.
+            for _ in range(16):
+                mid = .5*(lo+hi)
+                if set_back(mid) < arm_guard:
+                    lo = mid
+                else:
+                    hi = mid
+            lo = hi
+        set_back(lo)
+        cache['arm_back'] = lo
+        buckle = lo
     splay = 0.
     if f < ARM_LAND and arms_at(tpa) < .0005 and arms_at(tpa, 1.) >= .0005:
         # fix pass 7: a hanging paw that would reach the floor splays out to the side (the share that keeps it off the floor),
@@ -2629,6 +2930,22 @@ def faint4_frame(rig, skin, f, cache):
             else:
                 hi = mid
         splay = hi
+    elif f < ARM_LAND and arms_at(tpa) < .0005 and P.get('flop_flat') and f >= LAND:
+        # fix pass 10: after the landing the arm flops out on its own track (arms); where the in-between would go through the
+        # floor its upper arm lies flatter (its drop toward the floor lowered until the arm is on it) rather than jumping on
+        # to the rest (that moved the paw 86 px at 720 in one frame)
+        lo, hi = -.6, arm_drop
+        for _ in range(16):
+            mid = .5*(lo+hi)
+            for sd in ('L', 'R'):
+                dirs_E[f'upperarm.{sd}'] = _unit(mirror([ux/hz*math.sqrt(1-mid*mid), uy/hz*math.sqrt(1-mid*mid), -mid], sd))
+            if arms_at(tpa) > P['arm_rest_mm']/1000.:
+                lo = mid
+            else:
+                hi = mid
+        arm_drop = lo
+        for sd in ('L', 'R'):
+            dirs_E[f'upperarm.{sd}'] = _unit(mirror([ux/hz*math.sqrt(1-lo*lo), uy/hz*math.sqrt(1-lo*lo), -lo], sd))
     elif f < ARM_LAND and arms_at(tpa) < .0005:
         # a hanging paw would reach the floor: it swings on toward its rest instead (the share that keeps it on the floor)
         lo, hi = tpa, 1.
@@ -2660,6 +2977,37 @@ def faint4_frame(rig, skin, f, cache):
         splay = max(splay, cache.get('splay', 0.)*(.5 if tpa > .6 else 1.))
     cache['splay'] = splay
     arm_low = arms_at(tpa, splay)
+    if P.get('flop_dirs') and LAND <= f < ARM_LAND:
+        # fix pass 10: after the chest lands, the arms flop from where they lay at the landing to their rest by each bone's
+        # world direction on the arms track (blending their local turns swung the forearm through the floor), each in-between
+        # kept on the floor, not through it (the upper arm lifted toward its landing direction by the share that does it)
+        Tn = rc.bone_transforms(rig.J, body, bones=B)
+        if f == LAND or 'arm_land_dirs' not in cache:
+            cache['arm_land_dirs'] = {f'{b}.{sd}': Tn[f'{b}.{sd}'][0]@rc.bone_axis(rig.J, f'{b}.{sd}', B) for sd in 'LR' for b in ARMS}
+        tl = tr('arms')
+        arm_keep = {k: list(body[k]) for k in dirs_E}
+
+        def flop_at(s_):
+            tg = {k: _slerp_dir(cache['arm_land_dirs'][k], dirs_E[k], tl*(1-s_) if k.startswith('upperarm') else tl)
+                  for sd in 'LR' for k in (f'upperarm.{sd}', f'forearm.{sd}', f'hand.{sd}')}
+            pz = rc.pose_from_directions(rig.J, tg, base=dict(body, **arm_keep), bones=B)
+            for k in tg:
+                body[k] = [float(x) for x in pz[k]]
+            return min(float(cache['arm_parts'][sd].posed(body, lift)[:, 2].min()) for sd in ('L', 'R'))
+        sl = 0.
+        if f > LAND and flop_at(0.) < P['arm_rest_mm']/1000.:
+            lo_, hi_ = 0., 1.
+            for _ in range(14):
+                mid = .5*(lo_+hi_)
+                if flop_at(mid) < P['arm_rest_mm']/1000.:
+                    lo_ = mid
+                else:
+                    hi_ = mid
+            sl = hi_
+        arm_low = flop_at(sl) if f > LAND else arm_low
+        if f == LAND:
+            for k, v in arm_keep.items():
+                body[k] = v
     # the head: pitched only (profile), its world pitch on the head_pitch track (idle's own head turn eased out over the first
     # frames); fix pass 6: it turns toward E's only as the floor takes it (or past head_reach), then on head_land from the touchdown
     Wi = _world(rig, dict(ip, root=[0., 0., 0.]), 'head')
@@ -2733,6 +3081,27 @@ def faint4_frame(rig, skin, f, cache):
         e0, e1 = cache['ear0'][sd], rest[sd]
         wt_ = tr('ear_turn')
         prm = (e0[0]+(e1[0]-e0[0])*ws,)+_lerp_params(e0[1:], e1[1:], wt_)
+        if f > 0 and P.get('ear_plane'):
+            # fix pass 10 (critic f9: at 15 to 18 the ear swung forward over the head showing its dish, then flipped flat at
+            # 19): idle frame 0's own ear turn, swung only in the picture's plane (as rest A is), to the world elevation on
+            # ear_el (the near ear; the far ear far_down lower as at rest), never closer to the skull's long axis than
+            # ear_rel_min degrees; it trails the head: upright while the head hangs, back to rest A as the head turns onto
+            # its jaw, then onto rest A's own turn on ear_rest_in
+            for i in range(1, 5):
+                body[f'ear_{i}.{sd}'] = list(cache['idle0'][0].get(f'ear_{i}.{sd}', [0., 0., 0.]))
+            yh_ = _world(rig, body, 'head')@np.array([0., 1., 0.])
+            ax_ = math.degrees(math.atan2(yh_[2], yh_[1]))
+            el_ = max(tr('ear_el'), ax_+P['ear_rel_min'])-(P['far_down']*tr('ear_far_in') if sd == 'R' else 0.)
+            ear_swing_to(rig, skin, body, sd, el_)
+            ri = tr('ear_rest_in')
+            if ri > 0:
+                prm = _lerp_params(ear_world_params(rig, skin, body, sd), e1, ri)
+                set_ear_world(rig, skin, body, sd, *prm)
+            else:
+                prm = ear_world_params(rig, skin, body, sd)
+            ear_info[sd+'rel'] = round(el_-ax_, 2)
+            ear_info[sd] = [round(x, 2) for x in prm]
+            continue
         if f > 0:
             set_ear_world(rig, skin, body, sd, *prm)
             # fix pass 7: the ear's twist against the head past the rest's twist kept to ear_twist_keep of it (the ear turned
@@ -2765,6 +3134,15 @@ def faint4_frame(rig, skin, f, cache):
     if tl:
         Rl = rot([P['tail_lift_deg']*tl, 0., 0.])
         tdir = {b: Rl@v for b, v in tdir.items()}
+    if 'tail_splay' in P:
+        # fix pass 10: tails a and c fan out from b about the vertical (a toward the camera, c away) while the trunk topples,
+        # so a and b do not close on each other as they come down (they came to 32 to 48 mm apart at 15)
+        sp = P['tail_splay_deg']*tr('tail_splay')
+        if sp:
+            for tn, sg in (('a', 1.), ('c', -1.)):
+                Rz = _axis_angle(np.array([0., 0., 1.]), -sg*sp)
+                for k in range(1, rc.TAIL_BONES+1):
+                    tdir[f'tail_{tn}{k}'] = Rz@tdir[f'tail_{tn}{k}']
     if 'fur' not in cache:
         cache['fur'] = json.loads(Path(P['tail_fur_profile']).read_text())
     tbody = drape_tail_dirs(rig, dict(body), lift, tdir, P['tail_clear'], fur=cache['fur'], comp=P['tail_fur_comp'],
@@ -2776,7 +3154,7 @@ def faint4_frame(rig, skin, f, cache):
     info = dict(time=round(t, 4), fall=round(fa, 4), tip=round(tp, 4), arms=round(tpa, 4), splay=round(splay, 4), armLow_mm=round(arm_low*1000, 2),
                 neckTuck=round(tuck, 2), armHang=round(ah, 4), armFold=round(af, 4), heel=round(heel, 2), curl=round(curl, 2),
                 headLand=round(s_head, 3), headAir=round(s_air, 3), reachTurn=round(reach_turn, 3), earSag=round(ws, 3), ears=ear_info,
-                tails=round(tt, 3), bounce=round(bo, 4), armDrop=round(arm_drop, 4), armBuckle=round(buckle, 4), kneeLow_mm=round(kl*1000, 2), kneeFix_mm=round(knee_fix*1000, 2),
+                tails=round(tt, 3), bounce=round(bo, 4), armDrop=round(arm_drop, 4), armBuckle=round(buckle, 4), armGuard_mm=None if arm_guard is None else round(arm_guard*1000, 2), kneeLow_mm=round(kl*1000, 2), kneeFix_mm=round(knee_fix*1000, 2),
                 kneePinDx=pinned, planted=dict(L=True, R=True), targets={sd: [round(float(x), 6) for x in targets[sd]] for sd in ('L', 'R')})
     breath = ib*(1-fa)
     fd_ = frame_dict(f, full, lift, breath, info, belly=breath)
@@ -2805,7 +3183,7 @@ def trunk_line_pitch(rig, f, tp):
     return math.degrees(math.atan2(-v[1], v[2]))
 
 
-def solve_topple(rig, f0, f1, length, kick=None, th1=None, after=(), sub=200):
+def solve_topple(rig, f0, f1, length, kick=None, th1=None, after=(), sub=200, th_kick=None):
     """Fix pass 9: per-frame topple shares (dense keys for tip, round and slide) that make the trunk's pitch follow a slack
     trunk falling about its foot under gravity (theta'' = 3 g / (2 length) sin theta) from frame f0, where it carries on at the
     speed the drop gives it (no jump), to the chest's contact at f1 (share 1). At frame `kick` (the knees hitting the floor)
@@ -2813,16 +3191,20 @@ def solve_topple(rig, f0, f1, length, kick=None, th1=None, after=(), sub=200):
     Each frame's share is solved so the composed pitch is the simulated one (the drop's own pitch from K and the knee jolt are
     in the composition), so the trunk gathers speed all the way to the chest. With th1 the contact pitch is given (the slumped
     trunk's chest meets the floor short of the rest's pitch) and `after` keys take the share on to 1 (the back flattening).
+    Fix pass 10 (critic f9: at 12 to 14 it hung upright on its knees and the head's fall halved): with th_kick, the trunk is
+    already tipping during the drop: it is given a push at f0 (an added turning speed, solved) so that it reaches th_kick
+    degrees at the knee hit, then the kick is solved as before, so the topple never stalls at the knees.
     """
     th0 = trunk_line_pitch(rig, f0, 0.)
     th1 = trunk_line_pitch(rig, f1, 1.) if th1 is None else th1
     w_in = math.radians(th0-trunk_line_pitch(rig, f0-1, 0.))
     k = 3*9.81/(2*length)/900.
     kick = f1 if kick is None else kick
+    push = 0.
 
-    def run(dw):
-        th, w, out = math.radians(th0), w_in, [math.radians(th0)]
-        for i in range(f1-f0):
+    def run(dw, upto=None):
+        th, w, out = math.radians(th0), w_in+push, [math.radians(th0)]
+        for i in range(f1-f0 if upto is None else upto-f0):
             if f0+i == kick:
                 w += dw
             for _ in range(sub):
@@ -2830,6 +3212,15 @@ def solve_topple(rig, f0, f1, length, kick=None, th1=None, after=(), sub=200):
                 th += w/sub
             out.append(th)
         return out
+    if th_kick is not None:
+        lo, hi = 0., .3
+        for _ in range(50):
+            push = .5*(lo+hi)
+            if run(0., kick)[-1] > math.radians(th_kick):
+                hi = push
+            else:
+                lo = push
+        push = .5*(lo+hi)
     lo, hi = 0., .6
     for _ in range(50):
         mid = .5*(lo+hi)
@@ -2851,13 +3242,15 @@ def solve_topple(rig, f0, f1, length, kick=None, th1=None, after=(), sub=200):
                 b = m
         keys.append((f, 'linear', .5*(a+b)))
     keys += [tuple(k) for k in after] if after else [(f1, 'linear', 1.)]
-    return keys, dict(th0=th0, th1=th1, w_in_deg=math.degrees(w_in), kick_deg=math.degrees(dw), target=[round(x, 2) for x in target])
+    return keys, dict(th0=th0, th1=th1, w_in_deg=math.degrees(w_in), push_deg=math.degrees(push), kick_deg=math.degrees(dw),
+                      target=[round(x, 2) for x in target])
 
 
 def faint4_frames(rig, skin):
     if 'topple' in FAINT4:
         tp = FAINT4['topple']
-        keys, info = solve_topple(rig, tp['f0'], tp['f1'], tp['length'], tp.get('kick'), tp.get('th1'), tp.get('after', ()))
+        keys, info = solve_topple(rig, tp['f0'], tp['f1'], tp['length'], tp.get('kick'), tp.get('th1'), tp.get('after', ()),
+                                  th_kick=tp.get('th_kick'))
         FAINT4['tip'] = FAINT4['round'] = FAINT4['slide'] = keys
         FAINT4['topple_solved'] = info
     cache = {}
