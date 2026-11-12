@@ -73,6 +73,14 @@ class Eye:
         self.rg, self.loff, self.rvis, self.lfield = g('rg'), g('loff'), g('rvis'), g('lfield')
         self.sdz = g('sdz')
         self.furU, self.furL = g('furU'), g('furL')
+        has = lambda n: key+'__'+n in Z.files
+        # fix pass 4: lid fur roots run on over the cross-fade band (rootU/rootL; before pass 4 they stopped at furU/furL)
+        self.rootU, self.rootL = (g('rootU'), g('rootL')) if has('rootU') else (self.furU, self.furL)
+        self.xfade = float(L.get('xfade_mm', 0.))
+        self.fur_u = g('fur_u') if has('fur_u') else None
+        self.fb = dict(sd=g('fb_sd'), side=g('fb_side'), v=g('fb_v'), pidx=g('fb_pidx'), pstrand=g('fb_pstrand')) if has('fb_sd') else None
+        self.rib_ext = g('rib_ext') if has('rib_ext') else None
+        self.flags = set()
         self.show0, self.show1 = g('show0'), g('show1')
         self.cth, self.rimU, self.rimL, self.close = g('cth'), g('rimU'), g('rimL'), g('closeline')
         self.wline = g('winceline')
@@ -89,6 +97,8 @@ class Eye:
         self.capdata = dict(idx=g('caps_idx'), th=g('caps_th'), ph=g('caps_ph'), r_now=g('caps_r'), r_full=g('caps_rfull'))
         self.catch = g('catch')
         self.band = (g('band_theta'), g('band_upper'), g('band_lower'))
+        # fix pass 4: the bands' reach away from the eye (signed), for the lid fur cut, thinning and dark margin
+        self.band_out = (g('band_upper_out'), g('band_lower_out')) if has('band_upper_out') else None
 
     # ---------------------------------------------------------------- frame
     def dirs(self, t, p):
@@ -147,6 +157,27 @@ class Eye:
 
     def furlines(self, t):
         return interp1(self.cth, self.furU, t), interp1(self.cth, self.furL, t)
+
+    def rootlines(self, t):
+        return interp1(self.cth, self.rootU, t), interp1(self.cth, self.rootL, t)
+
+    def lid_weight(self, sd):
+        """Fix pass 4, the cross-fade: the lid fur's share of the fur at zone signed distance sd (1 inside the lid fur edge,
+        -fur_out_mm, falling to 0 at -(fur_out_mm+xfade_mm)); the face fur rooted there keeps the rest."""
+        if self.xfade <= 0:
+            return np.ones(np.shape(sd))
+        return smooth((np.asarray(sd, float)+self.L['fur_out_mm']+self.xfade)/self.xfade)
+
+    def ribbon_cover(self, t, which):
+        """Fix pass 4: 1 along the ribbon band riding this lid, falling to 0 over ribbon_end_fade_deg past its own ends (the
+        lid fur cut and thinning under the band end there; pass 3 kept a 4-degree cut past the outer end of the closed line,
+        where no ribbon is, and the bare lid sheet showed)."""
+        if self.rib_ext is None or self.L.get('ribbon_end_fade_deg', 0) <= 0:
+            return np.ones(np.shape(t))
+        a, b = self.rib_ext[:2] if which == 'upper' else self.rib_ext[2:]
+        w = self.L['ribbon_end_fade_deg']
+        t = np.asarray(t, float)
+        return smooth((t-a)/w+0.5)*smooth((b-t)/w+0.5)
 
     def fold_weight(self, t, p):
         """Folds only where the lid lies over the skin or the globe (not where it dives under the face)."""
@@ -261,10 +292,13 @@ class Eye:
         self.tone_mult = np.ones(n)
         li = np.flatnonzero(np.abs(F['lid']) == 1)
         ki = np.flatnonzero(np.abs(F['lid']) == 3)
+        ci = np.flatnonzero(F['lid'] == 5)
         if len(li):
             X[li], rad[li] = self._lid_strands(li, close, squint, wince)
         if len(ki):
             X[ki], rad[ki] = self._lash_strands(ki, close, squint, wince)
+        if len(ci):
+            X[ci], rad[ci] = self._corner_strands(ci, close, squint, wince)
         # a strand that does not show sits, zero length, at its root (or the eye centre when it never had one)
         X[rad[:, 0] == 0] = X[rad[:, 0] == 0][:, :1]
         return X, rad
@@ -297,10 +331,18 @@ class Eye:
         s0, s1 = self.grid(self.show0, t, p_root), self.grid(self.show1, t, p_root)
         g = s0+lam*(s1-s0)                                             # 0 under the skin, 1 where the lid shows
         # the root must also be on its own lid's side of the margin's travel (a root past the far edge has no sheet)
-        g = g*np.where(up, p_root <= self.furlines(t)[0], p_root >= self.furlines(t)[1])
+        g = g*np.where(up, p_root <= self.rootlines(t)[0], p_root >= self.rootlines(t)[1])
         g = g*(np.where(up, su, sl) > 0)                               # a lid that has not moved shows no fur
-        band = np.where(up, self.band_top(t, close, squint, 'upper', wince), self.band_top(t, close, squint, 'lower', wince))
-        g = g*(a_ > band)
+        band = np.where(up, self.band_top_fur(t, close, squint, 'upper', wince), self.band_top_fur(t, close, squint, 'lower', wince))
+        cov = np.where(up, self.ribbon_cover(t, 'upper'), self.ribbon_cover(t, 'lower'))
+        g = g*(a_ > band*cov)
+        sd_root = self.grid(self.sdz, t, p_root)
+        if self.xfade > 0 and self.fur_u is not None:
+            # fix pass 4, the cross-fade: past the lid fur edge each strand shows only if its random number is under the lid's
+            # share there (the face fur rooted there is hidden at the complementary share, face_radii)
+            g = g*(self.fur_u[ix] < self.lid_weight(sd_root))
+        if 'noedgelid' in self.flags:
+            g = g*(sd_root >= L['edge_hide_mm'])
         # the source face strand's own shape in the surface frame (eyelids_build: fur_prof3), scaled by how far the strand
         # has come out from under the rim; along the wince folds the fur bunches up (stands higher, lies shorter)
         prof = self.fur_prof3[ix]*g[:, None, None]
@@ -314,10 +356,23 @@ class Eye:
         # (it starts past half travel: a half-open or squinting lid keeps the face's own tone next to its margin)
         near = 1-smooth((a_-band)/L['margin_dark_deg'])
         ramp = lambda x: smooth((x-0.5)/0.5)
-        self.tone_mult[ix] = 1-L['margin_dark']*near*np.where(up, ramp(su), L['margin_dark_lower']*ramp(sl))
+        # (fix pass 4: only along the ribbon band; past its outer end the strands keep the face's tone)
+        self.tone_mult[ix] = 1-L['margin_dark']*near*cov*np.where(up, ramp(su), L['margin_dark_lower']*ramp(sl))
         # thinned where a point lies over the moved ribbon band (as sparse_caps thinned the face fur over the ribbon)
         rad = np.where(self.over_ribbon(T, P, close, squint, wince), 0., rad)
         return X, rad
+
+    def _corner_strands(self, ix, close, squint, wince):
+        """Fix pass 4: face-fur strands rooted along the closed line's extension past the ribbon's outer end, lying along it
+        toward the outer corner, shown as both lids near the line (a closed eye or a wince; not half, not squint)."""
+        F = self.fur
+        t = F['theta'][ix]
+        pu, pl, su, sl = self.margins(t, close, squint, wince)
+        g = np.broadcast_to(smooth((np.minimum(su, sl)-0.5)/0.4), t.shape)
+        p_root = (pu+pl)/2+F['a'][ix]
+        prof = self.fur_prof3[ix]*(g > 1e-4)[:, None, None]
+        X, _, _ = self._place(ix, t, p_root, prof, close, squint, wince)
+        return X, self.fur_rad[ix]*(g > 1e-4)[:, None]
 
     def _lash_strands(self, ix, close, squint, wince):
         """The lash line: short dark strands rooted along each lid margin, leaning over the line where the lids meet."""
@@ -366,15 +421,29 @@ class Eye:
         s = su if which == 'upper' else sl
         return self.L['ribbon_m0_deg']+w*self.band_factor(t, w, s, which)
 
+    def band_top_fur(self, t, close, squint, which, wince=0.):
+        """Fix pass 4: degrees from the margin to the top of the ribbon band where it lies over the lid (away from the eye):
+        band_top with the band's signed reach (at the outer end the upper ribbon curls down into the eye, over the line,
+        and leaves the lid above the margin bare). Before pass 4 (no signed arrays) it is band_top."""
+        if self.band_out is None:
+            return self.band_top(t, close, squint, which, wince)
+        tt, wu, wl = self.band
+        _, _, su, sl = self.margins(t, close, squint, wince)
+        w = interp1(tt, wu if which == 'upper' else wl, t)
+        wo = interp1(tt, self.band_out[0] if which == 'upper' else self.band_out[1], t)
+        s = su if which == 'upper' else sl
+        return self.L['ribbon_m0_deg']+wo*self.band_factor(t, w, s, which)
+
     def over_ribbon(self, T, P, close, squint, wince=0.):
         pu, pl, su, sl = self.margins(T, close, squint, wince)
-        bu = self.band_top(T, close, squint, 'upper', wince)
-        bl = self.band_top(T, close, squint, 'lower', wince)
+        bu = self.band_top_fur(T, close, squint, 'upper', wince)
+        bl = self.band_top_fur(T, close, squint, 'lower', wince)
         inside = (T > self.thm) & (T < self.thl)
         w = self.L['roll_deg']
         # the bands, and each lid's dark rolled lip under them: fur from either lid crossing the margins is thinned there,
         # so the closed line (lips and bands together) is not hidden under lid fur
-        bands = ((P >= pu) & (P <= pu+bu+0.3)) | ((P <= pl) & (P >= pl-bl-0.3))
+        cu, cl = self.ribbon_cover(T, 'upper'), self.ribbon_cover(T, 'lower')
+        bands = (((P >= pu) & (P <= pu+bu+0.3)) & (cu > 0.5)) | (((P <= pl) & (P >= pl-bl-0.3)) & (cl > 0.5))
         lips = ((P <= pu) & (P >= pu-w-0.3)) | ((P >= pl) & (P <= pl+w+0.3))
         return inside & (bands | lips)
 
@@ -422,6 +491,37 @@ class Eye:
         lower = (ph <= lo_l+pad) & (ph >= lo_l-bl-pad)
         return upper | lower | (th <= self.thm) | (th >= self.thl)
 
+    def face_radii(self, close, squint, wince=0.):
+        """The face-fur points this eye overrides, and their radii (NaN: keep the fur of record's): the caps under the
+        ribbon's old place (as before pass 4), and the face strands rooted in the cross-fade band, hidden at the face fur's
+        complementary share there as far as each lid has moved (fix pass 4; the cause-test flag nofaceband hides every face
+        strand rooted within 4 mm outside the lid fur edge once the lid moves). None when nothing is recorded."""
+        C, B = self.capdata, self.fb
+        parts_i, parts_r = [], []
+        if len(C['idx']):
+            over = self.over_ribbon_rest(C['th'], C['ph'], close, squint, wince)
+            parts_i.append(np.asarray(C['idx'], np.int64))
+            parts_r.append(np.where(over, C['r_now'], C['r_full']).astype(float))
+        if B is not None and len(B['pidx']):
+            _, _, su, sl = self.margins(np.array([0.5*(self.thm+self.thl)]), close, squint, wince)
+            lam = np.where(B['side'] > 0, float(np.ravel(self.lam(su))[0]), float(np.ravel(self.lam(sl))[0]))
+            hide = np.zeros(len(B['sd']), bool)
+            if self.xfade > 0:
+                hide = B['v'] < lam*self.lid_weight(B['sd'])
+            if 'nofaceband' in self.flags:
+                hide = hide | ((B['sd'] > -(self.L['fur_out_mm']+4.0)) & (lam > 0))
+            parts_i.append(np.asarray(B['pidx'], np.int64))
+            parts_r.append(np.where(hide[B['pstrand']], 0., np.nan))
+        if not parts_i:
+            return None
+        idx = np.concatenate(parts_i)
+        r = np.concatenate(parts_r)
+        # a point in both: hidden wins, then the caps value
+        order = np.lexsort((np.isnan(r), r != 0, idx))
+        idx, r = idx[order], r[order]
+        first = np.r_[True, idx[1:] != idx[:-1]]
+        return idx[first], r[first]
+
     def catch_visible(self, close, squint, wince=0.):
         t, p = self.catch
         pu, pl, _, _ = self.margins(np.array([t]), close, squint, wince)
@@ -454,6 +554,7 @@ class Lids:
         E = self.eyes[eye]
         flags = set(flags or ())
         E.hold_lower = 'holdlower' in flags
+        E.flags = flags
         is_open = close == 0 and squint == 0 and wince == 0
         t = E.lid_th
         out = dict(open=is_open, upper=E.lid_sheet('upper', t, close, squint, wince).reshape(-1, 3),
@@ -470,6 +571,12 @@ class Lids:
         out['fur_tone_mult'] = E.tone_mult.copy()
         out['ribbon'] = None if is_open else E.ribbon(close, squint, wince)
         out['caps'] = None if (is_open or 'keepcaps' in flags) else E.caps(close, squint, wince)
+        # fix pass 4: every face-fur radius this eye overrides (caps and the cross-fade band); None when open
+        fr = None if is_open else E.face_radii(close, squint, wince)
+        if fr is not None and 'keepcaps' in flags and len(E.capdata['idx']):
+            ci = np.isin(fr[0], E.capdata['idx'])
+            fr = (fr[0], np.where(ci & ~(fr[1] == 0), np.nan, fr[1]))
+        out['face'] = fr
         out['catch'] = True if is_open else E.catch_visible(close, squint, wince)
         return out
 
@@ -479,7 +586,7 @@ STATES = {'open': dict(close=0., squint=0., wince=0.), 'half': dict(close=0.5, s
           'closed': dict(close=1., squint=0., wince=0.)}
 
 
-FLAGS = ('holdlower', 'nolidfur', 'nolowerfur', 'noupperfur', 'keepcaps')
+FLAGS = ('holdlower', 'nolidfur', 'nolowerfur', 'noupperfur', 'keepcaps', 'noedgelid', 'nofaceband')
 
 
 def parse_state(text):

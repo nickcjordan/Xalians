@@ -11,6 +11,8 @@
       fix pass 2: <frames dir>/faint-fur/faint35/{crop_eyeside,crop_eyetq,sprite}/0035.png and 0036.png; sprite 4x and 1x
   python art/species-construction/anim/eyelids_sheet.py closed3 <spec json> <out png>
       fix pass 3: rows of fur side and three-quarter crops with the under-eye area's crop and mean Y (see closed3)
+  python art/species-construction/anim/eyelids_sheet.py closed4 <spec json> <out png>
+      fix pass 4: rows of captioned cells (crops, under-eye crops), pass 4 beside pass 3 (see closed4)
   python art/species-construction/anim/eyelids_sheet.py diff <approved png> <test png> <out prefix> [--label text]
       writes <out prefix>-diff.png (approved | test | |difference| x16 | any difference in amber) and prints and returns
       the numbers (max, mean, pixels over 0, 2, 8 levels) as JSON in <out prefix>-diff.json
@@ -234,6 +236,61 @@ def closed3(spec, out):
     print('sheet', out, sheet.size)
 
 
+def closed4(spec, out):
+    """Fix pass 4 sheet from a JSON spec: {"title", "columns": [titles], "sections": [{"title", "rows": [{"title", "cells":
+    [{"png", "caption"?, "under_eye"?: {"open", "open_masks", "lids"?}, "crop"?: [x0, y0, x1, y1], "scale"?} or null]}]}]}.
+    A cell is the image (or, with under_eye, the under-eye crop of the image at 2x with its mean Y against the open frame's;
+    with crop, that pixel box scaled by `scale`), its caption over it (lines split by newline). Text labels only."""
+    S = json.loads(Path(spec).read_text())
+    F = font(22)
+    blocks = []
+    for sec in S['sections']:
+        cells, titles = [], []
+        for r in sec['rows']:
+            row = []
+            for c in r['cells']:
+                if c is None:
+                    row.append(None)
+                    continue
+                cap = c.get('caption', '')
+                if c.get('under_eye'):
+                    u = c['under_eye']
+                    im, y, y0 = under_eye(Path(u['open']), Path(u['open_masks']), Path(c['png']), lids_dir=u.get('lids'))
+                    cap = (cap+'\n' if cap else '')+f'under-eye mean Y {y:.1f} ({y-y0:+.1f} against open {y0:.1f})'
+                else:
+                    im = Image.open(c['png']).convert('RGB')
+                    if c.get('crop'):
+                        x0, y0_, x1, y1 = c['crop']
+                        k = c.get('scale', 4)
+                        im = im.crop((x0, y0_, x1, y1)).resize(((x1-x0)*k, (y1-y0_)*k), Image.LANCZOS)
+                lines = cap.split('\n') if cap else []
+                cell = Image.new('RGB', (im.width, im.height+30*len(lines)+8), BG)
+                cell.paste(im, (0, 30*len(lines)+8))
+                d = ImageDraw.Draw(cell)
+                for k, ln in enumerate(lines):
+                    d.text((4, 4+30*k), ln, fill=INK, font=F)
+                row.append(cell)
+            cells.append(row)
+            titles.append(r['title'])
+        n = max(len(c) for c in cells)
+        cells = [c+[None]*(n-len(c)) for c in cells]
+        tmp = Path(out).with_suffix('.part%d.png' % len(blocks))
+        grid_sheet(cells, S['columns'][:n], titles, tmp, label_w=230)
+        blocks.append((sec['title'], Image.open(tmp).convert('RGB')))
+        tmp.unlink()
+    W = max(b.width for _, b in blocks)
+    H = sum(b.height+70 for _, b in blocks)+80
+    sheet = Image.new('RGB', (W, H), BG)
+    ImageDraw.Draw(sheet).text((16, 16), S.get('title', ''), fill=INK, font=font(40))
+    y = 80
+    for t, b in blocks:
+        ImageDraw.Draw(sheet).text((16, y+16), t, fill=INK, font=font(34))
+        sheet.paste(b, (0, y+70))
+        y += b.height+70
+    sheet.save(out)
+    print('sheet', out, sheet.size)
+
+
 def diff(approved, test, prefix, label=''):
     a = np.asarray(Image.open(approved).convert('RGB')).astype(np.int16)
     b = np.asarray(Image.open(test).convert('RGB')).astype(np.int16)
@@ -272,6 +329,8 @@ if __name__ == '__main__':
         faint2(Path(sys.argv[2]), Path(sys.argv[3]))
     elif cmd == 'closed3':
         closed3(Path(sys.argv[2]), Path(sys.argv[3]))
+    elif cmd == 'closed4':
+        closed4(Path(sys.argv[2]), Path(sys.argv[3]))
     elif cmd == 'diff':
         lab = sys.argv[sys.argv.index('--label')+1] if '--label' in sys.argv else ''
         diff(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4], lab)

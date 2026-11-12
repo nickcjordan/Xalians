@@ -55,12 +55,16 @@ LEVERS = dict(
     wince_arch_deg=24.0, wince_fold_upper_mm=1.6, wince_fold_upper_at_deg=7.0, wince_fold_upper2_mm=1.0, wince_fold_upper2_at_deg=15.0,
     wince_fold_lower_mm=1.4, wince_fold_lower_at_deg=6.0, wince_fold_width_deg=2.2, wince_bunch=0.6,
     lid_columns=150, lid_theta_pad_deg=6.0,
-    fur_density_scale=1.0, ring_inner_mm=2.0, ring_outer_mm=12.0, fur_src_k=10, fur_head_k=40, fur_lift_upper=0.75, fur_lift_lower=0.55, fur_root_mm=0.05, fur_clear_mm=0.12, fur_sink_mm=0.10,
+    fur_density_scale=1.0, ring_inner_mm=2.0, ring_outer_mm=12.0, fur_src_k=10, fur_head_k=40, fur_lift_upper=0.75, fur_lift_lower=0.8, fur_root_mm=0.05, fur_clear_mm=0.12, fur_sink_mm=0.10,
     fur_emerge_deg=2.0, fur_seed=11, fur_edge_lift_upper_mm=0.0, fur_edge_lift_lower_mm=4.0, heading_harmonic=True, heading_harmonic_upper=False, heading_smooth_upper_mm=6.0, heading_ring_in_mm=1.0, heading_ring_w_mm=4.0,
     heading_slit_w_deg=1.0, slit_heading_deg=30.0, slit_inner_deg_upper=-30.0, slit_inner_deg_lower=60.0, fur_reach_upper_mm=1000.0, fur_reach_lower_mm=5.5, fur_reach_dither=0.45, fur_reach_min=0.35,
     lash_count=240, lash_len_mm=5.0, lash_lower_scale=0.6, lash_tone=0.05, lash_radius_mm=0.55, lash_root_deg=0.25,
     lash_frame_deg=1.5, margin_dark=0.8, margin_dark_deg=4.0, margin_dark_lower=0.6,
-    ribbon_m0_deg=-0.9, ribbon_close_widen_upper=1.5, ribbon_close_upper_min_deg=9.0, ribbon_close_lower_min_deg=5.0, caps_pad_deg=0.6)
+    ribbon_m0_deg=-0.9, ribbon_close_widen_upper=1.5, ribbon_close_upper_min_deg=9.0, ribbon_close_lower_min_deg=5.0, caps_pad_deg=0.6,
+    xfade_mm=4.0, src_foot_lower=True, src_foot_upper=False, src_band_lower_mm=[1.6, 9.0], foot_deg=1.0, fb_extent_mm=8.0, fb_seed=23,
+    edge_hide_mm=3.0, ribbon_end_fade_deg=0.75, fur_density_scale_lower=1.3,
+    src_k_lower=30, src_uniform_lower=True,
+    corner_count=60, corner_from_deg=-0.5, corner_to_deg=4.0, corner_off_deg=1.2, corner_len_mm=4.0, corner_lift=0.5)
 LEVER_NOTES = {
     'delta_mm': 'lid height over the globe inside the opening (surface mm; x0.793 for rig mm)',
     'tuck_deg': 'open lid margin this far past the rim, under the skin',
@@ -89,6 +93,15 @@ LEVER_NOTES = {
     'heading_smooth_upper_mm': 'pass 3: the upper lid keeps the pass 2 heading field (heading_harmonic_upper False) smoothed among its own strands with this Gaussian (two passes): the V above the inner half of the eye',
     'heading_harmonic': 'pass 3 (the lower lid; the upper lid only with heading_harmonic_upper): lid fur headings are the harmonic fill of the face fur headings round the lid and of slit_heading_deg along the closed line (no source or parting inside a lid)',
     'slit_heading_deg': 'pass 3: along the closed line the lid fur points away from it, turned this many degrees toward the outer corner',
+    'xfade_mm': 'pass 4: the lid fur and the face fur cross-fade over this band outside the lid fur edge (sd -fur_out_mm to -(fur_out_mm+xfade_mm)): lid fur roots run on into it at a density ramping from full to none, and the face fur rooted there is hidden at the complementary share (per strand, at random), so each point has one layer of fur at the face density, not the lid fur lying over the face fur (0 = pass 3: lid fur roots stop at -fur_out_mm, the face fur all kept)',
+    'src_foot_lower': "pass 4: each lower lid strand copies a face strand from the band just outside the lid (src_band_lower_mm out from the zone edge, between the corners, nearest to the strand's foot: its own column foot_deg past the lid fur edge, or its own place when it lies in the cross-fade band), and the lower lid density is measured in that band. Pass 3 copied ring strands 2 to 12 mm out nearest to the strand's closed place: 5.4 to 7.9 mm long against 2.5 to 2.9 mm for the face fur below the eye, 2.3 times its fibre per mm2 (the grey oval)",
+    'fur_density_scale_lower': 'pass 4: the lower lid density on top of fur_density_scale: the lower lid copies the short strands nearest its edge (2.8 mm on average) while the face fur below the eye also carries longer strands from farther out lying over it (3.3 mm on average in the band, fibre 2.2 to 2.9 mm per mm2); at 1.0 the lower lid had 1.8 to 2.4 mm of fibre per mm2 against 2.3 to 2.9 in the face fur below it (eyelids_coverage.py)',
+    'fur_lift_lower': 'pass 4: the lower lid fur lies at this share of its source strand lift (0.55 in passes 2 and 3; with the short strands it now copies, 0.55 laid them into a smooth, pale stubble)',
+    'corner_count': "pass 4: the outer end of the closed line: this many face-fur strands rooted along the line's extension past the ribbon's outer end (corner_from_deg to corner_to_deg of theta past it, within corner_off_deg of the line), lying along it toward the outer corner (at most corner_len_mm, lift x corner_lift), shown as both lids near the line. The lid fur on either side points away from the line, and past the ribbon's end nothing covered the strip between: the bare skin the open ribbon's flick had lain over showed there (the pale spot). 0 = none",
+    'src_k_lower': 'pass 4: the lower lid strand picks its source among this many band strands nearest its foot (with src_uniform_lower, at equal weight)',
+    'fb_extent_mm': 'pass 4: face strands rooted within this far outside the zone edge are recorded (lids.npz fb_*) for the cross-fade and the nofaceband cause test',
+    'edge_hide_mm': 'pass 4 cause test (flag noedgelid): lid fur strands rooted at sd under this (the outer band of the lid fur) are hidden',
+    'ribbon_end_fade_deg': "pass 4: the lid fur cut under the ribbon band (and its thinning over it) fades out over this past the ribbon's own end: past the outer end of the closed line the cut stood 4 degrees wide with no ribbon there, and the bare lid sheet showed (the pale spot)",
 }
 
 
@@ -117,6 +130,23 @@ def main(maps_dir, probe_dir, out, overrides=None):
     full = nine & (rad[st] >= 0.000699) & (lens > 0.002)
     prof = np.median(np.array([rad[s:s+9] for s in st[full]]), axis=0)
     fdom = {n: (d, t) for n, d, t in PJ['furAttributes']}
+
+    def nine_of(i, v):
+        """Fix pass 4: a strand's per-point values at 9 points evenly along its length (a 9-point strand as it is). Below the
+        eye most face strands are short and carry 27 to 60 points (pale, 2.1 to 3.4 mm); the lid fur's strands have 9."""
+        s_, n_ = st[i], cnt[i]
+        if n_ == 9:
+            return v[s_:s_+9]
+        seg_ = np.linalg.norm(np.diff(FP[s_:s_+n_], axis=0), axis=1)
+        u_ = np.r_[0, np.cumsum(seg_)]
+        u_ = u_/max(u_[-1], 1e-12)
+        q_ = np.linspace(0, 1, 9)
+        vv = np.asarray(v[s_:s_+n_])
+        if vv.dtype.kind in 'iub':
+            return vv[np.clip(np.searchsorted(u_, q_), 0, n_-1)]
+        if vv.ndim == 1:
+            return np.interp(q_, u_, vv)
+        return np.stack([np.interp(q_, u_, vv[:, k]) for k in range(vv.shape[1])], 1)
     # ---- sparse_caps replayed: which face-fur points lie in each ribbon's footprint
     ang = np.radians(2.)
     up2 = np.array((0., np.sin(ang), np.cos(ang)))
@@ -227,6 +257,16 @@ def main(maps_dir, probe_dir, out, overrides=None):
         furL = np.array([ph[zs[:, j] & (ph < mid[j])].min() if (zs[:, j] & (ph < mid[j])).any() else rimL[j] for j in range(len(th))])
         furU, furL = np.maximum(furU, rimU), np.minimum(furL, rimL)
         A[key+'furU'], A[key+'furL'] = furU, furL
+        # fix pass 4: the lid fur roots run on past the lid fur edge over the cross-fade band (xfade_mm); the sheet keeps furU/furL
+        xf = L['xfade_mm']
+        if xf > 0:
+            zs2 = sd > -(L['fur_out_mm']+xf)
+            rootU = np.array([ph[zs2[:, j] & (ph > mid[j])].max() if (zs2[:, j] & (ph > mid[j])).any() else furU[j] for j in range(len(th))])
+            rootL = np.array([ph[zs2[:, j] & (ph < mid[j])].min() if (zs2[:, j] & (ph < mid[j])).any() else furL[j] for j in range(len(th))])
+            rootU, rootL = np.maximum(rootU, furU), np.minimum(rootL, furL)
+        else:
+            rootU, rootL = furU, furL
+        A[key+'rootU'], A[key+'rootL'] = rootU, rootL
         gU, gL = (furU-rimU)[cols], (rimL-furL)[cols]
         # ---- the lifted field (pass 2). A lid that has started to move lies on one smooth surface: over the globe in the
         # opening (delta, clearing the iris), lift_over over the bare skin round it, and under the skin past the zone edge,
@@ -357,7 +397,7 @@ def main(maps_dir, probe_dir, out, overrides=None):
         A[key+'skin_off'] = Hs
         # where a lid's fur shows: open (tucked) inside the opening only; lifted, over the zone and fur_out past it
         A[key+'show0'] = np.where(opening, ec.smooth(din/L['fur_emerge_deg']), 0.)
-        A[key+'show1'] = np.where(opening, 1., ec.smooth((sd+L['fur_out_mm'])/L['fur_fade_mm']))  # (the face fur still covers the widened band below the eye)
+        A[key+'show1'] = np.where(opening, 1., ec.smooth((sd+L['fur_out_mm']+L['xfade_mm'])/L['fur_fade_mm']))  # (the face fur still covers the widened band below the eye)
         rec_fill = dict(fill_raise_max_mm=float(((lf-ob)*(Z & near_eye)).max()*1000),
                         over_skin_max_mm=float(((lf-Hs)*(Z & ~opening & near_eye)).max()*1000))
         iris_clear = (rg+loff-ri)[np.isfinite(ri) & opening]
@@ -385,6 +425,18 @@ def main(maps_dir, probe_dir, out, overrides=None):
             if (near & (cls == -1)).any():
                 wl[k] = ext[near & (cls == -1)].max()
         A[key+'band_theta'], A[key+'band_upper'], A[key+'band_lower'] = bt, wu, wl
+        # fix pass 4: the same, signed: how far each band reaches away from the eye (up for the upper ribbon, down for the
+        # lower). At the outer end the upper ribbon's flick curls down into the eye (up to 1.7 degrees below its rim), so the
+        # unsigned width cut the upper lid fur up to 4 degrees above the margin where no ribbon lies: the pale spot
+        ext_s = np.where(cls[:, None] == 1, rph-ph0[:, None], ph0[:, None]-rph).max(1).clip(0)
+        wus, wls = np.zeros(len(bt)), np.zeros(len(bt))
+        for k, t in enumerate(bt):
+            near = np.abs(th0-t) < 1.5
+            if (near & (cls == 1)).any():
+                wus[k] = ext_s[near & (cls == 1)].max()
+            if (near & (cls == -1)).any():
+                wls[k] = ext_s[near & (cls == -1)].max()
+        A[key+'band_upper_out'], A[key+'band_lower_out'] = wus, wls
         # ---- catch light centre
         cv = P['catch light head_iris_and_pupil_'+side+'__v'].mean(0)-c
         A[key+'catch'] = np.array([np.degrees(np.arctan2(cv@lat, cv@f)), np.degrees(np.arctan2(cv@up, np.hypot(cv@lat, cv@f)))])
@@ -424,15 +476,26 @@ def main(maps_dir, probe_dir, out, overrides=None):
         bandG = near_eye & ~opening & (sd < -L['ring_inner_mm']) & (sd > -L['ring_outer_mm']) & (((S3-c)@f) > 0)
         clG = np.interp(TH, th, close)
         dens, ring_rec = {}, {}
+        foot = {1: L['src_foot_upper'], -1: L['src_foot_lower']}
+        sb0, sb1 = L['src_band_lower_mm']
+        nearF = np.linalg.norm(Drf, axis=1) < grid(rvis, rthF, rphF)+0.003      # rooted on the skin round the eye, not on the muzzle
+        ringFb = liveF & (sdF < -sb0) & (sdF > -sb1) & nearF & (rthF > thm) & (rthF < thl)
+        bandGb = near_eye & ~opening & (sd < -sb0) & (sd > -sb1) & (((S3-c)@f) > 0) & (TH > thm) & (TH < thl)
         for lid, sideF, sideG in ((1, rphF > clF, PHg > clG), (-1, rphF < clF, PHg < clG)):
+            if foot[lid]:
+                # fix pass 4: the density of the band the lid strands copy, between the corners
+                n_, a_ = int((ringFb & sideF).sum()), float(cellA[bandGb & sideG].sum())
+                dens[lid] = n_/a_ if a_ > 0 else 0.45
+                ring_rec[lid] = dict(roots=n_, area_mm2=round(a_), per_mm2=round(dens[lid], 3), band_mm=[sb0, sb1])
+                continue
             n_, a_ = int((ringF & sideF).sum()), float(cellA[bandG & sideG].sum())
             dens[lid] = n_/a_ if a_ > 0 else 0.45
             ring_rec[lid] = dict(roots=n_, area_mm2=round(a_), per_mm2=round(dens[lid], 3),
                                  sources=int((src_ok & sideF).sum()))
         rng = np.random.default_rng(L['fur_seed']+(0 if e == 'eye1' else 1))
         roots = dict(lid=[], theta=[], a=[])
-        for lid, span in ((1, lambda t: np.interp(t, th, furU)-(np.interp(t, th, close)+L['closed_half_gap_deg'])),
-                          (-1, lambda t: (np.maximum(np.interp(t, th, close), np.interp(t, th, A[key+'winceline']))-L['closed_half_gap_deg'])-np.interp(t, th, furL))):
+        for lid, span in ((1, lambda t: np.interp(t, th, rootU)-(np.interp(t, th, close)+L['closed_half_gap_deg'])),
+                          (-1, lambda t: (np.maximum(np.interp(t, th, close), np.interp(t, th, A[key+'winceline']))-L['closed_half_gap_deg'])-np.interp(t, th, rootL))):
             tt = rng.uniform(thm-4, thl+4, 600000)
             amax = np.maximum(span(tt), 0)
             aa = rng.uniform(0, 1, len(tt))*amax.max()
@@ -443,11 +506,11 @@ def main(maps_dir, probe_dir, out, overrides=None):
             pmid = np.interp(tt, th, close)+lid*(L['closed_half_gap_deg']+aa)
             if lid == -1:
                 pw = np.interp(tt, th, A[key+'winceline'])-(L['closed_half_gap_deg']+aa)
-                pmid = np.where(pmid >= np.interp(tt, th, furL), pmid, pw)
+                pmid = np.where(pmid >= np.interp(tt, th, rootL), pmid, pw)
             r0 = grid(rg, tt, pmid)+np.maximum(grid(lf, tt, pmid), 0)
             box = (thl-thm+8)*amax.max()*np.radians(1)**2
             dA = r0**2*np.cos(np.radians(pmid))*1e6*box/600000
-            keep_ = rng.uniform(0, 1, len(tt)) < np.clip(dens[lid]*L['fur_density_scale']*dA, 0, 1)
+            keep_ = rng.uniform(0, 1, len(tt)) < np.clip(dens[lid]*L['fur_density_scale']*(L['fur_density_scale_lower'] if lid == -1 else 1.)*dA, 0, 1)
             roots['lid'].append(np.full(int(keep_.sum()), lid))
             roots['theta'].append(tt[keep_])
             roots['a'].append(aa[keep_])
@@ -462,18 +525,34 @@ def main(maps_dir, probe_dir, out, overrides=None):
         # are taken there; taken at the closed place, these strands came out short and standing, a lens-shaped patch of
         # stubble in the wincing lower lid
         pwin = np.interp(tht, th, A[key+'winceline'])-(L['closed_half_gap_deg']+aat)
-        phome = np.where((lidv == -1) & (pcl < np.interp(tht, th, furL)), pwin, pcl)
+        phome = np.where((lidv == -1) & (pcl < np.interp(tht, th, rootL)), pwin, pcl)
         Xl = c+(np.cos(np.radians(pcl))[:, None]*(np.cos(np.radians(tht))[:, None]*f+np.sin(np.radians(tht))[:, None]*lat)
                 + np.sin(np.radians(pcl))[:, None]*up)*(grid(rg, tht, pcl)+np.maximum(grid(lf, tht, pcl), grid(Hs, tht, pcl)))[:, None]
         src_idx = np.zeros(len(lidv), int)
         for lid, sideF in ((1, rphF > clF), (-1, rphF < clF)):
             cand_ = np.flatnonzero(src_ok & sideF)
             me = np.flatnonzero(lidv == lid)
-            dq, iq = cKDTree(FP[st[cand_]]).query(Xl[me], k=L['fur_src_k'])
+            Xq = Xl[me]
+            if foot[lid]:
+                # fix pass 4: from the band just outside the lid, between the corners, nearest to the strand's foot (its column,
+                # foot_deg past the lid fur edge; a strand in the cross-fade band is its own foot)
+                cand_ = np.flatnonzero(liveF & (cnt >= 9) & ~flagged_strand & sideF & (sdF < -sb0) & (sdF > -sb1) & nearF & (rthF > thm) & (rthF < thl))
+                edge_ = np.interp(tht[me], th, furU if lid == 1 else furL)+lid*L['foot_deg']
+                pf = np.where(lid*(phome[me]-edge_) < 0, edge_, phome[me])
+                tf = tht[me]
+                Xq = c+(np.cos(np.radians(pf))[:, None]*(np.cos(np.radians(tf))[:, None]*f+np.sin(np.radians(tf))[:, None]*lat)
+                        + np.sin(np.radians(pf))[:, None]*up)*grid(rvis, tf, pf)[:, None]
+            kq = L['src_k_lower'] if (foot[lid] and lid == -1) else L['fur_src_k']
+            dq, iq = cKDTree(FP[st[cand_]]).query(Xq, k=kq)
             wq = 1/(dq**2+1e-6)
+            if foot[lid] and lid == -1 and L['src_uniform_lower']:
+                # fix pass 4: any of the src_k_lower nearest band strands with equal weight, so the lower lid carries the
+                # band's own mix of short pale strands and the longer ones from farther out (nearest-first gave only the short
+                # ones at the rim: a pale, even stubble)
+                wq = np.ones_like(wq)
             cw = np.cumsum(wq, 1)
             pick = (cw < rng.uniform(0, 1, len(me))[:, None]*cw[:, -1:]).sum(1)
-            src_idx[me] = cand_[iq[np.arange(len(me)), np.minimum(pick, L['fur_src_k']-1)]]
+            src_idx[me] = cand_[iq[np.arange(len(me)), np.minimum(pick, kq-1)]]
         # headings: each lid strand keeps its source's shape (length, lift, curl) but is turned about its normal to the
         # heading of a smooth field, the distance-weighted mean (1/d^2, the fur_head_k nearest) of the ring strands' own
         # headings on its side. Copying the source's heading alone left partings down the middle of each lid where the
@@ -616,15 +695,40 @@ def main(maps_dir, probe_dir, out, overrides=None):
             ii = np.flatnonzero(np.sign(lash_lid) == ll)
             _, nn_ = cKDTree(tht[mine, None]).query(lash_t[ii, None])
             lash_src[ii] = src_idx[mine[nn_]]
-        A[key+'fur_lid'] = np.concatenate([lidv, lash_lid])
-        A[key+'fur_theta'] = np.concatenate([tht, lash_t])
-        A[key+'fur_a'] = np.concatenate([aat, np.full(2*nl, L['lash_root_deg'])])
-        nfur = len(lidv)+2*nl
+        # fix pass 4: the corner strands (lid 5) along the closed line's extension past the ribbon's outer end
+        nc_ = int(L['corner_count'])
+        rngc = np.random.default_rng(L['fb_seed']+(5 if e == 'eye1' else 6))
+        rib_hi = float(th0[cls == 1].max()) if (cls == 1).any() else thl
+        cor_t = rib_hi+rngc.uniform(L['corner_from_deg'], L['corner_to_deg'], nc_)
+        cor_off = rngc.uniform(-L['corner_off_deg'], L['corner_off_deg'], nc_)
+        cor_src = np.zeros(nc_, int)
+        if nc_:
+            pc_ = np.interp(cor_t, th, close)+cor_off
+            Xc_ = c+(np.cos(np.radians(pc_))[:, None]*(np.cos(np.radians(cor_t))[:, None]*f+np.sin(np.radians(cor_t))[:, None]*lat)
+                     + np.sin(np.radians(pc_))[:, None]*up)*grid(rvis, cor_t, pc_)[:, None]
+            cand_ = np.flatnonzero(src_ok)
+            _, iq = cKDTree(FP[st[cand_]]).query(Xc_, k=6)
+            cor_src = cand_[iq[np.arange(nc_), rngc.integers(0, 6, nc_)]]
+        rng4 = np.random.default_rng(L['fb_seed']+(0 if e == 'eye1' else 1))
+        A[key+'fur_u'] = np.concatenate([rng4.uniform(0, 1, len(lidv)), np.zeros(2*nl), np.zeros(nc_)])
+        # fix pass 4: the face strands rooted within fb_extent_mm outside the zone edge (on the skin round the eye, near the eye
+        # in theta): their point indices in the fur object, root sd, side of the closed line and a random number each
+        fbs = np.flatnonzero(liveF & nearF & (sdF > -L['fb_extent_mm']) & (rthF > thm-14) & (rthF < thl+14))
+        A[key+'fb_sd'] = sdF[fbs]
+        A[key+'fb_side'] = np.where(rphF[fbs] > clF[fbs], 1, -1)
+        A[key+'fb_v'] = rng4.uniform(0, 1, len(fbs))
+        A[key+'fb_pidx'] = np.concatenate([gofs[i]+np.arange(cnt[i]) for i in fbs]) if len(fbs) else np.zeros(0, int)
+        A[key+'fb_pstrand'] = np.repeat(np.arange(len(fbs)), cnt[fbs])
+        A[key+'rib_ext'] = np.array([th0[cls == 1].min(), th0[cls == 1].max(), th0[cls == -1].min(), th0[cls == -1].max()])
+        A[key+'fur_lid'] = np.concatenate([lidv, lash_lid, np.full(nc_, 5)])
+        A[key+'fur_theta'] = np.concatenate([tht, lash_t, cor_t])
+        A[key+'fur_a'] = np.concatenate([aat, np.full(2*nl, L['lash_root_deg']), cor_off])
+        nfur = len(lidv)+2*nl+nc_
         A[key+'fur_len'] = np.zeros(nfur)
         A[key+'fur_gamma'] = np.zeros(nfur)
         A[key+'fur_jit'] = np.zeros(nfur)
         A[key+'fur_profile'] = prof
-        all_src = np.concatenate([src_idx, lash_src])
+        all_src = np.concatenate([src_idx, lash_src, cor_src])
         A[key+'fur_src'] = all_src
         # source shapes in the true surface frame at the root: u the theta direction laid in the tangent plane, v = n x u
         # (toward +phi), w the skin normal (pass 1 used the globe's radial direction, which on the flattened front of the
@@ -641,7 +745,7 @@ def main(maps_dir, probe_dir, out, overrides=None):
         t1 /= np.linalg.norm(t1, axis=1, keepdims=True)
         t2 = np.cross(nS, t1)
         t2 *= np.sign(np.einsum('ij,ij->i', t2, ep))[:, None]
-        Ds = np.stack([FP[st[i]:st[i]+9] for i in src_idx])-P0[:, None, :]
+        Ds = np.stack([nine_of(i, FP) for i in src_idx])-P0[:, None, :]
         prof3 = np.stack([np.einsum('ijk,ik->ij', Ds, t1), np.einsum('ijk,ik->ij', Ds, t2), np.einsum('ijk,ik->ij', Ds, nS)], 2)
         h0 = prof3[:, -1, :2]/np.maximum(np.linalg.norm(prof3[:, -1, :2], axis=1, keepdims=True), 1e-9)
         ang = np.arctan2(heading[:, 1], heading[:, 0])-np.arctan2(h0[:, 1], h0[:, 0])
@@ -676,7 +780,8 @@ def main(maps_dir, probe_dir, out, overrides=None):
         # each strand's reach is dithered (fur_reach_dither, uniform either side), so the tips end at varied distances and
         # do not draw a line where the lid fur stops
         dith = 1+L['fur_reach_dither']*np.random.default_rng(L['fur_seed']+(7 if e == 'eye1' else 8)).uniform(-1, 1, len(lidv))
-        lim = -(L['fur_out_mm']+np.where(lidv == 1, L['fur_reach_upper_mm'], L['fur_reach_lower_mm'])*dith)[:, None]
+        # (fix pass 4: measured from the strand's own root where that lies in the cross-fade band)
+        lim = (np.minimum(-L['fur_out_mm'], sdl)-np.where(lidv == 1, L['fur_reach_upper_mm'], L['fur_reach_lower_mm'])*dith)[:, None]
         beyond = sdk < lim
         first = np.where(beyond.any(1), beyond.argmax(1), 9)
         k0 = np.maximum(first-1, 0)
@@ -686,8 +791,36 @@ def main(maps_dir, probe_dir, out, overrides=None):
         q = np.where(first < 9, np.maximum((k0+frac*(first > 0))/8, L['fur_reach_min']), 1.)
         prof3 *= q[:, None, None]
         rec_reach = dict(shortened=int((q < 1).sum()), of=int(len(q)), min_scale=float(q.min()))
-        A[key+'fur_prof3'] = np.concatenate([prof3, lash_prof])
-        A[key+'fur_rad'] = np.concatenate([np.stack([rad[st[i]:st[i]+9] for i in src_idx]), lash_rad])
+        # corner strands: the source's shape in its surface frame, turned to lie along +theta (toward the outer corner),
+        # flattened (corner_lift) and capped at corner_len_mm
+        if nc_:
+            Pc0 = FP[st[cor_src]]
+            Dc = Pc0-c
+            tc_ = np.arctan2(Dc@lat, Dc@f)
+            pc0 = np.arctan2(Dc@up, np.hypot(Dc@lat, Dc@f))
+            nC = SN[stree.query(Pc0)[1]].astype(float)
+            nC /= np.linalg.norm(nC, axis=1, keepdims=True)
+            etc = -np.sin(tc_)[:, None]*f+np.cos(tc_)[:, None]*lat
+            epc = -np.sin(pc0)[:, None]*(np.cos(tc_)[:, None]*f+np.sin(tc_)[:, None]*lat)+np.cos(pc0)[:, None]*up
+            u1 = etc-np.einsum('ij,ij->i', etc, nC)[:, None]*nC
+            u1 /= np.linalg.norm(u1, axis=1, keepdims=True)
+            u2 = np.cross(nC, u1)
+            u2 *= np.sign(np.einsum('ij,ij->i', u2, epc))[:, None]
+            Dcs = np.stack([nine_of(i, FP) for i in cor_src])-Pc0[:, None, :]
+            cp3 = np.stack([np.einsum('ijk,ik->ij', Dcs, u1), np.einsum('ijk,ik->ij', Dcs, u2), np.einsum('ijk,ik->ij', Dcs, nC)], 2)
+            hc = cp3[:, -1, :2]/np.maximum(np.linalg.norm(cp3[:, -1, :2], axis=1, keepdims=True), 1e-9)
+            angc = rngc.uniform(-0.25, 0.25, nc_)-np.arctan2(hc[:, 1], hc[:, 0])
+            ca_, sa_ = np.cos(angc)[:, None], np.sin(angc)[:, None]
+            a_u, a_v = cp3[:, :, 0].copy(), cp3[:, :, 1].copy()
+            cp3[:, :, 0], cp3[:, :, 1] = a_u*ca_-a_v*sa_, a_u*sa_+a_v*ca_
+            cp3[:, :, 2] *= L['corner_lift']
+            lc = np.linalg.norm(np.diff(cp3, axis=1), axis=2).sum(1)
+            cp3 *= np.minimum(1., L['corner_len_mm']/1000/np.maximum(lc, 1e-9))[:, None, None]
+            cor_rad = np.stack([nine_of(i, rad) for i in cor_src])
+        else:
+            cp3, cor_rad = np.zeros((0, 9, 3)), np.zeros((0, 9))
+        A[key+'fur_prof3'] = np.concatenate([prof3, lash_prof, cp3])
+        A[key+'fur_rad'] = np.concatenate([np.stack([nine_of(i, rad) for i in src_idx]), lash_rad, cor_rad])
         for name, (dom, typ) in fdom.items():
             if name.startswith('.') or name in ('position', 'radius', 'curve_type') or 'furattr__'+name not in P.files:
                 continue
@@ -695,12 +828,12 @@ def main(maps_dir, probe_dir, out, overrides=None):
             if dom == 'CURVE':
                 out_v = v[all_src].copy()
                 if name == 'pale':
-                    out_v[len(src_idx):] = 1.
+                    out_v[len(src_idx):len(src_idx)+2*nl] = 1.
                 if name == 'fur_tone':
-                    out_v[len(src_idx):] = L['lash_tone']
+                    out_v[len(src_idx):len(src_idx)+2*nl] = L['lash_tone']
                 A[key+'fa__'+name] = out_v
             else:
-                A[key+'fa__'+name] = np.concatenate([v[st[i]:st[i]+9] for i in all_src])
+                A[key+'fa__'+name] = np.concatenate([nine_of(i, v) for i in all_src])
         # lid skin attributes (the skin shader reads pale, pad, rim, eyed, padd, solef): per lid column, the nearest skin
         # vertex 1.5 degrees past the lid-fur extent (pass 1 took it at the rim, the bare skin of the eye ring)
         for lid, edge in (('upper', furU), ('lower', furL)):
@@ -724,6 +857,7 @@ def main(maps_dir, probe_dir, out, overrides=None):
             catch=A[key+'catch'].tolist(), lid_fur_strands=int(len(A[key+'fur_theta'])),
             lid_fur_upper=int((A[key+'fur_lid'] == 1).sum()), lid_fur_lower=int((A[key+'fur_lid'] == -1).sum()),
             lash_strands=int((np.abs(A[key+'fur_lid']) == 3).sum()), ring=ring_rec, reach=rec_reach, fill=rec_fill, caps_points=int(len(fi)),
+            face_band_strands=int(len(fbs)), face_band_points=int(len(A[key+'fb_pidx'])), corner_strands=int(nc_),
             ribbon_columns=dict(upper=int((cls == 1).sum()), lower=int((cls == -1).sum()), corner=int((cls == 0).sum())))
         print(e, rec['eyes'][e], flush=True)
     # ---- sheet faces (columns x rows grid), wound so the normal points out of the eye

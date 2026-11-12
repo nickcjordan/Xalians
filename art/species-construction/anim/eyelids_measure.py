@@ -5,6 +5,8 @@
   python art/species-construction/anim/eyelids_measure.py vband <png> <masks npz> <eye> [--lids dir] [--json out]
   python art/species-construction/anim/eyelids_measure.py crescent <open png> <open masks> <eye> <out prefix> name=<png> ...
       [--lids <lids dir>] [--label text]
+  python art/species-construction/anim/eyelids_measure.py outline <png> <masks npz> <eye> <out prefix> [--label text]
+  python art/species-construction/anim/eyelids_measure.py bare <png> <masks npz> <eye> [--json out]
 
 The masks come from eyelid_frames.py --masks: each eye's grid cells on the frame's outer surface, projected through the
 render camera, with the bare zone's signed distance `sd` (surface mm, positive inside the zone and the opening: the area a
@@ -307,6 +309,156 @@ def dash(png, npz, eye):
     return out
 
 
+OUTLINE_SECTORS = 12
+OUTLINE_EDGE = (-7., 3.)       # the lid boundary zone (sd mm): the lid fur edge, the cross-fade band and the lid fur tips
+OUTLINE_FACE = (-16., -9.)     # ordinary face fur farther out, the same width less one mm
+OUTLINE_LINE_MM = 7.           # the closed line and this much round it left out (the lashes, the ribbon's flick at the outer end)
+
+
+def outline(png, npz, eye, prefix=None, label_text=''):
+    """Fix pass 4, the oval outline: patch's edge step averages the profile all round the lid, so an outline that is light on
+    one side and dark on the other cancels out (pass 3 passed it with the outline in plain view). Here the pixels are split
+    into OUTLINE_SECTORS sectors by their angle round the lid's centre in the picture; per sector the mean Y in 0.5 mm bins of
+    sd (the line and OUTLINE_LINE_MM round it left out: the lashes and the ribbon's flick), smoothed with a 1 mm Gaussian; the edge strength is the largest |dY/d sd| (levels
+    per mm, over 2 mm) in OUTLINE_EDGE, and the face fur's own the same in OUTLINE_FACE. Printed and written to <prefix>.json:
+    both per sector, the largest of each over the sectors, and the sectors where the boundary is the stronger. <prefix>.png:
+    the crop with the sectors and the lid boundary drawn, and the per-sector profiles."""
+    rgb, Y = lum(png)
+    sd, line, opening, W, H = raster(npz, eye, Y.shape)
+    gy, gx = np.gradient(np.where(np.isfinite(sd), sd, 0))
+    g = np.hypot(gx, gy)
+    okg = np.isfinite(sd) & (np.abs(sd) < 8) & (g > 0) & (g < 5)
+    mm_per_px = float(np.median(g[okg])) if okg.any() else 0.455
+    far_line = binary_dilation(line, iterations=max(1, int(round(OUTLINE_LINE_MM/mm_per_px))))
+    fin = np.isfinite(sd)
+    lidm = fin & (sd >= 0)
+    yy, xx = np.nonzero(lidm)
+    cy, cx = float(yy.mean()), float(xx.mean())
+    Yi, Xi = np.mgrid[0:Y.shape[0], 0:Y.shape[1]]
+    ang = (np.degrees(np.arctan2(-(Yi-cy), Xi-cx)) % 360)
+    sec = (ang // (360/OUTLINE_SECTORS)).astype(int)
+    use = fin & ~far_line
+    edges = np.arange(-18, 6.01, 0.5)
+    mids = (edges[:-1]+edges[1:])/2
+    out = dict(png=str(png), masks=str(npz), eye=eye, mm_per_px=round(mm_per_px, 4), sectors=[], edge_zone_mm=list(OUTLINE_EDGE),
+               face_zone_mm=list(OUTLINE_FACE))
+    profs = []
+    for k in range(OUTLINE_SECTORS):
+        m = use & (sec == k)
+        prof = np.array([Y[m & (sd >= a) & (sd < b)].mean() if (m & (sd >= a) & (sd < b)).sum() >= 15 else np.nan
+                         for a, b in zip(edges[:-1], edges[1:])])
+        ok = np.isfinite(prof)
+        rec = dict(sector=k, angle_deg=[k*360/OUTLINE_SECTORS, (k+1)*360/OUTLINE_SECTORS], pixels=int(m.sum()))
+        if ok.sum() < 20:
+            out['sectors'].append(rec)
+            profs.append(None)
+            continue
+        p_ = np.interp(mids, mids[ok], prof[ok])
+        w = gaussian_filter(ok.astype(float), 2.)
+        ps = gaussian_filter(np.where(ok, prof, 0.), 2.)/np.maximum(w, 1e-6)
+        d = np.abs(ps[4:]-ps[:-4])/2.0          # over 2 mm (4 bins of 0.5 mm), levels per mm
+        dm = mids[2:-2]
+        okd = ok[4:] & ok[:-4]
+
+        def zmax(lo, hi):
+            z = okd & (dm >= lo) & (dm <= hi)
+            return (round(float(d[z].max()), 2), float(dm[z][np.argmax(d[z])])) if z.sum() >= 4 else (None, None)
+        rec['edge_max_Y_per_mm'], rec['edge_at_mm'] = zmax(*OUTLINE_EDGE)
+        rec['face_max_Y_per_mm'], rec['face_at_mm'] = zmax(*OUTLINE_FACE)
+        rec['lid_0_4_mean_Y'] = round(float(np.nanmean(prof[(mids >= 0) & (mids < 4)])), 1) if np.isfinite(prof[(mids >= 0) & (mids < 4)]).any() else None
+        rec['band_m6_m2_mean_Y'] = round(float(np.nanmean(prof[(mids >= -6) & (mids < -2)])), 1) if np.isfinite(prof[(mids >= -6) & (mids < -2)]).any() else None
+        out['sectors'].append(rec)
+        profs.append(np.where(ok, ps, np.nan))
+    both = [s for s in out['sectors'] if s.get('edge_max_Y_per_mm') is not None and s.get('face_max_Y_per_mm') is not None]
+    out['edge_max_over_sectors'] = max((s['edge_max_Y_per_mm'] for s in both), default=None)
+    out['face_max_over_sectors'] = max((s['face_max_Y_per_mm'] for s in both), default=None)
+    out['edge_median_over_sectors'] = round(float(np.median([s['edge_max_Y_per_mm'] for s in both])), 2) if both else None
+    out['face_median_over_sectors'] = round(float(np.median([s['face_max_Y_per_mm'] for s in both])), 2) if both else None
+    out['sectors_edge_stronger'] = [s['sector'] for s in both if s['edge_max_Y_per_mm'] > s['face_max_Y_per_mm']]
+    out['sectors_compared'] = len(both)
+    if prefix:
+        Path(prefix+'.json').write_text(json.dumps(out, indent=1))
+        im = rgb.astype(np.uint8).copy()
+        e = fin & (np.abs(sd) < 0.6*mm_per_px+0.12)
+        ey, ex = np.nonzero(e)
+        dots = ((ey+ex) // 3) % 2 == 0
+        im[ey[dots], ex[dots]] = (255, 255, 255)
+        for k in range(OUTLINE_SECTORS):
+            a = np.radians(k*360/OUTLINE_SECTORS)
+            for r in range(0, 400, 3):
+                x_, y_ = int(cx+r*np.cos(a)), int(cy-r*np.sin(a))
+                if 0 <= x_ < im.shape[1] and 0 <= y_ < im.shape[0]:
+                    im[y_, x_] = (40, 40, 40)
+        F = font(18)
+        pic = Image.fromarray(im)
+        d_ = ImageDraw.Draw(pic)
+        for s in out['sectors']:
+            a = np.radians((s['sector']+0.5)*360/OUTLINE_SECTORS)
+            x_, y_ = cx+170*np.cos(a), cy-170*np.sin(a)
+            if s.get('edge_max_Y_per_mm') is not None:
+                d_.text((x_-30, y_-10), f"{s['sector']}: {s['edge_max_Y_per_mm']:.1f}/{s['face_max_Y_per_mm'] or 0:.1f}", fill=(20, 20, 120), font=F)
+        cw, ch = 720, 360
+        chart = Image.new('RGB', (cw, ch), BG)
+        dc = ImageDraw.Draw(chart)
+        vals = np.concatenate([p[np.isfinite(p)] for p in profs if p is not None]) if any(p is not None for p in profs) else np.array([0, 255])
+        lo_, hi_ = float(np.nanpercentile(vals, 1))-3, float(np.nanpercentile(vals, 99))+3
+        X = lambda m: 50+(m+18)/24*(cw-70)
+        Yp = lambda y: ch-40-(y-lo_)/(hi_-lo_)*(ch-80)
+        dc.line([(X(0), 30), (X(0), ch-40)], fill=(150, 150, 150))
+        for z0, z1, col in ((*OUTLINE_EDGE, (70, 70, 110)), (*OUTLINE_FACE, (70, 110, 70))):
+            dc.rectangle([X(z0), ch-38, X(z1), ch-34], fill=col)
+        for k, p in enumerate(profs):
+            if p is not None:
+                shade = 120+int(130*k/OUTLINE_SECTORS)
+                pts = [(X(m), Yp(y)) for m, y in zip(mids, p) if np.isfinite(y)]
+                if len(pts) > 1:
+                    dc.line(pts, fill=(shade, shade, shade), width=2)
+        dc.text((10, 4), f'mean Y by sd, per sector ({lo_:.0f} to {hi_:.0f}); bars: edge zone, face zone', fill=INK, font=F)
+        sheet = Image.new('RGB', (pic.width+cw+30, max(pic.height, ch)+110), BG)
+        sheet.paste(pic, (10, 100))
+        sheet.paste(chart, (pic.width+20, 100))
+        ds = ImageDraw.Draw(sheet)
+        ds.text((10, 8), label_text, fill=INK, font=F)
+        ds.text((10, 36), f"edge strength, levels per mm (sector: lid boundary / face fur): max {out['edge_max_over_sectors']} / {out['face_max_over_sectors']}, "
+                f"median {out['edge_median_over_sectors']} / {out['face_median_over_sectors']}; boundary stronger in sectors {out['sectors_edge_stronger']}", fill=INK, font=F)
+        sheet.save(prefix+'.png')
+    print(json.dumps({k: v for k, v in out.items() if k != 'sectors'}))
+    return out
+
+
+def bare(png, npz, eye, r_mm=10.0):
+    """Fix pass 4, the pale spot at the ends of the closed line (the lid sheet showing between the lashes and the lid fur): in
+    a window of r_mm round each end of the line (its line cells at the largest and the smallest theta), the pixels that are
+    smooth (standard deviation of Y over 5 x 5 pixels under 5 levels: no strands, a bare surface) and pale (Y over 150), and
+    the largest 4-connected blob of them. Fur and the dark line are never that smooth; the open eye white is (so only
+    meaningful for a closed or wincing eye)."""
+    from scipy.ndimage import uniform_filter
+    _, Y = lum(png)
+    sd, line, opening, W, H = raster(npz, eye, Y.shape)
+    gy, gx = np.gradient(np.where(np.isfinite(sd), sd, 0))
+    g = np.hypot(gx, gy)
+    okg = np.isfinite(sd) & (np.abs(sd) < 8) & (g > 0) & (g < 5)
+    mm_per_px = float(np.median(g[okg])) if okg.any() else 0.455
+    C = np.load(npz)[eye.replace('-', 'm')]
+    ln = C[:, 4] > 0.5
+    T = C[:, 6]
+    var = uniform_filter(Y**2, 5)-uniform_filter(Y, 5)**2
+    sm = np.sqrt(np.maximum(var, 0))
+    yy, xx = np.mgrid[0:Y.shape[0], 0:Y.shape[1]]
+    out = dict(png=str(png), eye=eye, window_mm=r_mm, mm_per_px=round(mm_per_px, 4))
+    for end, q in (('outer', T[ln].max()), ('inner', T[ln].min())):
+        k = ln & (np.abs(T-q) < 1.5)
+        x, y = float(C[k, 0].mean()), float(C[k, 1].mean())
+        win = ((xx-x)**2+(yy-y)**2 < (r_mm/mm_per_px)**2) & np.isfinite(sd)     # on the head's eye region (not the backdrop)
+        sp = win & (sm < 5.0) & (Y > 150)
+        lab_, n = label(sp)
+        big = int(np.bincount(lab_[lab_ > 0]).max()) if n else 0
+        out[end] = dict(at_px=[round(x), round(y)], smooth_pale_px=int(sp.sum()), largest_blob_px=big,
+                        largest_blob_mm2=round(big*mm_per_px**2, 2), window_px=int(win.sum()))
+    print(json.dumps(out))
+    return out
+
+
 if __name__ == '__main__':
     cmd = sys.argv[1]
     if cmd == 'patch':
@@ -323,6 +475,14 @@ if __name__ == '__main__':
         # vband <png> <masks> <eye> [--lids dir] [--json out]
         lids = sys.argv[sys.argv.index('--lids')+1] if '--lids' in sys.argv else None
         o = vband(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4], lids)
+        if '--json' in sys.argv:
+            Path(sys.argv[sys.argv.index('--json')+1]).write_text(json.dumps(o, indent=1))
+    elif cmd == 'outline':
+        # outline <png> <masks> <eye> <out prefix> [--label text]
+        lab = sys.argv[sys.argv.index('--label')+1] if '--label' in sys.argv else ''
+        outline(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4], sys.argv[5], lab)
+    elif cmd == 'bare':
+        o = bare(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4])
         if '--json' in sys.argv:
             Path(sys.argv[sys.argv.index('--json')+1]).write_text(json.dumps(o, indent=1))
     elif cmd == 'dash':

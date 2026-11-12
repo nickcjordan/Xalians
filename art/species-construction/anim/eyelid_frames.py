@@ -156,6 +156,7 @@ def add_lids(_dummy):
 
 
 CAPS_ORIG = {}
+FACE_IDX = {}
 
 
 def script_globals():
@@ -211,11 +212,20 @@ def lids_pre(scene, _depsgraph=None):
             if cat is not None:
                 cat.hide_render = (not g['catch']) or a.globe_as_lid_skin
             if fur is not None:
-                idx = E.capdata['idx']
+                # every face-fur point this eye may override (the caps under the ribbon's old place and, since fix pass 4,
+                # the face strands of the cross-fade band); their radii of record are read once and restored when open
+                if e not in FACE_IDX:
+                    all_ = E.face_radii(1., 0., 0.)
+                    FACE_IDX[e] = all_[0] if all_ is not None else np.zeros(0, np.int64)
+                idx = FACE_IDX[e]
                 if e not in CAPS_ORIG and len(idx):
                     CAPS_ORIG[e] = np.array([fur.data.attributes['radius'].data[int(i)].value for i in idx], np.float32)
                 if len(idx):
-                    want = CAPS_ORIG[e] if g['caps'] is None else g['caps'][1].astype(np.float32)
+                    want = CAPS_ORIG[e].copy()
+                    if g['face'] is not None:
+                        fi, fr_ = g['face']
+                        pos = np.searchsorted(idx, fi)
+                        want[pos] = np.where(np.isnan(fr_), want[pos], fr_).astype(np.float32)
                     ra = fur.data.attributes['radius'].data
                     for i, r in zip(idx, want):
                         if ra[int(i)].value != r:
