@@ -9,6 +9,8 @@
       3 wince, 4 closed; the sprite at 4x and at 1x
   python art/species-construction/anim/eyelids_sheet.py faint2 <frames dir> <out png>
       fix pass 2: <frames dir>/faint-fur/faint35/{crop_eyeside,crop_eyetq,sprite}/0035.png and 0036.png; sprite 4x and 1x
+  python art/species-construction/anim/eyelids_sheet.py closed3 <spec json> <out png>
+      fix pass 3: rows of fur side and three-quarter crops with the under-eye area's crop and mean Y (see closed3)
   python art/species-construction/anim/eyelids_sheet.py diff <approved png> <test png> <out prefix> [--label text]
       writes <out prefix>-diff.png (approved | test | |difference| x16 | any difference in amber) and prints and returns
       the numbers (max, mean, pixels over 0, 2, 8 levels) as JSON in <out prefix>-diff.json
@@ -21,6 +23,8 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 STATES = ['open', 'half', 'squint', 'closed']
 BG = (24, 24, 24)
@@ -166,6 +170,70 @@ def faint2(frames, out):
     grid_sheet(cells, [c[2] for c in cols], [r[1] for r in rows], out, label_w=230)
 
 
+def under_eye(open_png, open_npz, test_png, eye='eye1', lids_dir=None, scale=2):
+    """A large crop of the under-eye area (eyelids_measure.crescent_area, from the open frame) of a test frame, the area
+    dotted, and the area's mean Y in the test frame and in the open one."""
+    import eyelids_measure as em
+    from scipy.ndimage import binary_dilation
+    Yo, sd, base, area, thm, thl = em.crescent_area(open_png, open_npz, eye, lids_dir)
+    rgb, Yt = em.lum(test_png)
+    yy, xx = np.nonzero(area)
+    m = 40
+    y0, y1, x0, x1 = max(yy.min()-m, 0), min(yy.max()+m, Yt.shape[0]), max(xx.min()-m, 0), min(xx.max()+m, Yt.shape[1])
+    ov = rgb.astype(np.uint8).copy()
+    e = binary_dilation(area, iterations=1) & ~area
+    ey, ex = np.nonzero(e)
+    dots = ((ey+ex) // 3) % 2 == 0
+    ov[ey[dots], ex[dots]] = (20, 20, 20)
+    im = Image.fromarray(ov[y0:y1, x0:x1]).resize(((x1-x0)*scale, (y1-y0)*scale), Image.LANCZOS)
+    return im, float(Yt[area].mean()), float(Yo[area].mean())
+
+
+def closed3(spec, out):
+    """Fix pass 3 sheet from a JSON spec: {"sections": [{"title", "rows": [{"title", "side", "tq", "open_tq", "open_tq_masks",
+    "lids"?, "ue_tq"?, "compare"?: {"title", "tq"}}]}]}: per row the fur side and three-quarter 720 crops and the under-eye
+    crop of the three-quarter view (2x) with its mean Y against the open frame's; an optional fourth cell is another frame's
+    under-eye crop (pass 2, the same state) with its number."""
+    S = json.loads(Path(spec).read_text())
+    F = font(26)
+    blocks = []
+    for sec in S['sections']:
+        cells, titles = [], []
+        for r in sec['rows']:
+            side = Image.open(r['side']).convert('RGB')
+            tq = Image.open(r['tq']).convert('RGB')
+            ue, y, y0 = under_eye(Path(r['open_tq']), Path(r['open_tq_masks']), Path(r['tq']), lids_dir=r.get('lids'))
+            def labelled(im, text):
+                c = Image.new('RGB', (im.width, im.height+44), BG)
+                c.paste(im, (0, 44))
+                ImageDraw.Draw(c).text((4, 6), text, fill=INK, font=F)
+                return c
+            row = [side, tq, labelled(ue, f'under-eye mean Y {y:.1f} ({y-y0:+.1f} against open {y0:.1f})')]
+            if r.get('compare'):
+                cp_, cy, cy0 = under_eye(Path(r['open_tq']), Path(r['open_tq_masks']), Path(r['compare']['tq']), lids_dir=r.get('lids'))
+                row.append(labelled(cp_, f'{r["compare"]["title"]}: {cy:.1f} ({cy-cy0:+.1f})'))
+            cells.append(row)
+            titles.append(r['title'])
+        n = max(len(c) for c in cells)
+        cells = [c+[None]*(n-len(c)) for c in cells]
+        cols = ['fur, side camera\n720 head crop', 'fur, three-quarter front\n720 head crop',
+                'under the eye (three-quarter, 2x),\nthe area dotted: sd -18 to -2 mm', 'pass 2, the same state\n(under the eye, 2x)'][:n]
+        tmp = Path(out).with_suffix('.part%d.png' % len(blocks))
+        grid_sheet(cells, cols, titles, tmp, label_w=250)
+        blocks.append((sec['title'], Image.open(tmp).convert('RGB')))
+        tmp.unlink()
+    W = max(b.width for _, b in blocks)
+    H = sum(b.height+70 for _, b in blocks)
+    sheet = Image.new('RGB', (W, H), BG)
+    y = 0
+    for t, b in blocks:
+        ImageDraw.Draw(sheet).text((16, y+16), t, fill=INK, font=font(36))
+        sheet.paste(b, (0, y+70))
+        y += b.height+70
+    sheet.save(out)
+    print('sheet', out, sheet.size)
+
+
 def diff(approved, test, prefix, label=''):
     a = np.asarray(Image.open(approved).convert('RGB')).astype(np.int16)
     b = np.asarray(Image.open(test).convert('RGB')).astype(np.int16)
@@ -202,6 +270,8 @@ if __name__ == '__main__':
         states2(Path(sys.argv[2]), Path(sys.argv[3]))
     elif cmd == 'faint2':
         faint2(Path(sys.argv[2]), Path(sys.argv[3]))
+    elif cmd == 'closed3':
+        closed3(Path(sys.argv[2]), Path(sys.argv[3]))
     elif cmd == 'diff':
         lab = sys.argv[sys.argv.index('--label')+1] if '--label' in sys.argv else ''
         diff(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4], lab)

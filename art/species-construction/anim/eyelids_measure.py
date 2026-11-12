@@ -2,6 +2,9 @@
 
   python art/species-construction/anim/eyelids_measure.py patch <png> <masks npz> <eye> <out prefix> [--label text]
   python art/species-construction/anim/eyelids_measure.py dash <sprite png> <masks npz> <eye> [--json out]
+  python art/species-construction/anim/eyelids_measure.py vband <png> <masks npz> <eye> [--lids dir] [--json out]
+  python art/species-construction/anim/eyelids_measure.py crescent <open png> <open masks> <eye> <out prefix> name=<png> ...
+      [--lids <lids dir>] [--label text]
 
 The masks come from eyelid_frames.py --masks: each eye's grid cells on the frame's outer surface, projected through the
 render camera, with the bare zone's signed distance `sd` (surface mm, positive inside the zone and the opening: the area a
@@ -159,6 +162,127 @@ def patch(png, npz, eye, prefix, label_text=''):
     return out
 
 
+def cells_theta_rel(npz, eye, lids_dir):
+    """Per mask cell: theta and phi above the opening's middle. Masks from fix pass 3 on carry them (columns 6 and 7); older
+    masks are matched to their cells through the lids build that wrote them (the same grid and zone)."""
+    C = np.load(npz)[eye.replace('-', 'm')]
+    if C.shape[1] >= 8:
+        return C[:, 6], C[:, 7]
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import eyelids_core as ec
+    E = ec.Lids(lids_dir).eyes[eye]
+    th, ph = E.grid.th, E.grid.ph
+    keep_t = (th > E.thm-14) & (th < E.thl+14)
+    T, P = np.meshgrid(th[keep_t], ph)
+    ok = E.sdz[:, keep_t] > -26
+    T, P = T[ok], P[ok]
+    if len(T) != len(C):
+        raise SystemExit(f'{npz}: {len(C)} cells, the lids build gives {len(T)}')
+    rU, rL, _ = E.curves(T)
+    return T, P-(rU+rL)/2
+
+
+def raster_cols(npz, eye, shape, cols):
+    """Like raster, for any per-cell columns (nearest cell in depth, gaps of up to 2 px filled)."""
+    Z = np.load(npz)
+    C = Z[eye.replace('-', 'm')]
+    H, W = shape
+    px, py, dep = C[:, 0], C[:, 1], C[:, 2]
+    ok = np.flatnonzero((px >= 0) & (px < W) & (py >= 0) & (py < H))
+    order = ok[np.argsort(-dep[ok])]
+    M = np.full((H, W, len(cols)), np.nan)
+    M[py[order].astype(int), px[order].astype(int)] = np.stack(cols, 1)[order]
+    have = np.isfinite(M[..., 0])
+    d, (ii, jj) = distance_transform_edt(~have, return_indices=True)
+    f = (~have) & (d <= 2)
+    M[f] = M[ii[f], jj[f]]
+    return M
+
+
+CRESCENT_SD = (-18., -2.)
+CRESCENT_BINS = [(-26, -22), (-22, -18), (-18, -15), (-15, -12), (-12, -9), (-9, -6), (-6, -4), (-4, -2), (-2, 0)]
+
+
+def crescent_area(open_png, open_npz, eye, lids_dir=None):
+    """The open frame's luminance, its sd map, the lower band (below the middle, between the corners, outside the opening)
+    and the under-eye area in it (CRESCENT_SD), with the corners' theta."""
+    _, Yo = lum(open_png)
+    sdo = raster(open_npz, eye, Yo.shape)
+    sd, opening = sdo[0], sdo[2]
+    C = np.load(open_npz)[eye.replace('-', 'm')]
+    T, rel = cells_theta_rel(open_npz, eye, lids_dir)
+    M = raster_cols(open_npz, eye, Yo.shape, [T, rel])
+    fin = np.isfinite(sd) & np.isfinite(M[..., 0])
+    thm, thl = float(np.nanmin(T[C[:, 5] > 0.5])), float(np.nanmax(T[C[:, 5] > 0.5]))
+    base = fin & (M[..., 1] < 0) & (M[..., 0] > thm) & (M[..., 0] < thl) & ~opening
+    area = base & (sd >= CRESCENT_SD[0]) & (sd < CRESCENT_SD[1])
+    return Yo, sd, base, area, thm, thl
+
+
+def crescent(open_png, open_npz, tests, eye, prefix, lids_dir=None, label_text=''):
+    """The under-eye area (fix pass 3): the pixels of the open frame's eye cells below the opening's middle, between the
+    corners, outside the opening, and CRESCENT_SD surface mm out from the bare zone's edge (the face fur band under the eye;
+    the open eye's lower liner, within 2 mm, is left out). The same pixels are read in every test frame (the same pose and
+    camera). Prints and writes <prefix>.json: mean Y (Rec. 709, levels) of the area in the open frame and in each test frame,
+    the difference, and the same per sd band; <prefix>.png: the test crops side by side, the area dotted, each labelled."""
+    Yo, sd, base, area, thm, thl = crescent_area(open_png, open_npz, eye, lids_dir)
+    out = dict(open=str(open_png), masks=str(open_npz), eye=eye, area=f'below the middle, theta {thm:.1f} to {thl:.1f}, outside the opening, sd {CRESCENT_SD[0]} to {CRESCENT_SD[1]} mm',
+               area_pixels=int(area.sum()), open_mean_Y=round(float(Yo[area].mean()), 2),
+               open_bands={f'{a}..{b}': round(float(Yo[base & (sd >= a) & (sd < b)].mean()), 2) for a, b in CRESCENT_BINS
+                           if (base & (sd >= a) & (sd < b)).sum() > 30}, tests=[])
+    ims = []
+    for name, png in tests:
+        rgb, Yt = lum(png)
+        r = dict(name=name, png=str(png), mean_Y=round(float(Yt[area].mean()), 2), minus_open=round(float(Yt[area].mean()-Yo[area].mean()), 2),
+                 bands={f'{a}..{b}': round(float(Yt[base & (sd >= a) & (sd < b)].mean()-Yo[base & (sd >= a) & (sd < b)].mean()), 2)
+                        for a, b in CRESCENT_BINS if (base & (sd >= a) & (sd < b)).sum() > 30})
+        out['tests'].append(r)
+        ov = rgb.astype(np.uint8).copy()
+        e = binary_dilation(area, iterations=1) & ~area
+        yy, xx = np.nonzero(e)
+        dots = ((yy+xx) // 3) % 2 == 0
+        ov[yy[dots], xx[dots]] = (20, 20, 20)
+        ims.append((f'{name}: {r["mean_Y"]} ({r["minus_open"]:+.1f} against open {out["open_mean_Y"]})', Image.fromarray(ov)))
+    Path(prefix+'.json').write_text(json.dumps(out, indent=1))
+    F = font(20)
+    w, h = ims[0][1].size
+    sheet = Image.new('RGB', (len(ims)*(w+10)+10, h+90), BG)
+    d = ImageDraw.Draw(sheet)
+    d.text((10, 6), label_text+'  (under-eye area dotted; mean Y of the area)', fill=INK, font=F)
+    for k, (t, im) in enumerate(ims):
+        sheet.paste(im, (10+k*(w+10), 80))
+        d.text((10+k*(w+10), 44), t, fill=INK, font=F)
+    sheet.save(prefix+'.png')
+    print(json.dumps(out, indent=1))
+    return out
+
+
+def vband(png, npz, eye, lids_dir=None):
+    """The upper lid's broad light and dark bands (fix pass 3, the V above the closed eye): over the lid area above the
+    opening's middle (sd >= 0, the line and 6 mm round it left out: the lashes), the luminance blurred by a 4 px Gaussian (strand-scale
+    noise gone, partings and folds kept), its standard deviation and its 5 to 95 percentile range, and the same standard
+    deviation over the face fur above it (sd -12 to -2 mm) for scale."""
+    from scipy.ndimage import gaussian_filter
+    _, Y = lum(png)
+    sd, line, opening, W, H = raster(npz, eye, Y.shape)
+    T, rel = cells_theta_rel(npz, eye, lids_dir)
+    M = raster_cols(npz, eye, Y.shape, [T, rel])
+    gy, gx = np.gradient(np.where(np.isfinite(sd), sd, 0))
+    g = np.hypot(gx, gy)
+    okg = np.isfinite(sd) & (np.abs(sd) < 8) & (g > 0) & (g < 5)
+    px_mm = 1/float(np.median(g[okg]))
+    near_line = binary_dilation(line, iterations=max(1, int(round(6*px_mm))))
+    area = np.isfinite(sd) & (sd >= 0) & (M[..., 1] > 0) & ~near_line
+    ring = np.isfinite(sd) & (sd < -2) & (sd >= -12) & (M[..., 1] > 0)
+    Yb = gaussian_filter(Y, 4)
+    v, r = Yb[area], Yb[ring]
+    out = dict(png=str(png), eye=eye, pixels=int(area.sum()), mean_Y=round(float(v.mean()), 2), blurred_std=round(float(v.std()), 2),
+               blurred_p5_p95=[round(float(x), 1) for x in np.percentile(v, [5, 95])],
+               face_fur_above_blurred_std=round(float(r.std()), 2) if ring.any() else None)
+    print(json.dumps(out))
+    return out
+
+
 def dash(png, npz, eye):
     rgb, Y = lum(png)
     sd, line, opening, W, H = raster(npz, eye, Y.shape)
@@ -188,6 +312,19 @@ if __name__ == '__main__':
     if cmd == 'patch':
         lab = sys.argv[sys.argv.index('--label')+1] if '--label' in sys.argv else ''
         patch(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4], sys.argv[5], lab)
+    elif cmd == 'crescent':
+        # crescent <open png> <open masks> <eye> <out prefix> name=png [name=png ...] [--lids dir] [--label text]
+        args = sys.argv[2:]
+        lab = args[args.index('--label')+1] if '--label' in args else ''
+        lids = args[args.index('--lids')+1] if '--lids' in args else None
+        pos = [x for i, x in enumerate(args) if not x.startswith('--') and (i == 0 or args[i-1] not in ('--label', '--lids'))]
+        crescent(Path(pos[0]), Path(pos[1]), [tuple(x.split('=', 1)) for x in pos[4:]], pos[2], pos[3], lids, lab)
+    elif cmd == 'vband':
+        # vband <png> <masks> <eye> [--lids dir] [--json out]
+        lids = sys.argv[sys.argv.index('--lids')+1] if '--lids' in sys.argv else None
+        o = vband(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4], lids)
+        if '--json' in sys.argv:
+            Path(sys.argv[sys.argv.index('--json')+1]).write_text(json.dumps(o, indent=1))
     elif cmd == 'dash':
         o = dash(Path(sys.argv[2]), Path(sys.argv[3]), sys.argv[4])
         if '--json' in sys.argv:

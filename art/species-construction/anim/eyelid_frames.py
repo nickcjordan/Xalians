@@ -47,6 +47,8 @@ p.add_argument('--focus', default='eye1')
 p.add_argument('--hide-open', action='store_true')
 p.add_argument('--no-lids', action='store_true')
 p.add_argument('--masks', action='store_true')
+p.add_argument('--globe-as-lid-skin', action='store_true', help='cause test (fix pass 3): the eye globes and irises take the lid '
+               "sheets' material (the skin's) and the catch lights hide, so an open eye returns the light a closed lid would")
 a = p.parse_args(mine)
 LIDS = ec.Lids(a.lids)
 DEFAULT = ec.parse_state(a.state)
@@ -142,6 +144,14 @@ def add_lids(_dummy):
             cv.materials.append(hair_mat)
         ob = bpy.data.objects.new(cv.name, cv)
         bpy.context.scene.collection.objects.link(ob)
+    if a.globe_as_lid_skin:
+        for o in bpy.data.objects:
+            if o.type == 'MESH' and ('head_eye_globe_' in o.name or 'head_iris_and_pupil_' in o.name) and 'ribbon' not in o.name:
+                for k in range(len(o.data.materials)):
+                    o.data.materials[k] = skin_mat
+            if o.name.startswith('catch light'):
+                o.hide_render = True
+        print('cause test: globes and irises as lid skin', flush=True)
     print('eyelids added', [o.name for o in bpy.data.objects if 'eyelid' in o.name], flush=True)
 
 
@@ -175,7 +185,7 @@ def lids_pre(scene, _depsgraph=None):
         for e in ec.EYES:
             s = st[e]
             E = LIDS.eyes[e]
-            g = LIDS.state_geometry(e, s['close'], s['squint'], s.get('wince', 0.))
+            g = LIDS.state_geometry(e, s['close'], s['squint'], s.get('wince', 0.), s.get('flags', ()))
             hide = a.hide_open and g['open']
             for which in ('upper', 'lower'):
                 ob = bpy.data.objects.get(f'Akinza eyelid {which} {SIDE[e]}')
@@ -199,7 +209,7 @@ def lids_pre(scene, _depsgraph=None):
                 rib.data.update()
             cat = bpy.data.objects.get('catch light head_iris_and_pupil_'+GLOBE[e])
             if cat is not None:
-                cat.hide_render = not g['catch']
+                cat.hide_render = (not g['catch']) or a.globe_as_lid_skin
             if fur is not None:
                 idx = E.capdata['idx']
                 if e not in CAPS_ORIG and len(idx):
@@ -231,7 +241,8 @@ def write_masks(scene, G, clip, frame, view, st, place):
     """The eye regions' grid cells (each eye's theta x phi grid round the opening) on the frame's outer surface, placed
     by the head bone and projected through the render camera: pixel x, y (from the top left), depth along the view, the
     zone's signed distance (mm, positive inside the bare zone and the opening) and whether the cell lies on the closed line
-    (between the margins, on the lips or under a ribbon band). eyelids_measure.py rasterises them into the lid area, the
+    (between the margins, on the lips or under a ribbon band), whether it is in the opening, its theta and its phi above the
+    opening's middle (fix pass 3). eyelids_measure.py rasterises them into the lid area, the
     ring of face fur round it and the line."""
     cam = scene.camera
     W, H = scene.render.resolution_x, scene.render.resolution_y
@@ -259,7 +270,9 @@ def write_masks(scene, G, clip, frame, view, st, place):
         line = ((P <= pu+E.band_top(T, cw, sq, 'upper', wi)+0.3) & (P >= pl-E.band_top(T, cw, sq, 'lower', wi)-0.3)
                 & (T > E.thm) & (T < E.thl)) if not (cw == 0 and sq == 0 and wi == 0) else np.zeros(len(T), bool)
         opening = E.grid(E.rvis, T, P) <= E.grid(E.rg, T, P)+1e-6
-        out[e] = np.stack([px, py, -Xc[:, 2], sd, line.astype(float), opening.astype(float)], 1).astype(np.float32)
+        rU, rL, _ = E.curves(T)
+        # (fix pass 3) theta and phi above the opening's middle, for the under-eye area of eyelids_measure.py crescent
+        out[e] = np.stack([px, py, -Xc[:, 2], sd, line.astype(float), opening.astype(float), T, P-(rU+rL)/2], 1).astype(np.float32)
     d = G['a'].out/'masks'
     d.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(d/f'{clip}_{view}_{frame:04d}.npz', W=W, H=H, **{k.replace('-', 'm'): v for k, v in out.items()})

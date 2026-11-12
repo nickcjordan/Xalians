@@ -80,6 +80,7 @@ class Eye:
         self.thm, self.thl = float(g('corners')[0]), float(g('corners')[1])
         self.lid_th = g('lid_theta')
         self.L = L
+        self.hold_lower = False      # cause test (fix pass 3): the lower lid held at its open place while the upper one moves
         self.fur = {k: g('fur_'+k) for k in ('lid', 'theta', 'a', 'src')}
         self.fur_prof3 = g('fur_prof3')
         self.fur_rad = g('fur_rad')
@@ -113,6 +114,8 @@ class Eye:
         L = self.L
         su = 1-(1-close)*(1-SQUINT_UPPER*squint)*(1-wince)
         sl = 1-(1-close*close)*(1-SQUINT_LOWER*squint)*(1-wince)
+        if self.hold_lower:
+            sl = 0.*sl
         rU, rL, cl = self.curves(t)
         line = cl+(interp1(self.cth, self.wline, t)-cl)*wince
         u = np.clip((np.asarray(t, float)-self.thm)/(self.thl-self.thm), 0, 1)
@@ -124,7 +127,7 @@ class Eye:
         # both fade out toward a full close or a wince
         k = squint*(1-close)*(1-wince)
         pu = pu-k*L['squint_tilt_deg']*bump*(1-u)
-        pl = pl+k*L['squint_cheek_deg']*bump
+        pl = pl+k*L['squint_cheek_deg']*bump*(not self.hold_lower)
         mid = (pu+pl)/2
         cross = pu < pl
         pu, pl = np.where(cross, mid, pu), np.where(cross, mid, pl)
@@ -444,17 +447,29 @@ class Lids:
         self.faces = {w: self.Z['faces_'+w] for w in ('upper', 'lower')}
         self.fur_attr = {k[len('furattr__'):]: self.Z[k] for k in self.Z.files if k.startswith('furattr__')}
 
-    def state_geometry(self, eye, close=0., squint=0., wince=0.):
+    def state_geometry(self, eye, close=0., squint=0., wince=0., flags=()):
+        """flags (cause tests, fix pass 3; none in any clip): holdlower (the lower lid sheet, its fur, lashes and ribbon band
+        held at their open places while the upper lid moves), nolidfur (no lid fur or lashes), nolowerfur / noupperfur (that
+        lid's fur hidden, the lashes kept), keepcaps (the face fur under the ribbon's old place left as thinned)."""
         E = self.eyes[eye]
+        flags = set(flags or ())
+        E.hold_lower = 'holdlower' in flags
         is_open = close == 0 and squint == 0 and wince == 0
         t = E.lid_th
         out = dict(open=is_open, upper=E.lid_sheet('upper', t, close, squint, wince).reshape(-1, 3),
                    lower=E.lid_sheet('lower', t, close, squint, wince).reshape(-1, 3))
         X, rad = E.lid_fur(close, squint, wince)
+        lid = E.fur['lid']
+        if 'nolidfur' in flags:
+            rad = rad*0.
+        if 'nolowerfur' in flags:
+            rad = rad*(lid != -1)[:, None]
+        if 'noupperfur' in flags:
+            rad = rad*(lid != 1)[:, None]
         out['fur'], out['fur_radius'] = X.reshape(-1, 3), rad.ravel()
         out['fur_tone_mult'] = E.tone_mult.copy()
         out['ribbon'] = None if is_open else E.ribbon(close, squint, wince)
-        out['caps'] = None if is_open else E.caps(close, squint, wince)
+        out['caps'] = None if (is_open or 'keepcaps' in flags) else E.caps(close, squint, wince)
         out['catch'] = True if is_open else E.catch_visible(close, squint, wince)
         return out
 
@@ -464,9 +479,24 @@ STATES = {'open': dict(close=0., squint=0., wince=0.), 'half': dict(close=0.5, s
           'closed': dict(close=1., squint=0., wince=0.)}
 
 
+FLAGS = ('holdlower', 'nolidfur', 'nolowerfur', 'noupperfur', 'keepcaps')
+
+
 def parse_state(text):
     """'open' / 'half' / 'squint' / 'wince' / 'closed', or 'L=0.3,R=0.3,squint=0.5,wince=0.2' (squint and wince for both
-    eyes; squint.L / squint.R / wince.L / wince.R each)."""
+    eyes; squint.L / squint.R / wince.L / wince.R each). Cause-test flags (Lids.state_geometry) follow with '+', for both
+    eyes: 'closed+holdlower', 'closed+nolidfur'."""
+    text, *flags = text.split('+')
+    bad = [f for f in flags if f not in FLAGS]
+    if bad:
+        raise ValueError(bad)
+    out = _parse_base(text)
+    for e in out:
+        out[e]['flags'] = list(flags)
+    return out
+
+
+def _parse_base(text):
     if text in STATES:
         s = STATES[text]
         return {'eye1': dict(s), 'eye-1': dict(s)}

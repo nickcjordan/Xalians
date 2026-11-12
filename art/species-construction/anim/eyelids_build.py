@@ -47,15 +47,17 @@ import eyelids_core as ec  # noqa: E402
 LEVERS = dict(
     delta_mm=1.9, delta_min_mm=0.15, w_in_deg=3.0, eps_mm=0.35, w_out_deg=1.0,
     lift_at=0.08, bare_root_mm=1.6, bare_max_mm=14.0, bare_smooth_deg=1.5,
-    lift_over_mm=0.15, lift_under_mm=0.35, dive_mm=3.0, fill_close_deg=8.0, fill_blur_deg=1.0, fill_keep_mm=2.0, rim_band_deg=3.0, rim_band_mm_per_deg=1.2, cap_under_mm=1.0, graze_cos_min=0.3, mesh_under_mm=0.35, jump_mm=3.0, jump_pad_deg=0.5, fillet_deg=1.5, fillet_iter=12, fillet_max_mm=0.8,
+    lift_over_mm=0.15, lift_under_mm=0.35, dive_mm=3.0, fill_close_deg=8.0, fill_blur_deg=1.0, fill_keep_mm=2.0, rim_band_deg=0.0, rim_band_mm_per_deg=1.2, cap_under_mm=1.0, graze_cos_min=0.3, mesh_under_mm=0.35, jump_mm=3.0, jump_pad_deg=0.5, fillet_deg=1.5, fillet_iter=12, fillet_max_mm=0.0,
     fur_out_mm=1.0, fur_fade_mm=0.8,
     tuck_deg=3.0, far_deg=2.0, far_lower_deg=7.0, far_cap_deg=86.0, rows=120, roll_rows=4, roll_deg=1.8, seal_mm=0.15, closed_half_gap_deg=0.9,
+    low_ramp_deg=25.0, low_rim_mm=0.15, rim_hold_mm=0.03, iris_clear_mm=0.46, low_blur_deg=1.5, low_fade_deg=8.0,
     sag_deg=18.0, sag_power=0.8, squint_tilt_deg=7.0, squint_cheek_deg=6.0, fold_mm=0.8, fold_at_deg=9.0, fold_width_deg=2.5,
     wince_arch_deg=24.0, wince_fold_upper_mm=1.6, wince_fold_upper_at_deg=7.0, wince_fold_upper2_mm=1.0, wince_fold_upper2_at_deg=15.0,
     wince_fold_lower_mm=1.4, wince_fold_lower_at_deg=6.0, wince_fold_width_deg=2.2, wince_bunch=0.6,
     lid_columns=150, lid_theta_pad_deg=6.0,
     fur_density_scale=1.0, ring_inner_mm=2.0, ring_outer_mm=12.0, fur_src_k=10, fur_head_k=40, fur_lift_upper=0.75, fur_lift_lower=0.55, fur_root_mm=0.05, fur_clear_mm=0.12, fur_sink_mm=0.10,
-    fur_emerge_deg=2.0, fur_seed=11,
+    fur_emerge_deg=2.0, fur_seed=11, fur_edge_lift_upper_mm=0.0, fur_edge_lift_lower_mm=4.0, heading_harmonic=True, heading_harmonic_upper=False, heading_smooth_upper_mm=6.0, heading_ring_in_mm=1.0, heading_ring_w_mm=4.0,
+    heading_slit_w_deg=1.0, slit_heading_deg=30.0, slit_inner_deg_upper=-30.0, slit_inner_deg_lower=60.0, fur_reach_upper_mm=1000.0, fur_reach_lower_mm=5.5, fur_reach_dither=0.45, fur_reach_min=0.35,
     lash_count=240, lash_len_mm=5.0, lash_lower_scale=0.6, lash_tone=0.05, lash_radius_mm=0.55, lash_root_deg=0.25,
     lash_frame_deg=1.5, margin_dark=0.8, margin_dark_deg=4.0, margin_dark_lower=0.6,
     ribbon_m0_deg=-0.9, ribbon_close_widen_upper=1.5, ribbon_close_upper_min_deg=9.0, ribbon_close_lower_min_deg=5.0, caps_pad_deg=0.6)
@@ -79,13 +81,23 @@ LEVER_NOTES = {
     'fur_src_k': 'pass 2: each lid strand copies one of this many nearest face strands of the ring (shape in the true surface frame, radii and every attribute)',
     'wince_arch_deg': 'wince: the line the lids squeeze to arches this far above the straight corner-to-corner line (corners bent down)',
     'lash_tone': 'lash line: fur_tone of the short dark strands along the lid margins (the hair shader multiplies colour by fur_tone)',
+    'low_ramp_deg': 'pass 3: below the eye the closed lid rises from low_rim_mm over the globe at the rim to delta over this many degrees, never under the iris plus iris_clear_mm (pass 2 rose within w_in_deg and stood a roll over the lower rim)',
+    'rim_band_deg': 'pass 2 widened the lower zone by this much for the lid to ride the rolled rim skin; 0 since pass 3 (it held the lid 0.6 mm over the skin below the rim, over face-fur roots)',
+    'fillet_max_mm': 'pass 2 rounded the lower junction by raising it up to this much; 0 since pass 3 (it made the 2.7 mm roll above the lower rim)',
+    'fur_edge_lift_lower_mm': 'pass 3: the lower lid fur flattening (fur_lift_lower) fades out over this distance inside the lid fur edge, so edge strands lie as the face fur next to them (upper: fur_edge_lift_upper_mm, 0 = off, as pass 2)',
+    'fur_reach_lower_mm': 'pass 3: no lower lid strand reaches more than this past the lid fur edge, about one face strand at the lower rim (longer ones are shortened as a whole, to fur_reach_min of their length at least): pass 2 lower lid strands reached up to 10 mm and more past it over the flat, dense face fur below the eye, a doubled layer that darkened it (the crescent). The upper lid is not capped (fur_reach_upper_mm): its overlap darkens nothing, and a cap there drew the lid edge as a ring',
+    'heading_smooth_upper_mm': 'pass 3: the upper lid keeps the pass 2 heading field (heading_harmonic_upper False) smoothed among its own strands with this Gaussian (two passes): the V above the inner half of the eye',
+    'heading_harmonic': 'pass 3 (the lower lid; the upper lid only with heading_harmonic_upper): lid fur headings are the harmonic fill of the face fur headings round the lid and of slit_heading_deg along the closed line (no source or parting inside a lid)',
+    'slit_heading_deg': 'pass 3: along the closed line the lid fur points away from it, turned this many degrees toward the outer corner',
 }
 
 
-def main(maps_dir, probe_dir, out):
+def main(maps_dir, probe_dir, out, overrides=None):
     t0 = time.time()
     out.mkdir(parents=True, exist_ok=True)
     L = dict(LEVERS)
+    if overrides:
+        L.update(overrides)
     M = np.load(maps_dir/'maps.npz')
     P = np.load(probe_dir/'eye-region.npz')
     PJ = json.loads((probe_dir/'eye-region.json').read_text())
@@ -230,6 +242,21 @@ def main(maps_dir, probe_dir, out):
         h0 = np.where(opening, 0., np.maximum(clr, 0.))
         Hs = np.maximum(h0, gaussian_filter(h0, 0.5/step))
         ob_in = dm+(dl-dm)*ec.smooth(din/L['w_in_deg'])
+        # fix pass 3: below the eye the closed lid rises from the rim slowly (low_ramp_deg) from low_rim_mm over the globe, and
+        # only as high as the iris needs (iris_clear_mm over it), instead of reaching delta within w_in_deg. Pass 2's steep rise,
+        # with its rounded junction (a capped upper envelope up to fillet_max_mm), stood a roll 2.7 mm over the globe just above
+        # the lower rim, 1 mm proud of the skin at the rim: a puffy under-eye bag and its shadow on the cheek below (the crescent)
+        if L['low_ramp_deg'] > 0:
+            ri_ = M[key+'ri']
+            need = np.where(np.isfinite(ri_), ri_-rg+L['iris_clear_mm']/1000, -1.)
+            need = np.maximum(need, gaussian_filter(np.where(np.isfinite(ri_), need, 0.), 1.0/step))
+            ramp = L['low_rim_mm']/1000+(dl-L['low_rim_mm']/1000)*ec.smooth(din/L['low_ramp_deg'])
+            low_in = gaussian_filter(np.maximum(ramp, need), L['low_blur_deg']/step)
+            low_in = np.maximum(np.maximum(low_in, need), dm)
+            # only under the opening's middle, faded out toward it, so the closed line and the upper lid are as pass 2
+            mid_ = np.interp(TH, th, (rimU+rimL)/2)
+            wlow = ec.smooth((mid_-PHg)/L['low_fade_deg'])
+            ob_in = np.where(opening, np.minimum(ob_in, ob_in+(low_in-ob_in)*wlow), ob_in)
         ov, un, cu = L['lift_over_mm']/1000, L['lift_under_mm']/1000, L['cap_under_mm']/1000
         # the offsets are radial; where the skin is steep to the radial direction (the cheek just under the eye) a radial
         # offset is a much smaller distance along the skin normal, and the lid grazed the skin there (streaks in clay). Each
@@ -295,6 +322,11 @@ def main(maps_dir, probe_dir, out):
                 if len(rows):
                     rel = np.minimum.accumulate(lf[rows, j]-skin_rel[rows, j])
                     lf[rows, j] = skin_rel[rows, j]+rel
+        # fix pass 3: the first ring of cells outside the opening holds the lid just under the skin there (rim_hold_mm), not
+        # the full dive: a lid sheet vertex inside the opening interpolates between its cell and these, and with the lower lid
+        # now low at the rim (low_rim_mm) a dive in the next cell drew the sheet into the globe just inside the rim
+        ring1 = ~opening & (dout <= step*1.01)
+        lf = np.where(ring1, np.maximum(lf, np.minimum(L['low_rim_mm']/1000, skin_rel-L['rim_hold_mm']/1000)), lf)
         A[key+'lfield'] = lf
         A[key+'sd_eff'] = sd_eff
         # the lower sheet ends before the first row under the lower rim where the radial skin offset jumps (the ray grazes
@@ -414,6 +446,12 @@ def main(maps_dir, probe_dir, out):
         # each lid strand's source: one of the k nearest source strands on its own side of the closed line (by its closed
         # place), picked at random weighted by 1/d^2
         pcl = np.interp(tht, th, close)+lidv*(L['closed_half_gap_deg']+aat)
+        # fix pass 3: each strand's home, where it shows: its closed place, or for a lower-lid strand that only shows in a
+        # wince (its closed place is past the lid fur's extent) its wince place. The heading, the edge lift and the reach
+        # are taken there; taken at the closed place, these strands came out short and standing, a lens-shaped patch of
+        # stubble in the wincing lower lid
+        pwin = np.interp(tht, th, A[key+'winceline'])-(L['closed_half_gap_deg']+aat)
+        phome = np.where((lidv == -1) & (pcl < np.interp(tht, th, furL)), pwin, pcl)
         Xl = c+(np.cos(np.radians(pcl))[:, None]*(np.cos(np.radians(tht))[:, None]*f+np.sin(np.radians(tht))[:, None]*lat)
                 + np.sin(np.radians(pcl))[:, None]*up)*(grid(rg, tht, pcl)+np.maximum(grid(lf, tht, pcl), grid(Hs, tht, pcl)))[:, None]
         src_idx = np.zeros(len(lidv), int)
@@ -454,6 +492,98 @@ def main(maps_dir, probe_dir, out):
             wq = 1/(np.maximum(dq, 0.001)**2)
             hm = np.einsum('ij,ijk->ik', wq, hv[iq])
             heading[me] = hm/np.maximum(np.linalg.norm(hm, axis=1, keepdims=True), 1e-9)
+        # fix pass 3: the heading field over each lid is the harmonic (Laplace) fill of the face fur's headings in a band
+        # round the lid (Dirichlet) and of a fixed heading along the closed line: away from it, turned slit_heading_deg toward
+        # the outer corner. The face fur round the eye points away from the eye all round, so a plain distance-weighted mean
+        # of it (pass 2) holds a source inside the lid: a starburst parting on the closed lower lid and a sharp turn of the
+        # upper lid fur above the inner half of the eye (the V seen from the side). With the closed line as part of the
+        # boundary, each lid's boundary headings turn through no full circle, and the fill has no source or parting inside
+        # fix pass 3: the upper lid keeps pass 2's field (its tone over the lid matched the face fur; a different heading
+        # there darkened the whole upper lid by 9 to 10 levels) smoothed among the upper lid strands themselves (Gaussian,
+        # heading_smooth_upper_mm, two passes), which spreads the sharp turn from up to back above the inner half of the eye
+        # (the V seen from the side) over the lid
+        if L['heading_smooth_upper_mm'] > 0:
+            me = np.flatnonzero(lidv == 1)
+            sig = L['heading_smooth_upper_mm']/1000
+            tq_ = cKDTree(Xl[me])
+            pairs = tq_.query_ball_point(Xl[me], 3*sig)
+            for _ in range(2):
+                hh = heading[me].copy()
+                for k_, js in enumerate(pairs):
+                    js = np.asarray(js)
+                    w_ = np.exp(-0.5*(np.linalg.norm(Xl[me[js]]-Xl[me[k_]], axis=1)/sig)**2)
+                    v_ = (w_[:, None]*hh[js]).sum(0)
+                    heading[me[k_]] = v_/max(np.linalg.norm(v_), 1e-9)
+        if L['heading_harmonic']:
+            from scipy.sparse import coo_matrix
+            from scipy.sparse.linalg import spsolve
+            hfield = {}
+            for lid, sideF, sideG in ((1, rphF > clF, PHg > clG), (-1, rphF < clF, PHg < clG)):
+                if lid == 1 and not L['heading_harmonic_upper']:
+                    continue
+                cand_ = np.flatnonzero(src_ok & sideF)
+                n_, u_, v_ = frames_at(FP[st[cand_]])
+                tip = FP[st[cand_]+8]-FP[st[cand_]]
+                hv = np.stack([np.einsum('ij,ij->i', tip, u_), np.einsum('ij,ij->i', tip, v_)], 1)
+                hv /= np.maximum(np.linalg.norm(hv, axis=1, keepdims=True), 1e-9)
+                inner = L['fur_out_mm']+L['heading_ring_in_mm']
+                region = near_eye & sideG & (sd > -(inner+L['heading_ring_w_mm'])) & (TH > thm-14) & (TH < thl+14)
+                ring_c = region & (sd <= -inner)
+                slit_c = region & (np.abs(PHg-clG) < L['heading_slit_w_deg']) & (TH > thm) & (TH < thl)
+                fixed = ring_c | slit_c
+                val = np.zeros(opening.shape+(2,))
+                dq, iq = cKDTree(FP[st[cand_]]).query(S3[ring_c], k=12)
+                wq = 1/(np.maximum(dq, 0.001)**2)
+                hm = np.einsum('ij,ijk->ik', wq, hv[iq])
+                val[ring_c] = hm/np.maximum(np.linalg.norm(hm, axis=1, keepdims=True), 1e-9)
+                # away from the line (90 up on the upper lid, -90 down on the lower), turned toward the outer corner by
+                # slit_heading_deg at its outer end and toward the nose by slit_inner_deg (per lid) at its inner end, linearly
+                # between: the lower lid's face fur in front of the inner corner points forward, and a lid heading turned the
+                # other way there met it head on (a small parting at the inner corner)
+                uu_ = np.clip((TH-thm)/(thl-thm), 0, 1)
+                tilt = -L['slit_inner_deg_upper' if lid == 1 else 'slit_inner_deg_lower']*(1-uu_)+L['slit_heading_deg']*uu_
+                a_ = np.radians(90.*lid-lid*tilt)
+                sl_ = slit_c & ~ring_c
+                val[sl_] = np.stack([np.cos(a_[sl_]), np.sin(a_[sl_])], 1)
+                idx = -np.ones(opening.shape, int)
+                unk = region & ~fixed
+                idx[unk] = np.arange(unk.sum())
+                cphi = np.maximum(np.cos(np.radians(PHg)), 0.2)
+                rows, cols, vals = [], [], []
+                rhs = np.zeros((unk.sum(), 2))
+                diag = np.zeros(unk.sum())
+                ii, jj = np.nonzero(unk)
+                me_ = idx[ii, jj]
+                for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    i2, j2 = ii+di, jj+dj
+                    ok = (i2 >= 0) & (i2 < opening.shape[0]) & (j2 >= 0) & (j2 < opening.shape[1])
+                    i2, j2, m_ = i2[ok], j2[ok], me_[ok]
+                    wgt = np.ones(len(i2)) if dj == 0 else 1/cphi[ii[ok], jj[ok]]**2
+                    inreg = region[i2, j2]
+                    i2, j2, m_, wgt = i2[inreg], j2[inreg], m_[inreg], wgt[inreg]
+                    np.add.at(diag, m_, wgt)
+                    u2 = unk[i2, j2]
+                    rows += list(m_[u2]); cols += list(idx[i2[u2], j2[u2]]); vals += list(-wgt[u2])
+                    np.add.at(rhs, m_[~u2], wgt[~u2, None]*val[i2[~u2], j2[~u2]])
+                Amat = coo_matrix((np.r_[vals, diag], (np.r_[rows, np.arange(len(diag))], np.r_[cols, np.arange(len(diag))])),
+                                  shape=(len(diag), len(diag))).tocsr()
+                sol = np.stack([spsolve(Amat, rhs[:, 0]), spsolve(Amat, rhs[:, 1])], 1)
+                Fh = val.copy()
+                Fh[unk] = sol
+                hfield[lid] = Fh
+                me = np.flatnonzero(lidv == lid)
+                hh = np.stack([grid(Fh[..., 0], tht[me], phome[me]), grid(Fh[..., 1], tht[me], phome[me])], 1)
+                nrm = np.linalg.norm(hh, axis=1)
+                rec_h = rec.setdefault('heading', {}).setdefault(e, {})
+                rec_h[str(lid)] = dict(cells=int(region.sum()), ring_cells=int(ring_c.sum()), slit_cells=int(slit_c.sum()),
+                                       weakest=float(nrm.min()), weak_under_0p2=int((nrm < 0.2).sum()))
+                # a strand whose closed place lies outside the filled region (lower-lid strands that only show in a wince,
+                # whose closed place is past the lid fur's extent) keeps the distance-weighted mean, as in pass 2
+                ok_ = nrm > 0.2
+                heading[me[ok_]] = hh[ok_]/nrm[ok_, None]
+            A[key+'heading_lower'] = hfield[-1]
+            if 1 in hfield:
+                A[key+'heading_upper'] = hfield[1]
         # the lash line: short dark strands along each lid margin (upper full length, lower lash_lower_scale), shown as the lid
         # moves; with the lips and the ribbon bands they make the closed line a dash that reads at sprite size
         nl = L['lash_count']
@@ -511,12 +641,40 @@ def main(maps_dir, probe_dir, out):
         # a pile shades the cheek under it from the key light: the grey crescent of the first pass 2 renders); the normal
         # component is scaled by fur_lift_upper / fur_lift_lower and the tangent part lengthened to keep each strand's length
         kl = np.where(lidv == 1, L['fur_lift_upper'], L['fur_lift_lower'])[:, None]
+        # fix pass 3: on the lower lid the flattening fades out toward the lid fur's edge (fur_edge_lift_lower_mm), so the
+        # strands there lie as the face strands next to them (the upper lid as pass 2)
+        sdl = grid(sd, tht, phome)
+        el = np.where(lidv == 1, L['fur_edge_lift_upper_mm'], L['fur_edge_lift_lower_mm'])
+        fade = np.where(el > 0, ec.smooth((sdl+L['fur_out_mm'])/np.maximum(el, 1e-6)), 1.)
+        kl = 1-(1-kl)*fade[:, None]
         tip = prof3[:, -1, :]
         uv2 = np.maximum((tip[:, :2]**2).sum(1), 1e-12)[:, None]
         w2 = (tip[:, 2:]**2)
         fl = np.sqrt(1+(1-kl**2)*w2/uv2)
         prof3[:, :, :2] *= fl[:, :, None]
         prof3[:, :, 2] *= kl
+        # fix pass 3: no lower lid strand reaches more than fur_reach_lower_mm past the lid fur's edge (sd = -fur_out_mm)
+        # along the surface; a longer one is shortened as a whole (its shape kept, at least fur_reach_min of its length).
+        # Pass 2's lower lid strands copied ring strands 2 to 12 mm out (7.6 mm long against 4.8 mm for the face fur at the
+        # rim) and their tips reached 10 mm and more past the edge, a second layer over the flat (0.5 mm high), dense face fur
+        # below the eye that darkened it by up to 33 levels (the crescent). The upper lid is not capped (fur_reach_upper_mm)
+        rr_ = grid(rg, tht, phome)+np.maximum(grid(lf, tht, phome), 0.)
+        dth = np.degrees(prof3[:, :, 0]/(rr_[:, None]*np.cos(np.radians(phome))[:, None]))
+        dph = np.degrees(prof3[:, :, 1]/rr_[:, None])
+        sdk = grid(sd, tht[:, None]+dth, phome[:, None]+dph)
+        # each strand's reach is dithered (fur_reach_dither, uniform either side), so the tips end at varied distances and
+        # do not draw a line where the lid fur stops
+        dith = 1+L['fur_reach_dither']*np.random.default_rng(L['fur_seed']+(7 if e == 'eye1' else 8)).uniform(-1, 1, len(lidv))
+        lim = -(L['fur_out_mm']+np.where(lidv == 1, L['fur_reach_upper_mm'], L['fur_reach_lower_mm'])*dith)[:, None]
+        beyond = sdk < lim
+        first = np.where(beyond.any(1), beyond.argmax(1), 9)
+        k0 = np.maximum(first-1, 0)
+        a0 = sdk[np.arange(len(sdk)), k0]
+        a1 = sdk[np.arange(len(sdk)), np.minimum(first, 8)]
+        frac = np.clip((a0-lim[:, 0])/np.maximum(a0-a1, 1e-9), 0, 1)
+        q = np.where(first < 9, np.maximum((k0+frac*(first > 0))/8, L['fur_reach_min']), 1.)
+        prof3 *= q[:, None, None]
+        rec_reach = dict(shortened=int((q < 1).sum()), of=int(len(q)), min_scale=float(q.min()))
         A[key+'fur_prof3'] = np.concatenate([prof3, lash_prof])
         A[key+'fur_rad'] = np.concatenate([np.stack([rad[st[i]:st[i]+9] for i in src_idx]), lash_rad])
         for name, (dom, typ) in fdom.items():
@@ -554,7 +712,7 @@ def main(maps_dir, probe_dir, out):
             bare_zone_lower_deg=[float(np.min(gL)), float(np.max(gL))],
             catch=A[key+'catch'].tolist(), lid_fur_strands=int(len(A[key+'fur_theta'])),
             lid_fur_upper=int((A[key+'fur_lid'] == 1).sum()), lid_fur_lower=int((A[key+'fur_lid'] == -1).sum()),
-            lash_strands=int((np.abs(A[key+'fur_lid']) == 3).sum()), ring=ring_rec, fill=rec_fill, caps_points=int(len(fi)),
+            lash_strands=int((np.abs(A[key+'fur_lid']) == 3).sum()), ring=ring_rec, reach=rec_reach, fill=rec_fill, caps_points=int(len(fi)),
             ribbon_columns=dict(upper=int((cls == 1).sum()), lower=int((cls == -1).sum()), corner=int((cls == 0).sum())))
         print(e, rec['eyes'][e], flush=True)
     # ---- sheet faces (columns x rows grid), wound so the normal points out of the eye
@@ -586,4 +744,5 @@ def main(maps_dir, probe_dir, out):
 
 
 if __name__ == '__main__':
-    main(Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3]))
+    # an optional fourth argument: a JSON object of lever overrides (for trials; the levers used are written to lids.json)
+    main(Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3]), json.loads(sys.argv[4]) if len(sys.argv) > 4 else None)
