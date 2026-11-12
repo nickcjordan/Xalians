@@ -50,7 +50,7 @@ LEVERS = dict(
     lift_over_mm=0.15, lift_under_mm=0.35, dive_mm=3.0, fill_close_deg=8.0, fill_blur_deg=1.0, fill_keep_mm=2.0, rim_band_deg=0.0, rim_band_mm_per_deg=1.2, cap_under_mm=1.0, graze_cos_min=0.3, mesh_under_mm=0.35, jump_mm=3.0, jump_pad_deg=0.5, fillet_deg=1.5, fillet_iter=12, fillet_max_mm=0.0,
     fur_out_mm=1.0, fur_fade_mm=0.8,
     tuck_deg=3.0, far_deg=2.0, far_lower_deg=7.0, far_cap_deg=86.0, rows=120, roll_rows=4, roll_deg=1.8, seal_mm=0.15, closed_half_gap_deg=0.9,
-    low_ramp_deg=25.0, low_rim_mm=0.15, rim_hold_mm=0.03, iris_clear_mm=0.46, low_blur_deg=1.5, low_fade_deg=8.0,
+    low_ramp_deg=25.0, low_rim_mm=0.15, rim_hold_mm=0.03, iris_clear_mm=0.46, low_blur_deg=1.5, low_fade_deg=8.0, low_ramp_flat_rim=True, rise_lo_mm=1.0, rise_hi_mm=3.0,
     sag_deg=18.0, sag_power=0.8, squint_tilt_deg=7.0, squint_cheek_deg=6.0, fold_mm=0.8, fold_at_deg=9.0, fold_width_deg=2.5,
     wince_arch_deg=24.0, wince_fold_upper_mm=1.6, wince_fold_upper_at_deg=7.0, wince_fold_upper2_mm=1.0, wince_fold_upper2_at_deg=15.0,
     wince_fold_lower_mm=1.4, wince_fold_lower_at_deg=6.0, wince_fold_width_deg=2.2, wince_bunch=0.6,
@@ -256,6 +256,17 @@ def main(maps_dir, probe_dir, out, overrides=None):
             # only under the opening's middle, faded out toward it, so the closed line and the upper lid are as pass 2
             mid_ = np.interp(TH, th, (rimU+rimL)/2)
             wlow = ec.smooth((mid_-PHg)/L['low_fade_deg'])
+            if L['low_ramp_flat_rim']:
+                # also wherever the skin just outside the rim stays low (the inner and outer edges of the eye): the upper lid
+                # stood 1.9 mm proud of the skin along the inner edge, a cliff from the brow down to the inner corner (the V
+                # seen from the side). Where the skin rolls up into the brow above the eye the lid keeps pass 2's height
+                # (the socket fill meets the skin there). Per opening cell: the skin's height over the globe at the nearest
+                # cell 3 to 5 degrees outside the rim; the ramp applies in full under rise_lo_mm, not at all over rise_hi_mm
+                band_ = ~opening & (dout >= 3.) & (dout <= 5.) & np.isfinite(rs)
+                _, (bi_, bj_) = distance_transform_edt(~band_, sampling=step, return_indices=True)
+                rise = np.clip(rs[bi_, bj_]-rg[bi_, bj_], 0, None)*1000
+                wflat = 1-ec.smooth((rise-L['rise_lo_mm'])/(L['rise_hi_mm']-L['rise_lo_mm']))
+                wlow = np.maximum(wlow, gaussian_filter(wflat, 2.0/step))
             ob_in = np.where(opening, np.minimum(ob_in, ob_in+(low_in-ob_in)*wlow), ob_in)
         ov, un, cu = L['lift_over_mm']/1000, L['lift_under_mm']/1000, L['cap_under_mm']/1000
         # the offsets are radial; where the skin is steep to the radial direction (the cheek just under the eye) a radial
