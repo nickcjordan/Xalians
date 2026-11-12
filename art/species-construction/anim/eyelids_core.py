@@ -308,8 +308,10 @@ class Eye:
         rad = self.fur_rad[ix]*(g > 1e-4)[:, None]
         # the dark lid margin: lid fur next to the ribbon band darkens toward it (fur_tone, which the hair shader multiplies
         # the colour by) as the lid closes, so the closed line reads as a dark dash at sprite size without a heavier stroke
+        # (it starts past half travel: a half-open or squinting lid keeps the face's own tone next to its margin)
         near = 1-smooth((a_-band)/L['margin_dark_deg'])
-        self.tone_mult[ix] = 1-L['margin_dark']*near*np.where(up, su, L['margin_dark_lower']*sl)
+        ramp = lambda x: smooth((x-0.5)/0.5)
+        self.tone_mult[ix] = 1-L['margin_dark']*near*np.where(up, ramp(su), L['margin_dark_lower']*ramp(sl))
         # thinned where a point lies over the moved ribbon band (as sparse_caps thinned the face fur over the ribbon)
         rad = np.where(self.over_ribbon(T, P, close, squint, wince), 0., rad)
         return X, rad
