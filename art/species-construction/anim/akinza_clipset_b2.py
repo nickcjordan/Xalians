@@ -2904,7 +2904,7 @@ def bake(rig_dir, out, clips=None, rest=DEFAULT_REST):
                                     "89's pose), then idle from frame 0"),
                           params=dict(HELD=HELD, HELD_IN=HELD_IN, HELD_OUT=HELD_OUT, HELD_OUT_ARMS=HELD_OUT_ARMS)),
                 faint=dict(frames=FAINT4['frames'], loop=False, events=ev['faint'], startsOn='idle frame 0',
-                           endsOn='lying still (frames 31 to 35 are one pose); the game holds the last frame',
+                           endsOn=f"lying still (frames {FAINT4['still_from']} to {FAINT4['frames']-1} are one pose); the game holds the last frame",
                            cell=dict(front_px=FAINT_FRONT_PX, note='faint renders in a cell widened forward by front_px sprite pixels '
                                      '(clip_frames.py --front-px); at the atlas the other clips offsets and anchor shift right by it'),
                            params=dict(FAINT4=FAINT4, EAR_REST=EAR_REST)))
