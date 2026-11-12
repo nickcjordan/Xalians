@@ -152,6 +152,11 @@ cz = np.load(R/'correctives.npz')
 DELTAS = {k['name']: (cz[k['name']+'__ids'], cz[k['name']+'__delta'].astype(np.float64)) for k in KEYS}
 skin.shape_key_add(name='Basis', from_mix=False)
 for k in KEYS:
+    if 'pose_space' in k:
+        # (2026-11-12, pose_space_corrective.py: the neck fold and grip arm keys are driven by rotation distance in pose space,
+        # which has no Blender driver here yet; they are 0 at every board pose, and rig_core.posed_skin applies them everywhere else)
+        print('skipping pose-space key', k['name'], flush=True)
+        continue
     sk = skin.shape_key_add(name=k['name'], from_mix=False)
     co = rest.copy()
     ids, dl = DELTAS[k['name']]

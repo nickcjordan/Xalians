@@ -4,6 +4,7 @@
       [--rest <rest skin npz>] [--faint K|S]
   python art/species-construction/anim/akinza_clipset_b2.py setup <rig dir> <out dir> [--rest <rest skin npz>] [--clips K,S]
   python art/species-construction/anim/akinza_clipset_b2.py verify-approved <rig dir> <approved bake dir> <batch 1 bake dir> <scratch dir>
+  python art/species-construction/anim/akinza_clipset_b2.py rigpass <rig dir> <out dir> [<held bake dir for the grip arm keys or -> [<faint bake dir for faint's neck keys>]]
 
 Built beside the approved idle and Night Stalk (akinza_clips.py) and batch 1's hurt, evade and guard (akinza_clipset_b1.py):
 this module imports their rig, idle layers, foot solver, ear line and helpers and changes none of them. `verify-approved`
@@ -456,6 +457,17 @@ def _arm_profile(u, st):
     snapped back to the side in one frame at the hold's end and stopped dead (a small rebound; snapped past the side by .15 the
     paw went into the hip), then still. Held fix pass 8 (pry): from pry_at frames after the strain's start the elbow drives out
     over 3 frames, holds a frame, is snapped back past the side in one frame (pry_over) and settles the next."""
+    if 'pry_at' in st and 'pry_keys' in HELD:
+        # held fix pass 10 (critic h9: a one-frame jump to a hoop at 17 to 18): two small wrenches over four frames, a strain
+        # with a wobble while it is out, then snapped back past the side and settled (pry_keys: frames from pry_at, share)
+        a = st['pry_at']
+        keys = [(0., 0.)]+[(a+u, v) for u, v in HELD['pry_keys']]
+        if u <= 0 or u >= keys[-1][0]:
+            return 0.
+        for (u0, v0), (u1, v1) in zip(keys, keys[1:]):
+            if u0 <= u <= u1:
+                return v0+(v1-v0)*((u-u0)/(u1-u0))
+        return 0.
     if 'pry_at' in st and 'pry_shape' in HELD:
         # held fix pass 9 (critic h8: the elbow popped out in one frame and held dead still): it builds over two frames
         # (pry_shape: the shares at a+1 and a+2), strains with a small wobble while it is out, then is snapped back past the
@@ -824,6 +836,8 @@ def held_loop_body(rig, f, grip=True):
         # (mirrored against the head, not across the world's midline: mirrored in the world while the head turned 18 to 22
         # degrees, the far ear sat turned against the head and folded its root 400 to 530 triangles)
         mirror_far_ear_head(pose, P['far_loop']-P.get('far_loop_yaw', 0.)*lk_y)
+    if P.get('ear_p10'):
+        held_ears_p10(rig, pose, f, n)
     # the tails (fix pass 4): the waves and the whip as before, but a shorter lag down the chain, the whip low-passed in time,
     # and each frame's bends shared along the chain so no joint bends alone
     lagk = P['tail_lag_p4']
@@ -1105,6 +1119,93 @@ HELD_OUT.update(far_step=[0., 0., .1, .5, .9, 1., 1., 1., 1., 1.], far_lift=[0.,
                 release=[0., .12, .27, .43, .6, .76, .88, .96, 1., 1.], burst=[0., .1, .25, .38, .4, .3, .15, .05, 0., 0.])
 
 
+# Held fix pass 10 (blind critic h9 passed the read, the motion and the grip; the ear and the neck were limits of the rig): (1) the
+# ears laid back and down along the neck relative to the head (ear_turn_dirs: below the skull's long axis, splayed, turned about
+# their length so the dish is edge-on to the camera; on the rig as it is that ear's root is clean up to about 40 below, see
+# EAR_TURN), counter-turned against the head's own pitch by `counter` of it and kept within lo to hi below the skull line, so they
+# never come up to horizontal and never go deep enough to fold the root; the far ear mirrored a little lower (far_below) so it
+# stays behind the near one; three quick flicks of their own (frame, frames, degrees up toward the skull line); held_in and
+# held_out move them to and from this ear by the same three numbers (ear_head_params), so they pass horizontal once;
+# (2) in the holds the head turns 30 over the near shoulder and dips, the snout down and back toward the held paw (look keys
+# eased over 4 to 6 frames); (3) the paws keep more of their grip turn in the world (grip_hand_share), so they stay put through
+# the pulls; (4) the pry builds in two small wrenches over four frames (pry_keys); (5) the pulls carry the hips forward more and
+# sink them less, so the trailing (far) leg straightens at the peaks.
+HELD.update(
+    ear_p10=dict(below=34., counter=.6, lo=30., hi=40., splay=25., turn=62., far_below=2., far_turn=55., far_mid=15.,
+                 flicks=[(13, 4, 12.), (24, 3, 10.), (39, 4, 12.)]),
+    grip_hand_share=.7,
+    pry_keys=[(0., 0.), (1., .3), (2., .4), (3., .75), (4., .9), (5., .97), (6., .88), (7., -.15), (8., 0.)],
+)
+for _st, _upd in zip(HELD['strains'], (dict(rise=-.004, fwd=.034), dict(rise=-.003, fwd=.038), dict(rise=-.008, fwd=.042))):
+    _st.update(_upd)
+# (6) held_out's arms leave the grip more evenly (the paw jumped 40 and 35 px at 720 at out 2 and out 4)
+HELD_OUT.update(burst=[0., .08, .16, .22, .24, .2, .12, .05, 0., 0.], release=[0., .15, .3, .45, .6, .74, .86, .95, 1., 1.],
+                release_local=[0., 0., .03, .1, .22, .4, .62, .82, .95, 1.], shake=[0., 3., -3., 1.5, -.6, .2, 0., 0., 0., 0.])
+# (5) the trailing foot's heel stays down in the pulls (lifted 7 to 11 degrees it bent the far knee from 22 to 33 at the peaks)
+HELD['far_foot'] = [(f_, y_, z_, 0.) for f_, y_, z_, _ in HELD['far_foot']]
+for _st, _upd in zip(HELD['strains'], (dict(look=30., dip=26., look_keys=[(0., 0.), (6., 1.), (11., 1.), (15., 0.)]),
+                                       dict(look=30., dip=26., look_keys=[(2., 0.), (6., 1.), (12., 1.), (18., 0.)]),
+                                       dict())):
+    _st.update(_upd)
+
+
+def held_ears_p10(rig, pose, f, n):
+    """Held fix pass 10: both ears set relative to the head (see above); returns the near ear's (below, splay, turn)."""
+    E_ = HELD['ear_p10']
+    skin = _ear_skin(rig)
+    yh_ = _world(rig, pose, 'head')@np.array([0., 1., 0.])
+    ax_ = math.degrees(math.atan2(yh_[2], yh_[1]))         # the skull line's elevation pointing back (+ the back of the head up)
+    if 'ax0' not in E_:
+        E_['ax0'] = -4.                                    # the loop's rest head (level_head) draws it about 4 below level
+    below = min(E_['hi'], max(E_['lo'], E_['below']+E_['counter']*(ax_-E_['ax0'])))
+    fl = 0.
+    for f0_, du_, dg_ in E_['flicks']:
+        for sh_ in (-n, 0, n):
+            u = f-(f0_+sh_)
+            if 0 <= u <= du_:
+                fl += dg_*math.sin(math.pi*u/du_)
+    prm = (below-fl, E_['splay'], E_['turn'])
+    set_ear_head_params(rig, skin, pose, 'L', *prm)
+    set_ear_head_params(rig, skin, pose, 'R', prm[0]+E_['far_below'], prm[1], E_.get('far_turn', prm[2]))
+    return prm
+
+
+_EAR_SKIN = {}
+
+
+def _ear_skin(rig):
+    """A SkinSampler of the rig (for the ears' own frames, _ear_frames), made once."""
+    if 'skin' not in _EAR_SKIN:
+        _EAR_SKIN['skin'] = SkinSampler(rig.dir, DEFAULT_REST)
+    return _EAR_SKIN['skin']
+
+
+def ears_between(rig, pose, idle_pose, held_pose, w):
+    """Held fix pass 10: both ears the share w of the way from idle's ear to the loop's, by ear_head_params' three numbers
+    relative to the head as it is in `pose` (so they pass the skull's long axis once); w 0 keeps idle's ears and w 1 takes the
+    loop's exactly."""
+    ears = [f'ear_{i}.{sd}' for sd in 'LR' for i in range(1, 5)]
+    if w <= 0.:
+        for b in ears:
+            pose[b] = list(idle_pose.get(b, [0., 0., 0.]))
+        return
+    if w >= 1.:
+        for b in ears:
+            pose[b] = list(held_pose.get(b, [0., 0., 0.]))
+        return
+    skin = _ear_skin(rig)
+    for sd in 'LR':
+        qi, qh = dict(pose), dict(pose)
+        for i in range(1, 5):
+            qi[f'ear_{i}.{sd}'] = list(idle_pose.get(f'ear_{i}.{sd}', [0., 0., 0.]))
+            qh[f'ear_{i}.{sd}'] = list(held_pose.get(f'ear_{i}.{sd}', [0., 0., 0.]))
+        h0, h1 = ear_head_params(rig, skin, qi, sd), ear_head_params(rig, skin, qh, sd)
+        b_, s_, t_ = (x+(y-x)*w for x, y in zip(h0, h1))
+        if sd == 'R':       # the far ear dips below the near one on the way (it showed beside it as a second outline)
+            b_ += HELD['ear_p10'].get('far_mid', 0.)*math.sin(math.pi*w)
+        set_ear_head_params(rig, skin, pose, sd, b_, s_, t_)
+
+
 def ear_pin_yaw(pose, deg):
     """Held fix pass 9: each ear_1 turned deg degrees about the head's own vertical (near side; the far side mirrored), so
     the pinned ear lies back and down along the neck with its back and rim to the side camera, not its inner face."""
@@ -1159,6 +1260,8 @@ def held_in_frame(rig, k):
     if HELD.get('far_loop') and e['ears'] > 0:
         mirror_far_ear_head(pose, HELD['far_loop']*e['ears'])
     mirror_far_ear(rig, pose, HELD_IN['far_down'][k], HELD_IN['far_mirror'][k], HELD_IN['far_twist'][k])
+    if HELD.get('ear_p10'):
+        ears_between(rig, pose, ip, hp, e['ears'])
     lift = (1-e['body'])*ilift+e['body']*hlift+e['jolt']*np.asarray(HELD_IN_JOLT)
     feet = _blend_feet(IDLE_FEET, hfeet, e['body'])
     planted = dict(L=True, R=True)
@@ -1222,6 +1325,8 @@ def held_out_frame(rig, k):
     if HELD.get('far_loop') and e['ears'] < 1:
         mirror_far_ear_head(pose, HELD['far_loop']*(1-e['ears']))
     mirror_far_ear(rig, pose, HELD_OUT['far_down'][k], HELD_OUT['far_mirror'][k], HELD_OUT['far_twist'][k])
+    if HELD.get('ear_p10'):
+        ears_between(rig, pose, ip, hp, 1.-e['ears'])
     lift = (1-e['idle'])*hlift+e['idle']*ilift
     feet = _blend_feet(hfeet, IDLE_FEET, e['idle'])
     planted = dict(L=True, R=True)
@@ -2362,6 +2467,23 @@ FAINT4.update(
 )
 
 
+# Fix pass 12 (blind critic f11 passed the read, the arms and tails, the chest hit, the start seam and the still end; the ear's
+# inner face and the neck's pinch were limits of the rig). With the rig pass (pose_space_corrective.py: the neck fold keys, and
+# for the ear the finding that a turn about its length is clean on the rig as it is): (1) the ear eases from idle's to
+# ear_hang_prm relative to the head over 3 to 8 (rest A's own height above the skull's long axis, splayed 25 instead of 75,
+# turned 60 about its length so the dish is edge-on), holds while the head hangs, and gives back to the rest A path over 15 to
+# 19, so 18 is already half laid back; (2) the head's turn to its rest pitch starts at 13 and is two thirds done by 17, so the
+# contact frame carries less of it; (3) the bounce of head and shoulders 8 to 10 px at 720 over 20 and 21, settled on 22.
+FAINT4.update(
+    ear_hang=[(3, 'linear', 0.), (8, 'smooth', 1.), (15, 'linear', 1.), (19, 'smooth', 0.)], ear_hang_prm=(-30., 25., -60.),
+    head_pitch=[(0, 'linear', 0.), (1, 'linear', 10.), (2, 'linear', 24.), (3, 'smooth', 34.), (4, 'out', 38.), (8, 'smooth', 64.),
+                (11, 'smooth', 86.), (12, 'smooth', 92.), (13, 'smooth', 86.), (14, 'smooth', 76.), (15, 'smooth', 63.), (16, 'smooth', 49.),
+                (17, 'smooth', 36.), (18, 'smooth', 24.), (19, 'smooth', 13.), (20, 'smooth', 10.)],
+    bounce=[(18, 'linear', 0.), (19, 'linear', -.25), (20, 'out', 1.), (21, 'smooth', .45), (22, 'smooth', 0.)],
+    bounce_rot={'chest': [-8., 0., 0.], 'neck': [-3.5, 0., 0.]},
+)
+
+
 def _ear_frames(skin):
     """Per side: the ear's rest axis (root to tip) and its dish-facing normal (the blade's normal, signed toward the dish: rest
     vertex normals facing forward)."""
@@ -3305,6 +3427,18 @@ def faint4_frame(rig, skin, f, cache):
                 set_ear_world(rig, skin, body, sd, *prm)
             else:
                 prm = ear_world_params(rig, skin, body, sd)
+            wh_ = tr('ear_hang') if 'ear_hang' in P else 0.
+            if wh_ > 0:
+                # fix pass 12 (critic f11: over 8 to 17 the ear stood splayed 75 degrees out, pointing at the camera, so its
+                # concave inner face showed as a scoop): relative to the head the ear eases to ear_hang_prm (above the skull's
+                # long axis as rest A is, splayed less, turned about its length so the dish is edge-on to the camera: a clean
+                # root with the rig as it is, ear_turn_dirs), held while the head hangs, and handed back over the head's turn
+                # to rest so rest A follows unchanged
+                h0 = ear_head_params(rig, skin, body, sd)
+                h1 = P['ear_hang_prm']
+                set_ear_head_params(rig, skin, body, sd, *(x+(y-x)*wh_ for x, y in zip(h0, h1)))
+                prm = ear_world_params(rig, skin, body, sd)
+                ear_info[sd+'hang'] = round(wh_, 3)
             ear_info[sd+'rel'] = round(el_-ax_, 2)
             ear_info[sd] = [round(x, 2) for x in prm]
             continue
@@ -3468,6 +3602,151 @@ def faint4_frames(rig, skin):
     return frames
 
 
+# ---------------------------------------------------------------- rig pass (2026-11-12): ear turn, neck fold, grip arm
+# The pose-space keys (pose_space_corrective.py) are sculpted at these poses on the rest body (only the named bones turned): a key
+# depends only on the turns of its centre bones relative to their parents, so the same keys serve any trunk or head. The ear turn
+# board: the ear laid back and down `below` degrees under the skull's long axis (head +Y), splayed `splay` degrees out to its
+# own side, its dish as the minimal swing from rest leaves it, then turned `turn` degrees about its own length, the dish going
+# down and in, away from the side camera (+X for the near ear). The neck fold board: the neck bone flexed forward (+X) with the
+# head straight on it.
+EAR_TURN = dict(below=35., splay=25., turns=(), radius=20., board=(0., 20., 40., 60., 80.))
+# (turns: the ear turn keys' sculpt turns; none are built. On the raw skin the board's turn about the ear's length collapses no
+# ear-root triangle up to 70 degrees (3 at 80) and turning it in toward the midline about the head's vertical none up to 60; the
+# mush keys sculpted at 20 to 80 collapsed 77 to 828 instead. Only a turn out toward the camera side about the head's vertical
+# crushes the base's outer edge into the skull (30 at 40, 210 at 60), which neither a mush, a widened blend nor an edge-length
+# relaxation target fixes, so the clips turn the ear about its length and inward. Measures: clipset2/rigpass/ear-turn-map.json)
+NECK_FOLD = dict(angles=(60., 95., 130.), radius=35., board=(0., 45., 60., 95., 130.))
+# grip arm keys: on the arm drawn back into the grip the rig's arm keys sculpted for other arm poses (the elbow mush keys at
+# this bend most, armpit_fwd for the arm raised forward) put a sausage of lumps along the upper arm and a bulge at the elbow
+# (with them switched off the arm is smooth but the inner elbow collapses 91 triangles); the grip keys are mush keys over the
+# upper arm and elbow (mask: the skin weighted to the upper arm or forearm within 14 cm of the elbow, out 2 to 6 cm). (Taking the
+# arm keys' effect back out instead left the bulge, or creased the elbow's front when half of it was taken out there.) Per
+# side, centres picked from held's loop frames, farthest first, each at least a radius from the others (so
+# along the loop no two keys add up past 1), until every loop frame is within half a radius of one; the distance is the root of
+# the summed squares of the upper arm's, clavicle's and forearm's angles (every approved arm is 52 or more from every centre)
+GRIP_ARM = dict(radius=20., bones=('upperarm', 'clavicle', 'forearm'),
+                mask=dict(r0=.02, r1=.06, band_bones=['upperarm.{sd}', 'forearm.{sd}'], band_min=.3, near=['elbow.{sd}', .14],
+                          part_bones=['upperarm.{sd}', 'forearm.{sd}', 'hand.{sd}', 'clavicle.{sd}', 'chest', 'spine']))
+
+
+def grip_arm_frames(frames, sd):
+    bones = [f'{b}.{sd}' for b in GRIP_ARM['bones']]
+    q = lambda p, b: rc.quat_from_matrix(rc.euler_matrix(*p.get(b, (0, 0, 0))))
+    dist = lambda p1, p2: math.sqrt(sum(rc.local_turn_deg(p1, b, q(p2, b))**2 for b in bones))
+    r = GRIP_ARM['radius']
+    cen = [0]
+    while True:
+        dd = [min(dist(f['pose'], frames[c]['pose']) for c in cen) for f in frames]
+        far = int(np.argmax(dd))
+        if dd[far] <= r/2:
+            return sorted(cen)
+        cand = [i for i in np.argsort(dd)[::-1] if all(dist(frames[i]['pose'], frames[c]['pose']) >= r for c in cen)]
+        if not cand:
+            return sorted(cen)
+        cen.append(int(cand[0]))
+# faint pass 12: neck keys on faint's own path where the head bends back on the folded neck as it turns to its rest (12 to 18,
+# where the board's keys, sculpted with the head straight on the neck, are 0): one key a frame, the radius under the distance
+# between neighbouring frames (18.3 to 24.2) and under f18's distance to the rest pose (22.4), so each frame takes its own key
+# and the rest pose (Nick's ear rest A) none
+NECK_FAINT = dict(frames=(12, 13, 14, 15, 16, 17, 18), radius=18., mush_share=1., mush_share_at={17: .5})
+# (mush_share: the share of the smoothing on top of the neck curve; at .5 the neck creases at 12 to 18 counted 7/20, 18/40, 91/171,
+# 60/171, 8/56, 7/48, 12/63 (turned over 90 and 60 degrees from the smoothed surface), at 1 0/0, 0/0, 0/0, 0/1, 7/15, 35/80, 4/9)
+
+
+def ear_turn_dirs(skin, sd, below, splay, turn):
+    """The ear's axis and dish normal in the head's frame for the ear turn board (see above)."""
+    a, n0 = _ear_frames(skin)[sd]
+    sx = 1. if sd == 'L' else -1.
+    el, ps = math.radians(-below), math.radians(splay)
+    d = np.array([sx*math.sin(ps), math.cos(ps)*math.cos(el), math.cos(ps)*math.sin(el)])
+    n = rc.align_rotation(a, d)@n0
+    return d, _axis_angle(d, sx*turn)@n
+
+
+def ear_head_params(rig, skin, pose, sd):
+    """(below, splay, turn) of a pose's ear in the head's frame, the inverse of ear_turn_dirs: degrees below the skull's long axis
+    (negative above it), splayed toward its own side, turned about its length from the minimal swing's dish."""
+    a, n0 = _ear_frames(skin)[sd]
+    Wh, W1 = _world(rig, pose, 'head'), _world(rig, pose, f'ear_1.{sd}')
+    d, n = Wh.T@W1@a, Wh.T@W1@n0
+    sx = 1. if sd == 'L' else -1.
+    nb = rc.align_rotation(a, d)@n0
+    return (-math.degrees(math.atan2(d[2], d[1])), math.degrees(math.asin(max(-1., min(1., sx*d[0])))),
+            sx*math.degrees(math.atan2(float(np.cross(nb, n)@d), float(nb@n))))
+
+
+def set_ear_head_params(rig, skin, pose, sd, below, splay, turn):
+    """ear_1 set from ear_head_params' (below, splay, turn) for the head as it is in `pose`."""
+    set_ear_turn(rig, skin, pose, sd, below, splay, turn)
+
+
+def set_ear_turn(rig, skin, pose, sd, below, splay, turn):
+    """ear_1 set to the ear turn board's ear for the head as it is in `pose` (2 to 4 straight)."""
+    Wh = rc.bone_transforms(rig.J, pose, bones=B)['head'][0]
+    d, n = ear_turn_dirs(skin, sd, below, splay, turn)
+    set_ear_dn(rig, skin, pose, sd, Wh@d, Wh@n)
+
+
+def rigpass_poses(rig, skin):
+    """(name, pose) for every board pose: ear turns (both ears turned together), neck folds."""
+    out = []
+    for t in EAR_TURN['board']:
+        q = {}
+        for sd in 'LR':
+            set_ear_turn(rig, skin, q, sd, EAR_TURN['below'], EAR_TURN['splay'], t)
+        out.append((f'ear_turn_{t:.0f}', q))
+    for th in NECK_FOLD['board']:
+        out.append((f'neck_fold_{th:.0f}', {'neck': [float(th), 0., 0.]}))
+    return out
+
+
+def rigpass_spec(rig, skin, grip_bake=None, faint_bake=None):
+    """The pose-space key spec (pose_space_corrective.py): the ear turn keys per side at EAR_TURN['turns'], the neck fold keys at
+    NECK_FOLD['angles'], and the grip arm keys per side at held's GRIP_ARM['frames'] (poses.json:frame)."""
+    spec = []
+    for sd in 'LR':
+        for t in EAR_TURN['turns']:
+            q = {}
+            set_ear_turn(rig, skin, q, sd, EAR_TURN['below'], EAR_TURN['splay'], t)
+            spec.append(dict(name=f'ear_turn_{t:.0f}.{sd}', group='ear_turn', side=sd, sculpt=dict(pose=ordered(q), lift=0.),
+                             centre_bones=[f'ear_1.{sd}'], radius=EAR_TURN['radius'], target='mush',
+                             label=f"rest body, ear laid back {EAR_TURN['below']:.0f} below the skull line, splayed {EAR_TURN['splay']:.0f}, "
+                                   f"turned {t:.0f} about its length (dish away from the camera)"))
+    for th in NECK_FOLD['angles']:
+        spec.append(dict(name=f'neck_fold_{th:.0f}', group='neck_fold', side='C', sculpt=dict(pose={'neck': [float(th), 0., 0.]}, lift=0.),
+                         centre_bones=['neck', 'head'], radius=NECK_FOLD['radius'], target='neck_curve', mush_share=.5,
+                         label=f'rest body, neck flexed forward {th:.0f} degrees, head straight on the neck'))
+    if faint_bake:
+        for f in NECK_FAINT['frames']:
+            spec.append(dict(name=f'neck_fold_faint_{f}', group='neck_fold', side='C', sculpt=f'{Path(faint_bake)/"faint"/"poses.json"}:{f}',
+                             centre_bones=['neck', 'head'], radius=NECK_FAINT['radius'], target='neck_curve',
+                             mush_share=NECK_FAINT['mush_share_at'].get(f, NECK_FAINT['mush_share']), label=f'faint frame {f} (pass 12 bake)'))
+    if grip_bake:
+        hf = json.loads((Path(grip_bake)/'held'/'poses.json').read_text())
+        for sd in 'LR':
+            for f in grip_arm_frames(hf, sd):
+                spec.append(dict(name=f'grip_arm_{f}.{sd}', group='grip_arm', side=sd, sculpt=f'{Path(grip_bake)/"held"/"poses.json"}:{f}',
+                                 centre_bones=[f'{b}.{sd}' for b in GRIP_ARM['bones']], radius=GRIP_ARM['radius'],
+                                 target='mush', mask=GRIP_ARM['mask'],
+                                 label=f'held loop frame {f}'))
+    return spec
+
+
+def bake_rigpass(rig_dir, out, rest=DEFAULT_REST, grip_bake=None, faint_bake=None):
+    """The board poses as two clips (rigpass_ear, rigpass_neck) for clip_frames.py, and the key spec as pose-space-spec.json."""
+    rig = ac.Rig(rig_dir)
+    skin = SkinSampler(rig_dir, rest)
+    out = Path(out)
+    poses = rigpass_poses(rig, skin)
+    for clip, pre in (('rigpass_ear', 'ear_turn_'), ('rigpass_neck', 'neck_fold_')):
+        frames = [dict(frame=i, pose=ordered(q), lift=[0., 0., 0.], shapes=dict(breath=0., breath_belly=0.), info=dict(board=nm))
+                  for i, (nm, q) in enumerate(p for p in poses if p[0].startswith(pre))]
+        (out/clip).mkdir(parents=True, exist_ok=True)
+        (out/clip/'poses.json').write_text(json.dumps(frames, indent=0))
+        print('baked', clip, len(frames), flush=True)
+    (out/'pose-space-spec.json').write_text(json.dumps(rigpass_spec(rig, skin, grip_bake, faint_bake), indent=1))
+
+
 CLIPS = {'displaced': (displaced_frame, DISPLACED['frames']), 'held': (held_frame, HELD['frames']),
          'held_in': (held_in_frame, HELD['entry_frames']), 'held_out': (held_out_frame, HELD['exit_frames'])}
 ORDER = ['displaced', 'held', 'held_in', 'held_out', 'faint']
@@ -3542,7 +3821,7 @@ def verify_approved(rig_dir, approved, b1_bake, scratch):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
-    p.add_argument('cmd', choices=['bake', 'setup', 'verify-approved'])
+    p.add_argument('cmd', choices=['bake', 'setup', 'verify-approved', 'rigpass'])
     p.add_argument('rig', type=Path)
     p.add_argument('out', type=Path)
     p.add_argument('more', type=Path, nargs='*')
@@ -3557,6 +3836,9 @@ if __name__ == '__main__':
         FAINT4['ear_rest'] = a.ear_rest
     if a.cmd == 'setup':
         bake_setup(a.rig, a.out, a.rest, a.clips or 'K,S')
+    elif a.cmd == 'rigpass':
+        mo = [None if str(x) in ('-', '.') else x for x in a.more]+[None, None]
+        bake_rigpass(a.rig, a.out, a.rest, mo[0], mo[1])
     elif a.cmd == 'bake':
         bake(a.rig, a.out, a.clips.split(',') if a.clips else None, a.rest)
     else:

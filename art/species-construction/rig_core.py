@@ -1055,10 +1055,31 @@ def swing_direction(joints, pose, bone, axis, bones=None):
     return float(w@a/(n*np.linalg.norm(a)))
 
 
+def local_turn_deg(pose, bone, quat):
+    """The angle (degrees, 0 to 180) between a bone's local rotation in `pose` and the rotation `quat` (w, x, y, z): the
+    geodesic distance in rotation space, sign-free (q and -q are one rotation)."""
+    q = quat_from_matrix(euler_matrix(*pose.get(bone, (0, 0, 0))))
+    c = abs(float(np.dot(q, np.asarray(quat, float))))
+    return math.degrees(2*math.acos(min(1., c)))
+
+
+def pose_space_value(pose, ps):
+    """A pose-space key's value (2026-11-12, the ear turn, neck fold and grip arm keys): the keys sit at sculpted rotations
+    of one or more bones, `ps` = {centre: {bone: (w, x, y, z)}, radius: degrees}; the distance is the root of the summed
+    squares of each bone's local_turn_deg from its centre, and the value falls linearly from 1 at the centre to exactly 0 at
+    the radius (a tent: keys a radius apart along a path interpolate linearly between them). Exactly 0 anywhere a radius or
+    more from the centre, so a key placed a radius away from every rotation an approved clip uses never touches it."""
+    d = math.sqrt(sum(local_turn_deg(pose, b, q)**2 for b, q in ps['centre'].items()))
+    return max(0., 1.-d/ps['radius'])
+
+
 def key_value(joints, pose, k, bones=None):
     """A corrective key's value: driver_value of the bone's swing; a key with a `direction` {axis, sign, band} only
     fires when the swing turns that way: times smoothstep(sign * swing_direction, band[0], band[1]), which is exactly 1
-    for a swing well inside that direction (so such frames keep their values bit for bit) and 0 the other way."""
+    for a swing well inside that direction (so such frames keep their values bit for bit) and 0 the other way.
+    A key with `pose_space` is driven by pose_space_value instead (its bone's swing plays no part)."""
+    if 'pose_space' in k:
+        return pose_space_value(pose, k['pose_space'])
     v = driver_value(swing_deg(joints, pose, k['bone'], bones), k['rise'], k.get('fall'))
     dr = k.get('direction')
     if dr and v > 0:
