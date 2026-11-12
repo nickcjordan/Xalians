@@ -2,26 +2,28 @@
 
 The lids are separate objects; they add nothing to the skin. Each eye gets an upper and a lower lid sheet that slide over
 the eye globe in the eye's own angle frame (eyelids_maps.py: yaw theta toward the outer corner, pitch phi up, both from the
-globe's centre), plus short lid fur, and the eye's dark ribbon (the lid margin line of the fur of record) rides on each lid's
-margin. Rest space is the surface's world units (the figure 1.86 tall); clip_frames.py carries every head part to its pose
-with the head bone, and so does eyelid_frames.py with these.
+globe's centre), plus lid fur and a lash line, and the eye's dark ribbon (the lid margin line of the fur of record) rides on
+each lid's margin. Rest space is the surface's world units (the figure 1.86 tall); clip_frames.py carries every head part to
+its pose with the head bone, and so does eyelid_frames.py with these.
 
-Controls per eye: `close` 0 (open, as the approved build) to 1 (closed) and `squint` 0 to 1. The upper margin travels
-s_u = 1-(1-close)(1-SQUINT_UPPER*squint) of the way from its tucked open place to the closed line, the lower
-s_l = 1-(1-close^2)(1-SQUINT_LOWER*squint) (the lower lid joins late: the upper lid does most of a blink's travel).
+Controls per eye: `close` 0 (open, as the approved build) to 1 (closed), `squint` 0 to 1 and `wince` 0 to 1. The upper
+margin travels s_u = 1-(1-close)(1-SQUINT_UPPER*squint)(1-wince) of the way from its tucked open place to its line, the lower
+s_l = 1-(1-close^2)(1-SQUINT_LOWER*squint)(1-wince) (the lower lid joins a blink late: the upper lid does most of the travel).
+The line is the closed line (sagging between the corners, a sleeping eye) blended by `wince` toward the wince line (arched
+above the corner-to-corner line: the corners bent down, the lower lid pushed up by the cheek); a wince also raises tension
+folds on both lids.
 
-Open (close = squint = 0): every lid sheet lies under the skin of the socket rim (tucked tuck_deg past the rim, and the
-sheet under the skin or inside the globe wherever skin covers the globe: the tucked field `loff`), the lid fur has zero length
-and zero radius, the ribbon is the original mesh untouched, the fur of record keeps its radii and the catch light shows:
-`state_geometry` returns `open=True` for that eye.
+Open (close = squint = wince = 0): every lid sheet lies under the skin of the socket rim (tucked tuck_deg past the rim, and
+the sheet under the skin or inside the globe wherever skin covers the globe: the tucked field `loff`), the lid fur and lashes
+have zero length and zero radius, the ribbon is the original mesh untouched, the fur of record keeps its radii and the catch
+light shows: `state_geometry` returns `open=True` for that eye.
 
-Moving (by lift_at of its travel), a lid rises to the lifted field `lfield`: over the globe inside the opening, and over the
-bare skin round the opening (the zone the face fur does not reach, which the open ribbon partly covers) lift_delta above it,
-diving under the skin short of the first face-fur roots. So the lid unfolds over the bare band instead of leaving it bald
-when the ribbon slides off it. Its fur copies the shape of the face strand next to it (turned toward the margin) and
-shows where the lid does (`show0` tucked, `show1` lifted).
+Moving (by lift_at of its travel), a lid rises to the lifted field `lfield` (pass 2): one smooth surface over the globe in
+the opening, over the bare skin round it, filling the socket groove at the rim, and diving gently under the skin past the
+bare zone. Its fur copies the face fur of the ring round the bare zone (density, shape in the true surface frame, radii,
+every attribute) and shows where the lid does (`show0` tucked, `show1` lifted).
 
-Built by eyelids_build.py into <lids dir>/lids.npz and lids.json (the levers below are recorded there).
+Built by eyelids_build.py into <lids dir>/lids.npz and lids.json (the levers are recorded there).
 """
 import json
 from pathlib import Path
@@ -36,6 +38,10 @@ EYES = ('eye1', 'eye-1')  # eye1 is the creature's left (+X, the near side in th
 def smooth(x):
     x = np.clip(x, 0., 1.)
     return x*x*(3-2*x)
+
+
+def gauss(x, w):
+    return np.exp(-0.5*(np.asarray(x, float)/w)**2)
 
 
 class Grid:
@@ -65,17 +71,18 @@ class Eye:
         self.c, self.f, self.up, self.lat = g('frame')
         self.grid = Grid(Z['theta'], Z['phi'])
         self.rg, self.loff, self.rvis, self.lfield = g('rg'), g('loff'), g('rvis'), g('lfield')
+        self.sdz = g('sdz')
         self.furU, self.furL = g('furU'), g('furL')
         self.show0, self.show1 = g('show0'), g('show1')
         self.cth, self.rimU, self.rimL, self.close = g('cth'), g('rimU'), g('rimL'), g('closeline')
+        self.wline = g('winceline')
+        self.lowfar = g('lowfar') if key+'__lowfar' in Z.files else None
         self.thm, self.thl = float(g('corners')[0]), float(g('corners')[1])
         self.lid_th = g('lid_theta')
         self.L = L
-        self.fur = {k: g('fur_'+k) for k in ('lid', 'theta', 'a', 'len', 'gamma', 'jit')}
-        self.fur_prof = g('fur_profile')
+        self.fur = {k: g('fur_'+k) for k in ('lid', 'theta', 'a', 'src')}
         self.fur_prof3 = g('fur_prof3')
-        self.band_prof = g('fur_bandprof') if key+'__fur_bandprof' in Z.files else np.zeros((0, 9, 3))
-        self.band_first = int(np.flatnonzero(np.abs(self.fur['lid']) == 2)[0]) if (np.abs(self.fur['lid']) == 2).any() else 0
+        self.fur_rad = g('fur_rad')
         self.rib = dict(rest=g('rib_rest'), th=g('rib_th'), ph=g('rib_ph'), h=g('rib_h'), cls=g('rib_cls'), ph0=g('rib_ph0'),
                         th0=g('rib_th0'))
         self.capdata = dict(idx=g('caps_idx'), th=g('caps_th'), ph=g('caps_ph'), r_now=g('caps_r'), r_full=g('caps_rfull'))
@@ -102,19 +109,20 @@ class Eye:
         """Upper rim, lower rim and closed line at theta (outside the corners they all sit at the corner's height)."""
         return interp1(self.cth, self.rimU, t), interp1(self.cth, self.rimL, t), interp1(self.cth, self.close, t)
 
-    def margins(self, t, close, squint):
+    def margins(self, t, close, squint, wince=0.):
         L = self.L
-        su = 1-(1-close)*(1-SQUINT_UPPER*squint)
-        sl = 1-(1-close*close)*(1-SQUINT_LOWER*squint)
+        su = 1-(1-close)*(1-SQUINT_UPPER*squint)*(1-wince)
+        sl = 1-(1-close*close)*(1-SQUINT_LOWER*squint)*(1-wince)
         rU, rL, cl = self.curves(t)
+        line = cl+(interp1(self.cth, self.wline, t)-cl)*wince
         u = np.clip((np.asarray(t, float)-self.thm)/(self.thl-self.thm), 0, 1)
         bump = np.sin(np.pi*u)
         half = L['closed_half_gap_deg']
-        pu = (rU+L['tuck_deg'])*(1-su)+(cl+half)*su
-        pl = (rL-L['tuck_deg'])*(1-sl)+(cl-half)*sl
+        pu = (rU+L['tuck_deg'])*(1-su)+(line+half)*su
+        pl = (rL-L['tuck_deg'])*(1-sl)+(line-half)*sl
         # squint: the inner half of the upper lid pressed lower (the brow's pull), the lower lid pushed up by the cheek;
-        # both fade out toward a full close
-        k = squint*(1-close)
+        # both fade out toward a full close or a wince
+        k = squint*(1-close)*(1-wince)
         pu = pu-k*L['squint_tilt_deg']*bump*(1-u)
         pl = pl+k*L['squint_cheek_deg']*bump
         mid = (pu+pl)/2
@@ -128,8 +136,7 @@ class Eye:
         return smooth(np.asarray(s, float)/self.L['lift_at'])
 
     def field(self, t, p, lam):
-        """The lid's height over the globe: the tucked field (under the skin, as when open) blended with the lifted one
-        (over the bare skin between the rim and the face fur, then diving under the skin where the fur starts)."""
+        """The lid's height over the globe: the tucked field (under the skin, as when open) blended with the lifted one."""
         a = self.grid(self.loff, t, p)
         if np.all(np.asarray(lam) == 0):
             return a
@@ -138,10 +145,42 @@ class Eye:
     def furlines(self, t):
         return interp1(self.cth, self.furU, t), interp1(self.cth, self.furL, t)
 
-    def lid_sheet(self, which, t, close, squint):
+    def fold_weight(self, t, p):
+        """Folds only where the lid lies over the skin or the globe (not where it dives under the face)."""
+        return smooth((self.grid(self.sdz, t, p)-0.5)/2.5)
+
+    def folds(self, which, t, p, pm, close, squint, wince):
+        """Extra height of a lid at (theta, phi) from its margin pm: the squint's tension fold on the upper lid (as pass 1)
+        and the wince's folds, two on the upper lid and one on the lower (pressed skin bunching parallel to the slit)."""
+        L = self.L
+        t, p = np.asarray(t, float), np.asarray(p, float)
+        if which == 'upper':
+            a = p-pm
+            rU = self.curves(t)[0]
+            off = L['fold_mm']/1000*squint*(1-close)*(1-wince)*gauss(a-L['fold_at_deg'], L['fold_width_deg'])*(p < rU-0.5)
+            if wince > 0:
+                w = L['wince_fold_width_deg']
+                off = off+wince/1000*(L['wince_fold_upper_mm']*gauss(a-L['wince_fold_upper_at_deg'], w)
+                                      + L['wince_fold_upper2_mm']*gauss(a-L['wince_fold_upper2_at_deg'], w))*self.fold_weight(t, p)
+        else:
+            a = pm-p
+            off = np.zeros(np.broadcast(a, t).shape)
+            if wince > 0:
+                off = wince/1000*L['wince_fold_lower_mm']*gauss(a-L['wince_fold_lower_at_deg'], L['wince_fold_width_deg'])*self.fold_weight(t, p)
+        return off*(a > 0)
+
+    def fold_shape(self, which, t, p, pm):
+        """0 to 1 at the wince folds (for the fur bunching up along them)."""
+        L, w = self.L, self.L['wince_fold_width_deg']
+        if which == 'upper':
+            a = p-pm
+            return np.maximum(gauss(a-L['wince_fold_upper_at_deg'], w), gauss(a-L['wince_fold_upper2_at_deg'], w))
+        return gauss((pm-p)-L['wince_fold_lower_at_deg'], w)
+
+    def lid_sheet(self, which, t, close, squint, wince=0.):
         """Vertices (columns x rows x 3) of one lid sheet: rows from the margin's rolled lip to the far edge under the skin."""
         L = self.L
-        pu, pl, su, sl = self.margins(t, close, squint)
+        pu, pl, su, sl = self.margins(t, close, squint, wince)
         rU, rL, _ = self.curves(t)
         fU, fL = self.furlines(t)
         nr, roll = L['rows'], L['roll_rows']
@@ -149,7 +188,9 @@ class Eye:
         if which == 'upper':
             pm, far, sgn, lam = pu, np.minimum(np.maximum(fU, rU+L['tuck_deg'])+L['far_deg'], L['far_cap_deg']), 1., self.lam(su)
         else:
-            pm, far, sgn, lam = pl, np.maximum(np.minimum(fL, rL-L['tuck_deg'])-L['far_deg'], -L['far_cap_deg']), -1., self.lam(sl)
+            pm, far, sgn, lam = pl, np.maximum(np.minimum(fL, rL-L['tuck_deg'])-L.get('far_lower_deg', L['far_deg']), -L['far_cap_deg']), -1., self.lam(sl)
+            if self.lowfar is not None:
+                far = np.maximum(far, np.minimum(interp1(self.cth, self.lowfar, t), pm-L['roll_deg']-1.))
         T = np.repeat(t[:, None], roll+nr, 1)
         P = np.empty_like(T)
         O = np.empty_like(T)
@@ -164,19 +205,22 @@ class Eye:
             p = pm+(far-pm)*s
             P[:, roll+k] = p
             O[:, roll+k] = self.field(t, p, lam)
-        if which == 'upper' and squint > 0:
-            a = P[:, roll:]-pm[:, None]
-            fold = L['fold_mm']/1000*squint*(1-close)*np.exp(-0.5*((a-L['fold_at_deg'])/L['fold_width_deg'])**2)
-            inside = P[:, roll:] < rU[:, None]-0.5
-            O[:, roll:] += fold*inside
+        if squint > 0 or wince > 0:
+            O[:, roll:] += self.folds(which, T[:, roll:], P[:, roll:], pm[:, None], close, squint, wince)
         return self.point(T, P, O)
 
-    def outer_radius(self, t, p, close, squint):
-        """The outermost lid or globe radius at (theta, phi), with each lid's rolled lip (for the lid fur and the ribbon)."""
-        pu, pl, su, sl = self.margins(t, close, squint)
+    def outer_radius(self, t, p, close, squint, wince=0.):
+        """The outermost lid or globe radius at (theta, phi), with each lid's rolled lip and folds (for the lid fur, the
+        lashes and the ribbon)."""
+        pu, pl, su, sl = self.margins(t, close, squint, wince)
         w = self.L['roll_deg']
         lu, ll = self.lam(su), self.lam(sl)
-        off = np.where(p >= pu, self.field(t, p, lu), np.where(p <= pl, self.field(t, p, ll), 0.))
+        fu = self.field(t, p, lu)
+        fl = self.field(t, p, ll)
+        if squint > 0 or wince > 0:
+            fu = fu+self.folds('upper', t, p, pu, close, squint, wince)
+            fl = fl+self.folds('lower', t, p, pl, close, squint, wince)
+        off = np.where(p >= pu, fu, np.where(p <= pl, fl, 0.))
         for pm, sgn, lam in ((pu, 1., lu), (pl, -1., ll)):
             x = sgn*(pm-p)                                       # degrees past the margin onto its lip
             lip = (x > 0) & (x < w)
@@ -184,47 +228,64 @@ class Eye:
             off = np.where(lip, np.maximum(off, m_off*np.sqrt(np.clip(1-(x/w)**2, 0, 1))), off)
         return self.grid(self.rg, t, p)+np.maximum(off, 0.)
 
-    def surface_radius(self, t, p, close, squint):
+    def surface_radius(self, t, p, close, squint, wince=0.):
         """The outermost surface at rest skin, globe or lid: the rest visible surface (skin where it lies over the globe)
         or a lid."""
-        return np.maximum(self.grid(self.rvis, t, p), self.outer_radius(t, p, close, squint))
+        return np.maximum(self.grid(self.rvis, t, p), self.outer_radius(t, p, close, squint, wince))
 
-    # ---------------------------------------------------------------- fur on the lids, and on the band the ribbon leaves
-    def lid_fur(self, close, squint):
-        """Points (strands x 9 x 3) and radii (strands x 9): the lid fur (lid 1 upper, -1 lower) and the band fur (2, -2:
-        face fur on the skin band under the ribbon's rest place, shown where the ribbon has slid off it)."""
+    def surface_frame(self, t, p, close, squint, wince=0., h=0.3):
+        """The outer surface's normal n and tangents at (theta, phi): u along +theta laid in the tangent plane, v = n x u
+        (toward +phi)."""
+        S = lambda tt, pp: self.c+self.dirs(tt, pp)*self.surface_radius(tt, pp, close, squint, wince)[..., None]
+        dT = S(t+h, p)-S(t-h, p)
+        dP = S(t, p+h)-S(t, p-h)
+        n = np.cross(dT, dP)
+        n /= np.maximum(np.linalg.norm(n, axis=-1, keepdims=True), 1e-12)
+        n *= np.sign(np.einsum('...i,...i->...', n, self.dirs(t, p)))[..., None]
+        u = dT-np.einsum('...i,...i->...', dT, n)[..., None]*n
+        u /= np.maximum(np.linalg.norm(u, axis=-1, keepdims=True), 1e-12)
+        v = np.cross(n, u)
+        v *= np.sign(np.einsum('...i,...i->...', v, dP)+1e-15)[..., None]
+        return n, u, v
+
+    # ---------------------------------------------------------------- fur on the lids, and the lash line
+    def lid_fur(self, close, squint, wince=0.):
+        """Points (strands x 9 x 3) and radii (strands x 9): the lid fur (lid 1 upper, -1 lower) and the lashes (3, -3)."""
         F = self.fur
         n = len(F['theta'])
         X = np.zeros((n, 9, 3))
         rad = np.zeros((n, 9))
+        self.tone_mult = np.ones(n)
         li = np.flatnonzero(np.abs(F['lid']) == 1)
-        bi = np.flatnonzero(np.abs(F['lid']) == 2)
+        ki = np.flatnonzero(np.abs(F['lid']) == 3)
         if len(li):
-            X[li], rad[li] = self._lid_strands(li, close, squint)
-        if len(bi):
-            X[bi], rad[bi] = self._band_strands(bi, close, squint)
+            X[li], rad[li] = self._lid_strands(li, close, squint, wince)
+        if len(ki):
+            X[ki], rad[ki] = self._lash_strands(ki, close, squint, wince)
+        # a strand that does not show sits, zero length, at its root (or the eye centre when it never had one)
+        X[rad[:, 0] == 0] = X[rad[:, 0] == 0][:, :1]
         return X, rad
 
-    def _band_strands(self, ix, close, squint):
-        F = self.fur
-        t0, p0 = F['theta'][ix], F['a'][ix]
-        prof = self.band_prof[ix-self.band_first]                 # (n, 9, 3): dtheta, dphi, height over the surface
-        T = t0[:, None]+prof[:, :, 0]
-        P = p0[:, None]+prof[:, :, 1]
-        R = self.surface_radius(T, P, close, squint)+prof[:, :, 2]
-        X = self.c+self.dirs(T, P)*R[..., None]
-        covered = self.over_ribbon_rest(t0, p0, close, squint)
-        rad = np.where(covered[:, None], 0., self.fur_prof[None, :]*F['len'][ix, None]/self.L['fur_len_mm'])
-        rad = np.where(self.over_ribbon(T, P, close, squint) | self.over_ribbon_rest(T, P, close, squint), 0., rad)
-        return X, rad
+    def _place(self, ix, t, p_root, prof, close, squint, wince):
+        """Strands with the given surface-frame profiles rooted at (theta, phi) on the outer surface, every point kept
+        fur_clear over it."""
+        L = self.L
+        R0 = self.surface_radius(t, p_root, close, squint, wince)-L['fur_sink_mm']/1000
+        n0, u0, v0 = self.surface_frame(t, p_root, close, squint, wince)
+        X0 = self.c+self.dirs(t, p_root)*R0[:, None]
+        X = X0[:, None, :]+prof[:, :, :1]*u0[:, None, :]+prof[:, :, 1:2]*v0[:, None, :]+prof[:, :, 2:]*n0[:, None, :]
+        T, P, Rr = self.angles(X.reshape(-1, 3))
+        T, P, Rr = T.reshape(-1, 9), P.reshape(-1, 9), Rr.reshape(-1, 9)
+        floor = self.surface_radius(T, P, close, squint, wince)+L['fur_clear_mm']/1000
+        Rr = np.where(np.arange(9)[None, :] == 0, Rr, np.maximum(Rr, floor))
+        return self.c+self.dirs(T, P)*Rr[..., None], T, P
 
-    def _lid_strands(self, ix, close, squint):
+    def _lid_strands(self, ix, close, squint, wince):
         L, F = self.L, self.fur
         t = F['theta'][ix]
         a_ = F['a'][ix]
         lidv = F['lid'][ix]
-        pu, pl, su, sl = self.margins(t, close, squint)
-        rU, rL, _ = self.curves(t)
+        pu, pl, su, sl = self.margins(t, close, squint, wince)
         up = lidv == 1
         pm = np.where(up, pu, pl)
         sgn = np.where(up, 1., -1.)
@@ -235,25 +296,47 @@ class Eye:
         # the root must also be on its own lid's side of the margin's travel (a root past the far edge has no sheet)
         g = g*np.where(up, p_root <= self.furlines(t)[0], p_root >= self.furlines(t)[1])
         g = g*(np.where(up, su, sl) > 0)                               # a lid that has not moved shows no fur
-        band = np.where(up, self.band_top(t, close, squint, 'upper'), self.band_top(t, close, squint, 'lower'))
+        band = np.where(up, self.band_top(t, close, squint, 'upper', wince), self.band_top(t, close, squint, 'lower', wince))
         g = g*(a_ > band)
-        # the source face strand's own shape (eyelids_build: fur_prof3, in the surface frame at the root), scaled by how far
-        # the strand has come out from under the rim
+        # the source face strand's own shape in the surface frame (eyelids_build: fur_prof3), scaled by how far the strand
+        # has come out from under the rim; along the wince folds the fur bunches up (stands higher, lies shorter)
         prof = self.fur_prof3[ix]*g[:, None, None]
-        t0r, p0r = np.radians(t), np.radians(p_root)
-        n0 = self.dirs(t, p_root)
-        et = -np.sin(t0r)[:, None]*self.f+np.cos(t0r)[:, None]*self.lat
-        ep = -np.sin(p0r)[:, None]*(np.cos(t0r)[:, None]*self.f+np.sin(t0r)[:, None]*self.lat)+np.cos(p0r)[:, None]*self.up
-        R0 = self.outer_radius(t, p_root, close, squint)-L['fur_sink_mm']/1000
-        X = (self.c+n0*R0[:, None])[:, None, :]+prof[:, :, :1]*et[:, None, :]+prof[:, :, 1:2]*ep[:, None, :]+prof[:, :, 2:]*n0[:, None, :]
+        if wince > 0:
+            fs = np.where(up, self.fold_shape('upper', t, p_root, pm), self.fold_shape('lower', t, p_root, pm))*wince*L['wince_bunch']
+            prof = prof*np.stack([1-0.4*fs, 1-0.4*fs, 1+fs], 1)[:, None, :]
+        X, T, P = self._place(ix, t, p_root, prof, close, squint, wince)
+        rad = self.fur_rad[ix]*(g > 1e-4)[:, None]
+        # the dark lid margin: lid fur next to the ribbon band darkens toward it (fur_tone, which the hair shader multiplies
+        # the colour by) as the lid closes, so the closed line reads as a dark dash at sprite size without a heavier stroke
+        near = 1-smooth((a_-band)/L['margin_dark_deg'])
+        self.tone_mult[ix] = 1-L['margin_dark']*near*np.where(up, su, L['margin_dark_lower']*sl)
+        # thinned where a point lies over the moved ribbon band (as sparse_caps thinned the face fur over the ribbon)
+        rad = np.where(self.over_ribbon(T, P, close, squint, wince), 0., rad)
+        return X, rad
+
+    def _lash_strands(self, ix, close, squint, wince):
+        """The lash line: short dark strands rooted along each lid margin, leaning over the line where the lids meet."""
+        L, F = self.L, self.fur
+        t = F['theta'][ix]
+        up = F['lid'][ix] > 0
+        pu, pl, su, sl = self.margins(t, close, squint, wince)
+        pm = np.where(up, pu, pl)
+        sgn = np.where(up, 1., -1.)
+        s = np.where(up, su, sl)
+        g = smooth(s/0.15)*((t > self.thm) & (t < self.thl))
+        p_root = pm+sgn*L['lash_root_deg']
+        # the frame is taken on the lid face just past the rolled lip (the lip itself turns the normal into the eye)
+        R0 = self.surface_radius(t, p_root, close, squint, wince)-L['fur_sink_mm']/1000
+        n0, u0, v0 = self.surface_frame(t, pm+sgn*L['lash_frame_deg'], close, squint, wince)
+        X0 = self.c+self.dirs(t, p_root)*R0[:, None]
+        prof = self.fur_prof3[ix]*g[:, None, None]
+        X = X0[:, None, :]+prof[:, :, :1]*u0[:, None, :]+prof[:, :, 1:2]*v0[:, None, :]+prof[:, :, 2:]*n0[:, None, :]
         T, P, Rr = self.angles(X.reshape(-1, 3))
         T, P, Rr = T.reshape(-1, 9), P.reshape(-1, 9), Rr.reshape(-1, 9)
-        floor = self.outer_radius(T, P, close, squint)+L['fur_clear_mm']/1000
+        floor = self.surface_radius(T, P, close, squint, wince)+L['fur_clear_mm']/1000
         Rr = np.where(np.arange(9)[None, :] == 0, Rr, np.maximum(Rr, floor))
         X = self.c+self.dirs(T, P)*Rr[..., None]
-        rad = (self.fur_prof[None, :]*L['fur_radius_scale']*(g > 1e-4)[:, None])
-        # thinned where a point lies over the moved ribbon band (as sparse_caps thinned the face fur over the ribbon)
-        rad = np.where(self.over_ribbon(T, P, close, squint), 0., rad)
+        rad = self.fur_rad[ix]*(g > 1e-4)[:, None]
         return X, rad
 
     def band_factor(self, t, ext, s, which):
@@ -270,18 +353,18 @@ class Eye:
             target = np.maximum(ext, s*L['ribbon_close_lower_min_deg']*taper)
         return target/ext
 
-    def band_top(self, t, close, squint, which):
+    def band_top(self, t, close, squint, which, wince=0.):
         """Degrees from the margin to the top edge of the ribbon band riding on that lid."""
         tt, wu, wl = self.band
-        _, _, su, sl = self.margins(t, close, squint)
+        _, _, su, sl = self.margins(t, close, squint, wince)
         w = interp1(tt, wu if which == 'upper' else wl, t)
         s = su if which == 'upper' else sl
         return self.L['ribbon_m0_deg']+w*self.band_factor(t, w, s, which)
 
-    def over_ribbon(self, T, P, close, squint):
-        pu, pl, su, sl = self.margins(T, close, squint)
-        bu = self.band_top(T, close, squint, 'upper')
-        bl = self.band_top(T, close, squint, 'lower')
+    def over_ribbon(self, T, P, close, squint, wince=0.):
+        pu, pl, su, sl = self.margins(T, close, squint, wince)
+        bu = self.band_top(T, close, squint, 'upper', wince)
+        bl = self.band_top(T, close, squint, 'lower', wince)
         inside = (T > self.thm) & (T < self.thl)
         w = self.L['roll_deg']
         # the bands, and each lid's dark rolled lip under them: fur from either lid crossing the margins is thinned there,
@@ -291,9 +374,9 @@ class Eye:
         return inside & (bands | lips)
 
     # ---------------------------------------------------------------- ribbon
-    def ribbon(self, close, squint):
+    def ribbon(self, close, squint, wince=0.):
         R, L = self.rib, self.L
-        pu, pl, su, sl = self.margins(R['th0'], close, squint)
+        pu, pl, su, sl = self.margins(R['th0'], close, squint, wince)
         m0 = L['ribbon_m0_deg']
         cls = R['cls']
         dU = np.minimum(0., pu+m0-R['ph0'])
@@ -307,25 +390,25 @@ class Eye:
             return None
         ph = R['ph0'][:, None]+d[:, None]+(R['ph']-R['ph0'][:, None])*w[:, None]
         th = R['th']
-        r = self.surface_radius(th, ph, close, squint)+R['h']
+        r = self.surface_radius(th, ph, close, squint, wince)+R['h']
         X = self.c+self.dirs(th, ph)*r[..., None]
         X = np.where(moved[:, None, None], X, R['rest'])
         return X
 
     # ---------------------------------------------------------------- face fur under the ribbon's old place
-    def caps(self, close, squint):
+    def caps(self, close, squint, wince=0.):
         C = self.capdata
         if len(C['idx']) == 0:
             return None
-        over = self.over_ribbon_rest(C['th'], C['ph'], close, squint)
+        over = self.over_ribbon_rest(C['th'], C['ph'], close, squint, wince)
         return C['idx'], np.where(over, C['r_now'], C['r_full'])
 
-    def over_ribbon_rest(self, th, ph, close, squint):
+    def over_ribbon_rest(self, th, ph, close, squint, wince=0.):
         """Whether face-fur points (theta, phi) still lie under the ribbon band where it is now (its moved footprint)."""
-        pu, pl, su, sl = self.margins(th, close, squint)
+        pu, pl, su, sl = self.margins(th, close, squint, wince)
         m0 = self.L['ribbon_m0_deg']
-        bu = self.band_top(th, close, squint, 'upper')
-        bl = self.band_top(th, close, squint, 'lower')
+        bu = self.band_top(th, close, squint, 'upper', wince)
+        bl = self.band_top(th, close, squint, 'lower', wince)
         rU, rL, _ = self.curves(th)
         lo_u = np.minimum(rU, pu+m0)
         lo_l = np.maximum(rL, pl-m0)
@@ -334,46 +417,58 @@ class Eye:
         lower = (ph <= lo_l+pad) & (ph >= lo_l-bl-pad)
         return upper | lower | (th <= self.thm) | (th >= self.thl)
 
-    def catch_visible(self, close, squint):
+    def catch_visible(self, close, squint, wince=0.):
         t, p = self.catch
-        pu, pl, _, _ = self.margins(np.array([t]), close, squint)
+        pu, pl, _, _ = self.margins(np.array([t]), close, squint, wince)
         return bool(pl[0]+0.5 < p < pu[0]-0.5)
+
+
+class _Arrays(dict):
+    """lids.npz read whole at load (an NpzFile reads lazily, so a rebuild while a render runs would break it)."""
+
+    @property
+    def files(self):
+        return list(self.keys())
 
 
 class Lids:
     def __init__(self, lids_dir):
         d = Path(lids_dir)
-        self.Z = np.load(d/'lids.npz')
+        with np.load(d/'lids.npz') as z:
+            self.Z = _Arrays({k: z[k] for k in z.files})
         self.info = json.loads((d/'lids.json').read_text())
         self.L = self.info['levers']
         self.eyes = {k: Eye(self.Z, k, self.L) for k in EYES}
         self.faces = {w: self.Z['faces_'+w] for w in ('upper', 'lower')}
         self.fur_attr = {k[len('furattr__'):]: self.Z[k] for k in self.Z.files if k.startswith('furattr__')}
 
-    def state_geometry(self, eye, close=0., squint=0.):
+    def state_geometry(self, eye, close=0., squint=0., wince=0.):
         E = self.eyes[eye]
-        is_open = close == 0 and squint == 0
+        is_open = close == 0 and squint == 0 and wince == 0
         t = E.lid_th
-        out = dict(open=is_open, upper=E.lid_sheet('upper', t, close, squint).reshape(-1, 3),
-                   lower=E.lid_sheet('lower', t, close, squint).reshape(-1, 3))
-        X, rad = E.lid_fur(close, squint)
+        out = dict(open=is_open, upper=E.lid_sheet('upper', t, close, squint, wince).reshape(-1, 3),
+                   lower=E.lid_sheet('lower', t, close, squint, wince).reshape(-1, 3))
+        X, rad = E.lid_fur(close, squint, wince)
         out['fur'], out['fur_radius'] = X.reshape(-1, 3), rad.ravel()
-        out['ribbon'] = None if is_open else E.ribbon(close, squint)
-        out['caps'] = None if is_open else E.caps(close, squint)
-        out['catch'] = True if is_open else E.catch_visible(close, squint)
+        out['fur_tone_mult'] = E.tone_mult.copy()
+        out['ribbon'] = None if is_open else E.ribbon(close, squint, wince)
+        out['caps'] = None if is_open else E.caps(close, squint, wince)
+        out['catch'] = True if is_open else E.catch_visible(close, squint, wince)
         return out
 
 
-STATES = {'open': dict(close=0., squint=0.), 'half': dict(close=0.5, squint=0.), 'squint': dict(close=0., squint=1.),
-          'closed': dict(close=1., squint=0.)}
+STATES = {'open': dict(close=0., squint=0., wince=0.), 'half': dict(close=0.5, squint=0., wince=0.),
+          'squint': dict(close=0., squint=1., wince=0.), 'wince': dict(close=0., squint=0., wince=1.),
+          'closed': dict(close=1., squint=0., wince=0.)}
 
 
 def parse_state(text):
-    """'open' / 'half' / 'squint' / 'closed', or 'L=0.3,R=0.3,squint=0.5' (squint for both eyes; squint.L / squint.R each)."""
+    """'open' / 'half' / 'squint' / 'wince' / 'closed', or 'L=0.3,R=0.3,squint=0.5,wince=0.2' (squint and wince for both
+    eyes; squint.L / squint.R / wince.L / wince.R each)."""
     if text in STATES:
         s = STATES[text]
         return {'eye1': dict(s), 'eye-1': dict(s)}
-    out = {'eye1': dict(close=0., squint=0.), 'eye-1': dict(close=0., squint=0.)}
+    out = {'eye1': dict(close=0., squint=0., wince=0.), 'eye-1': dict(close=0., squint=0., wince=0.)}
     for kv in text.split(','):
         k, v = kv.split('=')
         v = float(v)
@@ -381,12 +476,10 @@ def parse_state(text):
             out['eye1']['close'] = v
         elif k == 'R':
             out['eye-1']['close'] = v
-        elif k == 'squint':
-            out['eye1']['squint'] = out['eye-1']['squint'] = v
-        elif k == 'squint.L':
-            out['eye1']['squint'] = v
-        elif k == 'squint.R':
-            out['eye-1']['squint'] = v
+        elif k in ('squint', 'wince'):
+            out['eye1'][k] = out['eye-1'][k] = v
+        elif k.split('.')[0] in ('squint', 'wince') and k.split('.')[-1] in ('L', 'R'):
+            out['eye1' if k.endswith('L') else 'eye-1'][k.split('.')[0]] = v
         else:
             raise ValueError(k)
     return out

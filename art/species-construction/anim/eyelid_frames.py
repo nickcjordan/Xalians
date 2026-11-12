@@ -2,7 +2,7 @@
 
   run_blender.py eyelid_frames.py <log> -- --lids <lids dir> [--state open|half|squint|closed|L=..,R=..,squint=..]
       [--schedule <json>] [--eye-crops name:azimuth:elevation:half,...] [--focus eye1|eye-1] [--hide-open] [--no-lids]
-      -- <clip_frames.py arguments>
+      [--masks] -- <clip_frames.py arguments>
 
 After clip_frames.py opens the surface (a persistent load_post handler), each eye gets an upper and a lower lid mesh
 (`Akinza eyelid upper +1` ...; the skin's own material, with the skin shader's attributes copied from the face at the rim)
@@ -16,7 +16,9 @@ in rest space through eyelids_core and then through the frame's head bone: the l
 Open (close = squint = 0) leaves the ribbon, the fur radii and the catch light exactly as clip_frames.py sets them, and the
 lid sheets tucked under the rim skin (or, with --hide-open, not rendered at all); the lid fur has zero length and radius.
 --eye-crops adds clip_frames.py crop views (on the head bone) re-aimed at the posed near eye centre (--focus), each half
-size in rig metres. --no-lids renders through the same path without lids (the baseline).
+size in rig metres. --no-lids renders through the same path without lids (the baseline). States may carry `wince` (fix
+pass 2) besides `close` and `squint`; the lid fur's fur_tone is set per frame (the dark lid margin). --masks writes, per
+render, each eye's grid cells projected through the camera (<out>/masks/<clip>_<view>_<frame>.npz) for eyelids_measure.py.
 """
 import argparse
 import json
@@ -44,6 +46,7 @@ p.add_argument('--eye-crops', default=None)
 p.add_argument('--focus', default='eye1')
 p.add_argument('--hide-open', action='store_true')
 p.add_argument('--no-lids', action='store_true')
+p.add_argument('--masks', action='store_true')
 a = p.parse_args(mine)
 LIDS = ec.Lids(a.lids)
 DEFAULT = ec.parse_state(a.state)
@@ -172,7 +175,7 @@ def lids_pre(scene, _depsgraph=None):
         for e in ec.EYES:
             s = st[e]
             E = LIDS.eyes[e]
-            g = LIDS.state_geometry(e, s['close'], s['squint'])
+            g = LIDS.state_geometry(e, s['close'], s['squint'], s.get('wince', 0.))
             hide = a.hide_open and g['open']
             for which in ('upper', 'lower'):
                 ob = bpy.data.objects.get(f'Akinza eyelid {which} {SIDE[e]}')
@@ -185,6 +188,9 @@ def lids_pre(scene, _depsgraph=None):
             if cob is not None:
                 cob.data.attributes['position'].data.foreach_set('vector', place(g['fur']).astype(np.float32).ravel())
                 cob.data.attributes['radius'].data.foreach_set('value', g['fur_radius'].astype(np.float32))
+                if cob.data.attributes.get('fur_tone') is not None and e+'__fa__fur_tone' in LIDS.Z.files:
+                    cob.data.attributes['fur_tone'].data.foreach_set(
+                        'value', (LIDS.Z[e+'__fa__fur_tone']*g['fur_tone_mult']).astype(np.float32))
                 cob.data.update_tag()
                 cob.hide_render = hide or not (g['fur_radius'] > 0).any()
             rib = bpy.data.objects.get('Akinza G1 ribbon head_eye_globe_'+GLOBE[e])
@@ -216,7 +222,47 @@ def lids_pre(scene, _depsgraph=None):
         fwd = cam.matrix_world.to_3x3()@Vector((0, 0, -1))
         cam.location = focus-fwd*10
     bpy.context.view_layer.update()
+    if a.masks and not a.no_lids:
+        write_masks(scene, G, clip, fr['frame'], view, st, place)
     STATE_LOG.append(rows)
+
+
+def write_masks(scene, G, clip, frame, view, st, place):
+    """The eye regions' grid cells (each eye's theta x phi grid round the opening) on the frame's outer surface, placed
+    by the head bone and projected through the render camera: pixel x, y (from the top left), depth along the view, the
+    zone's signed distance (mm, positive inside the bare zone and the opening) and whether the cell lies on the closed line
+    (between the margins, on the lips or under a ribbon band). eyelids_measure.py rasterises them into the lid area, the
+    ring of face fur round it and the line."""
+    cam = scene.camera
+    W, H = scene.render.resolution_x, scene.render.resolution_y
+    fr_ = [Vector(v) for v in cam.data.view_frame(scene=scene)]
+    xs, ys = [v.x for v in fr_], [v.y for v in fr_]
+    x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+    Mi = np.array(cam.matrix_world.inverted())
+    out = {}
+    for e in ec.EYES:
+        E = LIDS.eyes[e]
+        s = st[e]
+        th, ph = E.grid.th, E.grid.ph
+        keep_t = (th > E.thm-14) & (th < E.thl+14)
+        T, P = np.meshgrid(th[keep_t], ph)
+        sd = E.sdz[:, keep_t]
+        ok = sd > -26
+        T, P, sd = T[ok], P[ok], sd[ok]
+        cw, sq, wi = s['close'], s['squint'], s.get('wince', 0.)
+        R = E.surface_radius(T, P, cw, sq, wi)
+        X = place(E.c+E.dirs(T, P)*R[:, None])
+        Xc = X@Mi[:3, :3].T+Mi[:3, 3]
+        px = (Xc[:, 0]-x0)/(x1-x0)*W
+        py = (y1-Xc[:, 1])/(y1-y0)*H
+        pu, pl, _, _ = E.margins(T, cw, sq, wi)
+        line = ((P <= pu+E.band_top(T, cw, sq, 'upper', wi)+0.3) & (P >= pl-E.band_top(T, cw, sq, 'lower', wi)-0.3)
+                & (T > E.thm) & (T < E.thl)) if not (cw == 0 and sq == 0 and wi == 0) else np.zeros(len(T), bool)
+        opening = E.grid(E.rvis, T, P) <= E.grid(E.rg, T, P)+1e-6
+        out[e] = np.stack([px, py, -Xc[:, 2], sd, line.astype(float), opening.astype(float)], 1).astype(np.float32)
+    d = G['a'].out/'masks'
+    d.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(d/f'{clip}_{view}_{frame:04d}.npz', W=W, H=H, **{k.replace('-', 'm'): v for k, v in out.items()})
 
 
 bpy.app.handlers.load_post.append(add_lids)
