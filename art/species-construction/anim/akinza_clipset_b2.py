@@ -2183,8 +2183,11 @@ FAINT4.update(
     arms=[(19, 'linear', 0.), (23, 'linear', 1.)], arm_land=23,
 
     tails=[(1, 'linear', 0.), (12, 'in', .5), (19, 'smooth', 1.)],
-    # (released by 15 the tails' fall pressed tails a and b to 32 mm apart at 15: they come down over 12 to 19 instead)
-    tail_lift=[(9, 'linear', 0.), (12, 'smooth', 1.), (13, 'smooth', .75), (16, 'smooth', .5), (19, 'smooth', 0.)],
+    # (released by 15 the tails' fall pressed tails a and b to 32 mm apart at 15: they come down over 12 to 19 instead; lifted
+    # from 9 to a peak at 12, so the top tail's tip takes the hips' last drop over 10 to 12 (23, 28 and 21 px at 720; it fell
+    # 42 at 12 with the lift peaking at 12 alone) and keeps sagging through the topple to 16)
+    tail_lift=[(9, 'linear', 0.), (11, 'smooth', .45), (12, 'smooth', .9), (13, 'smooth', .85), (14, 'smooth', .68), (16, 'smooth', .4),
+               (19, 'smooth', 0.)], tail_lift_deg=22.,
     tail_splay=[(11, 'linear', 0.), (14, 'smooth', 1.), (17, 'linear', 1.), (21, 'smooth', 0.)], tail_splay_deg=14.,
     tail_splay_tails=(('a', 1.),),
     tail_bounce={'a': 0, 'b': 0, 'c': 0}, tail_bounce_deg=4.,
