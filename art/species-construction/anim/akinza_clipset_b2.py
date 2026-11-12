@@ -352,6 +352,69 @@ HELD = dict(
 )
 
 
+# Held fix pass 7 (Nick on F48, 2026-11-11: "the 'held' looks kinda like a demon trying to escape their body but its close"):
+# the grip has to read as outside the body. The trunk wrenching and the chest heaving with the arms and feet locked and the face
+# straight ahead read as a force inside it. So: it looks at what holds it (in the lunge the head turns and dips toward the near
+# arm, in the yank back toward the far side; a quick glance down between strains; no more chin-up toss); in each of those
+# strains one arm tries to pull free (its elbow pushes out from the side 3 to 5 cm with that shoulder shrugging up, then is
+# snapped back to the side and stops dead, as if the grip yanked it back); the whole body pulls one way as one unit, leaning
+# from the hips over the braced feet with the knees flexing (lean_shares: the pelvis carries the lean, the spine and chest
+# little), the trunk's twist against the hips halved and the rests' chest heave reduced. The spacing (10, 19, 16), the stops
+# and rebounds, the tremor, the ear flicks, the tails, the planted feet, held_in and held_out, the seam and the clamp are kept.
+HELD['strains'][0].update(head=2., jerk=0., jerk_yaw=0., rise=-.006, look=26., dip=14., arm='L', elbow_push=13.)
+# (the far-side look turned 28 degrees swung the near ear forward over the face and showed the far ear behind it; 16 still laid
+# the near ear over the back of the skull: 12, with the ears lifted ear_back degrees toward the line while it looks, -6;
+# swept 14 to 22 degrees further back they hung down behind the head like a lop ear)
+HELD['strains'][1].update(head=2., jerk=0., jerk_yaw=0., twist=-4.5, rise=-.015, look=-12., dip=14., arm='R', elbow_push=13.,
+                          ear_back=-6.)
+HELD['strains'][2].update(look=10., dip=6.)  # (its twist kept at 4: halved, the far paw went into the hip at 33 to 38)
+HELD.update(
+    lean_shares=(.65, .25, .1),          # pelvis, spine, chest (pass 6: .3, .4, .3)
+    neck_look=.35,                       # the neck's share of the look's yaw and dip (the head's the rest)
+    arm_shrug=.45,                       # degrees of clavicle raise per degree of the arm's push
+    # glances between the strains (frame, yaw, dip), periodic in 45
+    # (one, in the long rest after the yank back; one at 41 to 43 also played in held_in, which blends loop frames 39 to 44)
+    glance=[(0, 0., 0.), (24, 0., 0.), (25, 3., 9.), (26, 3., 10.), (28, 0., 0.), (45, 0., 0.)],
+    pant_rest=dict(HELD['pant_rest'], chest=2.0, key=1.0),
+)
+
+
+def _look_profile(u, st):
+    """Fix pass 7: a strain's look share by frame u from its start: it turns to look through the wind-up and lunge, holds through
+    the hold and turns back with the recoil (0 outside)."""
+    w, h = st['wind'], st['hold']
+    keys = [(0., 0.), (w, .3), (w+2, 1.), (w+3+h, 1.), (w+5+h, .3), (w+7+h, 0.)]
+    if u <= 0 or u >= keys[-1][0]:
+        return 0.
+    for (u0, v0), (u1, v1) in zip(keys, keys[1:]):
+        if u0 <= u <= u1:
+            return v0+(v1-v0)*cp.ease('smooth', (u-u0)/(u1-u0))
+    return 0.
+
+
+def _arm_profile(u, st):
+    """Fix pass 7: the arm pulling free, its share by frame u from the strain's start: out from the lunge's stop through the hold,
+    snapped back to the side in one frame at the hold's end and stopped dead (a small rebound; snapped past the side by .15 the
+    paw went into the hip), then still."""
+    w, h = st['wind'], st['hold']
+    keys = [(0., 0.), (w+2, .1), (w+3, .4), (w+2+h, 1.), (w+3+h, 1.), (w+4+h, -.04), (w+5+h, .03), (w+6+h, 0.)]
+    if u <= 0 or u >= keys[-1][0]:
+        return 0.
+    for (u0, v0), (u1, v1) in zip(keys, keys[1:]):
+        if u0 <= u <= u1:
+            return v0+(v1-v0)*cp.ease('linear' if (u0, u1) == (w+3+h, w+4+h) else 'smooth', (u-u0)/(u1-u0))
+    return 0.
+
+
+def _periodic_share(fn, f, st, n):
+    best = 0.
+    for sh in (-n, 0, n):
+        v = fn(f-(st['t0']+sh), st)
+        if abs(v) > abs(best):
+            best = v
+    return best
+
+
 def _rot_angle(M):
     return math.degrees(math.acos(max(-1., min(1., (np.trace(M)-1)/2))))
 
@@ -443,8 +506,10 @@ def _jerk(f, st, n):
     return best
 
 
-def held_loop_body(rig, f):
-    """Held loop frame f (periodic in 45): body pose (no legs), root move, feet specs, breath, info."""
+def held_loop_body(rig, f, grip=True):
+    """Held loop frame f (periodic in 45): body pose (no legs), root move, feet specs, breath, info. grip=False leaves out fix pass
+    7's look, glance and arm pulling free (held_in and held_out blend loop frames 39 to 44 and 0 to 9 and passed without them;
+    all three are 0 at loop frames 44 and 0, so the seams are unchanged)."""
     P = HELD
     n = P['frames']
     pose = {}
@@ -483,12 +548,32 @@ def held_loop_body(rig, f):
     ph = 2*math.pi*f/T['period']
     tr, tr2, tr3 = (amp*math.sin(ph+o) for o in (0., 1.9, 3.7))
     lift = lift+np.array([T['shake']*tr3, 0., 0.])
-    turn(pose, 'pelvis', [.3*ln, 0., T['hips']*tr2])
+    lp, ls, lc = P.get('lean_shares', (.3, .4, .3))
+    turn(pose, 'pelvis', [lp*ln, 0., T['hips']*tr2])
     # (fix pass 5: the tremble's pitch moved from the chest to the spine, whose turn about the waist carries the whole ribcage)
-    turn(pose, 'spine', [.4*ln+T['trunk']*tr, .5*bd+T['roll']*tr2, .4*tw])
-    turn(pose, 'chest', [.3*ln-env*PR['chest']*pb, .5*bd+.6*T['roll']*tr3, .6*tw])
+    turn(pose, 'spine', [ls*ln+T['trunk']*tr, .5*bd+T['roll']*tr2, .4*tw])
+    turn(pose, 'chest', [lc*ln-env*PR['chest']*pb, .5*bd+.6*T['roll']*tr3, .6*tw])
+    # fix pass 7: one arm pulling free in a strain (per side, degrees of upper arm out), and where the head looks
+    push = {'L': 0., 'R': 0.}
+    lk_y = lk_d = ear_back = 0.
+    for st in (P['strains'] if grip else ()):
+        if st.get('arm'):
+            push[st['arm']] += st['elbow_push']*_periodic_share(_arm_profile, f, st, n)
+        if st.get('look') is not None:
+            lv = _periodic_share(_look_profile, f, st, n)
+            lk_y += lv*st['look']
+            lk_d += lv*st.get('dip', 0.)
+            ear_back += lv*st.get('ear_back', 0.)
+    if 'glance' in P and grip:
+        gy, gd = _keys_periodic(P['glance'], f, n)
+        lk_y += gy
+        lk_d += gd
     pc = env*PR['clav']*pb
     cl = {'L': sh[0]-T['shoulder']*abs(tr)-pc, 'R': -sh[1]+T['shoulder']*abs(tr)+pc}      # the clavicles' raise (Y; - raises the near one)
+    if 'arm_shrug' in P:
+        # fix pass 7: the shoulder of the arm pulling free shrugs up with it
+        cl['L'] -= P['arm_shrug']*push['L']
+        cl['R'] += P['arm_shrug']*push['R']
     # (fix pass 5: the shrug goes up and back: the clavicles turn back a little the whole loop, and the near one further back
     # as the trunk twists away (the yank's twist carried the near shoulder ball forward against the throat at 14 to 21))
     cbk = P['clav_back']+P['clav_back_twist']*max(0., -tw)
@@ -498,8 +583,8 @@ def held_loop_body(rig, f):
     # little of the trunk's lean; the hands press harder in each strain and the forearms tremble with the torso
     ca = P['arm_counter']
     # (the elbows' press against the bind: out and back, so the side view sees it as the elbow pushing off the body)
-    turn(pose, 'upperarm.L', [-ca['lean']*ln+ca.get('twist', 0.)*tw+.8*eo, -ca['shrug']*cl['L']-eo, 0.])
-    turn(pose, 'upperarm.R', [-ca['lean']*ln+ca.get('twist', 0.)*tw+.8*eo, -ca['shrug']*cl['R']+eo, 0.])
+    turn(pose, 'upperarm.L', [-ca['lean']*ln+ca.get('twist', 0.)*tw+.8*eo, -ca['shrug']*cl['L']-eo-push['L'], 0.])
+    turn(pose, 'upperarm.R', [-ca['lean']*ln+ca.get('twist', 0.)*tw+.8*eo, -ca['shrug']*cl['R']+eo+push['R'], 0.])
     ce = ca.get('elbow', (0., 0.))
     turn(pose, 'forearm.L', [T['arms']*tr2, press[0]+ce[0]*eo, 0.])
     turn(pose, 'forearm.R', [T['arms']*tr3, -press[1]-ce[1]*eo, 0.])
@@ -509,9 +594,10 @@ def held_loop_body(rig, f):
     hl = P['head_level']
     # (fix pass 5: the neck takes .3 of the head's own pitch and the head .7, was .4 and .6: the chin-up toss at the yank's stop
     # creased the back of the neck at 15)
-    turn(pose, 'neck', [.3*(hd+jk)-.5*hl*ln-T['neck']*T['trunk']*tr+env*PR['chest']*pb, -.5*bd-T['neck']*(T['roll']*tr2+.6*T['roll']*tr3),
-                        .4*jy-.5*tw])
-    turn(pose, 'head', [.7*(hd+jk)-.5*hl*ln, -.5*bd, .6*jy-.5*tw])
+    nl = P.get('neck_look', 0.)
+    turn(pose, 'neck', [.3*(hd+jk)+nl*lk_d-.5*hl*ln-T['neck']*T['trunk']*tr+env*PR['chest']*pb, -.5*bd-T['neck']*(T['roll']*tr2+.6*T['roll']*tr3),
+                        .4*jy+nl*lk_y-.5*tw])
+    turn(pose, 'head', [.7*(hd+jk)+(1-nl)*lk_d-.5*hl*ln, -.5*bd, .6*jy+(1-nl)*lk_y-.5*tw])
     # the ears on stalk f18's line; each strain's flick (fix pass 4) a rigid swing back and down past the line and back
     # (ear_follow), its own keys by frame from the lunge's start
     e = P['ear_base']
@@ -523,7 +609,7 @@ def held_loop_body(rig, f):
             u = f-(st['t0']+sh_)
             if xs[0] <= u <= xs[-1]:
                 fd += float(np.interp(u, xs, ys))
-    ear_follow(rig, pose, fd)
+    ear_follow(rig, pose, fd+ear_back)
     # the tails (fix pass 4): the waves and the whip as before, but a shorter lag down the chain, the whip low-passed in time,
     # and each frame's bends shared along the chain so no joint bends alone
     lagk = P['tail_lag_p4']
@@ -556,7 +642,8 @@ def held_loop_body(rig, f):
     pant = .5-.5*math.cos(2*math.pi*P['pant']['cycles']*f/n)
     breath = P['pant']['key']*pant+.4*holding+env*PR['key']*pb    # a panting breath, a caught one in each hold, the rest's deeper breath
     return pose, lift, feet, breath, dict(strains=[round(v, 4) for v, _ in sts], holding=holding, flick=round(fd, 2), tremor=round(tr, 3),
-                                          jerk=round(jk, 3), pant=round(env, 3), elbows_out=round(eo, 2), planted=planted)
+                                          jerk=round(jk, 3), pant=round(env, 3), elbows_out=round(eo, 2), planted=planted,
+                                          push={k: round(v, 2) for k, v in push.items()}, look=[round(lk_y, 2), round(lk_d, 2)])
 
 
 def _rotvec(R):
@@ -773,7 +860,7 @@ def held_in_frame(rig, k):
     n = HELD['frames']
     e = {g: v[k] for g, v in HELD_IN.items()}
     ip, ilift, ib = cb.idle_pose(rig, k)
-    hp, hlift, hfeet, hb, hinfo = held_loop_body(rig, k-HELD['entry_frames'])
+    hp, hlift, hfeet, hb, hinfo = held_loop_body(rig, k-HELD['entry_frames'], grip=False)
     pose = cb.blend_poses(ip, hp, lambda b: e[held_group(b)])
     for b, d in HELD_IN_SNAP.items():
         turn(pose, b, d, e['jolt'])
@@ -792,7 +879,7 @@ def held_in_frame(rig, k):
 def held_out_frame(rig, k):
     m = HELD['exit_frames']
     e = {g: v[k] for g, v in HELD_OUT.items()}
-    hp, hlift, hfeet, hb, hinfo = held_loop_body(rig, k)
+    hp, hlift, hfeet, hb, hinfo = held_loop_body(rig, k, grip=False)
     phase = IDLE_N-1-(m-1)+k
     ip, ilift, ib = cb.idle_pose(rig, phase)
     pose = cb.blend_poses(hp, ip, lambda b: e['idle'] if held_group(b) != 'ears' else e['ears'])
@@ -1276,7 +1363,7 @@ def bake_setup(rig_dir, out, rest, names='K,S'):
 #              settle to 18
 #   f15 to 27  the trunk tips forward over the folded legs, accelerating: the forearms land, then the chest, the head on 27
 #              (`down`); a small bounce; still from 31 (the game holds the last frame)
-FAINT_FRONT_PX = 8     # D: faint's farthest pixel past the 192 cell's front edge plus 4 px, rounded up to 8 (end pose decision)
+FAINT_FRONT_PX = 16    # fix pass 9: 16 (the slack topple's hanging head reaches 7 cm further forward than pass 8's fold); pass 3 to 8: 8. D: faint's farthest pixel past the 192 cell's front edge plus 4 px, rounded up to 8 (end pose decision)
 CRUMPLE = dict(
     frames=36, down=27, still_from=31,
     # SIT: on the folded legs (the hips at HEAP's point, the heels up), the trunk slumped forward a little, the head hanging, the
@@ -1741,6 +1828,117 @@ FAINT4 = dict(
 )
 
 
+def _power_keys(f0, f1, p=2., v0=0., v1=1.):
+    """Dense linear track keys for v0 + (v1 - v0) * u**p, u = (f - f0) / (f1 - f0), one key a frame (p 2: a fall from rest under
+    a steady pull, distance growing with the square of time)."""
+    return [(f, 'linear', v0+(v1-v0)*((f-f0)/(f1-f0))**p) for f in range(f0, f1+1)]
+
+
+def _topple_keys(f0, f1, th0, th1, length, sub=200):
+    """Fix pass 9: dense linear keys (one a frame) for a trunk toppling as one slack mass from th0 to th1 degrees forward of
+    vertical between frames f0 and f1: a uniform rod pivoting about its foot under gravity (theta'' = 3 g / (2 length) sin theta),
+    its starting speed solved so it reaches th1 at f1. Values are the share (theta - th0) / (th1 - th0): it gathers speed all the
+    way to the contact."""
+    k = 3*9.81/(2*length)/900.                     # per frame squared
+    n = f1-f0
+
+    def run(w0):
+        th, w, out = math.radians(th0), w0, [0.]
+        for _ in range(n):
+            for _ in range(sub):
+                w += k*math.sin(th)/sub
+                th += w/sub
+            out.append(th)
+        return out
+    lo, hi = 0., .5
+    for _ in range(50):
+        mid = .5*(lo+hi)
+        if run(mid)[-1] > math.radians(th1):
+            hi = mid
+        else:
+            lo = mid
+    th = run(.5*(lo+hi))
+    th[0] = math.radians(th0)
+    return [(f0+i, 'linear', min(1., (x-math.radians(th0))/math.radians(th1-th0))) for i, x in enumerate(th)]
+
+
+# Fix pass 9 (Nick on F46b and F48, 2026-11-11: "the body sort of collapses like a wet noodle rather than an unconscious body"):
+# dead weight. Reference: Stanley Ketchel knocked out on his feet (1909 fight film, ref/clipset-b2/faint2): the knees buckle
+# straight down under him with the feet where they stood, the trunk stays in one piece and tips as the hips land, the chin is
+# on the chest from the first frames and the head hangs behind the trunk, hitting the floor last (2 frames after the
+# shoulders); the arms hang and trail. So: a short slack beat (0 to 3: the chin drops, the neck goes slack, the arms hang
+# straight down, the ears and tails begin to droop, a few mm of sink), then the hips fall straight down onto the heels under
+# gravity (0.9 g, distance with the square of time, no ease-out) and the knees hit the floor at 11 with a jolt (the trunk
+# compresses for a frame, the head, arms and tails keep going and snap back); the trunk, started tipping during the drop,
+# topples forward over the knees as one mass under gravity (a rod about its foot, gathering speed to the contact; spine and
+# chest share the root's tip, no progressive curl) and the chest and forearms hit at 18, the head a frame later; the head,
+# shoulders and tails bounce once (the tails out of step), and it is still from 25. The rest pose (25 on) is pass 8's: the
+# knees land where they landed in pass 8 (knee_pin), every track reaches its pass 8 end value, and the checks prove the skin
+# within a fraction of a mm of pass 8's frame 31.
+FAINT4.update(
+    knees=12, land=19, arm_land=21, still_from=26, time=[],
+    # the hips fall straight down onto the heels: K's pelvis over E's (pass 8 carried it 25 cm forward over the knees on the way
+    # down and slid it back after); z where the knee skin meets the floor as the fall ends
+    K=dict(FAINT4['K'], pelvis=[0., -.126, .236]),
+    # the knees land where pass 8's did, from the landing frame, so the rest pose is pass 8's (its knee joint at its landing)
+    knee_pin=[.2005, -.2998, .0324],
+    # the head's front kept 15 px inside the frame widened forward by FAINT_FRONT_PX = 16 (pass 8: -.772 with 8): a slack trunk
+    # toppling in one piece about its knees carries the hanging head 7 cm further forward than the pass 8 fold did, and
+    # holding it inside the old frame meant tucking the neck past pass 8's largest bend and then turning the head up
+    head_reach=-.842,
+    # the slack beat (0 to 3: a few mm of sink as the knees unlock), then the hips fall under a steady pull (distance with the
+    # square of time, about 0.8 g) onto the heels, the knees hitting the floor at 12
+    fall=[(0, 'linear', 0.), (1, 'linear', .006), (2, 'linear', .014), (3, 'linear', .022)]+_power_keys(3, 12, 2., .022, 1.)[1:],
+    heel=[(3, 'linear', 0.), (12, 'out', 1.)],
+    # the topple: tip, round and slide share one track, solved at the bake (solve_topple) so the trunk's pitch follows a slack
+    # trunk falling about its foot under gravity (a rod of `length` m) from 7 at the speed the drop gives it, thrown forward as
+    # the knees hit (kick), to the chest's contact at land (19)
+    topple=dict(f0=7, f1=19, length=.55, kick=12), spine_lead=0.,
+    tip=_topple_keys(7, 19, 4., 112.5, .55), slide=_topple_keys(7, 19, 4., 112.5, .55), round=_topple_keys(7, 19, 4., 112.5, .55),
+    curl=[(0, 'linear', 0.)],
+    # the knee jolt: the waist gives for a frame as the knees hit (the topple solve keeps the trunk line gathering speed)
+    settle=[(12, 'linear', 0.), (13, 'out', 1.), (15, 'smooth', 0.)], settle_rot={'spine': [5., 0., 0.]},
+    # the slack neck (degrees of extra bend): the head hangs from the slack beat, swings on at the knee jolt, and gives the
+    # bend back to the rest's as the head reaches the floor
+    neck_hang=[(0, 'linear', 0.), (1, 'linear', 6.), (3, 'out', 22.), (12, 'linear', 24.), (13, 'out', 32.), (15, 'smooth', 26.),
+               (17, 'smooth', 14.), (19, 'smooth', -6.), (21, 'smooth', 0.)],
+    neck=[(0, 'linear', 0.), (1, 'linear', .15), (3, 'out', .6), (12, 'smooth', .7), (19, 'smooth', 1.)],
+    # the head's world pitch: the chin falls in the slack beat, hangs through the drop, snaps on at the knee jolt, and hangs
+    # further as the trunk tips; in the last two frames it lags the trunk's fastest turn (its chin comes forward toward the
+    # floor, so the floor's turn onto the jaw at the contact (19) is not a single 70 degree flip); it never rises
+    head_pitch=[(0, 'linear', 0.), (1, 'linear', 8.), (3, 'out', 32.), (12, 'smooth', 40.), (13, 'out', 54.), (15, 'smooth', 62.),
+                (17, 'smooth', 64.), (18, 'smooth', 56.), (19, 'smooth', 50.)],
+    head_idle=[(0, 'linear', 0.), (1, 'linear', .5), (2, 'smooth', 1.)],
+    head_land=[(20, 'linear', 0.), (23, 'smooth', 1.)],
+    neck_tuck_cap=[(0, 'linear', 50.), (14, 'linear', 50.), (16, 'smooth', 68.), (20, 'linear', 68.), (22, 'smooth', 0.)],
+    ear_sag=[(2, 'linear', 0.), (20, 'in', 1.)], ear_turn=[(7, 'linear', 0.), (20, 'in', 1.)],
+    # the arms go slack in the slack beat and swing down to hang under the shoulders (a free swing of the arm, about a quarter
+    # of its pendulum period, 6 frames); as the trunk topples they trail back from the shoulder
+    # and the elbows give (arm_fold: the upper arm back along the flank, the elbow bent), so they are carried down under the
+    # chest; after the chest lands they flop out to their rest (arm_land)
+    arm_hang=[(0, 'linear', 0.), (1, 'linear', .12), (6, 'smooth', 1.)], arm_hang_dir=[.3, .25, -1.],
+    # (the elbow nearly straight: bent, the forearm hung plumb under a trailing upper arm and planted its paw like a prop)
+    arm_fold=[(13, 'linear', 0.), (17, 'smooth', 1.)], arm_fold_dirs={'upperarm': [.5, .6, -.62]},
+    arm_fold_turns={'forearm': [-5., 0., 0.], 'hand': [0., 0., 0.]},
+    # where a paw meets the floor the arm is pushed back and out by the body (the upper arm toward `dir`, the elbow folding
+    # `elbow` degrees more)
+    arm_buckle=dict(dir=[.65, .72, -.2], elbow=-5.),
+    arms=[(19, 'linear', 0.), (21, 'linear', 1.)],
+    arm_drop_cap=[(19, 'linear', .9), (20, 'smooth', .6), (21, 'linear', .32)],
+    clav=[(16, 'linear', 0.), (18, 'smooth', 1.), (20, 'linear', 1.), (22, 'smooth', 0.)],
+    tails=[(1, 'linear', 0.), (12, 'in', .55), (19, 'in', 1.)],
+    # the tails lifted a little as the hips land (they pressed tails a and b together, 0.2 mm apart, at 12 and 13)
+    tail_lift=[(9, 'linear', 0.), (12, 'smooth', 1.), (15, 'linear', 1.), (19, 'smooth', 0.)],
+    # the knee jolt in the arms and tails (they keep going for a frame): the hanging arms swing on forward, the tails drop
+    # (the tails' drop, jolt_tail, is 0: dropped onto the landing floor they pressed tails a and b together)
+    jolt=[(12, 'linear', 0.), (13, 'out', 1.), (14, 'smooth', -.3), (15, 'smooth', 0.)], jolt_arm=10., jolt_tail=0.,
+    # the bounce off the floor (the head and shoulders, the ears through their own lag), the tails one at a time behind it
+    bounce=[(19, 'linear', 0.), (20, 'out', 1.), (21, 'smooth', .25), (22, 'smooth', -.08), (23, 'smooth', 0.)],
+    bounce_late=[(20, 'linear', 0.), (21, 'out', 1.), (22, 'smooth', .2), (23, 'smooth', 0.)],
+    tail_bounce={'a': 0, 'b': 1, 'c': 2}, tail_bounce_deg=7.,
+)
+
+
 def _ear_frames(skin):
     """Per side: the ear's rest axis (root to tip) and its dish-facing normal (the blade's normal, signed toward the dish: rest
     vertex normals facing forward)."""
@@ -2197,6 +2395,8 @@ def knee_pin_solve(rig, skin, body, lift, heel, curl, pin, cache):
 def faint4_frame(rig, skin, f, cache):
     P = FAINT4
     K, E = P['K'], P['E']
+    LAND = P.get('land', P['down'])             # fix pass 9: the chest's landing (pass 8: `down`, 27)
+    ARM_LAND = P.get('arm_land', LAND)          # fix pass 9: the arms at their rest (they flop out after the chest lands)
     t = faint_time(f)
     tr = lambda k, x=None: ac.track(P[k], t if x is None else x)
     if 'idle0' not in cache:
@@ -2235,6 +2435,9 @@ def faint4_frame(rig, skin, f, cache):
         turn(body, b, e, tr('settle'))
     for b, e in P['curl_rot'].items():
         turn(body, b, e, tr('curl'))
+    if 'neck_hang' in P:
+        # fix pass 9: the slack neck lets the head hang (degrees on top of the neck's own turn, gone by the rest)
+        turn(body, 'neck', [tr('neck_hang'), 0., 0.])
     bo = tr('bounce')
     for b, e in P['bounce_rot'].items():
         turn(body, b, e, bo)
@@ -2249,8 +2452,10 @@ def faint4_frame(rig, skin, f, cache):
         return np.asarray(v, float)*np.array([1. if sd == 'L' else -1., 1., 1.])
     # arms: hanging straight down in the world from the landing (outside the kneeling thighs)
     ah = tr('arm_hang')
+    jo = tr('jolt') if 'jolt' in P else 0.
     if ah > 0:
-        hang = rc.pose_from_directions(rig.J, {f'{b}.{sd}': _unit(mirror(P['arm_hang_dir'], sd))
+        hd = rot([-P.get('jolt_arm', 0.)*jo, 0., 0.])@np.asarray(P['arm_hang_dir'], float)
+        hang = rc.pose_from_directions(rig.J, {f'{b}.{sd}': _unit(mirror(hd, sd))
                                                for sd in ('L', 'R') for b in ('upperarm', 'forearm')}, base=body, bones=B)
         for sd in ('L', 'R'):
             for b in ('upperarm', 'forearm'):
@@ -2290,7 +2495,11 @@ def faint4_frame(rig, skin, f, cache):
     kl = knee_low(full, lift)
     knee_fix = 0.
     pinned = None
-    if t > P['knees'] and 'knee_pin' in cache:
+    if P.get('knee_pin') and t >= P['knees'] and 'knee_pin' not in cache:
+        # fix pass 9: the knees land on pass 8's landing point, from the landing frame itself (so the rest pose is pass 8's;
+        # landing them by their height first and pinning from the next frame put them 7 mm back for a frame)
+        cache['knee_pin'] = list(P['knee_pin'])
+    if (t > P['knees'] or P.get('knee_pin')) and 'knee_pin' in cache:
         # fix pass 6: the knees stay where they landed (they slid 10 px forward and back over 16 to 20)
         res = knee_pin_solve(rig, skin, body, lift, heel, curl, cache['knee_pin'], cache)
         if res is not None:
@@ -2344,7 +2553,7 @@ def faint4_frame(rig, skin, f, cache):
         for b in dirs_E:
             if b in tg:
                 body[b] = [float(x) for x in pz[b]]
-            elif t_ >= 1 and f >= P['down']:
+            elif t_ >= 1 and f >= ARM_LAND:
                 body[b] = [float(x) for x in pzE[b]]
             else:
                 # toward the rest's own elbow and wrist turns (arm_rest_turns; the turns that reach dirs_E from an upper arm
@@ -2373,11 +2582,42 @@ def faint4_frame(rig, skin, f, cache):
         else:
             hi = mid
     arm_drop = .5*(lo+hi)
-    if f < P['down']:
+    if f < ARM_LAND:
         arm_drop = min(arm_drop, tr('arm_drop_cap'))
     rest_low(arm_drop)
+    buckle = 0.
+    if P.get('arm_buckle') and f < ARM_LAND:
+        # fix pass 9: a dead arm whose paw meets the floor is pushed back and out by the falling body: the upper arm swings
+        # toward bk['dir'] (back, out to its side and toward the floor, clear of the thigh) and the elbow folds, by the share
+        # that keeps the paw and claws on the floor (it never gives back before the arms flop out to their rest)
+        bk = P['arm_buckle']
+        T0 = rc.bone_transforms(rig.J, dict(body, **arm_from), bones=B)
+        ua0 = {sd: T0[f'upperarm.{sd}'][0]@rc.bone_axis(rig.J, f'upperarm.{sd}', B) for sd in 'LR'}
+        af0 = {k_: list(v) for k_, v in arm_from.items()}
+
+        def set_buckle(u):
+            dirs = {f'upperarm.{sd}': _slerp_dir(ua0[sd], _unit(np.asarray(bk['dir'], float)*np.array([1. if sd == 'L' else -1., 1., 1.])), u)
+                    for sd in 'LR'}
+            pz = rc.pose_from_directions(rig.J, dirs, base=dict(body, **af0), bones=B)
+            for sd in 'LR':
+                arm_from[f'upperarm.{sd}'] = [float(x) for x in pz[f'upperarm.{sd}']]
+                arm_from[f'forearm.{sd}'] = list(af0[f'forearm.{sd}'])
+                turn(arm_from, f'forearm.{sd}', [bk['elbow']*u, 0., 0.])
+            return arms_at(0.)
+        lo, hi = cache.get('buckle', 0.), 1.
+        if set_buckle(lo) < .0005:
+            for _ in range(16):
+                mid = .5*(lo+hi)
+                if set_buckle(mid) < .0005:
+                    lo = mid
+                else:
+                    hi = mid
+            lo = hi
+        buckle = lo
+        set_buckle(buckle)
+        cache['buckle'] = buckle
     splay = 0.
-    if f < P['down'] and arms_at(tpa) < .0005 and arms_at(tpa, 1.) >= .0005:
+    if f < ARM_LAND and arms_at(tpa) < .0005 and arms_at(tpa, 1.) >= .0005:
         # fix pass 7: a hanging paw that would reach the floor splays out to the side (the share that keeps it off the floor),
         # seen end-on from the side camera, instead of swinging forward ahead of its track (that reached forward like a brace
         # at 23)
@@ -2389,7 +2629,7 @@ def faint4_frame(rig, skin, f, cache):
             else:
                 hi = mid
         splay = hi
-    elif f < P['down'] and arms_at(tpa) < .0005:
+    elif f < ARM_LAND and arms_at(tpa) < .0005:
         # a hanging paw would reach the floor: it swings on toward its rest instead (the share that keeps it on the floor)
         lo, hi = tpa, 1.
         for _ in range(14):
@@ -2415,7 +2655,7 @@ def faint4_frame(rig, skin, f, cache):
             for sd in ('L', 'R'):
                 dirs_E[f'upperarm.{sd}'] = _unit(mirror([ux/hz*math.sqrt(1-lo*lo), uy/hz*math.sqrt(1-lo*lo), -lo], sd))
     cache['tpa'] = tpa
-    if f < P['down']:
+    if f < ARM_LAND:
         # (once splayed it stays out, letting go by half a frame as the arm nears its rest, never below what clears the floor)
         splay = max(splay, cache.get('splay', 0.)*(.5 if tpa > .6 else 1.))
     cache['splay'] = splay
@@ -2465,7 +2705,7 @@ def faint4_frame(rig, skin, f, cache):
         lift_neck = solve(0., -25., lambda n_: head_at(s_head, tuck+n_)[0] >= 0) if head_at(s_head, tuck-25.)[0] >= 0 else -25.
         tuck += lift_neck
     head_at(s_head, tuck)
-    if f >= P['down'] and bo:
+    if f >= LAND and bo:
         turn(body, 'head', [-3., 0., 0.], tr('bounce_late'))
     # fix pass 6, the ears: as they stood in idle frame 0, in the world, until ear_sag starts; then each eased (its world
     # direction and its turn about its length) toward its rest turn in the world (set relative to the head as it lies at rest),
@@ -2510,7 +2750,16 @@ def faint4_frame(rig, skin, f, cache):
     tE = tails_E_turned()
     tdir = {b: _slerp_dir(cache['tails0'][b], tE[b], tt) for b in cache['tails0']}
     tb = tr('bounce_late')
-    if tb:
+    if 'tail_bounce' in P:
+        # fix pass 9: each tail bounces once off the floor on its own frame (a rigid lift about its fork, a, b, c a frame
+        # apart), and drops on with the knee jolt
+        for tn, dl in P['tail_bounce'].items():
+            a_ = P['tail_bounce_deg']*tr('bounce_late', t-dl)+P.get('jolt_tail', 0.)*tr('jolt', t-dl)
+            if a_:
+                Rb = _axis_angle(np.array([1., 0., 0.]), a_)
+                for k in range(1, rc.TAIL_BONES+1):
+                    tdir[f'tail_{tn}{k}'] = Rb@tdir[f'tail_{tn}{k}']
+    elif tb:
         tdir['tail_root'] = rot([P['bounce_tail'][0]*tb, 0., 0.])@tdir['tail_root']
     tl = tr('tail_lift')
     if tl:
@@ -2527,7 +2776,7 @@ def faint4_frame(rig, skin, f, cache):
     info = dict(time=round(t, 4), fall=round(fa, 4), tip=round(tp, 4), arms=round(tpa, 4), splay=round(splay, 4), armLow_mm=round(arm_low*1000, 2),
                 neckTuck=round(tuck, 2), armHang=round(ah, 4), armFold=round(af, 4), heel=round(heel, 2), curl=round(curl, 2),
                 headLand=round(s_head, 3), headAir=round(s_air, 3), reachTurn=round(reach_turn, 3), earSag=round(ws, 3), ears=ear_info,
-                tails=round(tt, 3), bounce=round(bo, 4), armDrop=round(arm_drop, 4), kneeLow_mm=round(kl*1000, 2), kneeFix_mm=round(knee_fix*1000, 2),
+                tails=round(tt, 3), bounce=round(bo, 4), armDrop=round(arm_drop, 4), armBuckle=round(buckle, 4), kneeLow_mm=round(kl*1000, 2), kneeFix_mm=round(knee_fix*1000, 2),
                 kneePinDx=pinned, planted=dict(L=True, R=True), targets={sd: [round(float(x), 6) for x in targets[sd]] for sd in ('L', 'R')})
     breath = ib*(1-fa)
     fd_ = frame_dict(f, full, lift, breath, info, belly=breath)
@@ -2536,7 +2785,81 @@ def faint4_frame(rig, skin, f, cache):
     return fd_
 
 
+def trunk_line_pitch(rig, f, tp):
+    """Fix pass 9: the trunk's pitch (the pelvis-to-neck-base line, degrees forward of vertical in the side view) at frame f
+    with the topple share tp on tip, round and slide, composed as faint4_frame composes the root, spine and chest."""
+    P, K, E = FAINT4, FAINT4['K'], FAINT4['E']
+    tr = lambda k: ac.track(P[k], float(f))
+    ip, _, _ = cb.idle_pose(rig, f)
+    fa = tr('fall')
+    body = {b: list(ip.get(b, [0., 0., 0.])) for b in ('pelvis', 'spine', 'chest')}
+    for b in ('spine', 'chest'):
+        body[b] = slerp_e(slerp_e(body[b], K['body'].get(b, [0., 0., 0.]), fa), E['body'].get(b, [0., 0., 0.]), tp)
+    for b, e in P['settle_rot'].items():
+        turn(body, b, e, tr('settle'))
+    for b, e in P['curl_rot'].items():
+        turn(body, b, e, tr('curl'))
+    body['root'] = slerp_e(slerp_e([0., 0., 0.], [K['pitch'], 0., 0.], fa), [E['pitch'], 0., 0.], tp)
+    T = rc.bone_transforms(rig.J, body, bones=B)
+    v = (T['chest'][0]@np.array(rig.J['neck_base'])+T['chest'][1])-(T['pelvis'][0]@np.array(rig.J['pelvis'])+T['pelvis'][1])
+    return math.degrees(math.atan2(-v[1], v[2]))
+
+
+def solve_topple(rig, f0, f1, length, kick=None, th1=None, after=(), sub=200):
+    """Fix pass 9: per-frame topple shares (dense keys for tip, round and slide) that make the trunk's pitch follow a slack
+    trunk falling about its foot under gravity (theta'' = 3 g / (2 length) sin theta) from frame f0, where it carries on at the
+    speed the drop gives it (no jump), to the chest's contact at f1 (share 1). At frame `kick` (the knees hitting the floor)
+    the hips stop dead and the trunk is thrown forward: an added turning speed, solved so it reaches the frame-f1 pitch at f1.
+    Each frame's share is solved so the composed pitch is the simulated one (the drop's own pitch from K and the knee jolt are
+    in the composition), so the trunk gathers speed all the way to the chest. With th1 the contact pitch is given (the slumped
+    trunk's chest meets the floor short of the rest's pitch) and `after` keys take the share on to 1 (the back flattening).
+    """
+    th0 = trunk_line_pitch(rig, f0, 0.)
+    th1 = trunk_line_pitch(rig, f1, 1.) if th1 is None else th1
+    w_in = math.radians(th0-trunk_line_pitch(rig, f0-1, 0.))
+    k = 3*9.81/(2*length)/900.
+    kick = f1 if kick is None else kick
+
+    def run(dw):
+        th, w, out = math.radians(th0), w_in, [math.radians(th0)]
+        for i in range(f1-f0):
+            if f0+i == kick:
+                w += dw
+            for _ in range(sub):
+                w += k*math.sin(th)/sub
+                th += w/sub
+            out.append(th)
+        return out
+    lo, hi = 0., .6
+    for _ in range(50):
+        mid = .5*(lo+hi)
+        if run(mid)[-1] > math.radians(th1):
+            hi = mid
+        else:
+            lo = mid
+    dw = .5*(lo+hi)
+    target = [math.degrees(x) for x in run(dw)]
+    keys = [(f0, 'linear', 0.)]
+    for i in range(1, f1-f0+(1 if after else 0)):
+        f = f0+i
+        a, b = 0., 1.
+        for _ in range(40):
+            m = .5*(a+b)
+            if trunk_line_pitch(rig, f, m) < target[i]:
+                a = m
+            else:
+                b = m
+        keys.append((f, 'linear', .5*(a+b)))
+    keys += [tuple(k) for k in after] if after else [(f1, 'linear', 1.)]
+    return keys, dict(th0=th0, th1=th1, w_in_deg=math.degrees(w_in), kick_deg=math.degrees(dw), target=[round(x, 2) for x in target])
+
+
 def faint4_frames(rig, skin):
+    if 'topple' in FAINT4:
+        tp = FAINT4['topple']
+        keys, info = solve_topple(rig, tp['f0'], tp['f1'], tp['length'], tp.get('kick'), tp.get('th1'), tp.get('after', ()))
+        FAINT4['tip'] = FAINT4['round'] = FAINT4['slide'] = keys
+        FAINT4['topple_solved'] = info
     cache = {}
     frames = [faint4_frame(rig, skin, f, cache) for f in range(FAINT4['still_from']+1)]
     # it lies still: frames still_from to the end are one pose
