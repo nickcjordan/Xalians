@@ -2185,7 +2185,8 @@ FAINT4.update(
     tails=[(1, 'linear', 0.), (12, 'in', .5), (19, 'smooth', 1.)],
     # (released by 15 the tails' fall pressed tails a and b to 32 mm apart at 15: they come down over 12 to 19 instead)
     tail_lift=[(9, 'linear', 0.), (12, 'smooth', 1.), (13, 'smooth', .75), (16, 'smooth', .5), (19, 'smooth', 0.)],
-    tail_splay=[(11, 'linear', 0.), (14, 'smooth', 1.), (18, 'linear', 1.), (22, 'smooth', 0.)], tail_splay_deg=14.,
+    tail_splay=[(11, 'linear', 0.), (14, 'smooth', 1.), (17, 'linear', 1.), (21, 'smooth', 0.)], tail_splay_deg=14.,
+    tail_splay_tails=(('a', 1.),),
     tail_bounce={'a': 0, 'b': 0, 'c': 0}, tail_bounce_deg=4.,
     bounce=[(18, 'linear', 0.), (19, 'linear', -.25), (20, 'out', 1.), (21, 'smooth', .3), (22, 'smooth', -.05), (23, 'smooth', 0.)],
     bounce_rot={'chest': [-6., 0., 0.], 'neck': [-2.5, 0., 0.]},
@@ -3135,11 +3136,12 @@ def faint4_frame(rig, skin, f, cache):
         Rl = rot([P['tail_lift_deg']*tl, 0., 0.])
         tdir = {b: Rl@v for b, v in tdir.items()}
     if 'tail_splay' in P:
-        # fix pass 10: tails a and c fan out from b about the vertical (a toward the camera, c away) while the trunk topples,
-        # so a and b do not close on each other as they come down (they came to 32 to 48 mm apart at 15)
+        # fix pass 10: tail a fans out from b about the vertical (toward the camera) while the trunk topples, so a and b do
+        # not close on each other as they come down (they came to 32 to 48 mm apart at 15); (tail c fanned away the same
+        # way met the far leg, 0.1 mm at 18 and 19)
         sp = P['tail_splay_deg']*tr('tail_splay')
         if sp:
-            for tn, sg in (('a', 1.), ('c', -1.)):
+            for tn, sg in P['tail_splay_tails']:
                 Rz = _axis_angle(np.array([0., 0., 1.]), -sg*sp)
                 for k in range(1, rc.TAIL_BONES+1):
                     tdir[f'tail_{tn}{k}'] = Rz@tdir[f'tail_{tn}{k}']
